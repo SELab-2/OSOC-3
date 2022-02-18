@@ -1,7 +1,5 @@
 # Roles
 
-Note that in the column below, `preference` is nothing more than
-
 | Name    | Roles                             | Preference*   |
 | :------ | :-------------------------------- | :------------ |
 | Bert    | Customer relations                | Backend       |
