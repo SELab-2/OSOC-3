@@ -2,8 +2,6 @@
 
 ## Setting up a venv
 
-A `venv` (virtual environment) separates your 
-
 ```bash
 # Navigate to this directory
 cd backend
