@@ -50,15 +50,17 @@ When using WebStorm, Prettier and ESLint are supported by default. ESLint is ena
 
 Visual Studio Code requires an extension for Prettier and ESLint to work, as they are not present in the editor.
 
-1. Install the [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+1. Make sure the packages were installed by running `yarn install`, as `Prettier` and `ESLint` are among them
 
-2. Install the [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+2. Install the [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
 
-3. Select `Prettier` as the default formatter in the `Editor: Default Formatter` dropdown option
+2. Install the [ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+
+3. Select `Prettier` as the default formatter in the `Editor: Default Formatter` dropdown option.
 
 	![VSCode: Default Formatter setting](md-assets/readme/vscode-default-formatter.png)
 
-4. Enable the `Editor: Format On Save` option
+4. Enable the `Editor: Format On Save` option.
 
 	![VSCode: Format On Save setting](md-assets/readme/vscode-format-on-save.png)
 
