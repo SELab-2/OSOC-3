@@ -39,3 +39,4 @@ def function(first: str, second: int) -> bool:
     pass
 ```
 
+Link to the documentation for the typing module: https://docs.python.org/3/library/typing.html
