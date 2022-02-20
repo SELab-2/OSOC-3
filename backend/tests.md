@@ -1,11 +1,12 @@
 # Tests
-For tests we use the standard python library [unittest](https://docs.python.org/3/library/unittest.html)
+For tests we use the library [pytest](https://docs.pytest.org/en/7.0.x/) <br>
+All tests are written in test/test_\<file\>.py
 
 ## Run the tests
 ```bash
-# Test one file
-python -m unittest <filename>
+# Run one file
+pytest test/test_<file>.py
 
 # Run all tests
-python -m unittest
+pytest
 ```
