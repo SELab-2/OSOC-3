@@ -7,8 +7,8 @@ graph TD;
     D[Status]--Has-->C;
     D--Of-->E[Student];
     E--About-->C;
-    G[Skills]--Needs-->F;
     G--Part of-->E;
+    G[Skills]--Needs-->F;
     B--Coaching-->F[Project];
     E--Has-->F;
     H--Is-->E
