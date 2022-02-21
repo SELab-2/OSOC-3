@@ -16,7 +16,7 @@
     user-select: none;
     overflow: hidden;
     border-radius: 20px;
-    color: white;
+    color: black;
 }
 
 .green_login_button span {
@@ -40,11 +40,11 @@
     position: absolute;
     width: 8%;
     height: 500%;
-    background: #282c34;
+    background: white;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-60deg);
-    transition: all 0.15s;
+    transition: all 0.25s;
 }
 
 .green_login_button:hover span::before,
@@ -56,7 +56,7 @@
 
 .green_login_button:hover,
 .green_login_button:focus {
-    color: black;
+    color: white;
 }
 
 /*red  button*/
@@ -75,7 +75,7 @@
     user-select: none;
     overflow: hidden;
     border-radius: 20px;
-    color: white;
+    color: black;
 }
 
 .red_login_button span {
@@ -95,11 +95,11 @@
     position: absolute;
     width: 8%;
     height: 500%;
-    background: #282c34;
+    background: white;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-60deg);
-    transition: all 0.15s;
+    transition: all 0.25s;
 }
 
 .red_login_button:hover span::before,
@@ -111,5 +111,5 @@
 
 .red_login_button:hover,
 .red_login_button:focus {
-    color: black;
+    color: white;
 }

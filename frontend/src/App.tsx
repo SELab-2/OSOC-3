@@ -12,6 +12,15 @@ import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
 
 function App() {
+    const hamburger = document.querySelector(".hamburger");
+    const navMenu = document.querySelector(".nav-menu");
+    hamburger?.addEventListener("click", e => {
+        console.log("clicked hamburger");
+        console.log(hamburger.classList);
+        hamburger.classList.toggle("active");
+        navMenu?.classList.toggle("active");
+    });
+
     return (
         <Router>
             <NavBar/>
