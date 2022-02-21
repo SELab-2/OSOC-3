@@ -3,10 +3,11 @@
   --logo_orange: #fcb70f;
   --logo_light_green: #44dba4;
   --logo_red: #f14a3b;
+  --back_ground_color: #282c34;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--back_ground_color);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
