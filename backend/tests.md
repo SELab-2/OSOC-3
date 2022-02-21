@@ -1,6 +1,6 @@
 # Tests
 For tests we use the library [pytest](https://docs.pytest.org/en/7.0.x/) <br>
-All tests are written in tests/test_\<file\>.py
+All tests are written in `tests/test_<module>/test_<file>.py`.
 
 
 ## How to write basic tests
