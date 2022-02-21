@@ -5,12 +5,12 @@ All tests are written in `tests/test_<module>/test_<file>.py`.
 
 ## How to write basic tests
 ```python
-# in src/<file>.py
+# in src/<module>/<file>.py
 def function(x):
     #some code
     return #something
 
-# in tests/test_<file>.py
+# in tests/test_<module>/test_<file>.py
 from src.<file> import *
 
 def test_function(): #important that the tests start with "test_"
@@ -20,7 +20,7 @@ def test_function(): #important that the tests start with "test_"
 ## Run the tests
 ```bash
 # Run one file
-pytest tests/test_<file>.py
+pytest tests/test_<module>/test_<file>.py
 
 # Run all tests
 pytest
