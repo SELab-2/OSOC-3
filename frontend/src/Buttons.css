@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+}
+
+.green_login_button {
+    width: 255px;
+    border: none;
+    display: block;
+    position: relative;
+    margin-top: 10px;
+    padding: 0.5em 2.2em;
+    font-size: 25px;
+    background: transparent;
+    cursor: pointer;
+    z-index: 0;
+    user-select: none;
+    overflow: hidden;
+    border-radius: 20px;
+    color: white;
+}
+
+.green_login_button span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: -1;
+    border-radius: 20px;
+    border: 5px solid var(--logo_light_green);
+}
+
+.green_login_button img {
+    align-content: stretch;
+}
+
+.green_login_button span::before {
+    content: "";
+    position: absolute;
+    width: 8%;
+    height: 500%;
+    background: #282c34;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-60deg);
+    transition: all 0.15s;
+}
+
+.green_login_button:hover span::before,
+.green_login_button:focus span:before {
+    transform: translate(-50%, -50%) rotate(-30deg);
+    width: 100%;
+    background: var(--logo_light_green);
+}
+
+.green_login_button:hover,
+.green_login_button:focus {
+    color: black;
+}
+
+/*red  button*/
+
+.red_login_button {
+    width: 255px;
+    border: none;
+    display: block;
+    position: relative;
+    margin-top: 10px;
+    padding: 0.5em 2.2em;
+    font-size: 25px;
+    background: transparent;
+    cursor: pointer;
+    z-index: 0;
+    user-select: none;
+    overflow: hidden;
+    border-radius: 20px;
+    color: white;
+}
+
+.red_login_button span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: -1;
+    border-radius: 20px;
+    border: 5px solid var(--logo_red);
+}
+
+.red_login_button span::before {
+    content: "";
+    position: absolute;
+    width: 8%;
+    height: 500%;
+    background: #282c34;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-60deg);
+    transition: all 0.15s;
+}
+
+.red_login_button:hover span::before,
+.red_login_button:focus span:before {
+    transform: translate(-50%, -50%) rotate(-30deg);
+    width: 100%;
+    background: var(--logo_red);
+}
+
+.red_login_button:hover,
+.red_login_button:focus {
+    color: black;
+}
