@@ -38,3 +38,21 @@ def function(first: str, second: int) -> bool:
 ```
 
 Link to the documentation for the typing module: https://docs.python.org/3/library/typing.html
+
+## Running the project
+
+To start the API, run the following command in your terminal:
+
+```shell
+uvicorn src.app:app --reload
+```
+
+The "--reload" argument will enable hot reloading while you're developing, so you don't have to manually restart the process every time.
+
+⚠ ***Note*: the `--reload` argument should *not* be used in production!**
+
+To run the API on a specific IP-address and port, use the `--host` and `--port` arguments:
+
+```shell
+uvicorn src.app:app --host 0.0.0.0 --port 80
+```
