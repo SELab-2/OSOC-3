@@ -36,4 +36,22 @@ alle schermen: navbar met logo (+ links naar andere schermen(about, project,...)
 4. projects
 - zelfde lijst met studenten + filters als select students schermen
 - in lijst: knop bij elke students met dropdown om project te kiezen om aan te assignen
+- projecten naast elkaar
+    projectname
+    clientname
+    coach names
+    link to project info (bonus 4.3)
+    benoodigde rollen + aantal (optional info sign with requested skill, ex. must know React.js with front end role)
+    assigned students with their role and person who suggested him/her + optional comment-icon with motivation (i think from 4.1)
 
+4.1 when assign student to project: pop up screen with role draft and motivation why this student is a good fit for the team
+4.2 conflicts button: students who are assigned 2 projects
+    popup with the conflicts
+4.3 screen with info about project/partner (projectinfo)
+- about partner(bio)
+- about project (how it works, what it does...)
+- briefing: link to project template?
+- resources (tooling, code languages)
+
+bonus: students can ask to remove information: admins remove data
+bonsus: free text search (stijn says it may be hard to do (running through all students take time))
