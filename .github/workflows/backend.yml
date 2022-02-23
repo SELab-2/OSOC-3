@@ -38,7 +38,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: venv
-          key: ${{ runner.os }}-${{ hashFiles('requirements.txt', 'requirements-dev.txt') }}
+          key: ${{ runner.os }}-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
       - run: python -m pytest
 
