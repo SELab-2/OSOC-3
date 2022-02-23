@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
-      - run: apk add gcc musl-dev
+      - run: apk add gcc musl-dev build-base
       - name: Checkout code
         uses: actions/checkout@v2
       - run: pip install -r requirements.txt
