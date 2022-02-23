@@ -1,0 +1,58 @@
+name: Backend CI
+on: [ push ]
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  dependencies:
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-site-packages-
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: apk add gcc musl-dev build-base
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements-dev.txt
+
+  Test:
+    needs: [ dependencies ]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m pytest
+
+  Lint:
+    needs: [ dependencies ]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m pylint src

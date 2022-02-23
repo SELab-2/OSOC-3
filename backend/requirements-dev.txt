@@ -7,3 +7,6 @@ pytest==7.0.1
 
 # Pytest-cov: coverage plugin for pytest
 pytest-cov==3.0.0
+
+# Pylint: check your codestyle
+pylint==2.12.2
