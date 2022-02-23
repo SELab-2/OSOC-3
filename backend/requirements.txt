@@ -11,6 +11,8 @@ alembic==1.7.6
 # The packages below it are included in the uvicorn[standard] variant,
 # but if we add that instead then we can't require specific versions anymore
 # so all extra standard dependencies are listed independently
+# This is essentially a snapshot of the versions required by uvicorn[standard],
+# so they should not be updated through something like Dependabot
 uvicorn==0.17.5
 websockets==10.2
 httptools==0.3.0
