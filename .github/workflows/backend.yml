@@ -55,5 +55,4 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
-      - run: pip install pylint
-      - run: python -m pylint
+      - run: python -m pylint src
