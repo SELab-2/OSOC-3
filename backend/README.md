@@ -38,3 +38,13 @@ def function(first: str, second: int) -> bool:
 ```
 
 Link to the documentation for the typing module: https://docs.python.org/3/library/typing.html
+
+## Running the project
+
+To start the API, run the following command in your terminal:
+
+```shell
+uvicorn src.app:app --reload 
+```
+
+The "--reload" argument will enable hot reloading while you're developing, so you don't have to manually restart the process every time.
