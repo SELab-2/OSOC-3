@@ -1,0 +1,57 @@
+alle schermen: navbar met logo (+ links naar andere schermen(about, project,...))
+
+1. eerste loginscreen: 3 knoppen (loginscherm: niets, andere schermen: select students, projects, manage users, log out)
+1.1 loginscreen voor mail: 2 knoppen (email, password) + send knop
+1.2 loginscreen voor google: popup, gewoon default google login component (wordt wss naar google site gestuurd dan om in te loggen)
+1.3 loginscreen voor github: popup, gewoon default github login component (wordt wss naar github site gestuurd dan om in te loggen)
+
+2. manage users scherm:
+- tabel met users: 3 kolommen: namen, emails, account status
+- account status is dropdown met 3 opties: admin, coach, disabled
+
+3. select students scherm:
+- 3 knoppen: suggest yes, suggest maybe, suggest no 
+  + admin only: confirm button (final answer + extra option undecided)
+    keep track of who got what confirmation mail (confirm sends confirmation mail)
+- alle info over student
+     name + logos social media
+     suggestions from other coaches
+     academia
+     experience: cv, portfolio, project most proud of...
+     practical information (owns laptop, months available, time zone...) + details (first language, level of english...)
+     Motivation: why participate in osoc?, why do you think you're a good fit?...
+
+- lijst met studenten (kleur volgens hoe die al suggest zijn)
+- 4 knoppen: yes, maybe, no, undecided
+- search bar voor studenten
+- filter voor studenten: only alumni, only student coach volunteers, include students you've suggested for
+- filter op roles + deseleact all knop
+- bonusfilter: on practical information: living place, language...
+- bonusfilter: filter to only show available students on this page to avoid conflict!
+- bonus: remember filters when click away
+- reset filters knop
+
+3.1 na suggest knop te klikken: why are you making this decision? + button confirm suggestion
+
+4. projects
+- zelfde lijst met studenten + filters als select students schermen
+- in lijst: knop bij elke students met dropdown om project te kiezen om aan te assignen
+- projecten naast elkaar
+    projectname
+    clientname
+    coach names
+    link to project info (bonus 4.3)
+    benoodigde rollen + aantal (optional info sign with requested skill, ex. must know React.js with front end role)
+    assigned students with their role and person who suggested him/her + optional comment-icon with motivation (i think from 4.1)
+
+4.1 when assign student to project: pop up screen with role draft and motivation why this student is a good fit for the team
+4.2 conflicts button: students who are assigned 2 projects
+    popup with the conflicts
+4.3 screen with info about project/partner (projectinfo)
+- about partner(bio)
+- about project (how it works, what it does...)
+- briefing: link to project template?
+- resources (tooling, code languages)
+
+bonus: students can ask to remove information: admins remove data
+bonsus: free text search (stijn says it may be hard to do (running through all students take time))
