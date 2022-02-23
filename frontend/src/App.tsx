@@ -4,15 +4,6 @@ import "./App.css";
 import "./Buttons.css";
 
 function App() {
-    const hamburger = document.querySelector(".hamburger");
-    const navMenu = document.querySelector(".nav-menu");
-    hamburger?.addEventListener("click", e => {
-        console.log("clicked hamburger");
-        console.log(hamburger.classList);
-        hamburger.classList.toggle("active");
-        navMenu?.classList.toggle("active");
-    });
-
     return (
         <div className="App">
             <header className="App-header">
