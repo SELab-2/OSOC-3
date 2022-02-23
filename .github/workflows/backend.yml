@@ -40,4 +40,5 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
       - run: python -m pytest
+      - run: echo "Yay"
 
