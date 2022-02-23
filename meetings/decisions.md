@@ -18,10 +18,10 @@ Package manager: Yarn
 
 ### Backend
 
-Language: Python
+Language: Python (3.10.2)
 
-Framework: Flask or FastAPI
+Framework: FastAPI
 
-- Not sure if Flask will scale properly
-- Look into FastAPI as a possible alternative
-	- How feasible is unit testing?
+ORM: SQLAlchemy
+
+Database: MariaDB
