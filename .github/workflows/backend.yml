@@ -30,7 +30,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
   Test:
-    needs: [dependecies]
+    needs: [dependencies]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
