@@ -22,7 +22,7 @@ alle schermen: navbar met logo (+ links naar andere schermen(about, project,...)
      Motivation: why participate in osoc?, why do you think you're a good fit?...
 
 - lijst met studenten (kleur volgens hoe die al suggest zijn)
-- 4 knoppen: yes, maybe, no, undecided
+- 4 knoppen: yes, maybe, no, undecided(based on if they got already a confirmation email or not)
 - search bar voor studenten
 - filter voor studenten: only alumni, only student coach volunteers, include students you've suggested for
 - filter op roles + deseleact all knop
