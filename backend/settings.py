@@ -8,7 +8,7 @@ env.read_env()
 
 """Database"""
 # Name of the database
-DB_NAME: str = env.str("DB_NAME")
+DB_NAME: str = env.str("DB_NAME", "osoc_dev")
 # Username used to log in
 DB_USERNAME: str = env.str("DB_USER", "root")
 # Password used to log in
