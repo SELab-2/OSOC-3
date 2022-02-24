@@ -79,3 +79,55 @@ The coach
 1. First of all you may want to clear any previous filters set.
 2. You can search based name, alumni, student coach, skills/roles or based on reviews of others
 3. You can now review the student or assign the student to a project
+
+# Create Account
+## Description
+A new user(admin or coach) must create an account in order to use the tool
+## Preconditions
+The user has never before created an account and is not known to the tool
+## Postconditions
+The user has an account, but this is yet to be approved by an admin
+## Actors
+Coach or Admin
+## Description of steps
+* fill in username/email (one of these or both?)
+* fill in your password
+* confirm your password
+* click a "create account" button
+* a "hold on tight" window is shown
+* an email is sent to (all?) admins to request approval
+* (you receive an email once you've been verified?)
+## Description of alternative flows
+The person is the first to ever create an account:
+* automatically accept this user as an admin
+* the main window is shown instead of the "hold on tight" window
+
+Signup via github instead of filling in username/password:
+* you click the login with github button
+* you give the tool access to your account
+
+
+# Login
+## Description
+Every time a recurring user(admin or coach) returns, the user must be reauthenticated in order to use the tool
+## Preconditions
+The user has previously created an account
+The user might not have been verified by an admin
+## Postconditions
+The user has acces to the tool
+## Actors
+Coach or Admin
+## Description of steps
+* fill in username/email (one of these or both?)
+* fill in your password
+* click the login button
+* the main window is shown, you have access to the tool
+## Description of alternative flows
+Password incorrect/user unknown:
+* you get an error message saying your username/password combination is incorrect
+
+Not yet verified:
+* you get an error message saying your account has not been verified yet
+
+Login via github instead of filling in username/password:
+* you click the login with github button
