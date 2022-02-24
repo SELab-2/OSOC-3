@@ -21,7 +21,7 @@ jobs:
             ${{ runner.os }}-site-packages-
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: apk add gcc musl-dev build-base
+        run: apk add gcc musl-dev build-base mariadb-dev
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt
