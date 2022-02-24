@@ -22,15 +22,25 @@ pip3 install -r requirements-dev.txt
 
 Note that, in case your IDE does not do this automatically, you have to run `source venv/bin/activate` every time you want to run the backend, as otherwise your interpreter won't be able to find the packages.
 
+## Creating a .env file
+
+A `.env`-file can be used to store secrets such as database passwords. Further, it allows flexibility among developers by loading a specific configuration from the file instead of hard coding it in.
+
+This directory contains a `.env.example` file which shows the general structure the file should take, with dummy values.
+
+1. Create a new file named `.env` in this directory.
+2. Copy the content of the `.env.example` file into it.
+3. Edit the environment variables so the values are correct for your local system (e.g. change the password to your database password).
+
 ## Keeping requirements up to date
 
 Whenever you'd like to install a new package, make sure to **update the `requirements.txt` or `requirements-dev.txt` files** so that everyone has the same packages installed, and our tests can run easily.
 
-In case your package installs multiple other dependencies, it's not necessary to install those along with it. The main package you installed (along with he correct version) is satisfactory.
+In case your package installs multiple other dependencies, it's not necessary to install those along with it. The main package you installed (along with the correct version) is satisfactory.
 
 ## Type annotations
 
-Please **type your code**. Python is not a statically typed language, so IDE's might not be able to provide much useful information. By incorporating type annotations, development becomes a lot easier and faster. Furthermore, this helps avoid unnecessary bugs caused by non-matching types.
+Please **type your code**. Python is not a statically typed language, so IDEs might not be able to provide much useful information. By incorporating type annotations, development becomes a lot easier and faster. Furthermore, this helps avoid unnecessary bugs caused by non-matching types.
 
 ```python
 def function(first: str, second: int) -> bool:

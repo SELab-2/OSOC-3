@@ -1,5 +1,11 @@
+# Environs: simplified environment variable parsing
+environs==9.5.0
+
 # FastAPI: API framework
 fastapi==0.74.1
+
+# Starlette: lightweight ASGI framework/toolkit
+starlette==0.17.1
 
 # SQLAlchemy: ORM and database toolkit
 SQLAlchemy==1.4.31
