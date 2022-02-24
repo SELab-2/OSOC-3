@@ -8,7 +8,8 @@ import settings
 # Urlencode the password to pass it to the engine
 _encoded_password = quote_plus(settings.DB_PASSWORD)
 
-database_url = f"mariadb+mariadbconnector://{settings.DB_USERNAME}:{_encoded_password}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+database_url = f"mariadb+mariadbconnector://{settings.DB_USERNAME}:{_encoded_password}" \
+               f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
 engine = create_engine(database_url)
 
