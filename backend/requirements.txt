@@ -1,17 +1,23 @@
+# Alembic: Database migrations extension for SQLAlchemy
+alembic==1.7.6
+
 # Environs: simplified environment variable parsing
 environs==9.5.0
 
 # FastAPI: API framework
 fastapi==0.74.1
 
+# MariaDB: Python MariaDB connector
+mariadb==1.0.10
+
+# Requests: HTTP library
+requests==2.27.1
+
 # Starlette: lightweight ASGI framework/toolkit
 starlette==0.17.1
 
 # SQLAlchemy: ORM and database toolkit
 SQLAlchemy==1.4.31
-
-# Alembic: Database migrations extension for SQLAlchemy
-alembic==1.7.6
 
 # Uvicorn: ASGI web server implementation
 # The packages below it are included in the uvicorn[standard] variant,
