@@ -4,19 +4,19 @@ Replaces the database connection with a local SQLite instance
 from typing import Generator
 
 from starlette.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from src.database.database import get_session
 from src.database.models import Base
 from src.app.app import app
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
 
 # Connect to SQLite instead of MariaDB
-database_url = "sqlite:///./test.db"
+DATABASE_URL = "sqlite:///./test.db"
 
 # "check_same_thread: False" allows multiple connections at once to interact with the database
 # Only required for SQLite
-engine = create_engine(database_url, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 TestSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
