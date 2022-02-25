@@ -1,4 +1,4 @@
-# Use cases Admin
+# Use cases Coach
 Here you will find all the use cases
 
 ## Review student
@@ -58,6 +58,35 @@ The coach
 4. Choose the role this student will have in the team and argument why this student is a good fit for this project
 5. (Other users can in real time add other students to the same project and view your assignments)
 6. Make sure there are no conflicts between students and projects.
+
+## Change or remove review
+
+In this situation a coach wants to change its recomendation they made about a student (typo or wrong student)
+
+### Preconditions
+
+The current user (a coach) has created an account and is approved by an admin.
+
+The student already recieved a review from the coach
+
+### Postconditions
+
+The changed recommendation made by the coach is immediately visible to other users.
+
+A student can be added to a project by a coach based on the new review.
+
+An admin will make the final decision.
+
+### Actoren
+
+The coach
+
+### Description off steps
+
+1. (If you want to change the review of a specific student based on search criteria see the search for students use case)
+2. First click on the student you want to change the review for, click the edit recomendation button.
+3. (There might be real time reviews of other people than you can use to help make your own decisions)
+4. After you looked at the student for the second time it’s time to make your new recommendation. You can again choose between “yes”, “maybe” or “no”. It is possible to argument why you made this new decision so others can understand it.
 
 ## Search students
 
