@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Integer, Enum, ForeignKey, Text
+from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -23,7 +23,7 @@ class User(Base):
     email = Column(Text, unique=True, nullable=False)
     role = Column(Enum(RoleEnum))
 
-    coach_request = relationship("CoachRequest", backref="users", uselist=False)
+    coach_request = relationship("CoachRequest", uselist=False)
 
 
 class CoachRequest(Base):
@@ -34,7 +34,7 @@ class CoachRequest(Base):
     __tablename__ = "coach_requests"
 
     request_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"))
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
 
 class Partner(Base):
@@ -46,9 +46,9 @@ class Partner(Base):
 
 
 class Skill(Base):
-    """A skill a user can have, optionally with a description
-    These skills are not unique per user, but can be shared among them
-    as, for example, "Backend" can apply to anyone.
+    """A skill a student can have, optionally with a description
+    These skills are not unique per user, but can be shared among them as,
+    for example, "Backend" can apply to anyone.
 
     Example:
         name:           Frontend
@@ -58,4 +58,37 @@ class Skill(Base):
 
     skill_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    description = Column(Text, nullable=True)
+    description = Column(Text, nullable=True, default=None)
+
+    held_by = relationship("StudentSkill")
+
+
+class Student(Base):
+    """Information we have about a student"""
+    __tablename__ = "students"
+
+    student_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    email = Column(Text, nullable=False)
+    phone = Column(Text, nullable=True, default=None)
+    alumni = Column(Boolean, nullable=False, default=False)
+
+    skills = relationship("StudentSkill")
+
+
+class StudentSkill(Base):
+    """A skill possessed by a student
+    Avoids having to use an Array type to store these in, which we want to avoid
+    """
+    __tablename__ = "student_skills"
+
+    student_skill_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
+    skill_id = Column(Integer, ForeignKey("skills.skill_id"), nullable=False)
+
+
+class Webhook(Base):
+    """Data about a webhook for a student's CV that we've received"""
+    __tablename__ = "webhooks"
+
+    webhook_id = Column(Integer, primary_key=True)
