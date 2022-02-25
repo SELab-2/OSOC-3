@@ -107,7 +107,7 @@ The coach
 ### Description off steps
 
 1. First of all you may want to clear any previous filters set.
-2. You can search based name, alumni, student coach, skills/roles or based on reviews of others
+2. You can search based name, alumni, student coach, skills/roles, practical information, availability or based on reviews of others
 3. You can now review the student or assign the student to a project
 
 # Create Account
@@ -347,3 +347,68 @@ An admin
 1. The user clicks on a button 'remove student'
 2. The user get a pop up "are you sure"
 3. The user clicks on "yes"
+
+
+## Remove student from project
+### Description
+if the student is no longer required in the project, the student needs to be removed
+### Preconditions
+The current user is logged in.
+A student is assigned to a project.
+### Postconditions
+The student is removed from the project, this is immediately visible.
+### Actors
+Coach/Admin
+### Description of steps
+* navigate to the specific project
+* click on the "remove" button next to the student name
+* click the confirm button on the popup
+* the student disappears from the project
+### Description of alternative flows
+Cancel removal of student:
+* click the cancel button on the popup
+* you return to the previous window, nothing changes
+
+
+## Definitive decision on student
+### Description
+Admins have to make a definitive decision whether or not students can start working at OSOC
+### Preconditions
+coaches have made their suggestions for the student
+### Postconditions
+a decision for the student has been made:
+* yes: we are sure we can give
+them a project.
+* Maybe: we are not sure we
+have a project for them even
+if they have the skills.
+* No: we inform. They can ask
+for more information if their
+rejection was not based on
+payment, timezone or
+location.
+### Actors
+Admin
+Student?
+### Description of steps
+* select a definitive status for the student
+* click confirm
+* an email is sent to the student?
+### Description of alternative flows
+
+
+
+## Send mails
+### Description
+At different stages, automated mails have to be sent
+### Preconditions
+a student is accepted to join osoc
+### Postconditions
+an email is sent to the student, depending on the type of mail that needs to be sent
+### Actors
+Admin
+Student?
+### Description of steps
+* select which type of mail to be sent (send contract to be signed, share practical info about project, first introduction to project, coach and partner)
+* confirm selection with button
+### Description of alternative flows
