@@ -1,3 +1,4 @@
+# Use cases Admin
 Here you will find all the use cases
 
 ## Review student
@@ -131,3 +132,189 @@ Not yet verified:
 
 Login via github instead of filling in username/password:
 * you click the login with github button
+
+## Make project
+
+A admin adds projects that the students will be making that summer.
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user has been made admin by another admin
+* The user is on the 'mangement' page
+
+### Postconditions
+
+The project is visable
+Students can be added to the project
+
+### Actoren
+
+An admin
+
+### Description of steps
+
+1. The user clicks on the button 'new project'
+2. Fill in the details of the project.
+3. If the partner is not already in a list of partners, add the partner
+4. The user clicks a 'save' button
+
+## Edit Project
+
+If there's a mistake and the information of a project is not correct.
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user has been made admin by another admin
+* The user is on the 'mangement' page
+* There is a project created by an admin with incorrect information
+
+### Postconditions
+
+The changes are directly visable.
+
+### Actoren
+
+An admin
+
+### Description of steps
+
+1. The user clicks on a button 'edit'
+2. Change the wrong details
+3. If the partner need to be removed, remove the partner and automaticly all the projects of this partner need to be removed
+4. If the partner is wrong, and not in a list of partners, add the partner
+5. If the information of the partner is wrong, change the information of the partner
+6. The user clicks on a save edits button
+
+## Remove a project
+
+When a partner pull out with one or more projects, an admin should remove the project.
+
+### Preconditions 
+
+* The user has created an account that is approved by an admin.
+* The user has been made admin by another admin
+* The user is on the 'mangement' page
+* There is a project created by an admin that the partner don't want to do anymore
+
+### Postconditions
+
+* The deleted project is not visible anymore
+* There can't be added students to the delted project anymore
+* All students that where added on that project are free again to be set on an other project
+* All coaches set on that project, aren't anymore
+
+### Actoren
+
+An admin
+
+### Description of steps
+
+1. The user clicks on a 'delete project' button
+2. The user get a pop up "are you sure"
+3. The user clicks on "yes"
+
+## Approve new coaches
+
+when a new user wants to join an admin has to approve him.
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user has been made admin by another admin
+* The user is on the 'mangement' page
+* There is at least one person who made a new account
+
+### Postconditions
+
+* The user who is approved is out of the request list
+* The user is on the 'mangement' page
+* The user who made the request is a new coach
+* The user who made the request is visible in the list of users
+
+### Actoren
+
+An admin
+
+### Description off steps
+
+1. the admin clicks on 'approve'
+
+## Deny new coaches
+
+when a new user wants to join an admin has to approve him.
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user is on the 'mangement' page
+* The user has been made admin by another admin
+* The user is on the 'mangement' page
+* There is at least one person who made a new account
+
+### Postconditions
+
+* The user who is denied is out of the request list
+
+### Actoren
+
+An admin
+
+### Description off steps
+
+1. the admin clicks on 'deny'
+
+## Change user status
+
+If a coach is promoted to admin, an admin demoted to coach, a coach/admin don't want to be active anymore, or there was a simple misclick, the user's status has to change
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user is on the 'mangement' page
+* The user has been made admin by another admin
+* The other user has the status coach, admin or deactivated
+
+### Postconditions
+
+* The changes are directly visible for all admins
+* If the change involved with less access, and the other user is on a page he may not see anymore, he is redirected to the home page
+* If the user is now not active anymore, he is signed out
+
+### Actoren
+
+An admin
+
+### Description of steps
+
+1. The user clicks on a combobox at another user
+2. The user clicks on the new role of that other user
+
+## Remove data of a student
+
+When a student don't wants to be in the concidered as a candidate for OSOC. They have to be deleted from the database
+
+### Preconditions
+
+* The user has created an account that is approved by an admin.
+* The user has been made admin by another admin
+* The student has informed an amdin
+* The user is on the page where he sees all info of that student
+
+### Postconditions
+
+* The student is not visible anymore
+* The student can't be added to any projects
+* The student is removed from all projects
+* All reviews of that student are deleted
+
+### Actoren
+
+An admin
+
+### Description of steps
+
+1. The user clicks on a button 'remove student'
+2. The user get a pop up "are you sure"
+3. The user clicks on "yes"
