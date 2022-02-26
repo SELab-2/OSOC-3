@@ -15,10 +15,6 @@ The student has been approved by an OKBE employee. (can legally work and is in t
 
 The recommendation made by the coach is immediately visible to other users.
 
-A student can be added to a project by a coach. (not sure yet?)
-
-An admin will make the final decision.
-
 ### Actoren
 
 The coach
@@ -30,7 +26,7 @@ The coach
 3. (There might be real time reviews of other people than you can use to help make your own decisions)
 4. After you looked at the student it’s time to make a recommendation. You can choose between “yes”, “maybe” or “no”. It is possible to argument why you made this decision so others can understand it.
 
-## Add student to project (unsure, need to ask client)
+## Add student to project
 
 In this situation a coach will add a student to a specific project they seem fit for.
 
@@ -38,7 +34,7 @@ In this situation a coach will add a student to a specific project they seem fit
 
 The current user (a coach) has created an account and is approved by an admin.
 
-The student has received positive reviews from coaches
+The coach is assigned to the project they want to add the student to.
 
 ### Postconditions
 
@@ -50,7 +46,7 @@ The admin will confirm the assignment of the student and will send an email to t
 
 The coach
 
-### Description off steps
+### Description of steps
 
 1. First you can search for a specific project or go to the project overview
 2. (If you want to assign a specific student based on search criteria see the search for students use case)
@@ -67,7 +63,7 @@ In this situation a coach wants to change its recommendation they made about a s
 
 The current user (a coach) has created an account and is approved by an admin.
 
-The student already recieved a review from the coach.
+The student already received a review from the coach.
 
 ### Postconditions
 
@@ -77,10 +73,10 @@ The changed recommendation made by the coach is immediately visible to other use
 
 The coach
 
-### Description off steps
+### Description of steps
 
 1. Navigate to the student you want to change the review for.
-2. Click the edit recomendation button.
+2. Click the edit recommendation button.
 3. There might be real time reviews of other people than you can use to help make your own decisions
 4. After you looked at the student for the second time it’s time to make your new recommendation. You can again choose between “yes”, “maybe” or “no”. It is possible to argument why you made this new decision so others can understand it.
 
@@ -113,7 +109,7 @@ A new user must create an account in order to use the tool.
 The user has never before created an account and is not known to the tool.
 ### Postconditions
 The user has an account, but this is yet to be approved by an admin.
-An email is sent to all admins to request approval.
+An is sent to all admins to request approval.
 Admins can see this in the manage users tab.
 ### Actors
 User
@@ -358,30 +354,28 @@ Admins have to make a definitive decision whether or not students can start work
 The current user is logged in as an admin.
 Coaches have made their suggestions for the student.
 ### Postconditions
-A decision for the student has been made
-An email has been sent to the student
+A decision for the student has been made.
 ### Actors
 Admin
 ### Description of steps
 * Navigate to the student
 * Select a definitive status for the student
 * Click confirm
-### Description of alternative flows
 
 
 
-## View sent mails
+## View sent emails
 ### Description
-View a list of students to which an email has been sent.
+View a list of students showing what email has last been sent to them.
 ### Preconditions
 The current user is logged in as an admin.
 ### Postconditions
-A list of students which have received an email is shown.
+A list of students with their last received email is shown.
 ### Actors
 Admin
 ### Description of steps
-* Click a "view all mails" button
+* Click a "view all emails" button
 * The list of students is shown. The list is ordered as "most recently sent"
 ### Description of alternative flows
-Search a student by name:
+Search a student by name/definitive decision status:
 * only the search matches are shown
