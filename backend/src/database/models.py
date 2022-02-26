@@ -34,7 +34,7 @@ class Partner(Base):
     __tablename__ = "partners"
 
     partner_id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
+    name = Column(Text, unique=True, nullable=False)
 
 
 class Skill(Base):
@@ -61,8 +61,8 @@ class Student(Base):
 
     student_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    email = Column(Text, nullable=False)
-    phone = Column(Text, nullable=True, default=None)
+    email = Column(Text, unique=True, nullable=False)
+    phone = Column(Text, unique=True, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)
     cv_webhook_id = Column(Integer, ForeignKey("webhooks.webhook_id"))
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
@@ -70,7 +70,7 @@ class Student(Base):
 
     emails = relationship("DecisionEmail")
     skills = relationship("StudentSkill", back_populates="student")
-    webhook = relationship("Webhook", back_populates="student", useList=False)
+    webhook = relationship("Webhook", back_populates="student", uselist=False)
 
 
 class StudentSkill(Base):
@@ -93,7 +93,7 @@ class Webhook(Base):
 
     webhook_id = Column(Integer, primary_key=True)
 
-    student = relationship("Student", back_populates="webhook", useList=False)
+    student = relationship("Student", back_populates="webhook", uselist=False)
 
 
 class DecisionEmail(Base):

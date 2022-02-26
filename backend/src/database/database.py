@@ -1,6 +1,7 @@
 from typing import Generator
 from urllib.parse import quote_plus
 from sqlalchemy import create_engine
+from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker, Session
 
 import settings
@@ -8,10 +9,16 @@ import settings
 # Urlencode the password to pass it to the engine
 _encoded_password = quote_plus(settings.DB_PASSWORD)
 
-database_url = f"mariadb+mariadbconnector://{settings.DB_USERNAME}:{_encoded_password}" \
-               f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+DATABASE_ARGS = {
+    "drivername": "mariadb+mariadbconnector",
+    "username": settings.DB_USERNAME,
+    "password": _encoded_password,
+    "host": settings.DB_HOST,
+    "port": settings.DB_PORT,
+    "database": settings.DB_NAME
+}
 
-engine = create_engine(database_url)
+engine = create_engine(URL.create(**DATABASE_ARGS))
 
 DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
