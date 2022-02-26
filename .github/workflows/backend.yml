@@ -6,7 +6,7 @@ defaults:
     working-directory: backend
 
 jobs:
-  dependencies:
+  Dependencies:
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
   Test:
-    needs: [ dependencies ]
+    needs: [ Dependencies ]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -44,7 +44,7 @@ jobs:
       - run: python -m pytest
 
   Lint:
-    needs: [ dependencies ]
+    needs: [ Test ]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -58,7 +58,7 @@ jobs:
       - run: python -m pylint src
 
   Type:
-    needs: [ dependencies ]
+    needs: [ Test ]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
