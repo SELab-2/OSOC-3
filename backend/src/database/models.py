@@ -1,17 +1,9 @@
-import enum
-
-from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime
 from sqlalchemy.orm import declarative_base, relationship
 
+from src.database.enums import RoleEnum, DecisionEnum
+
 Base = declarative_base()
-
-
-class RoleEnum(enum.Enum):
-    """Enum for the different roles a user can have
-    The actual value of the enum is NOT used in the database, only the name of the field
-    """
-    ADMIN = 0
-    COACH = 1
 
 
 class User(Base):
@@ -21,7 +13,7 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     email = Column(Text, unique=True, nullable=False)
-    role = Column(Enum(RoleEnum))
+    role = Column(Enum(RoleEnum), nullable=True)
 
     coach_request = relationship("CoachRequest", uselist=False)
 
@@ -51,16 +43,16 @@ class Skill(Base):
     for example, "Backend" can apply to anyone.
 
     Example:
-        name:           Frontend
-        description:    Must know React
+        name:        Frontend
+        description: Must know React
     """
     __tablename__ = "skills"
 
     skill_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    description = Column(Text, nullable=True, default=None)
+    description = Column(Text, nullable=True)
 
-    held_by = relationship("StudentSkill")
+    held_by = relationship("StudentSkill", back_populates="skill")
 
 
 class Student(Base):
@@ -72,8 +64,13 @@ class Student(Base):
     email = Column(Text, nullable=False)
     phone = Column(Text, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)
+    cv_webhook_id = Column(Integer, ForeignKey("webhooks.webhook_id"))
+    decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
+    wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
 
-    skills = relationship("StudentSkill")
+    emails = relationship("DecisionEmail")
+    skills = relationship("StudentSkill", back_populates="student")
+    webhook = relationship("Webhook", back_populates="student", useList=False)
 
 
 class StudentSkill(Base):
@@ -86,9 +83,24 @@ class StudentSkill(Base):
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
     skill_id = Column(Integer, ForeignKey("skills.skill_id"), nullable=False)
 
+    student = relationship("Student", back_populates="skills")
+    skill = relationship("Skill", back_populates="held_by")
+
 
 class Webhook(Base):
     """Data about a webhook for a student's CV that we've received"""
     __tablename__ = "webhooks"
 
     webhook_id = Column(Integer, primary_key=True)
+
+    student = relationship("Student", back_populates="webhook", useList=False)
+
+
+class DecisionEmail(Base):
+    """An email sent out to a student that tells them the decision that was made"""
+    __tablename__ = "decision_emails"
+
+    email_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
+    decision = Column(Enum(DecisionEnum), nullable=False)
+    date = Column(DateTime, nullable=False)
