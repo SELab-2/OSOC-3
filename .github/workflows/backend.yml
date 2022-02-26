@@ -1,5 +1,8 @@
 name: Backend CI
-on: [ push ]
+on:
+  push:
+    paths:
+      - 'backend/**'
 
 defaults:
   run:
