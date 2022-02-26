@@ -1,5 +1,6 @@
 """FastAPI TestClient to run tests against
 Replaces the database connection with a local SQLite instance
+so we don't run tests on the production MariaDB database
 """
 from typing import Generator
 
@@ -18,8 +19,9 @@ DATABASE_ARGS = {
     "database": "test.db"
 }
 
+# TODO move everything below over to a fixture (GH #22)
 # "check_same_thread: False" allows multiple connections at once to interact with the database
-# Only required for SQLite
+# Only required for SQLite because it's a file
 engine = create_engine(URL.create(**DATABASE_ARGS), connect_args={"check_same_thread": False})
 TestSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

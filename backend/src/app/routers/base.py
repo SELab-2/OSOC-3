@@ -8,6 +8,7 @@ base_router = APIRouter()
 
 @dataclass
 class DummyResponse:
+    """Example response type dataclass"""
     message: str
 
 

@@ -1,4 +1,6 @@
-"""Note: the actual values of the enums are NOT used in the database, only the names of the fields"""
+"""
+Note: the actual values of the enums are NOT used in the database, only the names of the fields
+"""
 import enum
 
 
