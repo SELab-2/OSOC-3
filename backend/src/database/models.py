@@ -3,13 +3,52 @@ All the database models and association tables
 
 Association tables are tables that are only used to link two other
 tables together using relationships, in order to avoid using an Array
+more info: https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#association-object
+
+Relationships are not literally stored in the database: these are
+implicit fields that can be generated if necessary by linking data
+together
 """
+from uuid import uuid4
+
 from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime
 from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy_utils import UUIDType
 
 from src.database.enums import RoleEnum, DecisionEnum
 
 Base = declarative_base()
+
+
+class AuthEmail(Base):
+    """Authentication data for email/password"""
+    __tablename__ = "email_auths"
+
+    email_auth_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    pw_hash = Column(Text, nullable=False)
+
+    user = relationship("User", back_populates="email_auth", uselist=False)
+
+
+class AuthGitHub(Base):
+    """Authentication data for GitHub"""
+    __tablename__ = "github_auths"
+
+    gh_auth_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    user = relationship("User", back_populates="github_auth", uselist=False)
+
+
+class AuthGoogle(Base):
+    """Authentication data for Google"""
+    __tablename__ = "google_auths"
+
+    google_auth_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    user = relationship("User", back_populates="google_auth", uselist=False)
 
 
 class CoachRequest(Base):
@@ -35,6 +74,15 @@ class DecisionEmail(Base):
     date = Column(DateTime, nullable=False)
 
     student = relationship("Student", back_populates="emails", uselist=False)
+
+
+class InviteLink(Base):
+    """A unique invite link sent to a user in order to create an account"""
+    __tablename__ = "invite_links"
+
+    invite_link_id = Column(Integer, primary_key=True)
+    uuid = Column(UUIDType(binary=False), default=uuid4)
+    target_email = Column(Text, nullable=False)
 
 
 class Partner(Base):
@@ -94,8 +142,8 @@ class ProjectRole(Base):
 
     A ProjectRole is created when a coach (or admin) links a student to a project
 
-    This differs from Project.skills in that Project.skills describes all the required skills,
-    and doesn't have any users linked to them yet
+    This differs from ProjectSkill in that ProjectSkill describes all the required skills
+    for a project, and doesn't have any users linked to them yet
 
     A student can have multiple project_roles before being assigned to a project, as they can
     be drafted for multiple projects
@@ -107,10 +155,12 @@ class ProjectRole(Base):
     skill_id = Column(ForeignKey("skills.skill_id"), primary_key=True)
     definitive = Column(Boolean, nullable=False, default=False)
     argumentation = Column(Text, nullable=True)
+    drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    student = relationship("Student", back_populates="project_roles")
-    project = relationship("Project", back_populates="project_roles")
-    skill = relationship("Skill", back_populates="project_roles")
+    student = relationship("Student", back_populates="project_roles", uselist=False)
+    project = relationship("Project", back_populates="project_roles", uselist=False)
+    skill = relationship("Skill", back_populates="project_roles", uselist=False)
+    drafter = relationship("User", back_populates="drafted_roles", uselist=False)
 
 
 class ProjectSkill(Base):
@@ -143,6 +193,7 @@ class Skill(Base):
 
     project_roles = relationship("ProjectRole", back_populates="skill")
     projects = relationship("ProjectSkill", back_populates="skill")
+    students = relationship("StudentSkill", back_populates="skill")
 
 
 class Student(Base):
@@ -160,8 +211,22 @@ class Student(Base):
 
     emails = relationship("DecisionEmail", back_populates="student")
     project_roles = relationship("ProjectRole", back_populates="student")
+    skills = relationship("StudentSkill", back_populates="student")
     suggestions = relationship("Suggestion", back_populates="student")
     webhook = relationship("Webhook", back_populates="student", uselist=False)
+
+
+class StudentSkill(Base):
+    """A student linked to a skill
+    Association table
+    """
+    __tablename__ = "student_skills"
+
+    student_id = Column(ForeignKey("students.student_id"), primary_key=True)
+    skill_id = Column(ForeignKey("skills.skill_id"), primary_key=True)
+
+    student = relationship("Student", back_populates="skills", uselist=False)
+    skill = relationship("Skill", back_populates="students", uselist=False)
 
 
 class Suggestion(Base):
@@ -188,8 +253,14 @@ class User(Base):
     role = Column(Enum(RoleEnum), nullable=True)
 
     coach_request = relationship("CoachRequest", back_populates="user", uselist=False)
+    drafted_roles = relationship("ProjectRole", back_populates="drafter")
     projects = relationship("ProjectCoach", back_populates="coach")
     suggestions = relationship("Suggestion", back_populates="user")
+
+    # Authentication methods
+    email_auth = relationship("AuthEmail", back_populates="user", uselist=False)
+    github_auth = relationship("AuthGitHub", back_populates="user", uselist=False)
+    google_auth = relationship("AuthGoogle", back_populates="user", uselist=False)
 
 
 class Webhook(Base):

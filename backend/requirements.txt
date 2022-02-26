@@ -19,6 +19,9 @@ starlette==0.17.1
 # SQLAlchemy: ORM and database toolkit
 SQLAlchemy==1.4.31
 
+# SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
+sqlalchemy-utils==0.38.2
+
 # Uvicorn: ASGI web server implementation
 # The packages below it are included in the uvicorn[standard] variant,
 # but if we add that instead then we can't require specific versions anymore
