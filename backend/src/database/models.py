@@ -6,18 +6,6 @@ from src.database.enums import RoleEnum, DecisionEnum
 Base = declarative_base()
 
 
-class User(Base):
-    """Users of the tool (only admins & coaches)"""
-    __tablename__ = "users"
-
-    user_id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
-    email = Column(Text, unique=True, nullable=False)
-    role = Column(Enum(RoleEnum), nullable=True)
-
-    coach_request = relationship("CoachRequest", uselist=False)
-
-
 class CoachRequest(Base):
     """A request by somebody to become a coach, must be accepted by an admin
     This class doesn't hold an "accepted" state, because we remove the request
@@ -29,12 +17,47 @@ class CoachRequest(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
 
+class DecisionEmail(Base):
+    """An email sent out to a student that tells them the decision that was made"""
+    __tablename__ = "decision_emails"
+
+    email_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
+    decision = Column(Enum(DecisionEnum), nullable=False)
+    date = Column(DateTime, nullable=False)
+
+
 class Partner(Base):
     """A partner working on a project, does not have access to the tool (or an account)"""
     __tablename__ = "partners"
 
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
+
+
+class Project(Base):
+    """A project of this edition"""
+    __tablename__ = "projects"
+
+    project_id = Column(Integer, primary_key=True)
+
+    roles = relationship("ProjectRole")
+
+
+class ProjectRole(Base):
+    """Skills fulfilled by a student in a given project
+    This differs from ProjectSkill in that ProjectSkill describes all the required skills,
+    while ProjectRole is a possible link between a student and a project
+
+    A student can have multiple roles before being assigned to a project, as they can
+    be drafted for multiple projects
+    """
+    __tablename__ = "project_roles"
+
+    project_role_id = Column(Integer, primary_key=True)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
+    project_id = Column(Integer, ForeignKey("projects.project_id"), nullable=False)
+    skill_id = Column(Integer, ForeignKey("skills.skill_id"), nullable=False)
 
 
 class Skill(Base):
@@ -53,6 +76,7 @@ class Skill(Base):
     description = Column(Text, nullable=True)
 
     held_by = relationship("StudentSkill", back_populates="skill")
+    roles = relationship("ProjectRole")
 
 
 class Student(Base):
@@ -69,6 +93,7 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
 
     emails = relationship("DecisionEmail")
+    project_roles = relationship("ProjectRole")
     skills = relationship("StudentSkill", back_populates="student")
     webhook = relationship("Webhook", back_populates="student", uselist=False)
 
@@ -87,6 +112,18 @@ class StudentSkill(Base):
     skill = relationship("Skill", back_populates="held_by")
 
 
+class User(Base):
+    """Users of the tool (only admins & coaches)"""
+    __tablename__ = "users"
+
+    user_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    email = Column(Text, unique=True, nullable=False)
+    role = Column(Enum(RoleEnum), nullable=True)
+
+    coach_request = relationship("CoachRequest", uselist=False)
+
+
 class Webhook(Base):
     """Data about a webhook for a student's CV that we've received"""
     __tablename__ = "webhooks"
@@ -94,13 +131,3 @@ class Webhook(Base):
     webhook_id = Column(Integer, primary_key=True)
 
     student = relationship("Student", back_populates="webhook", uselist=False)
-
-
-class DecisionEmail(Base):
-    """An email sent out to a student that tells them the decision that was made"""
-    __tablename__ = "decision_emails"
-
-    email_id = Column(Integer, primary_key=True)
-    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
-    decision = Column(Enum(DecisionEnum), nullable=False)
-    date = Column(DateTime, nullable=False)
