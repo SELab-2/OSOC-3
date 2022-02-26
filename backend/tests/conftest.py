@@ -28,7 +28,7 @@ def database_engine() -> Engine:
 
 
 @pytest.fixture(scope="session")
-def tables(database_engine):
+def tables(database_engine: Engine):
     """
     Fixture to initialize a database before the tests,
     and drop it again afterwards
@@ -39,7 +39,7 @@ def tables(database_engine):
 
 
 @pytest.fixture
-def database_session(database_engine, tables) -> Generator[Session, None, None]:
+def database_session(database_engine: Engine, tables: None) -> Generator[Session, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
