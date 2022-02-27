@@ -1,10 +1,10 @@
 name: Frontend CI
 on:
   push:
-#    paths:
-#      - 'frontend/**'
-#      - '!**.md'
-# Disabled for testing purposes.
+    paths:
+      - ".github/workflows/frontend.yml"
+      - "frontend/**"
+      - "!**.md"
 
 defaults:
   run:
