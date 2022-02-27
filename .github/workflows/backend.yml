@@ -2,8 +2,9 @@ name: Backend CI
 on:
   push:
     paths:
-      - 'backend/**'
-      - '!**.md'
+      - ".github/workflows/backend.yml"
+      - "backend/**"
+      - "!**.md"
 
 defaults:
   run:
@@ -34,7 +35,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
   Test:
-    needs: [ Dependencies ]
+    needs: [Dependencies]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -48,7 +49,7 @@ jobs:
       - run: python -m pytest
 
   Lint:
-    needs: [ Test ]
+    needs: [Test]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -62,7 +63,7 @@ jobs:
       - run: python -m pylint src
 
   Type:
-    needs: [ Test ]
+    needs: [Test]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
