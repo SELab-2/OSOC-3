@@ -53,8 +53,48 @@ jobs:
       - run: yarn install --prefer-offline
       - run: yarn test
 
-  Build:
+  Lint:
     needs: [Test]
+    runs-on: self-hosted
+    container: node:16.14.0-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock', '**/package.json') }}
+
+      - run: yarn install --prefer-offline
+      - run: yarn run eslint src
+
+  Style:
+    needs: [Test]
+    runs-on: self-hosted
+    container: node:16.14.0-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock', '**/package.json') }}
+
+      - run: yarn install --prefer-offline
+      - run: yarn run prettier -c src
+
+  Build:
+    needs: [Style, Lint]
     runs-on: self-hosted
     container: node:16.14.0-alpine
     steps:
