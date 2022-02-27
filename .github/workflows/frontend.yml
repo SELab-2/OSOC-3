@@ -56,7 +56,7 @@ jobs:
   Build:
     needs: [Test]
     runs-on: self-hosted
-    container: python:3.10.2-alpine
+    container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
       - uses: actions/checkout@v2
