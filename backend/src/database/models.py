@@ -255,7 +255,7 @@ class User(Base):
     coach_request = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles = relationship("ProjectRole", back_populates="drafter")
     projects = relationship("ProjectCoach", back_populates="coach")
-    suggestions = relationship("Suggestion", back_populates="user")
+    suggestions = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
     email_auth = relationship("AuthEmail", back_populates="user", uselist=False)
