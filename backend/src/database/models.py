@@ -240,7 +240,7 @@ class Suggestion(Base):
     argumentation = Column(Text, nullable=True)
 
     student = relationship("Student", back_populates="suggestions", uselist=False)
-    coach = relationship("Users", back_populates="suggestions", uselist=False)
+    coach = relationship("User", back_populates="suggestions", uselist=False)
 
 
 class User(Base):
