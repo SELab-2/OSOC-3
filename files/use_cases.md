@@ -379,3 +379,53 @@ Admin
 ### Description of alternative flows
 Search a student by name/definitive decision status:
 * only the search matches are shown
+
+
+## Send email to students
+### Description
+Different types of emails have to be sent in batches to students.
+### Preconditions
+The current user is logged in as an admin.
+### Postconditions
+The selected type of email has been sent to the selected students.
+This is visible on the overview.
+### Actors
+Admin
+### Description of steps
+1. navigate to the overview of sent emails
+2. select the students you want to send an email to
+3. click the button corresponding to the type of email you want to send
+
+
+## Create new edition
+### Description
+Every year, a new edition of OSOC has to be created with new projects, students and coaches.
+### Preconditions
+The current user is logged in as an admin.
+### Postconditions
+A new edition of OSOC has been created, projects, coaches and students of that edition can be added.
+### Actors
+Admin
+### Description of steps
+1. Click the "Create new edition" button on the overview window.
+2. Select the year of the edition
+3. Confirm the creation of the new edition on the popup.
+### Description of alternative workflows
+* Cancel creation of new edition
+1. Click cancel on the popup window.
+
+## Delete edition
+### Description
+An edition might be deleted if it was created by mistake.
+### Preconditions
+The current user is logged in as an admin.
+### Postconditions
+The current edition will be deleted.
+### Actors
+Admin
+### Description of steps
+1. Click the "Remove this edition" button on the overview window.
+2. A popup with a warning is shown, confirm the deletion of the edition on the popup.
+### Description of alternative workflows
+* Cancel deletion of edition
+1. Click cancel on the popup window.
