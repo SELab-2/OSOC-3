@@ -1,12 +1,17 @@
 name: Backend CI
-on: [ push ]
+on:
+  push:
+    paths:
+      - ".github/workflows/backend.yml"
+      - "backend/**"
+      - "!**.md"
 
 defaults:
   run:
     working-directory: backend
 
 jobs:
-  dependencies:
+  Dependencies:
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -30,7 +35,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
   Test:
-    needs: [ dependencies ]
+    needs: [Dependencies]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -44,7 +49,7 @@ jobs:
       - run: python -m pytest
 
   Lint:
-    needs: [ dependencies ]
+    needs: [Test]
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
@@ -56,3 +61,17 @@ jobs:
           key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
       - run: python -m pylint src
+
+  Type:
+    needs: [Test]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m mypy src

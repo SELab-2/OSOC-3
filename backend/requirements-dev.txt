@@ -13,3 +13,6 @@ pytest-cov==3.0.0
 
 # Pylint: check your codestyle
 pylint==2.12.2
+
+# Mypy: check type usage in code
+mypy==0.931
