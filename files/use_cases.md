@@ -109,7 +109,7 @@ A new user must create an account in order to use the tool.
 The user has never before created an account and is not known to the tool.
 ### Postconditions
 The user has an account, but this is yet to be approved by an admin.
-An is sent to all admins to request approval.
+An email is sent to all admins to request approval.
 Admins can see this in the manage users tab.
 ### Actors
 User
@@ -142,7 +142,7 @@ The user has acces to the tool.
 ### Actors
 User
 ### Description of steps
-* fill in email 
+* fill in your name or email 
 * fill in your password
 * click the login button
 * the main window is shown, you have access to the tool
@@ -262,11 +262,11 @@ An admin
 
 ### Description of steps
 
-1. the admin clicks on 'approve'
+1. the admin clicks on 'Accept'
 
 ### Description of alternative flows
 Deny coach:
-1. the admin clicks on 'deny'
+1. the admin clicks on 'Reject'
 2. remove the coach from the tool
 
 
