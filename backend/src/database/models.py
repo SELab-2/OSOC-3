@@ -76,6 +76,18 @@ class DecisionEmail(Base):
     student = relationship("Student", back_populates="emails", uselist=False)
 
 
+class Edition(Base):
+    """An edition of the tool, to link other resources to"""
+    __tablename__ = "editions"
+
+    edition_id = Column(Integer, primary_key=True)
+    year = Column(Integer, nullable=False)
+
+    projects = relationship("Project", back_populates="edition")
+    roles = relationship("UserRole", back_populates="edition")
+    webhooks = relationship("Webhook", back_populates="edition")
+
+
 class InviteLink(Base):
     """A unique invite link sent to a user in order to create an account"""
     __tablename__ = "invite_links"
@@ -100,10 +112,11 @@ class Project(Base):
     __tablename__ = "projects"
 
     project_id = Column(Integer, primary_key=True)
-    name = Column(Text, unique=True, nullable=False)
+    name = Column(Text, nullable=False)
     number_of_students = Column(Integer, nullable=False, default=0)
-    edition = Column(Integer, nullable=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
+    edition = relationship("Edition", back_populates="projects", uselist=False)
     coaches = relationship("ProjectCoach", back_populates="project")
     skills = relationship("ProjectSkill", back_populates="project")
     partners = relationship("ProjectPartner", back_populates="project")
@@ -250,11 +263,11 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     email = Column(Text, unique=True, nullable=False)
-    role = Column(Enum(RoleEnum), nullable=True)
 
     coach_request = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles = relationship("ProjectRole", back_populates="drafter")
     projects = relationship("ProjectCoach", back_populates="coach")
+    role = relationship("UserRole", back_populates="user", uselist=False)
     suggestions = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
@@ -263,10 +276,27 @@ class User(Base):
     google_auth = relationship("AuthGoogle", back_populates="user", uselist=False)
 
 
+class UserRole(Base):
+    """Table that stores whether a user is an admin, coach, ...
+    This is stored on a per-edition basis
+    """
+    __tablename__ = "user_roles"
+
+    user_role_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    role = Column(Enum(RoleEnum), nullable=True)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
+
+    edition = relationship("Edition", back_populates="roles", uselist=False)
+    user = relationship("User", back_populates="role", uselist=False)
+
+
 class Webhook(Base):
     """Data about a webhook for a student's CV that we've received"""
     __tablename__ = "webhooks"
 
     webhook_id = Column(Integer, primary_key=True)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
+    edition = relationship("Edition", back_populates="webhooks", uselist=False)
     student = relationship("Student", back_populates="webhook", uselist=False)
