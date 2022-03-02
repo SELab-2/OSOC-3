@@ -18,7 +18,7 @@ def tables():
     Fixture to initialize a database before the tests,
     and drop it again afterwards
     """
-    alembic_config: config.Config = config.Config('alembic.yml')
+    alembic_config: config.Config = config.Config('alembic.ini')
     command.upgrade(alembic_config, 'head')
     yield
     command.downgrade(alembic_config, 'base')
