@@ -1,10 +1,10 @@
-from fastapi import FastAPI
-from .routers import base_router
-
 from alembic import config
 from alembic import script
 from alembic.runtime import migration
+from fastapi import FastAPI
+
 from src.database.engine import engine
+from .routers import base_router
 
 # Main application
 app = FastAPI()

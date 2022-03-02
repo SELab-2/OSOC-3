@@ -1,4 +1,5 @@
 # Urlencode the password to pass it to the engine
+from typing import Dict
 from urllib.parse import quote_plus
 
 from sqlalchemy import create_engine
@@ -6,7 +7,6 @@ from sqlalchemy.engine import URL, Engine
 from sqlalchemy.orm import sessionmaker
 
 import settings
-from typing import Dict
 
 DATABASE_ARGS: Dict[str, str]
 
