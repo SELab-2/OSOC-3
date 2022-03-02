@@ -4,6 +4,7 @@ from alembic.runtime import migration
 from fastapi import FastAPI
 
 from src.database.engine import engine
+from src.database.exceptions import PendingMigrationsException
 from .routers import base_router
 
 # Main application
@@ -23,4 +24,4 @@ async def startup():
     with engine.begin() as conn:
         context: migration.MigrationContext = migration.MigrationContext.configure(conn)
         if context.get_current_revision() != alembic_script.get_current_head():
-            raise Exception('Pending migrations')
+            raise PendingMigrationsException('Pending migrations')
