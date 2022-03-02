@@ -16,7 +16,7 @@ This step is only required on Linux, **not on Mac or Windows**.
 
 Follow the instructions in [Docker's README](https://github.com/docker/compose#linux).
 
-## Running and stopping the database
+## Starting and stopping the database
 
 ### Starting
 
