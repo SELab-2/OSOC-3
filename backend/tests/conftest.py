@@ -2,49 +2,35 @@
 from typing import Generator
 
 import pytest
-
-from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
-from sqlalchemy.engine.url import URL
+from alembic import command
+from alembic import config
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from src.app import app
 from src.database.database import get_session
-from src.database.models import Base
+from src.database.engine import engine
 
 
 @pytest.fixture(scope="session")
-def database_engine() -> Engine:
-    """Fixture to create an SQLite engine instead of MariaDB"""
-    database_args = {
-        "drivername": "sqlite",
-        "database": "test.db"
-    }
-
-    # "check_same_thread: False" allows multiple connections at once to interact with the database
-    # Only required for SQLite because it's a file
-    return create_engine(URL.create(**database_args), connect_args={"check_same_thread": False})
-
-
-@pytest.fixture(scope="session")
-def tables(database_engine: Engine):
+def tables():
     """
     Fixture to initialize a database before the tests,
     and drop it again afterwards
     """
-    Base.metadata.create_all(bind=database_engine)
+    alembic_config: config.Config = config.Config('alembic.yml')
+    command.upgrade(alembic_config, 'head')
     yield
-    Base.metadata.drop_all(bind=database_engine)
+    command.downgrade(alembic_config, 'base')
 
 
 @pytest.fixture
-def database_session(database_engine: Engine, tables: None) -> Generator[Session, None, None]:
+def database_session(tables: None) -> Generator[Session, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
     """
-    connection = database_engine.connect()
+    connection = engine.connect()
     transaction = connection.begin()
     session = Session(bind=connection)
 
@@ -59,6 +45,7 @@ def database_session(database_engine: Engine, tables: None) -> Generator[Session
 @pytest.fixture
 def test_client(database_session: Session) -> TestClient:
     """Fixture to create a testing version of our main application"""
+
     def override_get_session() -> Generator[Session, None, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead

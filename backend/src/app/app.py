@@ -15,6 +15,9 @@ app.include_router(base_router)
 
 @app.on_event('startup')
 async def startup():
+    """
+    Check if all migrations have been executed. If not refuse to start the app.
+    """
     alembic_config: config.Config = config.Config('alembic.ini')
     alembic_script: script.ScriptDirectory = script.ScriptDirectory.from_config(alembic_config)
     with engine.begin() as conn:
