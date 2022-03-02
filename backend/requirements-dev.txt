@@ -19,3 +19,6 @@ pylint==2.12.2
 
 # Mypy: check type usage in code
 mypy==0.931
+
+# Sqlalchemy-stubs: type hints for sqlalchemy
+sqlalchemy-stubs==0.4
