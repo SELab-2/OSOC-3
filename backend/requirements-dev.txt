@@ -22,3 +22,6 @@ mypy==0.931
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
 sqlalchemy2-stubs==0.0.2a20
+
+# Pylint-Pytest: A Pylint plugin to suppress pytest-related false positives.
+pylint-pytest==1.1.2
