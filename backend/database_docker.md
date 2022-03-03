@@ -20,14 +20,10 @@ Follow the instructions in [Docker's README](https://github.com/docker/compose#l
 
 ### Starting
 
-The containers can be started using `docker compose up`. We have, however, created configuration files for both development and production, so you have to pass in the path to those files to override the default configurations.
+The containers can be started using `docker compose up`. You can add the `-d` flag at the end to "detach" the process and let it run in the background, otherwise you'll have to leave your terminal open.
 
 ```sh
-# Development environment
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up
-
-# Production environment
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+docker compose up -d
 ```
 
 ### Stopping
