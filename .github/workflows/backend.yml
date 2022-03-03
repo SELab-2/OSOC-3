@@ -60,7 +60,7 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
-      - run: python -m pylint src
+      - run: python -m pylint src tests
 
   Type:
     needs: [Test]
@@ -74,4 +74,4 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
 
-      - run: python -m mypy src
+      - run: python -m mypy src tests
