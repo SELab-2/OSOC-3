@@ -59,10 +59,18 @@ uvicorn src.app:app --reload
 
 The "--reload" argument will enable hot reloading while you're developing, so you don't have to manually restart the process every time.
 
-⚠ ***Note*: the `--reload` argument should *not* be used in production!**
+⚠ **_Note_: the `--reload` argument should _not_ be used in production!**
 
 To run the API on a specific IP-address and port, use the `--host` and `--port` arguments:
 
 ```shell
 uvicorn src.app:app --host 0.0.0.0 --port 80
 ```
+
+## Running tests
+
+Refer to [`tests.md`](tests.md) for more information
+
+## Creating and starting the database
+
+Refer to [`database_docker.md`](database_docker.md) for more information.

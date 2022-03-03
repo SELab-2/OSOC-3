@@ -1,0 +1,16 @@
+version: "2.1"
+services:
+  mariadb:
+    image: mariadb:10.4
+    container_name: osoc-dev
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=osoc_dev
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    volumes:
+      - data:/var/lib/mysql
+
+volumes:
+  data:
