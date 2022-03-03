@@ -2,3 +2,8 @@ version: "2.1"
 services:
   mariadb:
     image: docker.io/library/mariadb:10.4
+    volumes:
+      - data:/var/lib/mysql
+
+volumes:
+  data:
