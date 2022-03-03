@@ -71,7 +71,7 @@ jobs:
           key: ${{ runner.os }}-yarn-cache-${{ hashFiles('**/yarn.lock', '**/package.json') }}
 
       - run: yarn install --prefer-offline
-      - run: yarn run eslint src
+      - run: yarn run lint
 
   Style:
     needs: [Test]
