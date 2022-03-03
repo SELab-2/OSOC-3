@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   mariadb:
-    image: docker.io/library/mariadb:10.4
+    image: mariadb:10.4
     container_name: osoc-dev
     environment:
       - MYSQL_ROOT_PASSWORD=password
