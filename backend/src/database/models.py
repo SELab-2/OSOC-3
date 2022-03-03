@@ -9,11 +9,14 @@ Relationships are not literally stored in the database: these are
 implicit fields that can be generated if necessary by linking data
 together
 """
-from uuid import uuid4
+from __future__ import annotations
 
-from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime
+from typing import List
+from uuid import uuid4, UUID
+
+from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy_utils import UUIDType
+from sqlalchemy_utils import UUIDType  # type: ignore
 
 from src.database.enums import RoleEnum, DecisionEnum
 
@@ -28,7 +31,7 @@ class AuthEmail(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     pw_hash = Column(Text, nullable=False)
 
-    user = relationship("User", back_populates="email_auth", uselist=False)
+    user: User = relationship("User", back_populates="email_auth", uselist=False)
 
 
 class AuthGitHub(Base):
@@ -38,7 +41,7 @@ class AuthGitHub(Base):
     gh_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    user = relationship("User", back_populates="github_auth", uselist=False)
+    user: User = relationship("User", back_populates="github_auth", uselist=False)
 
 
 class AuthGoogle(Base):
@@ -48,7 +51,7 @@ class AuthGoogle(Base):
     google_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    user = relationship("User", back_populates="google_auth", uselist=False)
+    user: User = relationship("User", back_populates="google_auth", uselist=False)
 
 
 class CoachRequest(Base):
@@ -61,7 +64,7 @@ class CoachRequest(Base):
     request_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    user = relationship("User", back_populates="coach_request", uselist=False)
+    user: User = relationship("User", back_populates="coach_request", uselist=False)
 
 
 class DecisionEmail(Base):
@@ -73,7 +76,7 @@ class DecisionEmail(Base):
     decision = Column(Enum(DecisionEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
-    student = relationship("Student", back_populates="emails", uselist=False)
+    student: Student = relationship("Student", back_populates="emails", uselist=False)
 
 
 class Edition(Base):
@@ -83,9 +86,9 @@ class Edition(Base):
     edition_id = Column(Integer, primary_key=True)
     year = Column(Integer, nullable=False)
 
-    projects = relationship("Project", back_populates="edition")
-    roles = relationship("UserRole", back_populates="edition")
-    webhooks = relationship("Webhook", back_populates="edition")
+    projects: List[Project] = relationship("Project", back_populates="edition")
+    roles: List[UserRole] = relationship("UserRole", back_populates="edition")
+    webhooks: List[Student] = relationship("Webhook", back_populates="edition")
 
 
 class InviteLink(Base):
@@ -93,7 +96,7 @@ class InviteLink(Base):
     __tablename__ = "invite_links"
 
     invite_link_id = Column(Integer, primary_key=True)
-    uuid = Column(UUIDType(binary=False), default=uuid4)
+    uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     target_email = Column(Text, nullable=False)
 
 
@@ -104,7 +107,7 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects = relationship("ProjectPartner", back_populates="partner")
+    projects: List[Project] = relationship("ProjectPartner", back_populates="partner")
 
 
 class Project(Base):
@@ -116,37 +119,24 @@ class Project(Base):
     number_of_students = Column(Integer, nullable=False, default=0)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition = relationship("Edition", back_populates="projects", uselist=False)
-    coaches = relationship("ProjectCoach", back_populates="project")
-    skills = relationship("ProjectSkill", back_populates="project")
-    partners = relationship("ProjectPartner", back_populates="project")
-    project_roles = relationship("ProjectRole", back_populates="project")
+    edition: Edition = relationship("Edition", back_populates="projects", uselist=False)
+    coaches: List[User] = relationship("User", secondary="project_coaches", back_populates="projects")
+    skills: List[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
+    partners: List[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
+    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="project")
 
 
-class ProjectCoach(Base):
-    """A coach linked to a project
-    Association table
-    """
-    __tablename__ = "project_coaches"
+project_coaches = Table(
+    "project_coaches", Base.metadata,
+    Column("project_id", ForeignKey("projects.project_id")),
+    Column("coach_id", ForeignKey("users.user_id"))
+)
 
-    project_id = Column(ForeignKey("projects.project_id"), primary_key=True)
-    coach_id = Column(ForeignKey("users.user_id"), primary_key=True)
-
-    project = relationship("Project", back_populates="coaches", uselist=False)
-    coach = relationship("User", back_populates="projects", uselist=False)
-
-
-class ProjectPartner(Base):
-    """A partner linked to a project
-    Association table
-    """
-    __tablename__ = "project_partners"
-
-    project_id = Column(ForeignKey("projects.project_id"), primary_key=True)
-    partner_id = Column(ForeignKey("partners.partner_id"), primary_key=True)
-
-    partner = relationship("Partner", back_populates="projects")
-    project = relationship("Project", back_populates="partners")
+project_partners = Table(
+    "project_partners", Base.metadata,
+    Column("project_id", ForeignKey("projects.project_id")),
+    Column("partner_id", ForeignKey("partners.partner_id"))
+)
 
 
 class ProjectRole(Base):
@@ -163,30 +153,24 @@ class ProjectRole(Base):
     """
     __tablename__ = "project_roles"
 
-    student_id = Column(ForeignKey("students.student_id"), primary_key=True)
-    project_id = Column(ForeignKey("projects.project_id"), primary_key=True)
-    skill_id = Column(ForeignKey("skills.skill_id"), primary_key=True)
+    student_id = Column(Integer, ForeignKey("students.student_id"), primary_key=True)
+    project_id = Column(Integer, ForeignKey("projects.project_id"), primary_key=True)
+    skill_id = Column(Integer, ForeignKey("skills.skill_id"), primary_key=True)
     definitive = Column(Boolean, nullable=False, default=False)
     argumentation = Column(Text, nullable=True)
     drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    student = relationship("Student", back_populates="project_roles", uselist=False)
-    project = relationship("Project", back_populates="project_roles", uselist=False)
-    skill = relationship("Skill", back_populates="project_roles", uselist=False)
-    drafter = relationship("User", back_populates="drafted_roles", uselist=False)
+    student: Student = relationship("Student", back_populates="project_roles", uselist=False)
+    project: Project = relationship("Project", back_populates="project_roles", uselist=False)
+    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False)
+    drafter: User = relationship("User", back_populates="drafted_roles", uselist=False)
 
 
-class ProjectSkill(Base):
-    """A skill required by a project
-    Association table
-    """
-    __tablename__ = "project_skills"
-
-    project_id = Column(ForeignKey("projects.project_id"), primary_key=True)
-    skill_id = Column(ForeignKey("skills.skill_id"), primary_key=True)
-
-    project = relationship("Project", back_populates="skills", uselist=False)
-    skill = relationship("Skill", back_populates="projects", uselist=False)
+project_skills = Table(
+    "project_skills", Base.metadata,
+    Column("project_id", ForeignKey("projects.project_id")),
+    Column("skill_id", ForeignKey("skills.skill_id"))
+)
 
 
 class Skill(Base):
@@ -204,9 +188,9 @@ class Skill(Base):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=True)
 
-    project_roles = relationship("ProjectRole", back_populates="skill")
-    projects = relationship("ProjectSkill", back_populates="skill")
-    students = relationship("StudentSkill", back_populates="skill")
+    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="skill")
+    projects: List[Project] = relationship("Project", secondary="project_skills", back_populates="skills")
+    students: List[Student] = relationship("Student", secondary="student_skills", back_populates="skills")
 
 
 class Student(Base):
@@ -222,24 +206,18 @@ class Student(Base):
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
 
-    emails = relationship("DecisionEmail", back_populates="student")
-    project_roles = relationship("ProjectRole", back_populates="student")
-    skills = relationship("StudentSkill", back_populates="student")
-    suggestions = relationship("Suggestion", back_populates="student")
-    webhook = relationship("Webhook", back_populates="student", uselist=False)
+    emails: List[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
+    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="student")
+    skills: List[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
+    suggestions: List[Suggestion] = relationship("Suggestion", back_populates="student")
+    webhook: Webhook = relationship("Webhook", back_populates="student", uselist=False)
 
 
-class StudentSkill(Base):
-    """A student linked to a skill
-    Association table
-    """
-    __tablename__ = "student_skills"
-
-    student_id = Column(ForeignKey("students.student_id"), primary_key=True)
-    skill_id = Column(ForeignKey("skills.skill_id"), primary_key=True)
-
-    student = relationship("Student", back_populates="skills", uselist=False)
-    skill = relationship("Skill", back_populates="students", uselist=False)
+student_skills = Table(
+    "student_skills", Base.metadata,
+    Column("student_id", ForeignKey("students.student_id")),
+    Column("skill_id", ForeignKey("skills.skill_id"))
+)
 
 
 class Suggestion(Base):
@@ -252,8 +230,8 @@ class Suggestion(Base):
     suggestion = Column(Enum(DecisionEnum), nullable=False, default=DecisionEnum.UNDECIDED)
     argumentation = Column(Text, nullable=True)
 
-    student = relationship("Student", back_populates="suggestions", uselist=False)
-    coach = relationship("User", back_populates="suggestions", uselist=False)
+    student: Student = relationship("Student", back_populates="suggestions", uselist=False)
+    coach: User = relationship("User", back_populates="suggestions", uselist=False)
 
 
 class User(Base):
@@ -264,16 +242,16 @@ class User(Base):
     name = Column(Text, nullable=False)
     email = Column(Text, unique=True, nullable=False)
 
-    coach_request = relationship("CoachRequest", back_populates="user", uselist=False)
-    drafted_roles = relationship("ProjectRole", back_populates="drafter")
-    projects = relationship("ProjectCoach", back_populates="coach")
-    role = relationship("UserRole", back_populates="user", uselist=False)
-    suggestions = relationship("Suggestion", back_populates="coach")
+    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
+    drafted_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
+    projects: List[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
+    role: UserRole = relationship("UserRole", back_populates="user", uselist=False)
+    suggestions: List[Suggestion] = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
-    email_auth = relationship("AuthEmail", back_populates="user", uselist=False)
-    github_auth = relationship("AuthGitHub", back_populates="user", uselist=False)
-    google_auth = relationship("AuthGoogle", back_populates="user", uselist=False)
+    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False)
+    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False)
+    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False)
 
 
 class UserRole(Base):
@@ -287,8 +265,8 @@ class UserRole(Base):
     role = Column(Enum(RoleEnum), nullable=True)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition = relationship("Edition", back_populates="roles", uselist=False)
-    user = relationship("User", back_populates="role", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="roles", uselist=False)
+    user: User = relationship("User", back_populates="role", uselist=False)
 
 
 class Webhook(Base):
@@ -298,5 +276,5 @@ class Webhook(Base):
     webhook_id = Column(Integer, primary_key=True)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition = relationship("Edition", back_populates="webhooks", uselist=False)
-    student = relationship("Student", back_populates="webhook", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="webhooks", uselist=False)
+    student: Student = relationship("Student", back_populates="webhook", uselist=False)

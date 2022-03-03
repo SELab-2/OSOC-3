@@ -21,4 +21,4 @@ pylint==2.12.2
 mypy==0.931
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
-sqlalchemy-stubs==0.4
+sqlalchemy2-stubs==0.0.2a20
