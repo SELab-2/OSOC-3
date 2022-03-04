@@ -157,3 +157,6 @@ cython_debug/
 
 # Visual Studio Code
 .vscode/
+
+# Testing SQLite database
+*test.db

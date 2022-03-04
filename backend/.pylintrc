@@ -1,0 +1,9 @@
+[MASTER]
+load-plugins=pylint_pytest
+disable=
+    import-outside-toplevel,
+    missing-module-docstring,
+    too-few-public-methods,
+
+[FORMAT]
+max-line-length=120
