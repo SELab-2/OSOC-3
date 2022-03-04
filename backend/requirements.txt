@@ -13,9 +13,6 @@ mariadb==1.0.10
 # Requests: HTTP library
 requests==2.27.1
 
-# Starlette: lightweight ASGI framework/toolkit
-starlette==0.17.1
-
 # SQLAlchemy: ORM and database toolkit
 SQLAlchemy==1.4.31
 
