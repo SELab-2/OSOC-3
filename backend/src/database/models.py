@@ -11,7 +11,6 @@ together
 """
 from __future__ import annotations
 
-from typing import List
 from uuid import uuid4, UUID
 
 from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table
@@ -86,9 +85,9 @@ class Edition(Base):
     edition_id = Column(Integer, primary_key=True)
     year = Column(Integer, nullable=False)
 
-    projects: List[Project] = relationship("Project", back_populates="edition")
-    roles: List[UserRole] = relationship("UserRole", back_populates="edition")
-    webhooks: List[Student] = relationship("Webhook", back_populates="edition")
+    projects: list[Project] = relationship("Project", back_populates="edition")
+    roles: list[UserRole] = relationship("UserRole", back_populates="edition")
+    webhooks: list[Student] = relationship("Webhook", back_populates="edition")
 
 
 class InviteLink(Base):
@@ -107,7 +106,7 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: List[Project] = relationship("ProjectPartner", back_populates="partner")
+    projects: list[Project] = relationship("ProjectPartner", back_populates="partner")
 
 
 class Project(Base):
@@ -120,10 +119,10 @@ class Project(Base):
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     edition: Edition = relationship("Edition", back_populates="projects", uselist=False)
-    coaches: List[User] = relationship("User", secondary="project_coaches", back_populates="projects")
-    skills: List[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
-    partners: List[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
-    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="project")
+    coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects")
+    skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
+    partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project")
 
 
 project_coaches = Table(
@@ -188,9 +187,9 @@ class Skill(Base):
     name = Column(Text, nullable=False)
     description = Column(Text, nullable=True)
 
-    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="skill")
-    projects: List[Project] = relationship("Project", secondary="project_skills", back_populates="skills")
-    students: List[Student] = relationship("Student", secondary="student_skills", back_populates="skills")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="skill")
+    projects: list[Project] = relationship("Project", secondary="project_skills", back_populates="skills")
+    students: list[Student] = relationship("Student", secondary="student_skills", back_populates="skills")
 
 
 class Student(Base):
@@ -206,10 +205,10 @@ class Student(Base):
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
 
-    emails: List[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
-    project_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="student")
-    skills: List[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
-    suggestions: List[Suggestion] = relationship("Suggestion", back_populates="student")
+    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
+    skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
     webhook: Webhook = relationship("Webhook", back_populates="student", uselist=False)
 
 
@@ -243,10 +242,10 @@ class User(Base):
     email = Column(Text, unique=True, nullable=False)
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
-    drafted_roles: List[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    projects: List[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
+    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
+    projects: list[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
     role: UserRole = relationship("UserRole", back_populates="user", uselist=False)
-    suggestions: List[Suggestion] = relationship("Suggestion", back_populates="coach")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
     email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False)
