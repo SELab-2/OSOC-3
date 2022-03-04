@@ -5,7 +5,10 @@ alembic==1.7.6
 environs==9.5.0
 
 # FastAPI: API framework
-fastapi[all]==0.74.1
+fastapi==0.74.1
+
+# Uvicorn: ASGI web server implementation
+uvicorn[standard] >=0.12.0,<0.16.0
 
 # MariaDB: Python MariaDB connector
 mariadb==1.0.10
