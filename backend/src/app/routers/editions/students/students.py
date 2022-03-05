@@ -21,6 +21,13 @@ async def send_emails(edition_id: int):
     """
 
 
+@students_router.delete("/{student_id}")
+async def delete_student(edition_id: int, student_id: int):
+    """
+    Delete all information stored about a specific student.
+    """
+
+
 @students_router.get("/{student_id}")
 async def get_student(edition_id: int, student_id: int):
     """
