@@ -6,12 +6,14 @@ from fastapi import FastAPI
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
 from .routers import base_router
+from .webhooks import router as webhook_router
 
 # Main application
 app = FastAPI()
 
 # Include all routers
 app.include_router(base_router)
+app.include_router(webhook_router)
 
 
 @app.on_event('startup')
