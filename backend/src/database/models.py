@@ -98,7 +98,7 @@ class InviteLink(Base):
     invite_link_id = Column(Integer, primary_key=True)
     uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     target_email = Column(Text, nullable=False)
-    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
+    edition_id = Column(Integer, ForeignKey("editions.edition_id", name="fk_invite_link_edition_id_edition"))
 
     edition: Edition = relationship("Edition", back_populates="invite_links", uselist=False)
 
