@@ -21,3 +21,12 @@ SQLAlchemy==1.4.31
 
 # SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
 sqlalchemy-utils==0.38.2
+
+# OAuth2 form data
+python-multipart==0.0.5
+
+# generate and verify JWT tokens
+python-jose[cryptography]==3.3.0
+
+# hash passwords
+passlib[bcrypt]==1.7.4
