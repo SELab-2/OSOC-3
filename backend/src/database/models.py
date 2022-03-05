@@ -110,7 +110,7 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: list[Project] = relationship("ProjectPartner", back_populates="partner")
+    projects: list[Project] = relationship("Project", secondary="project_partners", back_populates="partners")
 
 
 class Project(Base):
@@ -247,7 +247,7 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    projects: list[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
     role: UserRole = relationship("UserRole", back_populates="user", uselist=False)
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
