@@ -17,7 +17,7 @@ app = FastAPI(
 app.include_router(editions_router)
 
 
-# @app.on_event('startup')
+@app.on_event('startup')
 async def startup():
     """
     Check if all migrations have been executed. If not refuse to start the app.
