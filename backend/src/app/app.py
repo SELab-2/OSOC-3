@@ -5,7 +5,7 @@ from fastapi import FastAPI, APIRouter
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import editions_router
+from .routers import editions_router, auth_router
 from .exceptions import install_handlers
 
 # Main application
@@ -15,6 +15,7 @@ app = FastAPI(
 )
 
 # Include all routers
+app.include_router(auth_router)
 app.include_router(editions_router)
 
 # Install exception handlers
