@@ -2,6 +2,7 @@ from typing import Optional
 
 from humps.camel import case
 from pydantic import BaseModel
+from uuid import UUID
 
 
 def to_camel(string: str) -> str:
@@ -47,3 +48,7 @@ class WebhookEvent(CamelCaseModel):
     event_id: str
     created_at: str
     data: Form
+
+
+class WebhookUrlResponse(BaseModel):
+    uuid: UUID
