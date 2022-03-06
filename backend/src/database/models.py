@@ -17,7 +17,7 @@ from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTim
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
-from src.database.enums import RoleEnum, DecisionEnum
+from src.database.enums import RoleEnum, DecisionEnum, QuestionEnum
 
 Base = declarative_base()
 
@@ -208,12 +208,53 @@ class Student(Base):
     cv_webhook_id = Column(Integer, ForeignKey("webhooks.webhook_id"))
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
-    webhook: Webhook = relationship("Webhook", back_populates="student", uselist=False)
+    questions: list[Question] = relationship("Question", back_populates="student")
+    edition: Edition = relationship("Edition", back_populates="students", uselist=False)
+
+
+class Question(Base):
+    """A question from the form"""
+    __tablename__ = "questions"
+
+    question_id = Column(Integer, primary_key=True)
+    type = Column(Enum(QuestionEnum), nullable=False)
+    question = Column(Text, nullable=False)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
+
+    answers: list[QuestionAnswer] = relationship("QuestionAnswer", back_populates="question")
+    files: list[QuestionFileAnswer] = relationship("QuestionFileAnswer", back_populates="question")
+    student: Student = relationship("Student", back_populates="questions", uselist=False)
+
+
+class QuestionAnswer(Base):
+    """Answer on a question for the form"""
+    __tablename__ = "question_answers"
+
+    answer_id = Column(Integer, primary_key=True)
+    answer = Column(Text, nullable=False)
+    question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
+
+    question: Question = relationship("Question", back_populates="answers", uselist=False)
+
+
+class QuestionFileAnswer(Base):
+    """An answer containg a file"""
+    __tablename__ = "question_file_answers"
+
+    file_answer_id = Column(Integer, primary_key=True)
+    file_name = Column(Text, nullable=False)
+    url = Column(Text, nullable=False)
+    mime_type = Column(Text, nullable=False)
+    size = Column(Integer, nullable=False)
+    question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
+
+    question: Question = relationship("Question", back_populates="files", uselist=False)
 
 
 student_skills = Table(
@@ -272,12 +313,12 @@ class UserRole(Base):
     user: User = relationship("User", back_populates="roles", uselist=False)
 
 
-class Webhook(Base):
-    """Data about a webhook for a student's CV that we've received"""
-    __tablename__ = "webhooks"
+class WebhookURL(Base):
+    """Allowed webhook uuid's"""
+    __tablename__ = "webhook_urls"
 
     webhook_id = Column(Integer, primary_key=True)
+    uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition: Edition = relationship("Edition", back_populates="webhooks", uselist=False)
-    student: Student = relationship("Student", back_populates="webhook", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="webhook_urls", uselist=False)

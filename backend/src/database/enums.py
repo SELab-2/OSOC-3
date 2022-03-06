@@ -19,3 +19,17 @@ class RoleEnum(enum.Enum):
     ADMIN = 0
     COACH = 1
     DISABLED = 2
+
+
+@enum.unique
+class QuestionEnum(enum.Enum):
+    """Enum for the different question types in a Form"""
+    CHECKBOXES = 0
+    FILE_UPLOAD = 1
+    INPUT_EMAIL = 2
+    INPUT_LINK = 3
+    INPUT_PHONE_NUMBER = 4
+    INPUT_TEXT = 5
+    MULTIPLE_CHOICE = 6
+    TEXTAREA = 7
+
