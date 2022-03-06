@@ -1,6 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from src.app.routers.tags import Tags
+
+from fastapi import Depends
+from src.database.database import get_session
+from src.database.models import Edition
+from sqlalchemy.orm import Session
 
 from .invites import invites_router
 from .projects import projects_router
@@ -29,21 +34,37 @@ for router in child_routers:
 
 
 @editions_router.get("/", tags=[Tags.EDITIONS])
-async def get_editions():
+async def get_editions(db: Session = Depends(get_session)):
     """
     Get a list of all editions.
     """
+    return db.query(Edition).all()
+
 
 
 @editions_router.post("/", tags=[Tags.EDITIONS])
-async def post_edition():
+async def post_edition(db: Session = Depends(get_session)):
     """
     Create a new edition.
     """
+    new_edition: Edition = Edition()
+    new_edition.year = 2022
+    db.add(new_edition)
+    db.commit()
+    db.refresh(new_edition)
+    return new_edition
+
 
 
 @editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
-async def delete_edition(edition_id: int):
+async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
     """
     Delete an existing edition.
     """
+    edition: Edition = db.get(Edition, edition_id)
+    db.delete(edition)
+    db.commit()
+    return {"data": "ok"}
+
+    
+    
