@@ -1,7 +1,7 @@
 from alembic import config
 from alembic import script
 from alembic.runtime import migration
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
@@ -14,7 +14,11 @@ app = FastAPI()
 
 # Include all routers
 app.include_router(base_router)
-app.include_router(webhook_router)
+
+editions_router = APIRouter(prefix="/{edition}")
+editions_router.include_router(webhook_router)
+
+app.include_router(editions_router)
 
 # Install exception handlers
 install_handlers(app)
