@@ -88,7 +88,8 @@ class Edition(Base):
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
     projects: list[Project] = relationship("Project", back_populates="edition")
     roles: list[UserRole] = relationship("UserRole", back_populates="edition")
-    webhooks: list[Student] = relationship("Webhook", back_populates="edition")
+    students: list[Student] = relationship("Student", back_populates="edition")
+    webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition")
 
 
 class InviteLink(Base):
