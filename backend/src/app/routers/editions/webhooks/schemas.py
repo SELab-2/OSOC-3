@@ -1,12 +1,12 @@
 from typing import Optional
-
-from humps.camel import case
-from pydantic import BaseModel
 from uuid import UUID
+
+from humps import camelize
+from pydantic import BaseModel
 
 
 def to_camel(string: str) -> str:
-    return case(string)
+    return camelize(string)
 
 
 class CamelCaseModel(BaseModel):
