@@ -35,19 +35,29 @@ for router in child_routers:
 
 @editions_router.get("/", tags=[Tags.EDITIONS])
 async def get_editions(db: Session = Depends(get_session)):
-    """
-    Get a list of all editions.
+    """Get a list of all editions.
+
+    Args:
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        List[Edition]: a list of all the editions
     """
     return db.query(Edition).all()
 
 
-
 @editions_router.post("/", tags=[Tags.EDITIONS])
 async def post_edition(db: Session = Depends(get_session)):
-    """
-    Create a new edition.
+    """ Create a new edition.
+
+    Args:
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        Edition: the newly made edition object.
     """
     new_edition: Edition = Edition()
+    # TODO year still hardcoded
     new_edition.year = 2022
     db.add(new_edition)
     db.commit()
@@ -55,16 +65,20 @@ async def post_edition(db: Session = Depends(get_session)):
     return new_edition
 
 
-
 @editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
 async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
-    """
-    Delete an existing edition.
+    """Delete an existing edition
+
+    Args:
+        edition_id (int): the id of the edition that needs to be deleted, if found.
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        json: describes if the delete executed successfully
     """
     edition: Edition = db.get(Edition, edition_id)
-    db.delete(edition)
-    db.commit()
-    return {"data": "ok"}
-
-    
-    
+    if edition is not None:
+        db.delete(edition)
+        db.commit()
+        return {"status": "deletion successful"}
+    else: return {"status": "This edition was not found"}
