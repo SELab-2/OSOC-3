@@ -7,6 +7,7 @@ from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
 from .routers import base_router
 from .webhooks import router as webhook_router
+from .exceptions import install_handlers
 
 # Main application
 app = FastAPI()
@@ -14,6 +15,9 @@ app = FastAPI()
 # Include all routers
 app.include_router(base_router)
 app.include_router(webhook_router)
+
+# Install exception handlers
+install_handlers(app)
 
 
 @app.on_event('startup')
