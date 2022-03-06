@@ -85,6 +85,7 @@ class Edition(Base):
     edition_id = Column(Integer, primary_key=True)
     year = Column(Integer, nullable=False)
 
+    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
     projects: list[Project] = relationship("Project", back_populates="edition")
     roles: list[UserRole] = relationship("UserRole", back_populates="edition")
     webhooks: list[Student] = relationship("Webhook", back_populates="edition")
@@ -97,6 +98,9 @@ class InviteLink(Base):
     invite_link_id = Column(Integer, primary_key=True)
     uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     target_email = Column(Text, nullable=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id", name="fk_invite_link_edition_id_edition"))
+
+    edition: Edition = relationship("Edition", back_populates="invite_links", uselist=False)
 
 
 class Partner(Base):
@@ -106,7 +110,7 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: list[Project] = relationship("ProjectPartner", back_populates="partner")
+    projects: list[Project] = relationship("Project", secondary="project_partners", back_populates="partners")
 
 
 class Project(Base):
@@ -243,7 +247,7 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    projects: list[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
     role: UserRole = relationship("UserRole", back_populates="user", uselist=False)
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
