@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import List
 
 from src.app.routers.tags import Tags
 
@@ -34,7 +35,7 @@ for router in child_routers:
 
 
 @editions_router.get("/", tags=[Tags.EDITIONS])
-async def get_editions(db: Session = Depends(get_session)):
+async def get_editions(db: Session = Depends(get_session)) -> List[Edition]:
     """Get a list of all editions.
 
     Args:
@@ -47,7 +48,7 @@ async def get_editions(db: Session = Depends(get_session)):
 
 
 @editions_router.post("/", tags=[Tags.EDITIONS])
-async def post_edition(db: Session = Depends(get_session)):
+async def post_edition(db: Session = Depends(get_session)) -> Edition:
     """ Create a new edition.
 
     Args:
@@ -66,7 +67,7 @@ async def post_edition(db: Session = Depends(get_session)):
 
 
 @editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
-async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
+async def delete_edition(edition_id: int, db: Session = Depends(get_session)) -> dict:
     """Delete an existing edition
 
     Args:
@@ -74,7 +75,7 @@ async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        json: describes if the delete executed successfully
+        dict: describes if the delete executed successfully
     """
     edition: Edition = db.get(Edition, edition_id)
     if edition is not None:
