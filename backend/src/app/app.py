@@ -5,19 +5,16 @@ from fastapi import FastAPI, APIRouter
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import base_router
-from .webhooks import router as webhook_router
+from .routers import editions_router
 from .exceptions import install_handlers
 
 # Main application
-app = FastAPI()
+app = FastAPI(
+    title="OSOC Team 3",
+    version="0.0.1"
+)
 
 # Include all routers
-app.include_router(base_router)
-
-editions_router = APIRouter(prefix="/{edition}")
-editions_router.include_router(webhook_router)
-
 app.include_router(editions_router)
 
 # Install exception handlers
