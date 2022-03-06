@@ -18,3 +18,4 @@ class RoleEnum(enum.Enum):
     """Enum for the different roles a user can have"""
     ADMIN = 0
     COACH = 1
+    DISABLED = 2
