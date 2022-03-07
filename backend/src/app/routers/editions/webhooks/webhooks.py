@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.database.database import get_session
 from src.database.crud.webhooks import get_webhook, create_webhook
-from src.app.routers.editions.webhooks.schemas import WebhookEvent, WebhookUrlResponse
+from src.app.schemas.webhooks import WebhookEvent, WebhookUrlResponse
 from src.database.models import Edition
 from src.app.utils.dependencies import get_edition
 from src.app.routers.tags import Tags

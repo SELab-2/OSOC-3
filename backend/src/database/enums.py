@@ -24,12 +24,11 @@ class RoleEnum(enum.Enum):
 @enum.unique
 class QuestionEnum(enum.Enum):
     """Enum for the different question types in a Form"""
-    CHECKBOXES = 0
-    FILE_UPLOAD = 1
-    INPUT_EMAIL = 2
-    INPUT_LINK = 3
-    INPUT_PHONE_NUMBER = 4
-    INPUT_TEXT = 5
-    MULTIPLE_CHOICE = 6
-    TEXTAREA = 7
-
+    CHECKBOXES = "CHECKBOXES"
+    FILE_UPLOAD = "FILE_UPLOAD"
+    INPUT_EMAIL = "INPUT_EMAIL"
+    INPUT_LINK = "INPUT_LINK"
+    INPUT_PHONE_NUMBER = "INPUT_PHONE_NUMBER"
+    INPUT_TEXT = "INPUT_TEXT"
+    MULTIPLE_CHOICE = "MULTIPLE_CHOICE"
+    TEXTAREA = "TEXTAREA"

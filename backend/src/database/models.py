@@ -202,11 +202,13 @@ class Student(Base):
     __tablename__ = "students"
 
     student_id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
+    first_name = Column(Text, nullable=False)
+    last_name = Column(Text, nullable=False)
+    preferred_name = Column(Text)
     email_address = Column(Text, unique=True, nullable=False)
     phone_number = Column(Text, unique=True, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)
-    cv_webhook_id = Column(Integer, ForeignKey("webhooks.webhook_id"))
+    #cv_url = Column(Text)
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
@@ -238,7 +240,7 @@ class QuestionAnswer(Base):
     __tablename__ = "question_answers"
 
     answer_id = Column(Integer, primary_key=True)
-    answer = Column(Text, nullable=False)
+    answer = Column(Text, nullable=True)
     question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
 
     question: Question = relationship("Question", back_populates="answers", uselist=False)
