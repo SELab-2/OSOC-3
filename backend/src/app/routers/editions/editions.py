@@ -40,7 +40,7 @@ async def get_editions(db: Session = Depends(get_session)) -> List[Edition]:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        List[Edition]: a list of all the editions
+        List[Edition]: a list of all the editions.
     """
     return db.query(Edition).all()
 
@@ -66,14 +66,14 @@ async def post_edition(db: Session = Depends(get_session)) -> Edition:
 
 @editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
 async def delete_edition(edition_id: int, db: Session = Depends(get_session)) -> dict:
-    """Delete an existing edition
+    """Delete an existing edition.
 
     Args:
         edition_id (int): the id of the edition that needs to be deleted, if found.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        dict: describes if the delete executed successfully
+        dict: describes if the delete executed successfully.
     """
     edition: Edition = db.get(Edition, edition_id)
     if edition is not None:
