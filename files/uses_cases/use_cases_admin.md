@@ -33,7 +33,7 @@ When a partner changes their mind about one or more projects, an admin should re
 | Preconditions | The current user is logged in as an admin. <br> There is a project created by an admin that the partner doesn't want to do anymore |
 | Postconditions | The deleted project is not visible anymore <br> No more students can be added to the project <br> All students that where added on that project are free again to be set on an other project <br> All coaches set on that project, aren't anymore |
 | Actors| Admin |
-| Description of steps | <ol><li>Navigate to the management page</li><li>The user clicks on a 'delete project' button</li><li>The user gets a popup "are you sure?"</li><li>The user clicks on "yes"</li></ol> |
+| Description of steps | <ol><li>Navigate to the management page</li><li>The user clicks on a 'delete project' button</li><li>The user gets a pop-up "are you sure?"</li><li>The user clicks on "yes"</li></ol> |
 | Alternative flow | Cancel removal of project: <ul><li>click the cancel button on the popup</li><li>you return to the previous window, nothing changes</li></ul> |
 
 ## Approve new coaches
@@ -68,7 +68,7 @@ When a student doesn't want to be considered as a candidate for OSOC. They have 
 | Preconditions | The current user is logged in as an admin. <br> The student has informed an admin. |
 | Postconditions | The student is not visible anymore <br> The student can't be added to any projects <br> The student is removed from all projects <br> All reviews of that student are deleted |
 | Actors| Admin |
-| Description of steps | <ol><li>Navigate to the student that needs to be removed</li><li>The user clicks on a button 'remove student'</li><li>The user get a popup "are you sure?"</li><li>The user clicks on "yes"</li></ol> |
+| Description of steps | <ol><li>Navigate to the student that needs to be removed</li><li>The user clicks on a button 'remove student'</li><li>The user get a pop-up "are you sure?"</li><li>The user clicks on "yes"</li></ol> |
 | Alternative flow | Cancel removal of student data:<ul><li>The user clicks on cancel in the popup</li><li>You return to the previous page, nothing has changed</li></ul> |
 
 ## Remove student from project
@@ -81,7 +81,7 @@ if the student is no longer required in the project, the student needs to be rem
 | Postconditions | The student is removed from the project, this is immediately visible. |
 | Actors| Admin |
 | Description of steps | <ol><li> navigate to the specific project </li><li> click on the "remove" button next to the student name</li><li> click the confirm button on the popup</li><li> the student disappears from the project</li></ol> |
-| Alternative flow | Cancel removal of student from project: <ul><li> click the cancel button on the popup </li><li> you return to the previous window, nothing changes </li> </ul> |
+| Alternative flow | Cancel removal of student from project: <ul><li> click the cancel button on the pop-up </li><li> you return to the previous window, nothing changes </li> </ul> |
 
 ## Definitive decision on student
 
@@ -128,7 +128,7 @@ Every year, a new edition of OSOC has to be created with new projects, students 
 | Postconditions | A new edition of OSOC has been created, projects, coaches and students of that edition can be added. <br> All info of previous edition is set on read and remove only |
 | Actors| Admin |
 | Description of steps | <ol><li>Click the "Create new edition" button on the overview window.</li><li>Select the year of the edition</li><li>Confirm the creation of the new edition on the popup.</li></ol> |
-| Alternative flow | Cancel creation of new edition:<ul><li>Click cancel on the popup window.</li></ul> |
+| Alternative flow | Cancel creation of new edition:<ul><li>Click "Cancel" on the pop-up window.</li></ul> |
 
 ## Delete edition
 
@@ -139,8 +139,8 @@ An edition might be deleted if it was created by mistake.
 | Preconditions | The current user is logged in as an admin. |
 | Postconditions | The current edition will be deleted. |
 | Actors| Admin |
-| Description of steps | <ol><li>Click the "Remove this edition" button on the overview window.</li><li>A popup with a warning is shown, confirm the deletion of the edition on the popup.</li></ol> |
-| Alternative flow | Cancel deletion of edition:<ul><li>Click cancel on the popup window.</li><li>The screen goes back to the last edition</li></li>The last edition can be edited again</li></ul> |
+| Description of steps | <ol><li>Click the "Remove this edition" button on the overview window.</li><li>A pop-up with a warning is shown, confirm the deletion of the edition on the popup.</li></ol> |
+| Alternative flow | Cancel deletion of edition:<ul><li>Click "Cancel" on the pop-up window.</li><li>The screen goes back to the last edition</li></li>The last edition can be edited again</li></ul> |
 
 ## Invite new coach
 
