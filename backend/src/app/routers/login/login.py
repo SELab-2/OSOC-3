@@ -57,7 +57,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-auth_router = APIRouter()
+login_router = APIRouter(prefix="/login")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -127,7 +127,7 @@ async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> UserIn
     return user
 
 
-@auth_router.post("/token", response_model=Token)
+@login_router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
     """Called when logging in, generates an access token to use in other functions
     """
@@ -145,7 +145,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@auth_router.post("/register/")
+@login_router.post("/register/")
 async def register(registeruser: RegisterUser):
     """Hash the password of a newly registered user and add its data to the database
     """
@@ -154,7 +154,7 @@ async def register(registeruser: RegisterUser):
     add_user(fake_users_db, user)
 
 
-# Example functions
+"""Example functions
 
 @auth_router.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
@@ -164,3 +164,4 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 @auth_router.get("/users/me/items/")
 async def read_own_items(current_user: User = Depends(get_current_active_user)):
     return [{"item_id": "Foo", "owner": current_user.email_auth_id}]
+"""

@@ -5,14 +5,14 @@ from fastapi import FastAPI
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import base_router, auth_router
+from .routers import base_router, login_router
 
 # Main application
 app = FastAPI()
 
 # Include all routers
 app.include_router(base_router)
-app.include_router(auth_router)
+app.include_router(login_router)
 
 @app.on_event('startup')
 async def startup():
