@@ -2,7 +2,7 @@
 
 ## Review student
 
-In this situation a coach will make a recommendation about a student based onto the students skills and motivation.
+In this situation a coach will make a recommendation about a student based on the student's skills and motivation.
 
 | Review student ||
 | --- | --- |
@@ -32,7 +32,7 @@ In this situation a coach wants to change its recommendation they made about a s
 | Preconditions | The current user (a coach) has created an account and is approved by an admin. <br> The student already received a review from the coach. |
 | Postconditions | The changed recommendation made by the coach is immediately visible to other users.|
 | Actors| Coach |
-| Description of steps | <ol> <li> Navigate to the student you want to change the review for.</li> <li>Click the edit recommendation button. </li> <li>There might be real time reviews of other people than you can use to help make your own decisions. </li> <li>After you looked at the student for the second time it’s time to make your new recommendation. You can again choose between “yes”, “maybe” or “no”. It is possible to argument why you made this new decision so others can understand it.</li> </ol> |
+| Description of steps | <ol> <li> Navigate to the student you want to change the review for.</li> <li>Click the edit recommendation button. </li> <li>There might be real time reviews of other people that you can use to help make your own decisions. </li> <li>After you looked at the student for the second time it’s time to make your new recommendation. You can again choose between “yes”, “maybe” or “no”. It is possible to argument why you made this new decision so others can understand it.</li> </ol> |
 | Alternative flow| The coach cancels the change of the review: <ul> <li>You return to the user info, nothing changes.</li> </ul> The coach clicks on delete review: <ul><li>The users clicks on "delete review" and confirms it.</li><li>The review is not visible anymore</li></ul> |
 
 ## Search students
@@ -55,8 +55,8 @@ If the student is no longer required in the project, the student needs to be rem
 | Preconditions | The current user is logged in. <br> A student is assigned to a project. |
 | Postconditions | The student is removed from the project, this is immediately visible. |
 | Actors| Coach |
-| Description of steps | <ol><li>navigate to the specific project</li><li>click on the "remove" button next to the student name</li><li>click the confirm button on the popup</li><li>the student disappears from the project</li></ol> |
-| Alternative flow | Cancel removal of student from project:<ul><li>click the cancel button on the popup</li><li>you return to the previous window, nothing changes</li></ul> |
+| Description of steps | <ol><li>navigate to the specific project</li><li>click on the "remove" button next to the student name</li><li>click the confirm button on the pop-up</li><li>the student disappears from the project</li></ol> |
+| Alternative flow | Cancel removal of student from project:<ul><li>click the cancel button on the pop-up</li><li>you return to the previous window, nothing changes</li></ul> |
 
 ## See all conflicts
 
