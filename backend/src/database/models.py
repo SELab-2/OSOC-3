@@ -83,8 +83,9 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
-    year = Column(Integer, nullable=False)
+    year = Column(Integer, unique=True, nullable=False)
 
+    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
     projects: list[Project] = relationship("Project", back_populates="edition")
     roles: list[UserRole] = relationship("UserRole", back_populates="edition")
     webhooks: list[Student] = relationship("Webhook", back_populates="edition")
@@ -97,6 +98,9 @@ class InviteLink(Base):
     invite_link_id = Column(Integer, primary_key=True)
     uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     target_email = Column(Text, nullable=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id", name="fk_invite_link_edition_id_edition"))
+
+    edition: Edition = relationship("Edition", back_populates="invite_links", uselist=False)
 
 
 class Partner(Base):
@@ -106,7 +110,7 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: list[Project] = relationship("ProjectPartner", back_populates="partner")
+    projects: list[Project] = relationship("Project", secondary="project_partners", back_populates="partners")
 
 
 class Project(Base):
@@ -144,10 +148,10 @@ class ProjectRole(Base):
 
     A ProjectRole is created when a coach (or admin) links a student to a project
 
-    This differs from ProjectSkill in that ProjectSkill describes all the required skills
+    This differs from project_skills in that project_skills describes all the required skills
     for a project, and doesn't have any users linked to them yet
 
-    A student can have multiple project_roles before being assigned to a project, as they can
+    A student can have multiple ProjectRoles before being assigned to a project, as they can
     be drafted for multiple projects
     """
     __tablename__ = "project_roles"
@@ -243,8 +247,8 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    projects: list[Project] = relationship("ProjectCoach", secondary="project_coaches", back_populates="coach")
-    role: UserRole = relationship("UserRole", back_populates="user", uselist=False)
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
+    roles: list[UserRole] = relationship("UserRole", back_populates="user")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
@@ -265,7 +269,7 @@ class UserRole(Base):
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     edition: Edition = relationship("Edition", back_populates="roles", uselist=False)
-    user: User = relationship("User", back_populates="role", uselist=False)
+    user: User = relationship("User", back_populates="roles", uselist=False)
 
 
 class Webhook(Base):

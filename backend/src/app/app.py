@@ -5,14 +5,19 @@ from fastapi import FastAPI
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import base_router, login_router
+from .routers import editions_router
+from .routers import login_router
 
 # Main application
-app = FastAPI()
+app = FastAPI(
+    title="OSOC Team 3",
+    version="0.0.1"
+)
 
 # Include all routers
-app.include_router(base_router)
+app.include_router(editions_router)
 app.include_router(login_router)
+
 
 @app.on_event('startup')
 async def startup():
