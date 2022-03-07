@@ -14,7 +14,7 @@ if settings.DB_USE_SQLITE:
     engine = create_engine(URL.create(
         drivername="sqlite",
         database="test.db"
-    ))
+    ), connect_args={"check_same_thread": False})
 else:
     # Use Mariadb database.
     _encoded_password = quote_plus(settings.DB_PASSWORD)
