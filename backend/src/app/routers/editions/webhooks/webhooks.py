@@ -9,7 +9,7 @@ from src.app.utils.dependencies import get_edition
 from src.app.routers.tags import Tags
 from src.app.logic.webhooks import process_webhook
 
-webhooks_router = APIRouter(prefix="/webhook", tags=[Tags.WEBHOOKS])
+webhooks_router = APIRouter(prefix="/webhooks", tags=[Tags.WEBHOOKS])
 
 
 def valid_uuid(uuid: str, db: Session = Depends(get_session)):

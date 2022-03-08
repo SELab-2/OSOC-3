@@ -57,7 +57,7 @@ def upgrade():
         'coach_requests',
         sa.Column('request_id', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='coach_requests_users_fk'),
         sa.PrimaryKeyConstraint('request_id')
     )
     op.create_table(
@@ -65,21 +65,21 @@ def upgrade():
         sa.Column('email_auth_id', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),
         sa.Column('pw_hash', sa.Text(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='email_auths_users_fk'),
         sa.PrimaryKeyConstraint('email_auth_id')
     )
     op.create_table(
         'github_auths',
         sa.Column('gh_auth_id', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='github_auths_users_fk'),
         sa.PrimaryKeyConstraint('gh_auth_id')
     )
     op.create_table(
         'google_auths',
         sa.Column('google_auth_id', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='google_auths_users_fk'),
         sa.PrimaryKeyConstraint('google_auth_id')
     )
     op.create_table(
@@ -88,7 +88,7 @@ def upgrade():
         sa.Column('name', sa.Text(), nullable=False),
         sa.Column('number_of_students', sa.Integer(), nullable=False),
         sa.Column('edition_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], ),
+        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='projects_editions_fk'),
         sa.PrimaryKeyConstraint('project_id')
     )
     op.create_table(
@@ -97,37 +97,37 @@ def upgrade():
         sa.Column('user_id', sa.Integer(), nullable=True),
         sa.Column('role', sa.Enum('ADMIN', 'COACH', name='roleenum'), nullable=True),
         sa.Column('edition_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], ),
-        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], ),
+        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='user_roles_editions_fk'),
+        sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='user_roles_users_fk'),
         sa.PrimaryKeyConstraint('user_role_id')
     )
     op.create_table(
         'webhooks',
         sa.Column('webhook_id', sa.Integer(), nullable=False),
         sa.Column('edition_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], ),
+        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='webhooks_editions_fk'),
         sa.PrimaryKeyConstraint('webhook_id')
     )
     op.create_table(
         'project_coaches',
         sa.Column('project_id', sa.Integer(), nullable=True),
         sa.Column('coach_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['coach_id'], ['users.user_id'], ),
-        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], )
+        sa.ForeignKeyConstraint(['coach_id'], ['users.user_id'], name='project_coaches_users_fk'),
+        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], name='project_coaches_projects_fk')
     )
     op.create_table(
         'project_partners',
         sa.Column('project_id', sa.Integer(), nullable=True),
         sa.Column('partner_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['partner_id'], ['partners.partner_id'], ),
-        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], )
+        sa.ForeignKeyConstraint(['partner_id'], ['partners.partner_id'], name='project_partners'),
+        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], name='project_partners_projects_fk')
     )
     op.create_table(
         'project_skills',
         sa.Column('project_id', sa.Integer(), nullable=True),
         sa.Column('skill_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], ),
-        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], )
+        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], name='project_skills_projects_fk'),
+        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], name='project_skills_skills_fk')
     )
     op.create_table(
         'students',
@@ -139,7 +139,7 @@ def upgrade():
         sa.Column('cv_webhook_id', sa.Integer(), nullable=True),
         sa.Column('decision', sa.Enum('UNDECIDED', 'YES', 'MAYBE', 'NO', name='decisionenum'), nullable=True),
         sa.Column('wants_to_be_student_coach', sa.Boolean(), nullable=False),
-        sa.ForeignKeyConstraint(['cv_webhook_id'], ['webhooks.webhook_id'], ),
+        sa.ForeignKeyConstraint(['cv_webhook_id'], ['webhooks.webhook_id'], name='students_webhooks_fk'),
         sa.PrimaryKeyConstraint('student_id'),
         sa.UniqueConstraint('email_address'),
         sa.UniqueConstraint('phone_number')
@@ -150,7 +150,7 @@ def upgrade():
         sa.Column('student_id', sa.Integer(), nullable=False),
         sa.Column('decision', sa.Enum('UNDECIDED', 'YES', 'MAYBE', 'NO', name='decisionenum'), nullable=False),
         sa.Column('date', sa.DateTime(), nullable=False),
-        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], ),
+        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], name='decision_emails_students_fk'),
         sa.PrimaryKeyConstraint('email_id')
     )
     op.create_table(
@@ -161,18 +161,18 @@ def upgrade():
         sa.Column('definitive', sa.Boolean(), nullable=False),
         sa.Column('argumentation', sa.Text(), nullable=True),
         sa.Column('drafter_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['drafter_id'], ['users.user_id'], ),
-        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], ),
-        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], ),
-        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], ),
+        sa.ForeignKeyConstraint(['drafter_id'], ['users.user_id'], name='project_roles_users_fk'),
+        sa.ForeignKeyConstraint(['project_id'], ['projects.project_id'], name='project_roles_projects_fk'),
+        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], name='project_roles_skills_fk'),
+        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], name='project_roles_students_fk'),
         sa.PrimaryKeyConstraint('student_id', 'project_id', 'skill_id')
     )
     op.create_table(
         'student_skills',
         sa.Column('student_id', sa.Integer(), nullable=True),
         sa.Column('skill_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], ),
-        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], )
+        sa.ForeignKeyConstraint(['skill_id'], ['skills.skill_id'], name='student_skills_skills_fk'),
+        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], name='student_skills_students_fk')
     )
     op.create_table(
         'suggestions',
@@ -181,8 +181,8 @@ def upgrade():
         sa.Column('coach_id', sa.Integer(), nullable=False),
         sa.Column('suggestion', sa.Enum('UNDECIDED', 'YES', 'MAYBE', 'NO', name='decisionenum'), nullable=False),
         sa.Column('argumentation', sa.Text(), nullable=True),
-        sa.ForeignKeyConstraint(['coach_id'], ['users.user_id'], ),
-        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], ),
+        sa.ForeignKeyConstraint(['coach_id'], ['users.user_id'], name='suggestions_users_fk'),
+        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], name='suggestions_students_fk'),
         sa.PrimaryKeyConstraint('suggestion_id')
     )
     # ### end Alembic commands ###

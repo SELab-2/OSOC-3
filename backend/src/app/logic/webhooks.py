@@ -1,11 +1,11 @@
-from src.app.schemas.webhooks import WebhookEvent, Question, Form, QuestionOption, QuestionUpload
-from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
-from src.database.enums import QuestionEnum as QE
-from settings import FormMapping
 from sqlalchemy.orm import Session
 
+from settings import FormMapping
+from src.app.schemas.webhooks import WebhookEvent, Question, Form
+from src.database.enums import QuestionEnum as QE
+from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
 
-# TODO: add edition
+
 def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
     form: Form = data.data
     questions: list[Question] = form.fields
@@ -33,7 +33,13 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                         break  # Only 2 options, Yes and No.
             case _:
                 extra_questions.append(question)
-    print(attributes)
+
+    # Check all attributes are included and not None
+    needed = {'first_name', 'last_name', 'preferred_name', 'email_address', 'phone_number', 'wants_to_be_student_coach'}
+    diff = set(attributes.keys()) - needed
+    if len(diff) != 0:
+        raise Exception(f'Missing questions for Attributes {diff}')
+
     student: Student = Student(**attributes)
 
     db.add(student)
@@ -88,7 +94,6 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                                 answer=option.text,
                                 question=model
                             ))
-                            #break  # Only one answer per value in checkbox questions.
             case _:
                 # TODO: replace with proper handling, preferably just log and don't fail hard.
                 raise Exception('Unkown question type')

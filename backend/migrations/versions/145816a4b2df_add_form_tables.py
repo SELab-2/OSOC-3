@@ -24,7 +24,7 @@ def upgrade():
         sa.Column('webhook_id', sa.Integer(), nullable=False),
         sa.Column('uuid', sqlalchemy_utils.types.uuid.UUIDType(binary=False), nullable=True),
         sa.Column('edition_id', sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], ),
+        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='webhook_urls_editions_fk'),
         sa.PrimaryKeyConstraint('webhook_id')
     )
     op.create_table(
@@ -36,7 +36,7 @@ def upgrade():
         ), nullable=False),
         sa.Column('question', sa.Text(), nullable=False),
         sa.Column('student_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], ),
+        sa.ForeignKeyConstraint(['student_id'], ['students.student_id'], name='questions_students_fk'),
         sa.PrimaryKeyConstraint('question_id')
     )
     op.create_table(
@@ -44,7 +44,7 @@ def upgrade():
         sa.Column('answer_id', sa.Integer(), nullable=False),
         sa.Column('answer', sa.Text(), nullable=True),
         sa.Column('question_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], ),
+        sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], name='question_answers_questions_fk'),
         sa.PrimaryKeyConstraint('answer_id')
     )
     op.create_table(
@@ -55,7 +55,7 @@ def upgrade():
         sa.Column('mime_type', sa.Text(), nullable=False),
         sa.Column('size', sa.Integer(), nullable=False),
         sa.Column('question_id', sa.Integer(), nullable=False),
-        sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], ),
+        sa.ForeignKeyConstraint(['question_id'], ['questions.question_id'], name='question_file_answers_questions_fk'),
         sa.PrimaryKeyConstraint('file_answer_id')
     )
 
@@ -64,8 +64,8 @@ def upgrade():
         batch_op.add_column(sa.Column('last_name', sa.Text(), nullable=False))
         batch_op.add_column(sa.Column('preferred_name', sa.Text(), nullable=True))
         batch_op.add_column(sa.Column('edition_id', sa.Integer(), nullable=True))
-        batch_op.drop_constraint('students_ibfk_1', type_='foreignkey')
-        batch_op.create_foreign_key(None, 'editions', ['edition_id'], ['edition_id'])
+        batch_op.drop_constraint('students_webhooks_fk', type_='foreignkey')
+        batch_op.create_foreign_key('students_editions_fk', 'editions', ['edition_id'], ['edition_id'])
         batch_op.drop_column('cv_webhook_id')
         batch_op.drop_column('name')
 
@@ -80,21 +80,22 @@ def downgrade():
         batch_op.add_column(sa.Column('name', mysql.TEXT(), nullable=False))
         batch_op.add_column(
             sa.Column('cv_webhook_id', mysql.INTEGER(display_width=11), autoincrement=False, nullable=True))
-        batch_op.drop_constraint(None, type_='foreignkey')
-        batch_op.create_foreign_key('students_ibfk_1', 'webhooks', ['cv_webhook_id'], ['webhook_id'])
+        batch_op.drop_constraint('students_editions_fk', type_='foreignkey')
+        batch_op.create_foreign_key('students_webhooks_fk', 'webhooks', ['cv_webhook_id'], ['webhook_id'])
         batch_op.drop_column('edition_id')
         batch_op.drop_column('preferred_name')
         batch_op.drop_column('last_name')
         batch_op.drop_column('first_name')
 
-    op.create_table('webhooks',
-                    sa.Column('webhook_id', mysql.INTEGER(display_width=11), autoincrement=True, nullable=False),
-                    sa.Column('edition_id', mysql.INTEGER(display_width=11), autoincrement=False, nullable=True),
-                    sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='webhooks_ibfk_1'),
-                    sa.PrimaryKeyConstraint('webhook_id'),
-                    mariadb_default_charset='latin1',
-                    mariadb_engine='InnoDB'
-                    )
+    op.create_table(
+        'webhooks',
+        sa.Column('webhook_id', mysql.INTEGER(display_width=11), autoincrement=True, nullable=False),
+        sa.Column('edition_id', mysql.INTEGER(display_width=11), autoincrement=False, nullable=True),
+        sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='webhooks_editions_fk'),
+        sa.PrimaryKeyConstraint('webhook_id'),
+        mariadb_default_charset='latin1',
+        mariadb_engine='InnoDB'
+    )
     op.drop_table('question_file_answers')
     op.drop_table('question_answers')
     op.drop_table('questions')
