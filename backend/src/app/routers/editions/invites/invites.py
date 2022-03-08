@@ -1,15 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
+from src.app.schemas.invites import InviteLink, InvitesListResponse
+from src.app.utils.dependencies import get_edition
+from src.database.crud.invites import get_all_pending_invites
+from src.database.database import get_session
+from src.database.models import Edition
 
 invites_router = APIRouter(prefix="/invites", tags=[Tags.INVITES])
 
 
-@invites_router.get("/")
-async def get_invites(edition_id: int):
+@invites_router.get("/", response_model=InvitesListResponse)
+async def get_invites(edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
     """
     Get a list of all pending invitation links.
     """
+    invites_orm = get_all_pending_invites(db, edition)
+    return InvitesListResponse(invite_links=invites_orm)
 
 
 @invites_router.post("/")
