@@ -30,7 +30,7 @@ class Question(CamelCaseModel):
     key: str
     label: str
     type: str
-    value: str | list[QuestionUpload] | list[str] | int
+    value: str | list[QuestionUpload] | list[str] | int | None
     options: Optional[list[QuestionOption]]
 
 
@@ -52,3 +52,6 @@ class WebhookEvent(CamelCaseModel):
 
 class WebhookUrlResponse(BaseModel):
     uuid: UUID
+
+    class Config:
+        orm_mode = True
