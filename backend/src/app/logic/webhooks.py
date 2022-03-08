@@ -11,13 +11,13 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
     questions: list[Question] = form.fields
     extra_questions: list[Question] = []
 
-    attributes: dict[str, str | int] = {edition: Edition}
+    attributes: dict[str, str | int] = {'edition': edition}
 
     for question in questions:
         question: Question
-        match question.key:
+        match FormMapping(question.key):
             case FormMapping.FIRST_NAME:
-                attributes['name'] = question.value
+                attributes['first_name'] = question.value
             case FormMapping.LAST_NAME:
                 attributes['last_name'] = question.value
             case FormMapping.PREFERRED_NAME:
@@ -33,12 +33,15 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                         break  # Only 2 options, Yes and No.
             case _:
                 extra_questions.append(question)
-
+    print(attributes)
     student: Student = Student(**attributes)
 
-    db.add(Student)
+    db.add(student)
 
     for question in extra_questions:
+
+        if QE(question.type) == QE.CHECKBOXES and not question.options:
+            continue
 
         model = QuestionModel(
             type=question.type,
@@ -48,7 +51,9 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
 
         db.add(model)
 
-        match question.type:
+        print(question)
+
+        match QE(question.type):
             case QE.MULTIPLE_CHOICE:
                 value: str = question.value
                 for option in question.options:
@@ -58,31 +63,34 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                             question=model
                         ))
                         break  # Only one answer in multiple choice questions.
-            case QE.INPUT_EMAIL | QE.INPUT_LINK | QE.INPUT_TEXT | QE.TEXTAREA | QE.INPUT_PHONE_NUMBER:
-                db.add(QuestionAnswer(
-                    answer=question.value,
-                    question=model
-                ))
-            case QE.FILE_UPLOAD:
-                for upload in question.value:
-                    db.add(QuestionFileAnswer(
-                        file_name=upload.name,
-                        url=upload.url,
-                        mime_type=upload.mime_type,
-                        size=upload.size,
+            case QE.INPUT_EMAIL | QE.INPUT_LINK | QE.INPUT_TEXT | QE.TEXTAREA | QE.INPUT_PHONE_NUMBER | QE.INPUT_NUMBER:
+                if question.value:
+                    db.add(QuestionAnswer(
+                        answer=question.value,
                         question=model
                     ))
+            case QE.FILE_UPLOAD:
+                if question.value:
+                    for upload in question.value:
+                        db.add(QuestionFileAnswer(
+                            file_name=upload.name,
+                            url=upload.url,
+                            mime_type=upload.mime_type,
+                            size=upload.size,
+                            question=model
+                        ))
             case QE.CHECKBOXES:
                 for value in question.value:
                     for option in question.options:
                         if option.id == value:
+                            print('.')
                             db.add(QuestionAnswer(
                                 answer=option.text,
                                 question=model
                             ))
-                            break  # Only one answer per value in checkbox questions.
+                            #break  # Only one answer per value in checkbox questions.
             case _:
                 # TODO: replace with proper handling, preferably just log and don't fail hard.
                 raise Exception('Unkown question type')
 
-    db.flush()
+    db.commit()

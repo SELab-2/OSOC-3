@@ -2,6 +2,7 @@
 Note: the actual values of the enums are NOT used in the database, only the names of the fields
 """
 import enum
+from typing import Any
 
 
 @enum.unique
@@ -30,5 +31,12 @@ class QuestionEnum(enum.Enum):
     INPUT_LINK = "INPUT_LINK"
     INPUT_PHONE_NUMBER = "INPUT_PHONE_NUMBER"
     INPUT_TEXT = "INPUT_TEXT"
+    INPUT_NUMBER = "INPUT_NUMBER"
     MULTIPLE_CHOICE = "MULTIPLE_CHOICE"
     TEXTAREA = "TEXTAREA"
+
+    UNKNOWN = None  # Returned when no specific question can be matched
+
+    @classmethod
+    def _missing_(cls, value: object) -> Any:
+        return QuestionEnum.UNKNOWN

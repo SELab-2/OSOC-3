@@ -7,6 +7,7 @@ from src.app.schemas.webhooks import WebhookEvent, WebhookUrlResponse
 from src.database.models import Edition
 from src.app.utils.dependencies import get_edition
 from src.app.routers.tags import Tags
+from src.app.logic.webhooks import process_webhook
 
 webhooks_router = APIRouter(prefix="/webhook", tags=[Tags.WEBHOOKS])
 
@@ -21,5 +22,6 @@ def new(edition: Edition = Depends(get_edition), db: Session = Depends(get_sessi
 
 
 @webhooks_router.post("/{uuid}", dependencies=[Depends(valid_uuid)])
-def webhook(data: WebhookEvent, db: Session = Depends(get_session)):
-    return data
+def webhook(data: WebhookEvent, edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
+    process_webhook(edition, data, db)
+    return "OK"
