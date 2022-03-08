@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
-from typing import List
+from typing import List, Optional
 
 from src.app.routers.tags import Tags
 
-from fastapi import Depends
 from src.database.database import get_session
-from src.database.models import Edition
+from src.database.schemas import EditionBase, Edition
+from src.database.crud import editions as crud_editions
 from sqlalchemy.orm import Session
 
 from .invites import invites_router
@@ -32,8 +32,8 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_id}")
 
 
-@editions_router.get("/", tags=[Tags.EDITIONS])
-async def get_editions(db: Session = Depends(get_session)) -> List[Edition]:
+@editions_router.get("/",response_model=list[Edition], tags=[Tags.EDITIONS])
+async def get_editions(db: Session = Depends(get_session)):
     """Get a list of all editions.
 
     Args:
@@ -42,11 +42,24 @@ async def get_editions(db: Session = Depends(get_session)) -> List[Edition]:
     Returns:
         List[Edition]: a list of all the editions.
     """
-    return db.query(Edition).all()
+    return crud_editions.get_editions(db)
 
 
-@editions_router.post("/", tags=[Tags.EDITIONS])
-async def post_edition(db: Session = Depends(get_session)) -> Edition:
+@editions_router.get("/{edition_id}",response_model=Edition | None, tags=[Tags.EDITIONS])
+async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)):
+    """Get a specific edition.
+
+    Args:
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        Edition: an edition
+    """
+    return crud_editions.get_edition_by_key(db, edition_id)
+
+
+@editions_router.post("/",response_model=Edition, tags=[Tags.EDITIONS])
+async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
     """ Create a new edition.
 
     Args:
@@ -55,29 +68,17 @@ async def post_edition(db: Session = Depends(get_session)) -> Edition:
     Returns:
         Edition: the newly made edition object.
     """
-    new_edition: Edition = Edition()
-    # TODO year still hardcoded
-    new_edition.year = 2022
-    db.add(new_edition)
-    db.commit()
-    db.refresh(new_edition)
-    return new_edition
+    return crud_editions.create_edition(db, edition)
 
 
 @editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
-async def delete_edition(edition_id: int, db: Session = Depends(get_session)) -> dict:
+async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
     """Delete an existing edition.
 
     Args:
         edition_id (int): the id of the edition that needs to be deleted, if found.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
-    Returns:
-        dict: describes if the delete executed successfully.
+    Returns: nothing
     """
-    edition: Edition = db.get(Edition, edition_id)
-    if edition is not None:
-        db.delete(edition)
-        db.commit()
-        return {"status": "deletion successful"}
-    else: return {"status": "This edition was not found"}
+    crud_editions.delete_edition(db, edition_id)
