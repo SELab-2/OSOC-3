@@ -2,8 +2,13 @@ from sqlalchemy.orm import Session
 
 from src.app.schemas.invites import InvitesListResponse, EmailAddress, MailtoLink
 from src.app.utils.mailto import generate_mailto_string
-from src.database.crud.invites import create_invite_link, get_all_pending_invites
-from src.database.models import Edition
+from src.database.crud.invites import create_invite_link, delete_invite_link as delete_link_db, get_all_pending_invites
+from src.database.models import Edition, InviteLink
+
+
+def delete_invite_link(db: Session, invite_link: InviteLink):
+    """Delete an invite link from the database"""
+    delete_link_db(db, invite_link)
 
 
 def get_pending_invites_list(db: Session, edition: Edition) -> InvitesListResponse:
