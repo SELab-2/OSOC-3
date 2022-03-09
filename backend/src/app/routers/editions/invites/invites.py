@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from src.app.logic.invites import create_mailto_link, get_pending_invites_list
 from src.app.routers.tags import Tags
-from src.app.schemas.invites import InvitesListResponse, EmailAddress
+from src.app.schemas.invites import InvitesListResponse, EmailAddress, MailtoLink
 from src.app.utils.dependencies import get_edition
-from src.database.crud.invites import get_all_pending_invites
 from src.database.database import get_session
 from src.database.models import Edition
 
@@ -12,19 +12,19 @@ invites_router = APIRouter(prefix="/invites", tags=[Tags.INVITES])
 
 
 @invites_router.get("/", response_model=InvitesListResponse)
-async def get_invites(edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
+async def get_invites(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all pending invitation links.
     """
-    invites_orm = get_all_pending_invites(db, edition)
-    return InvitesListResponse(invite_links=invites_orm)
+    return get_pending_invites_list(db, edition)
 
 
-@invites_router.post("/")
-async def create_invite(email: EmailAddress, edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
+@invites_router.post("/", response_model=MailtoLink)
+async def create_invite(email: EmailAddress, db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Create a new invitation link for the current edition.
     """
+    return create_mailto_link(db, edition, email)
 
 
 @invites_router.delete("/{invite_id}")

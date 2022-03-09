@@ -10,6 +10,8 @@ from .webhooks import WebhookProcessException
 def install_handlers(app: FastAPI):
     """Install all custom exception handlers"""
 
+    # Note: pydantic validation raises a pydantic.ValidationError when validation fails,
+    # so it's not possible to catch our own custom ValidationException here!
     @app.exception_handler(ValidationError)
     def validation_exception(_request: Request, _exception: ValidationError):
         return JSONResponse(
