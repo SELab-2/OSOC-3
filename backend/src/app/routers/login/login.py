@@ -9,6 +9,8 @@ from fastapi import APIRouter
 from src.database.database import get_session
 from src.database import models
 from sqlalchemy.orm import Session
+from environs import Env
+
 
 from src.app.routers.tags import Tags
 
@@ -19,10 +21,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
 
-# to get a string like this run:
-# openssl rand -hex 32
-# TODO: how should this be stored?
-SECRET_KEY = "4d16a9cc83d74144322e893c879b5f639088c15dc1606b11226abbd7e97f5ee5"
+env = Env()
+
+# Read the .env file
+env.read_env()
+
+SECRET_KEY: str = env.str("SECRET_KEY")
 ALGORITHM = "HS256"
 # TODO: set time wanted
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
