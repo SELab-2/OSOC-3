@@ -26,4 +26,13 @@ class InviteLink(CamelCaseModel):
 
 
 class InvitesListResponse(CamelCaseModel):
+    """A list of invite link models
+    Sending a pure list as JSON is bad practice, lists should be wrapped in
+    a dict with 1 key that leads to them instead. This class does that.
+    """
     invite_links: list[InviteLink]
+
+
+class MailtoLink(CamelCaseModel):
+    """A response containing a mailto link to invite a user with"""
+    mail_to: str
