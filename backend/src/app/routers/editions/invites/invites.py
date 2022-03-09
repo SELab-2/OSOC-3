@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
-from src.app.schemas.invites import InviteLink, InvitesListResponse
+from src.app.schemas.invites import InvitesListResponse, EmailAddress
 from src.app.utils.dependencies import get_edition
 from src.database.crud.invites import get_all_pending_invites
 from src.database.database import get_session
@@ -21,7 +21,7 @@ async def get_invites(edition: Edition = Depends(get_edition), db: Session = Dep
 
 
 @invites_router.post("/")
-async def create_invite(edition_id: int):
+async def create_invite(email: EmailAddress, edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
     """
     Create a new invitation link for the current edition.
     """

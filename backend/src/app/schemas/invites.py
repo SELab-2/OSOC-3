@@ -1,10 +1,21 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import Field, validator
+
+from src.app.schemas.validators import validate_email_format
+from src.app.schemas.webhooks import CamelCaseModel
 
 
-# TODO perhaps use CamelCaseModel? What does it do?
-class InviteLink(BaseModel):
+class EmailAddress(CamelCaseModel):
+    email: str
+
+    @validator("email")
+    def valid_format(cls, v):
+        """Check that the email is of a valid format"""
+        validate_email_format(v)
+
+
+class InviteLink(CamelCaseModel):
     uuid: UUID
     target_email: str = Field(alias="email")
     edition_id: int
@@ -14,5 +25,5 @@ class InviteLink(BaseModel):
         orm_mode = True
 
 
-class InvitesListResponse(BaseModel):
+class InvitesListResponse(CamelCaseModel):
     invite_links: list[InviteLink]
