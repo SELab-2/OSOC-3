@@ -17,6 +17,7 @@ class EmailAddress(CamelCaseModel):
 
 
 class InviteLink(CamelCaseModel):
+    invite_link_id: int
     uuid: UUID
     target_email: str = Field(alias="email")
     edition_id: int
