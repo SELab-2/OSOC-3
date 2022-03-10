@@ -7,9 +7,9 @@ class Tags(enum.Enum):
 
     Helps to structure the API in the documentation.
     """
-    LOGIN = "login"
     EDITIONS = "editions"
     INVITES = "invites"
+    LOGIN = "login"
     PROJECTS = "projects"
     REGISTRATION = "registration"
     SKILLS = "skills"
