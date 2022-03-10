@@ -1,13 +1,14 @@
 import React from "react";
-import {Nav, NavLink, Bars, NavMenu, NavBtn, NavBtnLink} from "./NavBarElementss";
+import {Nav, NavLink, Bars, NavMenu} from "./NavBarElementss";
 
 function NavBar() {
     return(
         <>
             <Nav>
-                <NavLink to="/students">
-                    <img src={require('../../images/header_logo.png')} alt='logo'/>
-                </NavLink>
+                <div className="logo-plus-name">
+                    <img src={require('../../images/header_logo.png')} alt='logo' style={{marginRight: '20px'}}/>
+                    <h1> Selections</h1>
+                </div>
                 <Bars />
                 <NavMenu>
                     <NavLink to="/students" activeStyle>
@@ -23,9 +24,6 @@ function NavBar() {
                         Log out
                     </NavLink>
                 </NavMenu>
-                <NavBtn>
-                    <NavBtnLink to="/register">Register</NavBtnLink>
-                </NavBtn>
             </Nav>
         </>
     )
