@@ -24,7 +24,7 @@ DB_PORT: int = env.int("DB_PORT", 3306)
 DB_USE_SQLITE: bool = env.bool("DB_USE_SQLITE", False)
 
 """JWT token key"""
-SECRET_KEY: str = env.str("SECRET_KEY")
+SECRET_KEY: str = env.str("SECRET_KEY", "4d16a9cc83d74144322e893c879b5f639088c15dc1606b11226abbd7e97f5ee5")
 
 
 @enum.unique
