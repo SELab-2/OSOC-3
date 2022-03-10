@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import { NavLink as Link } from "react-router-dom";
 import {FaBars} from 'react-icons/fa'
+import "../../css-files/App.css"
 
 export const Nav = styled.nav`
     background: #000;
@@ -22,7 +23,7 @@ export const NavLink = styled(Link)`
     cursor: pointer;
     
     &.active {
-        color: #15cdfc
+        color: var(--osoc_red)
     }
 `
 
@@ -43,8 +44,7 @@ export const Bars = styled(FaBars)`
 
 export const NavMenu = styled.div`
     display: flex;
-    align-items: center;
-    margin-right: -24px;
+    margin-right: 30px;
     
     @media screen and (max-width: 768px) {
         display: none;
@@ -63,7 +63,7 @@ export const NavBtn = styled.nav`
 
 export const NavBtnLink = styled(Link)`
     border-radius: 4px;
-    background: #256ce1;
+    background: var(--osoc_red);
     padding: 10px 22px;
     color: #fff;
     border: none;
