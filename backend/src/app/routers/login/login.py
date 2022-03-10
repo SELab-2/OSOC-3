@@ -6,10 +6,10 @@ from jose import JWTError, jwt, ExpiredSignatureError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from fastapi import APIRouter
+import settings
 from src.database.database import get_session
 from src.database import models
 from sqlalchemy.orm import Session
-from environs import Env
 
 
 from src.app.routers.tags import Tags
@@ -21,12 +21,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
 
-env = Env()
-
-# Read the .env file
-env.read_env()
-
-SECRET_KEY: str = env.str("SECRET_KEY")
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24
 
@@ -106,7 +101,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     """Encode the user data with an expire timestamp to create the token
     """
     to_encode = data.copy()
-    if expires_delta:
+    if expires_delta is not None:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(hours=24)
