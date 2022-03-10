@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 
 from src.app.routers.tags import Tags
@@ -81,4 +81,5 @@ async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
 
     Returns: nothing
     """
-    crud_editions.delete_edition(db, edition_id)
+    status: bool = crud_editions.delete_edition(db, edition_id)
+    if not status: raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
