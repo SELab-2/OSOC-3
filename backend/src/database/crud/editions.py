@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from src.database.models import Edition
 from src.database.schemas import EditionBase
@@ -34,7 +33,7 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
     """ Create a new edition.
 
     Args:
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+        db (Session): connection with the database.
         edition (EditionBase): an edition that needs to be created
 
     Returns:
@@ -48,9 +47,19 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
     return new_edition
 
 
-def delete_edition(db: Session, edition_id: int):
+def delete_edition(db: Session, edition_id: int) -> bool:
+    """Delete an edition.
+
+    Args:
+        db (Session): connection with the database.
+        edition_id (int): the primary key of the edition that needs to be deleted
+
+    Returns:
+        bool: True if the edition was found and deleted, False if the edition was not found
+    """
     edition_to_delete = get_edition_by_key(db, edition_id)
     if edition_to_delete is not None:
         db.delete(edition_to_delete)
         db.commit()
-    else: raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
+        return True
+    else: return False
