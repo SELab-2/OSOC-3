@@ -1,53 +1,27 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import "./Buttons.css";
+import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NavBar from './components/navbar'
+import LoginPage from "./views/LoginPage";
+import Students from "./views/Students";
+import Users from "./views/Users";
+import ProjectsPage from "./views/ProjectsPage";
+import RegisterForm from "./views/RegisterForm";
+import ErrorPage from "./views/ErrorPage";
 
 function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <nav className="navbar">
-                    <h1>Selections</h1>
-                    <ul className="nav-menu">
-                        <li className="nav-item">
-                            <a href="#" className="nav-link">
-                                Home
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="#" className="nav-link">
-                                Projects
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="#" className="nav-link">
-                                About
-                            </a>
-                        </li>
-                    </ul>
-                    <div className="hamburger">
-                        <span className="bar"></span>
-                        <span className="bar"></span>
-                        <span className="bar"></span>
-                    </div>
-                </nav>
-                <img src={logo} className="App-logo" alt="logo" />
-                <h1>Open Summer Of Code</h1>
-                <button className="red_login_button">
-                    Mail account
-                    <span></span>
-                </button>
-                <button className="green_login_button">
-                    Google
-                    <span></span>
-                </button>
-                <button className="red_login_button">
-                    Github
-                    <span></span>
-                </button>
-            </header>
-        </div>
+        <Router>
+            <NavBar/>
+            <Routes>
+                <Route path="/" element={<LoginPage/>}/>
+                <Route path="/register" element={<RegisterForm/>}/>
+                <Route path="/students" element={<Students/>}/>
+                <Route path="/users" element={<Users/>}/>
+                <Route path="/projects" element={<ProjectsPage/>}/>
+                <Route path="*" element={<ErrorPage/>}/>
+            </Routes>
+        </Router>
     );
 }
 
