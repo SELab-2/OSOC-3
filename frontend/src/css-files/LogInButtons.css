@@ -1,6 +1,8 @@
 .login-buttons {
     width: available;
     margin-top: 60px;
+    display: flex;
+    justify-content: center;
 }
 
 .login-button {
