@@ -1,0 +1,34 @@
+:root {
+    --osoc_blue: #0a0839;
+    --osoc_orange: #fcb70f;
+    --osoc_red: #f14a3b;
+    --osoc_green: #44dba4;
+    --react_dark_grey: #323232;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--react_dark_grey);
+    color: white;
+}
+
+.welcome-text {
+    width: 800px;
+    margin-bottom: 40px;
+    text-align: center;
+    justify-content: center;
+}
+
+.logo-plus-name {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 100%;
+}
