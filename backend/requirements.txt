@@ -22,5 +22,7 @@ SQLAlchemy==1.4.31
 # SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
 sqlalchemy-utils==0.38.2
 
+pydantic>=1.9.0
+
 # Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
 pyhumps==3.5.3
