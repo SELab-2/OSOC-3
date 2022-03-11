@@ -19,7 +19,9 @@ class UserBase(BaseModel):
 
 @users_router.get("/", response_model=list[UserBase])
 async def get_users(edition_id: int, db: Session = Depends(get_session)) -> list[User]:
-    """Get a list of all users from given edition."""
+    """
+    Get a list of all users from given edition.
+    """
     return get_users_from_edition(db, edition_id)
 
 
