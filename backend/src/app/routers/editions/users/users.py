@@ -3,8 +3,10 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
+from src.database.crud.users import get_users_from_edition
 from src.database.database import get_session
 from src.database.models import User
+
 
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
@@ -17,14 +19,8 @@ class UserBase(BaseModel):
 
 @users_router.get("/", response_model=list[UserBase])
 async def get_users(edition_id: int, db: Session = Depends(get_session)) -> list[User]:
-    """Get a list of all users from given edition.
-    Args:
-        edition_id (int): the id of the edition of which the users need to be
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-    Returns:
-        list[User]: a list of all users from the given edition
-    """
-    return db.query(User).all()  # TODO: filter edition
+    """Get a list of all users from given edition."""
+    return get_users_from_edition(db, edition_id)
 
 
 @users_router.patch("/{user_id}/status")
