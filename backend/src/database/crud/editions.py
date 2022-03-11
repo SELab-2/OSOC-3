@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src.database.models import Edition
-from src.database.schemas import EditionBase
+from src.app.schemas.editions import EditionBase
 from typing import List, Optional
 
 
@@ -29,7 +29,7 @@ def get_editions(db: Session) -> List[Edition]:
     return db.query(Edition).all()
 
 
-def create_edition(db: Session, edition: EditionBase) -> Edition:
+def create_edition(db: Session, edition: EditionBase) -> Optional[Edition]:
     """ Create a new edition.
 
     Args:
@@ -42,10 +42,13 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
     new_edition: Edition = Edition()
     new_edition.year = edition.year
     db.add(new_edition)
-    db.commit()
-    db.refresh(new_edition)
-    return new_edition
-
+    try:
+        db.commit()
+        db.refresh(new_edition)
+        return new_edition
+    except Exception:
+        db.rollback()
+        return None
 
 def delete_edition(db: Session, edition_id: int) -> bool:
     """Delete an edition.

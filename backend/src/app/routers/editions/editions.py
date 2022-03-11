@@ -4,9 +4,11 @@ from typing import List, Optional
 from src.app.routers.tags import Tags
 
 from src.database.database import get_session
-from src.database.schemas import EditionBase, Edition
+from src.app.schemas.editions import EditionBase, Edition
 from src.database.crud import editions as crud_editions
 from sqlalchemy.orm import Session
+
+from starlette import status
 
 from .invites import invites_router
 from .projects import projects_router
@@ -47,7 +49,7 @@ async def get_editions(db: Session = Depends(get_session)):
     return crud_editions.get_editions(db)
 
 
-@editions_router.get("/{edition_id}",response_model=Edition | None, tags=[Tags.EDITIONS])
+@editions_router.get("/{edition_id}", response_model=Edition | None, tags=[Tags.EDITIONS])
 async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)):
     """Get a specific edition.
 
@@ -57,10 +59,13 @@ async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)
     Returns:
         Edition: an edition
     """
-    return crud_editions.get_edition_by_key(db, edition_id)
+    result: Optional[Edition] = crud_editions.get_edition_by_key(db, edition_id)
+    if result == None:
+        raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
+    else: return result
 
 
-@editions_router.post("/",response_model=Edition, tags=[Tags.EDITIONS])
+@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS])
 async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
     """ Create a new edition.
 
@@ -70,10 +75,12 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     Returns:
         Edition: the newly made edition object.
     """
-    return crud_editions.create_edition(db, edition)
+    result: Optional[Edition] = crud_editions.create_edition(db, edition)
+    if result == None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"An edition in {edition.year} already exists")
 
 
-@editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
+@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS])
 async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
     """Delete an existing edition.
 

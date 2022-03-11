@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from fastapi import Depends
 from src.database.database import get_session
 from src.database.models import Student
-from src.database.schemas import StudentBase
 from sqlalchemy.orm import Session
 
 from typing import List
@@ -16,7 +15,7 @@ students_router.include_router(students_suggestions_router, prefix="/{student_id
 
 
 @students_router.get("/")
-async def get_students(edition_id: int, db: Session = Depends(get_session)) -> List[StudentBase]:
+async def get_students(edition_id: int, db: Session = Depends(get_session)):
     """Get a list of all students.
 
     Args:

@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from src.database.database import get_session
 from src.database.models import Skill
-from src.database.schemas import SkillBase
+from src.app.schemas.skills import SkillBase
 from sqlalchemy.orm import Session
 
 from typing import List
