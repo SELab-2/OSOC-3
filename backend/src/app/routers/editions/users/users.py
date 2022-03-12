@@ -15,9 +15,8 @@ async def get_users(edition_id: int, db: Session = Depends(get_session)):
     """
     Get a list of all users from given edition.
     """
-    users = logic.get_users_list(db, edition_id)
 
-    return users
+    return logic.get_users_list(db, edition_id)
 
 
 @users_router.patch("/{user_id}/status", status_code=204)
@@ -26,7 +25,7 @@ async def update_user_status(edition_id: int, user_id: int, status: StatusBody, 
     Update the status of a user (admin/coach/disabled) for a given edition.
     """
 
-    logic.update_user_status(db, edition_id, user_id, status)
+    logic.update_user_status(db, edition_id, user_id, status.status)
 
 
 @users_router.post("/{user_id}/request")
