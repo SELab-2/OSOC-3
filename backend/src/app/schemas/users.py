@@ -29,3 +29,6 @@ class Status(str, Enum):
 class StatusBody(CamelCaseModel):
     status: Status
 
+
+class RequestAnswer(CamelCaseModel):
+    accept: bool
