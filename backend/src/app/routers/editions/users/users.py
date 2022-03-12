@@ -19,19 +19,29 @@ async def get_users(edition_id: int, db: Session = Depends(get_session)):
     return logic.get_users_list(db, edition_id)
 
 
-@users_router.patch("/{user_id}/status", status_code=204)
-async def update_user_status(edition_id: int, user_id: int, status: StatusBody, db: Session = Depends(get_session)):
+@users_router.post("/{user_id}/coach", status_code=204)
+async def add_user_as_coach(edition_id: int, user_id, int, db: Session = Depends(get_session)):
     """
-    Update the status of a user (admin/coach/disabled) for a given edition.
+    Add user as coach for the given edition
     """
 
-    logic.update_user_status(db, edition_id, user_id, status.status)
+    logic.add_user_as_coach(db, edition_id, user_id)
+
+
+@users_router.delete("/{user_id}/coach", status_code=204)
+async def delete_user_as_coach(edition_id: int, user_id, int, db: Session = Depends(get_session)):
+    """
+    Remove user as coach for the given edition
+    """
+
+    logic.delete_user_as_coach(db, edition_id, user_id)
 
 
 @users_router.post("/{user_id}/request", status_code=204)
 async def handle_user_request(edition_id: int, user_id: int, answer: RequestAnswer, db: Session = Depends(get_session)):
     """
     Accept or decline the pending invite request for a given user.
+    Accept will add the user as coach to the edition
     """
 
     logic.handle_user_request(db, edition_id, user_id, answer)

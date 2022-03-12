@@ -15,11 +15,20 @@ def get_users_list(db: Session, edition: int) -> UsersListResponse:
     return UsersListResponse(users=users_orm)
 
 
-def update_user_status(db: Session, edition_id: int, user_id: int, status: Status):
-    """Change the status of a given user in an edition"""
+def add_user_as_coach(db: Session, edition_id: int, user_id: int):
+    """
+    Add user as admin for the given edition if not already coach
+    """
 
-    status = {Status.DISABLED: RoleEnum.DISABLED, Status.ADMIN: RoleEnum.ADMIN, Status.COACH: RoleEnum.COACH}[status]
-    users_crud.update_user_status(db, edition_id, user_id, status)
+    users_crud.add_user_as_coach(db, edition_id, user_id)
+
+
+def delete_user_as_coach(db: Session, edition_id: int, user_id: int):
+    """
+    Add user as admin for the given edition if not already coach
+    """
+
+    users_crud.delete_user_as_coach(db, edition_id, user_id)
 
 
 def handle_user_request(db: Session, edition_id: int, user_id: int, answer: RequestAnswer):
