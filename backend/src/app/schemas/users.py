@@ -1,6 +1,7 @@
-from enum import Enum
+from pydantic import Field
 
 from src.app.schemas.webhooks import CamelCaseModel
+from src.database.enums import RoleEnum
 
 
 class User(CamelCaseModel):
@@ -10,12 +11,11 @@ class User(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class UsersListResponse(CamelCaseModel):
     users: list[User]
 
 
-class RequestAnswer(CamelCaseModel):
-    accept: bool
+class StatusBody(CamelCaseModel):
+    status: RoleEnum
