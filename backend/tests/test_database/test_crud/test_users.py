@@ -7,9 +7,9 @@ from src.database.enums import RoleEnum
 
 def test_get_users_from_edition(database_session: Session):
     # Create users
-    user1 = models.User(name="user1", email="email1")
+    user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
-    user2 = models.User(name="user2", email="email2")
+    user2 = models.User(name="user2", email="user2@mail.com")
     database_session.add(user2)
 
     # Create editions
@@ -42,17 +42,17 @@ def test_get_users_from_edition(database_session: Session):
 
 
 def test_update_user_status(database_session: Session):
-    # Create users
-    user1 = models.User(name="user1", email="email1")
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
 
-    # Create editions
+    # Create edition
     edition1 = models.Edition(year=1)
     database_session.add(edition1)
 
     database_session.commit()
 
-    # Create roles
+    # Create role
     user1_edition1_role = models.UserRole(user_id=user1.user_id, role=RoleEnum.COACH, edition_id=edition1.edition_id)
     database_session.add(user1_edition1_role)
 

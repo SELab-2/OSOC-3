@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
-import src.database.crud.users as crud_users
+import src.app.logic.users as logic
 from src.app.schemas.users import UsersListResponse, StatusBody
 from src.database.database import get_session
 
@@ -15,7 +15,7 @@ async def get_users(edition_id: int, db: Session = Depends(get_session)):
     """
     Get a list of all users from given edition.
     """
-    users = crud_users.get_users_from_edition(db, edition_id)
+    users = logic.get_users_list(db, edition_id)
 
     return users
 
@@ -25,7 +25,7 @@ async def update_user_status(edition_id: int, user_id: int, status: StatusBody, 
     """
     Update the status of a user (admin/coach/disabled) for a given edition.
     """
-    return crud_users.update_user_status(db, edition_id, user_id, status.status)
+    return None #crud_users.update_user_status(db, edition_id, user_id, status.status)
 
 
 @users_router.post("/{user_id}/request")
