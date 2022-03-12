@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from backend.src.database.models import Edition
+from src.database.models import Edition
 from src.database.models import Skill
 from src.app.schemas.skills import SkillBase
 from typing import List, Optional
