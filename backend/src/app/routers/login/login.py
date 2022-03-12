@@ -40,11 +40,6 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    """Data after decoding token"""
-    user_id: int | None = None
-
-
 class User(BaseModel):
     """The fields used to find a user in the DB"""
     user_id: int | None = None
@@ -69,11 +64,13 @@ def get_password_hash(password: str) -> str:
 #     user_auth = db.query(models.AuthEmail).filter(models.AuthEmail.user_id == user.user_id).first()
 #     return UserInDB(user_id=user.user_id, pw_hash=user_auth.pw_hash)
 
-def get_user(email: str, db = fake_users_db) -> UserInDB:
+def get_user(email: str, db = fake_users_db) -> UserInDB | None:
     """Request the user_id and hashed password from the db"""
     for key in db:
         if db[key]["email"] == email:
-            return UserInDB(user_id=db[key]["user_id"], pw_hash=db[key]["pw_hash"])
+            return UserInDB(user_id=int(db[key]["user_id"]), pw_hash=db[key]["pw_hash"])
+
+    return None
 
 
 # TODO: fix to actual db
@@ -88,12 +85,12 @@ def get_user_by_id(id: int, db=fake_users_db) -> UserInDB:
     return UserInDB(user_id=db[id]["user_id"], pw_hash=db[id]["pw_hash"])
 
 
-def authenticate_user(email: str, password: str) -> bool | UserInDB:
+def authenticate_user(email: str, password: str) -> UserInDB | None:
     user = get_user(email)
-    if not user:
-        return False
+    if user is None:
+        return None
     if not verify_password(password, user.pw_hash):
-        return False
+        return None
     return user
 
 
@@ -122,18 +119,18 @@ async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> UserIn
     expire_exception = HTTPException(status_code=400, detail="Inactive user")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: int | None = payload.get("sub")
         if user_id is None:
             raise credentials_exception
-        token_data = TokenData(user_id=user_id)
+
+        user = get_user_by_id(int(user_id))
+        if user is None:
+            raise credentials_exception
+        return user
     except ExpiredSignatureError:
         raise expire_exception
     except JWTError:
         raise credentials_exception
-    user = get_user_by_id(token_data.user_id)
-    if user is None:
-        raise credentials_exception
-    return user
 
 
 @login_router.post("/token", response_model=Token)
@@ -141,7 +138,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     """Called when logging in, generates an access token to use in other functions
     """
     user = authenticate_user(form_data.username, form_data.password)
-    if not user:
+    if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
