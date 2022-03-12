@@ -23,5 +23,10 @@ def new(edition: Edition = Depends(get_edition), db: Session = Depends(get_sessi
 
 @webhooks_router.post("/{uuid}", dependencies=[Depends(valid_uuid)])
 def webhook(data: WebhookEvent, edition: Edition = Depends(get_edition), db: Session = Depends(get_session)):
-    process_webhook(edition, data, db)
+    try:
+        process_webhook(edition, data, db)
+    except Exception as e:  # When processing fails, write the webhook data to a file to make sure it is not lost.
+        with open(f'failed-webhook-{data.event_id}.json') as f:
+            f.write(data.json())
+        raise e  # Let the exception propagate further.
     return "OK"

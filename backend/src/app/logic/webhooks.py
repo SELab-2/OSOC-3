@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from settings import FormMapping
+from src.app.exceptions.webhooks import WebhookProcessException
 from src.app.schemas.webhooks import WebhookEvent, Question, Form
 from src.database.enums import QuestionEnum as QE
 from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
@@ -38,7 +39,7 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
     needed = {'first_name', 'last_name', 'preferred_name', 'email_address', 'phone_number', 'wants_to_be_student_coach'}
     diff = set(attributes.keys()) - needed
     if len(diff) != 0:
-        raise Exception(f'Missing questions for Attributes {diff}')
+        raise WebhookProcessException(f'Missing questions for Attributes {diff}')
 
     student: Student = Student(**attributes)
 
@@ -95,7 +96,6 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                                 question=model
                             ))
             case _:
-                # TODO: replace with proper handling, preferably just log and don't fail hard.
-                raise Exception('Unkown question type')
+                raise WebhookProcessException('Unknown question type')
 
     db.commit()
