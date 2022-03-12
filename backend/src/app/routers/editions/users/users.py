@@ -1,35 +1,31 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
-from src.database.crud.users import get_users_from_edition
+import src.database.crud.users as crud_users
+from src.app.schemas.users import UsersListResponse, StatusBody
 from src.database.database import get_session
-from src.database.models import User
 
 
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 
-class UserBase(BaseModel):
-    user_id: int
-    name: str
-    email: str
-
-
-@users_router.get("/", response_model=list[UserBase])
-async def get_users(edition_id: int, db: Session = Depends(get_session)) -> list[User]:
+@users_router.get("/", response_model=UsersListResponse)
+async def get_users(edition_id: int, db: Session = Depends(get_session)):
     """
     Get a list of all users from given edition.
     """
-    return get_users_from_edition(db, edition_id)
+    users = crud_users.get_users_from_edition(db, edition_id)
+
+    return users
 
 
 @users_router.patch("/{user_id}/status")
-async def update_user_status(edition_id: int, user_id: int):
+async def update_user_status(edition_id: int, user_id: int, status: StatusBody, db: Session = Depends(get_session)):
     """
-    Update the status of a user (admin/coach/disabled).
+    Update the status of a user (admin/coach/disabled) for a given edition.
     """
+    return crud_users.update_user_status(db, edition_id, user_id, status.status)
 
 
 @users_router.post("/{user_id}/request")
