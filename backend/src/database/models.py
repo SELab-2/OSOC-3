@@ -292,8 +292,8 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
     editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
