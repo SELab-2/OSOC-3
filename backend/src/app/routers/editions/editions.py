@@ -4,7 +4,7 @@ from starlette import status
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
-from src.app.schemas.editions import EditionBase, Edition
+from src.app.schemas.editions import EditionBase, Edition, EditionList
 
 from src.database.database import get_session
 from src.database.crud import editions as crud_editions
@@ -12,7 +12,6 @@ from src.database.crud import editions as crud_editions
 from .invites import invites_router
 from .projects import projects_router
 from .register import registration_router
-from .skills import skills_router
 from .students import students_router
 from .users import users_router
 from .webhooks import webhooks_router
@@ -24,8 +23,7 @@ editions_router = APIRouter(prefix="/editions")
 # Register all child routers
 child_routers = [
     invites_router, projects_router, registration_router,
-    skills_router, students_router, users_router,
-    webhooks_router
+    students_router, users_router, webhooks_router
 ]
 
 for router in child_routers:
@@ -35,7 +33,7 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_id}")
 
 
-@editions_router.get("/",response_model=list[Edition], tags=[Tags.EDITIONS])
+@editions_router.get("/",response_model=EditionList, tags=[Tags.EDITIONS])
 async def get_editions(db: Session = Depends(get_session)):
     """Get a list of all editions.
 

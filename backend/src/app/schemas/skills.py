@@ -24,4 +24,32 @@ class SkillBase(CamelCaseModel):
         CamelCaseModel (CamelCaseModel): needed to make SkillBase pydantic.
     """
     name: str
-    desc: str
+    description: str
+
+
+class Skill(CamelCaseModel):
+    """Schema of a created skill
+
+    Args:
+        CamelCaseModel (CamelCaseModel): needed to make SkillBase pydantic.
+    """
+    skill_id: int
+    name: str
+    description: str
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+
+
+class SkillList(CamelCaseModel):
+    """A list of Skills
+
+    Args:
+        CamelCaseModel (CamelCaseModel): needed to make SkillList pydantic.
+    """
+    skills: list[Skill]
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True

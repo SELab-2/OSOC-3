@@ -17,7 +17,7 @@ class CamelCaseModel(BaseModel):
         allow_population_by_field_name = True
 
 
-class EditionBase(BaseModel):
+class EditionBase(CamelCaseModel):
     """Schema of an edition
 
     Args:
@@ -26,14 +26,28 @@ class EditionBase(BaseModel):
     year: int
 
 
-class Edition(BaseModel):
+class Edition(CamelCaseModel):
     """Schema of an created edition
 
     Args:
-        BaseModel (BaseModel): needed to make EditionBase pydantic.
+        CamelCaseModel (CamelCaseModel): needed to make EditionBase pydantic.
     """
     edition_id: int
     year: int
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
+
+
+class EditionList(CamelCaseModel):
+    """A list of editions
+
+    Args:
+        CamelCaseModel (CamelCaseModel): needed to make EditionList pydantic.
+    """
+    editions: list[Edition]
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
