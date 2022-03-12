@@ -42,7 +42,7 @@ def test_get_users_from_edition(database_session: Session):
     assert user2.user_id == users[0].user_id
 
 
-def test_update_user_status(database_session: Session):
+def test_add_user_as_coach(database_session: Session):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
@@ -53,14 +53,7 @@ def test_update_user_status(database_session: Session):
 
     database_session.commit()
 
-    # Create role
-    user1_edition1_role = models.UserRole(user_id=user1.user_id, role=RoleEnum.COACH, edition_id=edition1.edition_id)
-    database_session.add(user1_edition1_role)
-
-    database_session.commit()
-
-    users_crud.update_user_status(database_session, edition1.edition_id, user1.user_id, RoleEnum.DISABLED)
-    assert user1_edition1_role.role == RoleEnum.DISABLED
+    # TODO
 
 
 def test_accept_request(database_session: Session):
