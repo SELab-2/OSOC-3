@@ -28,7 +28,3 @@ def update_user_status(db: Session, edition_id: int, user_id: int, status: RoleE
     )
 
     db.execute(stmt)
-
-
-
-

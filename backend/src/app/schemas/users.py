@@ -1,3 +1,5 @@
+from enum import Enum
+
 from pydantic import BaseModel
 
 from src.app.schemas.webhooks import CamelCaseModel
@@ -18,5 +20,7 @@ class UsersListResponse(CamelCaseModel):
     users: list[User]
 
 
-class StatusBody(CamelCaseModel):
-    status: RoleEnum
+class StatusBody(str, Enum):
+    COACH = "coach"
+    ADMIN = "admin"
+    DISABLED = "disabled"
