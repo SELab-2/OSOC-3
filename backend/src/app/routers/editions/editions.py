@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
-
-from src.app.routers.tags import Tags
-
-from src.database.database import get_session
-from src.app.schemas.editions import EditionBase, Edition
-from src.database.crud import editions as crud_editions
+from starlette import status
 from sqlalchemy.orm import Session
 
-from starlette import status
+from src.app.routers.tags import Tags
+from src.app.schemas.editions import EditionBase, Edition
+
+from src.database.database import get_session
+from src.database.crud import editions as crud_editions
 
 from .invites import invites_router
 from .projects import projects_router

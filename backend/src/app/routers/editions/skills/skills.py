@@ -1,17 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from typing import List, Optional
+from starlette import status
 
-from fastapi import Depends
 from src.database.database import get_session
 from src.database.models import Skill
+from src.database.crud import skills as crud_skills
+
 from src.app.schemas.skills import SkillBase
-from sqlalchemy.orm import Session
-
-from typing import List
-
 from src.app.routers.tags import Tags
-
-# Should be added in a schema file
-
 
 
 skills_router = APIRouter(prefix="/skills", tags=[Tags.SKILLS])
@@ -28,8 +25,7 @@ async def get_skills(edition_id: int, db: Session = Depends(get_session)) -> Lis
     Returns:
         List[Skill]: a list of all the skills of an edition.
     """
-    return db.query(Skill).all()
-    # return db.query(Skill).filter_by(edition_id = edition_id)
+    return crud_skills.get_skills(db, edition_id)
 
 
 
