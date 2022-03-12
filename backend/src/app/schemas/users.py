@@ -20,7 +20,12 @@ class UsersListResponse(CamelCaseModel):
     users: list[User]
 
 
-class StatusBody(str, Enum):
+class Status(str, Enum):
     COACH = "coach"
     ADMIN = "admin"
     DISABLED = "disabled"
+
+
+class StatusBody(CamelCaseModel):
+    status: Status
+

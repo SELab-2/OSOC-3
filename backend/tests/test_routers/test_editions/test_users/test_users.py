@@ -5,7 +5,7 @@ from starlette import status
 
 from json import dumps
 
-from src.app.schemas.users import StatusBody
+from src.app.schemas.users import Status
 from src.database import models
 from src.database.enums import RoleEnum
 
@@ -50,13 +50,12 @@ def test_update_user_status(database_session: Session, test_client: TestClient):
 
     database_session.commit()
 
-    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id}/status?status={StatusBody.DISABLED.value}")
+    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id}/status", data=dumps({"status": Status.DISABLED.value}))
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert user1_edition1_role.role == RoleEnum.DISABLED
 
-    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id}/status?status=InvalidStatus")
+    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id}/status", data=dumps({"status": "INVALID STATUS"}))
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id+1}/status={StatusBody.DISABLED.value}")
+    response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id+1}", data=dumps({"status": Status.DISABLED.value}))
     assert response.status_code == status.HTTP_404_NOT_FOUND
-
