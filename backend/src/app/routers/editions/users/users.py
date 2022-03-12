@@ -20,12 +20,13 @@ async def get_users(edition_id: int, db: Session = Depends(get_session)):
     return users
 
 
-@users_router.patch("/{user_id}/status")
+@users_router.patch("/{user_id}/status", status_code=204)
 async def update_user_status(edition_id: int, user_id: int, status: StatusBody, db: Session = Depends(get_session)):
     """
     Update the status of a user (admin/coach/disabled) for a given edition.
     """
-    return None #crud_users.update_user_status(db, edition_id, user_id, status.status)
+
+    logic.update_user_status(db, edition_id, user_id, status)
 
 
 @users_router.post("/{user_id}/request")
