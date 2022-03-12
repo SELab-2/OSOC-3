@@ -40,11 +40,6 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenData(BaseModel):
-    """Data after decoding token"""
-    user_id: int | None = None
-
-
 class User(BaseModel):
     """The fields used to find a user in the DB"""
     user_id: int | None = None
@@ -124,11 +119,11 @@ async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> UserIn
     expire_exception = HTTPException(status_code=400, detail="Inactive user")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: int | None = payload.get("sub")
         if user_id is None:
             raise credentials_exception
 
-        user = get_user_by_id(user_id)
+        user = get_user_by_id(int(user_id))
         if user is None:
             raise credentials_exception
         return user
