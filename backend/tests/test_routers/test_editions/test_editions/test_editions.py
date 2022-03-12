@@ -10,10 +10,23 @@ def test_get_editions(database_session: Session, test_client: TestClient):
     database_session.add(edition)
     database_session.commit()
 
+    # Make the get request
     response = test_client.get("/editions/")
 
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
+
+def test_get_edition_by_id(database_session: Session, test_client: TestClient):
+    edition = Edition(year = 2022)
+    database_session.add(edition)
+    database_session.commit()
+    database_session.refresh(edition)
+
+    # Make the get request
+    response = test_client.get(f"/editions/{edition.edition_id}")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["year"] == 2022
+    assert response.json()["edition_id"] == edition.edition_id
 
 
 def test_create_edition(database_session: Session, test_client: TestClient):
@@ -28,7 +41,19 @@ def test_create_edition(database_session: Session, test_client: TestClient):
     assert test_client.get("/editions/1/").status_code == status.HTTP_200_OK
 
     # Try to make an edition in the same year
-    response = test_client.post("/editions/", data=dumps({"year": 2022}))
-    assert response.status_code == status.HTTP_409_CONFLICT
+    #response = test_client.post("/editions/", data=dumps({"year": 2022}))
+    #assert response.status_code == status.HTTP_409_CONFLICT
 
-    
+def test_delete_edition(database_session: Session, test_client: TestClient):
+    edition = Edition(year = 2022)
+    database_session.add(edition)
+    database_session.commit()
+    database_session.refresh(edition)
+
+    # Make the delete request
+    response = test_client.delete(f"/editions/{edition.edition_id}")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    # Try to make a delete on an editions that doesn't exist
+    response = test_client.delete("/edition/1")
+    assert response.status_code == status.HTTP_404_NOT_FOUND

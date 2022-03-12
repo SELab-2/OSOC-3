@@ -4,7 +4,7 @@ from src.app.schemas.editions import EditionBase
 from typing import List, Optional
 
 
-def get_edition_by_key(db: Session, edition_id: int) -> Optional[Edition]:
+def get_edition_by_id(db: Session, edition_id: int) -> Optional[Edition]:
     """Get an edition given its primary key
 
     Args:
@@ -60,7 +60,7 @@ def delete_edition(db: Session, edition_id: int) -> bool:
     Returns:
         bool: True if the edition was found and deleted, False if the edition was not found
     """
-    edition_to_delete = get_edition_by_key(db, edition_id)
+    edition_to_delete = get_edition_by_id(db, edition_id)
     if edition_to_delete is not None:
         db.delete(edition_to_delete)
         db.commit()

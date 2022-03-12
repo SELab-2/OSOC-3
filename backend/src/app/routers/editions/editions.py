@@ -59,7 +59,7 @@ async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)
     Returns:
         Edition: an edition
     """
-    result: Optional[Edition] = crud_editions.get_edition_by_key(db, edition_id)
+    result: Optional[Edition] = crud_editions.get_edition_by_id(db, edition_id)
     if result == None:
         raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
     else: return result
