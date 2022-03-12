@@ -110,25 +110,37 @@ body {
     0% {
         width: 15%;
         height: 15%;
+        left: 5%;
+        top: 15%;
     }
     80% {
         width: 13%;
         height: 13%;
+        left: 6%;
+        top: 16%;
     }
     93% {
         width: 13%;
         height: 13%;
+        left: 6%;
+        top: 16%;
     }
     95% {
         width: 15%;
         height: 15%;
+        left: 5%;
+        top: 15%;
     }
     97% {
         width: 13%;
         height: 13%;
+        left: 6%;
+        top: 16%;
     }
     100% {
         width: 15%;
         height: 15%;
+        left: 5%;
+        top: 15%;
     }
 }
