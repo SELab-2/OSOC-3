@@ -13,20 +13,15 @@
     background: white;
     cursor: pointer;
     color: var(--react_dark_grey);
-    border: 1px solid white;
     border-radius: 10px;
+    border-color: black;
+    border-width: 2px;
 }
 
 .login-button-content {
     display: flex;
     align-items: center;
     margin-left: 10px;
-}
-
-.mail-icon {
-    color: deepskyblue;
-    height: 30px;
-    margin-right: 10px;
 }
 
 .email-login {
@@ -36,23 +31,11 @@
     margin-bottom: 10px;
 }
 
-.google-icon {
-    color: deepskyblue;
-    height: 30px;
-    margin-right: 10px;
-}
-
 .google-login {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
-}
-
-.github-icon {
-    color: deepskyblue;
-    height: 30px;
-    margin-right: 10px;
 }
 
 .github-login {

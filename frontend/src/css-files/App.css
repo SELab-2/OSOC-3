@@ -3,7 +3,8 @@
     --osoc_orange: #fcb70f;
     --osoc_red: #f14a3b;
     --osoc_green: #44dba4;
-    --react_dark_grey: #323232;
+    --react_dark_grey: #343434;
+    --custom_light_blue: #00bfff;
 }
 
 * {
@@ -45,10 +46,11 @@ body {
 
 .osoc-logo-O1 {
     position: absolute;
-    width: 20%;
-    height: 20%;
+    width: 15%;
+    height: 15%;
     left: 5%;
     top: 15%;
+    animation: change-size 3s infinite linear;
 }
 
 .osoc-logo-S {
@@ -57,6 +59,7 @@ body {
     max-height: 20%;
     bottom: 15%;
     left: 15%;
+    animation: wiggle 5s infinite linear;
 }
 
 .osoc-logo-O2 {
@@ -73,4 +76,59 @@ body {
     height: 20%;
     right: 10%;
     bottom: 15%;
+    animation: rotation 20s infinite linear;
+}
+
+@keyframes rotation {
+    from{
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateX(5px) translateY(5px) rotate(-5deg);
+    }
+    50% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+    75% {
+        transform: translateX(-5px) translateY(-5px) rotate(10deg);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+}
+
+@keyframes change-size {
+    0% {
+        width: 15%;
+        height: 15%;
+    }
+    80% {
+        width: 13%;
+        height: 13%;
+    }
+    93% {
+        width: 13%;
+        height: 13%;
+    }
+    95% {
+        width: 15%;
+        height: 15%;
+    }
+    97% {
+        width: 13%;
+        height: 13%;
+    }
+    100% {
+        width: 15%;
+        height: 15%;
+    }
 }
