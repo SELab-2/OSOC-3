@@ -34,14 +34,14 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
 
         try:
             user = get_user_by_id(db, int(user_id))
-        except sqlalchemy.exc.NoResultFound:
-            raise InvalidCredentialsException()
+        except sqlalchemy.exc.NoResultFound as not_found:
+            raise InvalidCredentialsException() from not_found
 
         return user
-    except ExpiredSignatureError:
-        raise ExpiredCredentialsException()
-    except JWTError:
-        raise InvalidCredentialsException()
+    except ExpiredSignatureError as expired_signature:
+        raise ExpiredCredentialsException() from expired_signature
+    except JWTError as jwt_err:
+        raise InvalidCredentialsException() from jwt_err
 
 
 # Alias that is easier to read in the dependency list when
