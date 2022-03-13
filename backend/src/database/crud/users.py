@@ -71,37 +71,3 @@ def delete_user_as_coach(db, edition_id, user_id):
     user = db.query(User).where(User.user_id == user_id).one()
     edition = db.query(Edition).where(Edition.edition_id == edition_id).one()
     user.editions.remove(edition)
-
-    stmt = (
-        insert(UserRole).
-        values(user_id=user_id, role=RoleEnum.COACH, edition_id=edition_id)
-    )
-    db.execute(stmt)
-
-# def accept_request(db: Session, edition_id: int, user_id: int):
-#     """
-#     Accept a coach request:
-#         - Remove the request
-#         - Add user as admin to given edition
-#     """
-#     stmt = (
-#         delete(CoachRequest).
-#         where(user_id == user_id)
-#     )
-#     db.execute(stmt)
-#
-#     stmt = (
-#         insert(UserRole).
-#         values(user_id=user_id, role=RoleEnum.COACH, edition_id=edition_id)
-#     )
-#     db.execute(stmt)
-#
-#
-# def reject_request(db: Session, user_id: int):
-#     stmt = (
-#         delete(CoachRequest).
-#         where(user_id == user_id)
-#     )
-#
-#     db.execute(stmt)
-
