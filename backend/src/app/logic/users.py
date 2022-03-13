@@ -32,14 +32,6 @@ def edit_admin_status(db: Session, user_id: int, admin: AdminPatch):
     users_crud.edit_admin_status(db, user_id, admin.admin)
 
 
-def add_user_as_coach(db: Session, edition_id: int, user_id: int):
-    """
-    Add user as admin for the given edition if not already coach
-    """
-
-    users_crud.add_user_as_coach(db, edition_id, user_id)
-
-
 def add_coach(db: Session, user_id: int, edition_id: int):
     """
     Add user as coach for the given edition

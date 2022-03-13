@@ -1,7 +1,4 @@
-from sqlalchemy import update, delete, insert
-
-from src.database.enums import RoleEnum
-from src.database.models import user_editions, CoachRequest, User
+from src.database.models import user_editions, User, Edition
 from sqlalchemy.orm import Session
 
 
@@ -42,11 +39,10 @@ def edit_admin_status(db: Session, user_id: int, admin: bool):
     Edit the admin-status of a user
     """
 
-    db.execute(
-        update(User).
-        where(User.user_id == user_id).
-        values(admin=admin)
-    )
+    user = db.query(User).where(User.user_id == user_id).one()
+    user.admin = admin
+    db.add(user)
+    db.commit()
 
 
 def add_coach(db, user_id, edition_id):
@@ -54,7 +50,9 @@ def add_coach(db, user_id, edition_id):
     Add user as admin for the given edition
     """
 
-    db.execute(user_editions.insert(), {"user_id": user_id, "edition_id": edition_id})
+    user = db.query(User).where(User.user_id == user_id).one()
+    edition = db.query(Edition).where(Edition.edition_id == edition_id).one()
+    user.editions.append(edition)
 
 
 def remove_coach(db, user_id, edition_id):
@@ -70,39 +68,35 @@ def delete_user_as_coach(db, edition_id, user_id):
     Add user as admin for the given edition if not already coach
     """
 
-    stmt = (
-        delete(user_editions).
-        where(user_id == user_id, edition_id == edition_id)
-    )
-    db.execute(stmt)
+    user = db.query(User).where(User.user_id == user_id).one()
+    edition = db.query(Edition).where(Edition.edition_id == edition_id).one()
+    user.editions.remove(edition)
 
 
-
-
-def accept_request(db: Session, edition_id: int, user_id: int):
-    """
-    Accept a coach request:
-        - Remove the request
-        - Add user as admin to given edition
-    """
-    stmt = (
-        delete(CoachRequest).
-        where(user_id == user_id)
-    )
-    db.execute(stmt)
-
-    stmt = (
-        insert(UserRole).
-        values(user_id=user_id, role=RoleEnum.COACH, edition_id=edition_id)
-    )
-    db.execute(stmt)
-
-
-def reject_request(db: Session, user_id: int):
-    stmt = (
-        delete(CoachRequest).
-        where(user_id == user_id)
-    )
-
-    db.execute(stmt)
+# def accept_request(db: Session, edition_id: int, user_id: int):
+#     """
+#     Accept a coach request:
+#         - Remove the request
+#         - Add user as admin to given edition
+#     """
+#     stmt = (
+#         delete(CoachRequest).
+#         where(user_id == user_id)
+#     )
+#     db.execute(stmt)
+#
+#     stmt = (
+#         insert(UserRole).
+#         values(user_id=user_id, role=RoleEnum.COACH, edition_id=edition_id)
+#     )
+#     db.execute(stmt)
+#
+#
+# def reject_request(db: Session, user_id: int):
+#     stmt = (
+#         delete(CoachRequest).
+#         where(user_id == user_id)
+#     )
+#
+#     db.execute(stmt)
 
