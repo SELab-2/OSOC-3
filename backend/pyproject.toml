@@ -9,75 +9,86 @@ license = "MIT"
 python = "^3.10"
 
 # Alembic: Database migrations extension for SQLAlchemy
-alembic="1.7.6"
+alembic = "1.7.6"
 
 # Environs: simplified environment variable parsing
-environs="9.5.0"
+environs = "9.5.0"
 
 # FastAPI: API framework
-fastapi="0.74.1"
+fastapi = "0.74.1"
 
 # MariaDB: Python MariaDB connector
-mariadb="1.0.10"
+mariadb = "1.0.10"
 
 # Hash passwords
-passlib = { "version" = "1.7.4", extras = ["bcrypt"]}
+passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
 
 # Generate and verify JWT tokens
 python-jose = { "version" = "3.3.0", extras = ["cryptography"] }
 
 # Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
-pyhumps==3.5.3
+pyhumps = "3.5.3"
 
 # OAuth2 form data
-python-multipart="0.0.5"
+python-multipart = "0.0.5"
 
 # Requests: HTTP library
-requests="2.27.1"
+requests = "2.27.1"
 
 # SQLAlchemy: ORM and database toolkit
-SQLAlchemy="1.4.31"
+SQLAlchemy = "1.4.31"
 
 # SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
-sqlalchemy-utils="0.38.2"
+sqlalchemy-utils = "0.38.2"
 
 # Uvicorn: ASGI web server implementation
 uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
 
 [tool.poetry.dev-dependencies]
 # Coverage: generate code coverage reports
-coverage="6.3.1"
+coverage = { "version" = "6.3.1", extras = ["toml"] }
 
 # faker: Generate dummy data
 faker = "13.3.1"
 
 # Mypy: check type usage in code
-mypy="0.940"
+mypy = "0.940"
 
 # Pylint: Python linter
-pylint="2.12.2"
+pylint = "2.12.2"
 
 # Pylint-Pytest: A Pylint plugin to suppress pytest-related false positives.
-pylint-pytest="1.1.2"
+pylint-pytest = "1.1.2"
 
 # Pytest: Python testing framework
 # (more advanced than the built-in unittest module)
-pytest="7.0.1"
+pytest = "7.0.1"
 
 # Pytest-cov: coverage plugin for pytest
-pytest-cov="3.0.0"
+pytest-cov = "3.0.0"
 
 # Pytest-env: env plugin for pytest
-pytest-env="0.6.2"
+pytest-env = "0.6.2"
 
 # Pytest-mock: mocking for pytest
 pytest-mock = "3.7.0"
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
-sqlalchemy2-stubs="0.0.2a20"
+sqlalchemy2-stubs = "0.0.2a20"
 
 # Types for the passlib library
 types-passlib = "1.7.0"
+
+[tool.coverage.run]
+omit = [
+    "*tests*",
+]
+
+[tool.coverage.report]
+omit = [
+    "*tests*",
+    "*__init__.py*",
+]
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin"]
