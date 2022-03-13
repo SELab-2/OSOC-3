@@ -1,5 +1,6 @@
 [MASTER]
 load-plugins=pylint_pytest
+argument-rgx=[a-z_][a-z0-9_]{1,31}$
 disable=
     import-outside-toplevel,
     missing-module-docstring,
