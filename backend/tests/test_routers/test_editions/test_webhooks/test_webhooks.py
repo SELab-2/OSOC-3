@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database.models import Edition, WebhookURL, Student
-from .data import create_webhook_event, WEBHOOK_EVENT_BAD_FORMAT
+from .data import create_webhook_event, WEBHOOK_EVENT_BAD_FORMAT, WEBHOOK_MISSING_QUESTION
 
 
 @pytest.fixture
@@ -92,4 +92,12 @@ def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL):
         phone_number="0477002266",
     )
     response = test_client.post(f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}", json=event)
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL):
+    response = test_client.post(
+        f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}",
+        json=WEBHOOK_MISSING_QUESTION
+    )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
