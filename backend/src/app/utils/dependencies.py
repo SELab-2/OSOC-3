@@ -5,7 +5,7 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
 
 import settings
-from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException
+from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, UnauthorizedException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
 from src.database.database import get_session
@@ -42,3 +42,7 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
         raise ExpiredCredentialsException()
     except JWTError:
         raise InvalidCredentialsException()
+
+
+async def require_admin(user: User = Depends(get_current_active_user)):
+    raise UnauthorizedException()

@@ -1,6 +1,10 @@
+class ExpiredCredentialsException(ValueError):
+    pass
+
+
 class InvalidCredentialsException(ValueError):
     pass
 
 
-class ExpiredCredentialsException(ValueError):
+class UnauthorizedException(ValueError):
     pass

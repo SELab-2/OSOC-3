@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette import status
 
-from .authentication import ExpiredCredentialsException, InvalidCredentialsException
+from .authentication import ExpiredCredentialsException, InvalidCredentialsException, UnauthorizedException
 from .webhooks import WebhookProcessException
 
 
@@ -23,6 +23,13 @@ def install_handlers(app: FastAPI):
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    @app.exception_handler(UnauthorizedException)
+    def unauthorized(_request: Request, _exception: UnauthorizedException):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"message": "You are not authorized to perform this action"}
         )
 
     @app.exception_handler(sqlalchemy.exc.NoResultFound)
