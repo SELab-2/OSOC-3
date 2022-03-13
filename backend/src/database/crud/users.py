@@ -1,7 +1,7 @@
 from sqlalchemy import update, delete, insert
 
 from src.database.enums import RoleEnum
-from src.database.models import User, user_editions, CoachRequest
+from src.database.models import user_editions, CoachRequest, User
 from sqlalchemy.orm import Session
 
 
@@ -42,8 +42,11 @@ def edit_admin_status(db: Session, user_id: int, admin: bool):
     Edit the admin-status of a user
     """
 
-    stmt = User.update().where(User.user_id == user_id).values(admin=admin)
-    db.execute(stmt)
+    db.execute(
+        update(User).
+        where(User.user_id == user_id).
+        values(admin=admin)
+    )
 
 
 def add_coach(db, user_id, edition_id):
@@ -52,6 +55,14 @@ def add_coach(db, user_id, edition_id):
     """
 
     db.execute(user_editions.insert(), {"user_id": user_id, "edition_id": edition_id})
+
+
+def remove_coach(db, user_id, edition_id):
+    """
+    Remove user as admin for the given edition
+    """
+
+    db.execute(user_editions.delete(), {"user_id": user_id, "edition_id": edition_id})
 
 
 def delete_user_as_coach(db, edition_id, user_id):
