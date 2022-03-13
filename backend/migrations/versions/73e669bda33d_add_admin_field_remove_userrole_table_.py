@@ -28,7 +28,7 @@ def upgrade():
     )
     op.drop_table('user_roles')
     with op.batch_alter_table('users', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('admin', sa.Boolean(), nullable=False))
+        batch_op.add_column(sa.Column('admin', sa.Boolean(), nullable=False, server_default='f'))
 
     # ### end Alembic commands ###
 
@@ -50,5 +50,6 @@ def downgrade():
         mariadb_default_charset='latin1',
         mariadb_engine='InnoDB'
     )
+
     op.drop_table('user_editions')
     # ### end Alembic commands ###
