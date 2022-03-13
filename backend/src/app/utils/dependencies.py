@@ -8,9 +8,10 @@ import settings
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
+from src.database.crud.projects import db_get_project
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.database import get_session
-from src.database.models import Edition, InviteLink, User
+from src.database.models import Edition, InviteLink, User, Project
 
 
 # TODO: Might be nice to use a more descriptive year number here than primary id.
@@ -65,3 +66,8 @@ async def require_admin(user: User = Depends(get_current_active_user)) -> User:
 def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> InviteLink:
     """Get an invite link from the database, given the id in the path"""
     return get_invite_link_by_uuid(db, invite_uuid)
+
+
+def get_project(project_id: int, db: Session = Depends(get_session)) -> Project:
+    """Get a project from het database, given the id in the path"""
+    return db_get_project(db, project_id)
