@@ -15,7 +15,9 @@ def test_get_editions(database_session: Session, test_client: TestClient):
     response = test_client.get("/editions/")
 
     assert response.status_code == status.HTTP_200_OK
-    json = response.json()
+    response = response.json()
+    assert response["editions"][0]["year"] == 2022
+    assert response["editions"][0]["editionId"] == 1
 
 
 def test_get_edition_by_id(database_session: Session, test_client: TestClient):
