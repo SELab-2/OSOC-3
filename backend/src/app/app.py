@@ -1,7 +1,7 @@
 from alembic import config
 from alembic import script
 from alembic.runtime import migration
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
