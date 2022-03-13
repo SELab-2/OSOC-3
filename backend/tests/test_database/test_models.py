@@ -4,12 +4,16 @@ from src.database import models
 
 
 def test_user_coach_request(database_session: Session):
+    edition = models.Edition(year=2022)
+    database_session.add(edition)
+    database_session.commit()
+
     # Passing as user_id
     user = models.User(name="name", email="email1")
     database_session.add(user)
     database_session.commit()
 
-    req = models.CoachRequest(user_id=user.user_id)
+    req = models.CoachRequest(user_id=user.user_id, edition=edition)
     database_session.add(req)
     database_session.commit()
 
@@ -20,7 +24,7 @@ def test_user_coach_request(database_session: Session):
     database_session.add(user)
     database_session.commit()
 
-    req = models.CoachRequest(user=user)
+    req = models.CoachRequest(user=user, edition=edition)
     database_session.add(req)
     database_session.commit()
 

@@ -62,7 +62,9 @@ class CoachRequest(Base):
 
     request_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"), nullable=False)
 
+    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False)
     user: User = relationship("User", back_populates="coach_request", uselist=False)
 
 
@@ -88,6 +90,7 @@ class Edition(Base):
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
     projects: list[Project] = relationship("Project", back_populates="edition")
     coaches: list[User] = relationship("User", secondary="user_editions", back_populates="editions")
+    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition")
     students: list[Student] = relationship("Student", back_populates="edition")
     webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition")
 
