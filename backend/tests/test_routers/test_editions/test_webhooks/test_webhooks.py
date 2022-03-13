@@ -6,10 +6,10 @@ from uuid import UUID
 
 
 @pytest.fixture
-def edition(database_session) -> Edition:
+def edition(db) -> Edition:
     edition = Edition(year=2022)
-    database_session.add(edition)
-    database_session.commit()
+    db.add(edition)
+    db.commit()
     return edition
 
 

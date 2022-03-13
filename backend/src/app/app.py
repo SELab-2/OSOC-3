@@ -9,6 +9,8 @@ from .routers import editions_router
 from .exceptions import install_handlers
 
 # Main application
+from .routers.users.users import users_router
+
 app = FastAPI(
     title="OSOC Team 3",
     version="0.0.1"
@@ -16,6 +18,7 @@ app = FastAPI(
 
 # Include all routers
 app.include_router(editions_router)
+app.include_router(users_router)
 
 # Install exception handlers
 install_handlers(app)

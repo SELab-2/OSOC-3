@@ -11,22 +11,22 @@ from src.database.enums import RoleEnum
 from src.database.models import CoachRequest, UserRole
 
 
-def test_get_users(database_session: Session, test_client: TestClient):
+def test_get_users(db, test_client: TestClient):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    database_session.add(user1)
+    db.add(user1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    database_session.add(edition1)
+    db.add(edition1)
 
-    database_session.commit()
+    db.commit()
 
     # Create role
     user1_edition1_role = models.UserRole(user_id=user1.user_id, role=RoleEnum.COACH, edition_id=edition1.edition_id)
-    database_session.add(user1_edition1_role)
+    db.add(user1_edition1_role)
 
-    database_session.commit()
+    db.commit()
 
     response = test_client.get(f"/editions/{edition1.edition_id}/users")
 
@@ -34,22 +34,22 @@ def test_get_users(database_session: Session, test_client: TestClient):
     assert response.json()['users'][0]['userId'] == user1.user_id
 
 
-def test_update_user_status(database_session: Session, test_client: TestClient):
+def test_update_user_status(db, test_client: TestClient):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    database_session.add(user1)
+    db.add(user1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    database_session.add(edition1)
+    db.add(edition1)
 
-    database_session.commit()
+    db.commit()
 
     # Create role
     user1_edition1_role = models.UserRole(user_id=user1.user_id, role=RoleEnum.COACH, edition_id=edition1.edition_id)
-    database_session.add(user1_edition1_role)
+    db.add(user1_edition1_role)
 
-    database_session.commit()
+    db.commit()
 
     response = test_client.patch(f"/editions/{edition1.edition_id}/users/{user1.user_id}/status",
                                  data=dumps({"status": Status.DISABLED.value}))
@@ -65,59 +65,59 @@ def test_update_user_status(database_session: Session, test_client: TestClient):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_accept_request(database_session: Session, test_client: TestClient):
+def test_accept_request(db, test_client: TestClient):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    database_session.add(user1)
+    db.add(user1)
 
-    database_session.commit()
+    db.commit()
 
     # Create request
     request1 = models.CoachRequest(user_id=user1.user_id)
-    database_session.add(request1)
+    db.add(request1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    database_session.add(edition1)
+    db.add(edition1)
 
-    database_session.commit()
+    db.commit()
 
     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
                                 data=dumps({"accept": True}))
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    requests = database_session.query(CoachRequest).all()
+    requests = db.query(CoachRequest).all()
     assert len(requests) == 0
 
-    user_role: UserRole = database_session.query(UserRole).one()
+    user_role: UserRole = db.query(UserRole).one()
     assert user_role.role == RoleEnum.COACH
     assert user_role.edition_id == edition1.edition_id
     assert user_role.user_id == user1.user_id
 
 
-def test_reject_request_new_user(database_session: Session, test_client: TestClient):
+def test_reject_request_new_user(db, test_client: TestClient):
 
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    database_session.add(user1)
+    db.add(user1)
 
-    database_session.commit()
+    db.commit()
 
     # Create request
     request1 = models.CoachRequest(user_id=user1.user_id)
-    database_session.add(request1)
+    db.add(request1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    database_session.add(edition1)
+    db.add(edition1)
 
-    database_session.commit()
+    db.commit()
 
     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
                                 data=dumps({"accept": False}))
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    requests = database_session.query(CoachRequest).all()
+    requests = db.query(CoachRequest).all()
     assert len(requests) == 0
 
     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
