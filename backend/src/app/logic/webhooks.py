@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from settings import FormMapping
@@ -94,5 +95,7 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                             ))
             case _:
                 raise WebhookProcessException('Unknown question type')
-
-    db.commit()
+    try:
+        db.commit()
+    except sqlalchemy.exc.IntegrityError:
+        raise WebhookProcessException('Unique Check Failed')

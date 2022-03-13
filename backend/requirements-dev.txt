@@ -25,3 +25,6 @@ sqlalchemy2-stubs==0.0.2a20
 
 # Pylint-Pytest: A Pylint plugin to suppress pytest-related false positives.
 pylint-pytest==1.1.2
+
+# faker: Generate dummy data
+faker==13.3.1
