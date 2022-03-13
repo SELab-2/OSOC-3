@@ -7,6 +7,12 @@ from src.database.models import Edition
 
 
 def test_get_editions(database_session: Session, test_client: TestClient):
+    """Performe tests on getting editions
+
+    Args:
+        database_session (Session): a connection with the database
+        test_client (TestClient): a client used to do rest calls 
+    """
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
@@ -21,6 +27,12 @@ def test_get_editions(database_session: Session, test_client: TestClient):
 
 
 def test_get_edition_by_id(database_session: Session, test_client: TestClient):
+    """Performe tests on getting editions by ids
+
+    Args:
+        database_session (Session): a connection with the database
+        test_client (TestClient): a client used to do rest calls 
+    """
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
@@ -34,6 +46,12 @@ def test_get_edition_by_id(database_session: Session, test_client: TestClient):
 
 
 def test_create_edition(database_session: Session, test_client: TestClient):
+    """Performe tests on creating editions
+
+    Args:
+        database_session (Session): a connection with the database
+        test_client (TestClient): a client used to do rest calls 
+    """
     # Verify that editions doesn't exist yet
     assert test_client.get("/editions/1/").status_code == status.HTTP_404_NOT_FOUND
 
@@ -50,6 +68,12 @@ def test_create_edition(database_session: Session, test_client: TestClient):
 
 
 def test_delete_edition(database_session: Session, test_client: TestClient):
+    """Performe tests on deleting editions
+
+    Args:
+        database_session (Session): a connection with the database
+        test_client (TestClient): a client used to do rest calls 
+    """
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
