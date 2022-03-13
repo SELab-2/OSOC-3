@@ -1,33 +1,71 @@
 from sqlalchemy import update, delete, insert
 
 from src.database.enums import RoleEnum
-from src.database.models import User, UserRole, CoachRequest
+from src.database.models import User, user_editions, CoachRequest
 from sqlalchemy.orm import Session
+
+
+def get_all_admins(db: Session) -> list[User]:
+    """
+    Get all admins
+    """
+
+    return db.query(User).where(User.admin).all()
+
+
+def get_all_users(db: Session) -> list[User]:
+    """
+    Get all users (coaches + admins)
+    """
+
+    return db.query(User).all()
 
 
 def get_users_from_edition(db: Session, edition_id: int) -> list[User]:
     """
-    Get all users from the given edition
+    Get all coaches from the given edition
     """
 
-    coaches = db.query(User).join(UserRole).where(UserRole.edition_id == edition_id).all()
-    # TODO: admins (depends on changes in db)
-
-    return coaches
+    return db.query(User).join(user_editions).filter(user_editions.c.edition_id == edition_id).all()
 
 
-def update_user_status(db: Session, edition_id: int, user_id: int, status: RoleEnum):
+def get_admins_from_edition(db: Session, edition_id: int) -> list[User]:
     """
-    Change the status of a given user for a given edition
+    Get all admins from the given edition
     """
-    stmt = (
-        update(UserRole).
-        where(UserRole.user_id == user_id).
-        where(UserRole.edition_id == edition_id).
-        values({UserRole.role: status})
-    )
 
+    return db.query(User).where(User.admin).join(user_editions).filter(user_editions.c.edition_id == edition_id).all()
+
+
+def edit_admin_status(db: Session, user_id: int, admin: bool):
+    """
+    Edit the admin-status of a user
+    """
+
+    stmt = User.update().where(User.user_id == user_id).values(admin=admin)
     db.execute(stmt)
+
+
+def add_coach(db, user_id, edition_id):
+    """
+    Add user as admin for the given edition
+    """
+
+    db.execute(user_editions.insert(), {"user_id": user_id, "edition_id": edition_id})
+
+
+def delete_user_as_coach(db, edition_id, user_id):
+    """
+    Add user as admin for the given edition if not already coach
+    """
+
+    stmt = (
+        delete(user_editions).
+        where(user_id == user_id, edition_id == edition_id)
+    )
+    db.execute(stmt)
+
+
 
 
 def accept_request(db: Session, edition_id: int, user_id: int):
@@ -56,3 +94,4 @@ def reject_request(db: Session, user_id: int):
     )
 
     db.execute(stmt)
+

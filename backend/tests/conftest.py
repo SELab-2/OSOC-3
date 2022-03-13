@@ -25,7 +25,7 @@ def tables():
 
 
 @pytest.fixture
-def database_session(tables: None) -> Generator[Session, None, None]:
+def db(tables: None) -> Generator[Session, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
@@ -43,14 +43,14 @@ def database_session(tables: None) -> Generator[Session, None, None]:
 
 
 @pytest.fixture
-def test_client(database_session: Session) -> TestClient:
+def test_client(db) -> TestClient:
     """Fixture to create a testing version of our main application"""
 
     def override_get_session() -> Generator[Session, None, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead
         """
-        yield database_session
+        yield db
 
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
