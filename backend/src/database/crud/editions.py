@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src.database.models import Edition
-from src.app.schemas.editions import EditionBase
+from src.app.schemas.editions import EditionBase, EditionList
 from typing import List, Optional
 
 
@@ -17,16 +17,16 @@ def get_edition_by_id(db: Session, edition_id: int) -> Optional[Edition]:
     return db.get(Edition, edition_id)
 
 
-def get_editions(db: Session) -> List[Edition]:
+def get_editions(db: Session) -> EditionList:
     """Get a list of all editions.
 
     Args:
         db (Session): connection with the database.
 
     Returns:
-        List[Edition]: a list of all the editions.
+        EditionList: an object with a list of all editions
     """
-    return db.query(Edition).all()
+    return EditionList(editions=db.query(Edition).all())
 
 
 def create_edition(db: Session, edition: EditionBase) -> Optional[Edition]:

@@ -41,7 +41,7 @@ async def get_editions(db: Session = Depends(get_session)):
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        List[Edition]: a list of all the editions.
+        EditionList: an object with a list of all the editions.
     """
     return crud_editions.get_editions(db)
 
@@ -54,7 +54,7 @@ async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        Edition: an edition
+        Edition: an edition.
     """
     result: Optional[Edition] = crud_editions.get_edition_by_id(db, edition_id)
     if result == None:

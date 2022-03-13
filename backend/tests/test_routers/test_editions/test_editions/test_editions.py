@@ -5,6 +5,7 @@ from starlette.testclient import TestClient
 
 from src.database.models import Edition
 
+
 def test_get_editions(database_session: Session, test_client: TestClient):
     edition = Edition(year = 2022)
     database_session.add(edition)
@@ -16,6 +17,7 @@ def test_get_editions(database_session: Session, test_client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
 
+
 def test_get_edition_by_id(database_session: Session, test_client: TestClient):
     edition = Edition(year = 2022)
     database_session.add(edition)
@@ -26,7 +28,7 @@ def test_get_edition_by_id(database_session: Session, test_client: TestClient):
     response = test_client.get(f"/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["year"] == 2022
-    assert response.json()["edition_id"] == edition.edition_id
+    assert response.json()["editionId"] == edition.edition_id
 
 
 def test_create_edition(database_session: Session, test_client: TestClient):
@@ -36,13 +38,14 @@ def test_create_edition(database_session: Session, test_client: TestClient):
     # Make the post request
     response = test_client.post("/editions/", data=dumps({"year": 2022}))
     assert response.status_code == status.HTTP_201_CREATED
-    assert test_client.get("/editions/").json()[0]["year"] == 2022
-    assert test_client.get("/editions/").json()[0]["edition_id"] == 1
+    assert test_client.get("/editions/").json()["editions"][0]["year"] == 2022
+    assert test_client.get("/editions/").json()["editions"][0]["editionId"] == 1
     assert test_client.get("/editions/1/").status_code == status.HTTP_200_OK
 
     # Try to make an edition in the same year
     #response = test_client.post("/editions/", data=dumps({"year": 2022}))
     #assert response.status_code == status.HTTP_409_CONFLICT
+
 
 def test_delete_edition(database_session: Session, test_client: TestClient):
     edition = Edition(year = 2022)
