@@ -90,6 +90,27 @@ ignore_errors = true
 module = "jose.*"
 ignore_missing_imports = true
 
+[tool.pylint.master]
+load-plugins=["pylint_pytest"]
+argument-rgx = "[a-z_][a-z0-9_]{1,31}$"
+disable=[
+    "import-outside-toplevel",
+    "missing-module-docstring",
+    "too-few-public-methods",
+]
+extension-pkg-whitelist = "pydantic"
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:.*The distutils package is deprecated:DeprecationWarning",
+]
+env = [
+    "DB_USE_SQLITE = 1",
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
