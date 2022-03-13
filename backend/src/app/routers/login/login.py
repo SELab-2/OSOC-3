@@ -16,14 +16,15 @@ login_router = APIRouter(prefix="/login", tags=[Tags.LOGIN])
 
 
 @login_router.post("/token", response_model=Token)
-async def login_for_access_token(db: Session = Depends(get_session), form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
+async def login_for_access_token(db: Session = Depends(get_session),
+                                 form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
     """Called when logging in, generates an access token to use in other functions"""
     try:
         user = authenticate_user(db, form_data.username, form_data.password)
-    except sqlalchemy.exc.NoResultFound:
+    except sqlalchemy.exc.NoResultFound as not_found:
         # Don't use our own error handler here because this should
         # be a 401 instead of a 404
-        raise InvalidCredentialsException()
+        raise InvalidCredentialsException() from not_found
 
     access_token_expires = timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
     access_token = create_access_token(
