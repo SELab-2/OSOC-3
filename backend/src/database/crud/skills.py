@@ -1,21 +1,19 @@
 from sqlalchemy.orm import Session
-from src.database.models import Edition
 from src.database.models import Skill
-from src.app.schemas.skills import SkillBase
+from src.app.schemas.skills import SkillBase, SkillList
 from typing import List
 
 
-def get_skills(db: Session) -> List[Edition]:
+def get_skills(db: Session) -> SkillList:
     """Get a list of all the base skills that can be added to a student or project.
 
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
-        List[Skill]: a list of all the skills of an edition.
+        SkillList: an object with a list of all the skills.
     """
-    return db.query(Skill).all()
-     # return db.query(Skill).filter_by(edition_id = edition_id)
+    return SkillList(skills=db.query(Skill).all())
 
 
 def create_skill(db: Session, skill: SkillBase) -> Skill:
