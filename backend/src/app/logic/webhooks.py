@@ -36,7 +36,7 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                 extra_questions.append(question)
 
     # Check all attributes are included and not None
-    needed = {'first_name', 'last_name', 'preferred_name', 'email_address', 'phone_number', 'wants_to_be_student_coach'}
+    needed = {'first_name', 'last_name', 'preferred_name', 'email_address', 'phone_number', 'wants_to_be_student_coach', 'edition'}
     diff = set(attributes.keys()) - needed
     if len(diff) != 0:
         raise WebhookProcessException(f'Missing questions for Attributes {diff}')
