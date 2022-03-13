@@ -44,5 +44,11 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
         raise InvalidCredentialsException()
 
 
+# Alias that is easier to read in the dependency list when
+# the return value isn't required
+require_authorization = get_current_active_user
+
+
 async def require_admin(user: User = Depends(get_current_active_user)):
-    raise UnauthorizedException()
+    if not user.admin:
+        raise UnauthorizedException()
