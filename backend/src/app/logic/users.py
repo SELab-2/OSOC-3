@@ -48,6 +48,14 @@ def add_coach(db: Session, user_id: int, edition_id: int):
     users_crud.add_coach(db, user_id, edition_id)
 
 
+def remove_coach(db: Session, user_id: int, edition_id: int):
+    """
+    Remove user as coach for the given edition
+    """
+
+    users_crud.remove_coach(db, user_id, edition_id)
+
+
 def delete_user_as_coach(db: Session, edition_id: int, user_id: int):
     """
     Add user as admin for the given edition if not already coach

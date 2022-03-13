@@ -2,8 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.database import models
 import src.database.crud.users as users_crud
-from src.database.enums import RoleEnum
-from src.database.models import CoachRequest
+from src.database.models import user_editions
 
 
 def test_get_users(db: Session):
@@ -65,29 +64,35 @@ def test_edit_admin_status(db: Session):
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
     db.add(user)
+    db.commit()
 
-    users_crud.edit_admin_status(db, user, True)
+    users_crud.edit_admin_status(db, user.user_id, True)
     assert user.admin
 
-    users_crud.edit_admin_status(db, user, False)
+    users_crud.edit_admin_status(db, user.user_id, False)
     assert not user.admin
 
 
-#
-# def test_add_user_as_coach(database_session: Session):
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     database_session.add(user1)
-#
-#     # Create edition
-#     edition1 = models.Edition(year=1)
-#     database_session.add(edition1)
-#
-#     database_session.commit()
-#
-#     # TODO
-#
-#
+def test_coach(db: Session):
+    # Create user
+    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    db.add(user)
+
+    # Create edition
+    edition = models.Edition(year=1)
+    db.add(edition)
+
+    db.commit()
+
+    users_crud.add_coach(db, user.user_id, edition.edition_id)
+    coach = db.query(user_editions).one()
+    assert coach.user_id == user.user_id
+    assert coach.edition_id == edition.edition_id
+
+    users_crud.remove_coach(db, user.user_id, edition.edition_id)
+    assert len(db.query(user_editions).all()) == 0
+
+
 # def test_accept_request(database_session: Session):
 #     # Create user
 #     user1 = models.User(name="user1", email="user1@mail.com")
