@@ -46,6 +46,7 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
 
 # Alias that is easier to read in the dependency list when
 # the return value isn't required
+# Require the user to be authorized, coach or admin doesn't matter
 require_authorization = get_current_active_user
 
 
