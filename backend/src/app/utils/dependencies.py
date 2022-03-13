@@ -49,6 +49,9 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
 require_authorization = get_current_active_user
 
 
-async def require_admin(user: User = Depends(get_current_active_user)):
+async def require_admin(user: User = Depends(get_current_active_user)) -> User:
+    """Dependency to create an admin-only route"""
     if not user.admin:
         raise UnauthorizedException()
+
+    return user
