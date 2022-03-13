@@ -58,8 +58,6 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
 
         db.add(model)
 
-        print(question)
-
         match QE(question.type):
             case QE.MULTIPLE_CHOICE:
                 value: str = question.value
@@ -90,7 +88,6 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                 for value in question.value:
                     for option in question.options:
                         if option.id == value:
-                            print('.')
                             db.add(QuestionAnswer(
                                 answer=option.text,
                                 question=model
