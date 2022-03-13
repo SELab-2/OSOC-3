@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
-from src.app.schemas.users import UsersListResponse, StatusBody, RequestAnswer
+from src.app.schemas.users import StatusBody, RequestAnswer
 from src.database.database import get_session
 
 

@@ -20,7 +20,6 @@ class UsersListResponse(CamelCaseModel):
 class AdminPatch(CamelCaseModel):
     admin: bool
 
+
 class RequestAnswer(CamelCaseModel):
     accept: bool
-
-
