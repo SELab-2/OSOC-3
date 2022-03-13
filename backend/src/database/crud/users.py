@@ -72,6 +72,11 @@ def delete_user_as_coach(db, edition_id, user_id):
     edition = db.query(Edition).where(Edition.edition_id == edition_id).one()
     user.editions.remove(edition)
 
+    stmt = (
+        insert(UserRole).
+        values(user_id=user_id, role=RoleEnum.COACH, edition_id=edition_id)
+    )
+    db.execute(stmt)
 
 # def accept_request(db: Session, edition_id: int, user_id: int):
 #     """
