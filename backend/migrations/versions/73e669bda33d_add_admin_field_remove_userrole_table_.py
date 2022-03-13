@@ -5,8 +5,9 @@ Revises: 145816a4b2df
 Create Date: 2022-03-12 22:01:41.966008
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
+from sqlalchemy import Enum
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
@@ -41,7 +42,7 @@ def downgrade():
         'user_roles',
         sa.Column('user_role_id', mysql.INTEGER(display_width=11), autoincrement=True, nullable=False),
         sa.Column('user_id', mysql.INTEGER(display_width=11), autoincrement=False, nullable=True),
-        sa.Column('role', mysql.ENUM('ADMIN', 'COACH'), nullable=True),
+        sa.Column('role', Enum('ADMIN', 'COACH'), nullable=True),
         sa.Column('edition_id', mysql.INTEGER(display_width=11), autoincrement=False, nullable=True),
         sa.ForeignKeyConstraint(['edition_id'], ['editions.edition_id'], name='user_roles_editions_fk'),
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id'], name='user_roles_users_fk'),
