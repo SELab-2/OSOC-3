@@ -1,4 +1,3 @@
-from pytest import fail
 from sqlalchemy.orm import Session
 
 from src.database.models import AuthEmail, CoachRequest, User
