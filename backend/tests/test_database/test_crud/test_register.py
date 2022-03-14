@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.database.models import Edition, User
+from src.database.models import User
 
 from src.database.crud.register import create_user
 
@@ -9,4 +9,3 @@ def test_test(database_session: Session):
 
     a = database_session.query(User).all()
     print(len(a))
-    assert False
