@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
-from src.app.logic.register import create_user
+from src.app.logic.register import create_request
 from src.app.routers.tags import Tags
 from src.app.schemas.register import NewUser
 from src.app.utils.dependencies import get_edition
 from src.database.database import get_session
-from src.database.models import Edition, User
+from src.database.models import Edition
 
 registration_router = APIRouter(prefix="/register", tags=[Tags.REGISTRATION])
 
@@ -17,4 +17,4 @@ async def register_email(user: NewUser, db: Session = Depends(get_session), edit
     """
     Register a new account using the email/password format.
     """
-    create_user(db, edition, user)
+    create_request(db, user)
