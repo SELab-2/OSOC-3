@@ -1,11 +1,9 @@
-from curses.ascii import US
-from click import edit
 from sqlalchemy.orm import Session
 
-from src.database.models import Edition, User
+from src.database.models import User
 
-def create_user(db: Session, edition: Edition, name: str, email: str) -> User:
-    user = User(name=name, email=email, admin=False, editions=[edition])
+def create_user(db: Session, name: str, email: str) -> User:
+    user = User(name="Jos", email="mail@email.com")
     db.add(user)
     db.commit()
     return user
