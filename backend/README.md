@@ -2,10 +2,19 @@
 
 ## Setting up a venv and installing dependencies
 
-```bash
-# Install Poetry
-pip3 install poetry
+First, Install Poetry:
 
+```shell
+# Linux & MacOS
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Windows (Powershell)
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
+
+Next, create a venv and install the dependencies:
+
+```shell
 # Navigate to this directory
 cd backend
 
