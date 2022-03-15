@@ -9,6 +9,7 @@ class Tags(enum.Enum):
     """
     EDITIONS = "editions"
     INVITES = "invites"
+    LOGIN = "login"
     PROJECTS = "projects"
     REGISTRATION = "registration"
     SKILLS = "skills"

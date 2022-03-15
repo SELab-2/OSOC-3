@@ -28,3 +28,6 @@ pylint-pytest==1.1.2
 
 # faker: Generate dummy data
 faker==13.3.1
+
+# Types for the passlib library
+types-passlib==1.7.0

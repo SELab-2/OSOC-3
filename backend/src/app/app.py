@@ -5,8 +5,10 @@ from fastapi import FastAPI
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import editions_router
 from .exceptions import install_handlers
+from .routers import editions_router
+from .routers import login_router
+
 
 # Main application
 app = FastAPI(
@@ -16,6 +18,7 @@ app = FastAPI(
 
 # Include all routers
 app.include_router(editions_router)
+app.include_router(login_router)
 
 # Install exception handlers
 install_handlers(app)
