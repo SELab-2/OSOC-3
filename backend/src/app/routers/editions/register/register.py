@@ -17,4 +17,4 @@ async def register_email(user: NewUser, db: Session = Depends(get_session), edit
     """
     Register a new account using the email/password format.
     """
-    create_request(db, user)
+    create_request(db, user, edition)
