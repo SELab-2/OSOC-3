@@ -33,7 +33,7 @@ jobs:
         run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction
+        run: bash -c "poetry install --no-interaction"
 
   Test:
     needs: [Dependencies]
