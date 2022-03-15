@@ -1,4 +1,3 @@
-from sqlalchemy import null
 from sqlalchemy.orm import Session
 
 from src.app.schemas.register import NewUser
@@ -23,7 +22,7 @@ def test_create_request(database_session: Session):
 def test_new_user_but_coach_request_failed(database_session: Session):
     nu = NewUser(name="user1", email="email@email.com", pw="wachtwoord")
     try:
-        create_request(database_session, nu, null)
+        create_request(database_session, nu, None)
     except:
         users = database_session.query(User).where(User.name == "user1").all()
         assert len(users) == 0
