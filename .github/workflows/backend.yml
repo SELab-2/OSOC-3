@@ -15,7 +15,7 @@ jobs:
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
-      - run: apk add --no-cache tar
+      - run: apk add --no-cache tar bash
       - uses: actions/checkout@v2
       - uses: snok/install-poetry@v1
         with:
