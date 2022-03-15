@@ -8,6 +8,7 @@ from src.database.exceptions import PendingMigrationsException
 from .routers import editions_router, login_router
 from .exceptions import install_handlers
 
+
 # Main application
 app = FastAPI(
     title="OSOC Team 3",

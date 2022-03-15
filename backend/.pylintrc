@@ -5,6 +5,7 @@ disable=
     import-outside-toplevel,
     missing-module-docstring,
     too-few-public-methods,
+extension-pkg-whitelist=pydantic
 
 [FORMAT]
 max-line-length=120

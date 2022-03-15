@@ -25,7 +25,7 @@ async def login_for_access_token(db: Session = Depends(get_session),
         # Don't use our own error handler here because this should
         # be a 401 instead of a 404
         raise InvalidCredentialsException() from not_found
-
+    
     access_token_expires = timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
     access_token = create_access_token(
         data={"sub": str(user.user_id)}, expires_delta=access_token_expires

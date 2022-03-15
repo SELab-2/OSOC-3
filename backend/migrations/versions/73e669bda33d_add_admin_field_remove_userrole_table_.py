@@ -28,7 +28,7 @@ def upgrade():
     )
     op.drop_table('user_roles')
     with op.batch_alter_table('users', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('admin', sa.Boolean(), nullable=False, server_default='f'))
+        batch_op.add_column(sa.Column('admin', sa.Boolean(), nullable=False, server_default=sa.sql.expression.literal(False)))
 
     # ### end Alembic commands ###
 
