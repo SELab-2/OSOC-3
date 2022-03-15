@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.database.models import AuthEmail, CoachRequest, User, Edition
 
-import hashlib
+from src.app.logic.security import get_password_hash
 
 def create_user(db: Session, name: str, email: str) -> User:
     """Create a user"""
@@ -20,7 +20,7 @@ def create_coach_request(db: Session, user: User, edition: Edition) -> CoachRequ
 
 def create_auth_email(db: Session, user: User, pw: str) -> AuthEmail:
     """Create a authentication for email"""
-    pw_hash = hashlib.sha512(pw.encode("UTF-8")).hexdigest()
+    pw_hash = get_password_hash(pw)
     auth_email : AuthEmail = AuthEmail(user=user, pw_hash = pw_hash)
     db.add(auth_email)
     db.flush()
