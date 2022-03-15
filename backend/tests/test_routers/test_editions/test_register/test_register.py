@@ -1,4 +1,3 @@
-from json import dumps
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.testclient import TestClient
