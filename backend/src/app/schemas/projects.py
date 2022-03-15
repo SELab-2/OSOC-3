@@ -1,3 +1,5 @@
+from pydantic import BaseModel
+
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum
 
@@ -9,6 +11,7 @@ class User(CamelCaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class Skill(CamelCaseModel):
@@ -18,6 +21,7 @@ class Skill(CamelCaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class Partner(CamelCaseModel):
@@ -26,6 +30,7 @@ class Partner(CamelCaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class ProjectRole(CamelCaseModel):
@@ -33,11 +38,12 @@ class ProjectRole(CamelCaseModel):
     project_id: int
     skill_id: int
     definitive: bool
-    argumentation: str
+    argumentation: str | None
     drafter_id: int
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class Project(CamelCaseModel):
@@ -53,6 +59,7 @@ class Project(CamelCaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
 
 
 class Student(CamelCaseModel):
@@ -61,7 +68,7 @@ class Student(CamelCaseModel):
     last_name: str
     preferred_name: str
     email_address: str
-    phone_number: str
+    phone_number: str | None
     alumni: bool
     decision: DecisionEnum
     wants_to_be_student_coach: bool
@@ -69,6 +76,11 @@ class Student(CamelCaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
+
+
+class StudentList(CamelCaseModel):
+    students: list[Student]
 
 
 class ProjectList(CamelCaseModel):
@@ -81,3 +93,18 @@ class ConflictProject(Project):
 
 class ConflictProjectList(CamelCaseModel):
     conflict_projects = list[ConflictProject]
+
+
+class InputProject(BaseModel):
+    name: str
+    number_of_students: int
+    skills: list[int]
+    partners: list[str]
+    coaches: list[int]
+
+
+# TODO: change drafter_id to current user with authentication
+class InputStudentRole(BaseModel):
+    skill_id: int
+    drafter_id: int
+

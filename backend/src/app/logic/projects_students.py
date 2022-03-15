@@ -13,5 +13,5 @@ def logic_add_student_project(db: Session, project: Project, student_id: int, sk
     db_add_student_project(db, project, student_id, skill_id, drafter_id)
 
 
-def logic_change_project_role(db: Session, project: Project, student_id: int, skill_id: int):
-    db_change_project_role(db, project, student_id, skill_id)
+def logic_change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+    db_change_project_role(db, project, student_id, skill_id, drafter_id)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.database.models import Edition, Project, ProjectRole
+from src.database.models import Project, ProjectRole
 
 
 def db_remove_student_project(db: Session, project: Project, student_id: int):
@@ -16,7 +16,8 @@ def db_add_student_project(db: Session, project: Project, student_id: int, skill
     db.commit()
 
 
-def db_change_project_role(db: Session, project: Project, student_id: int, skill_id: int):
+def db_change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     pr = db.query(ProjectRole).where(ProjectRole.student_id == student_id and ProjectRole.project == project).one()
+    pr.drafter_id = drafter_id
     pr.skill_id = skill_id
     db.commit()

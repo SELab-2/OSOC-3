@@ -6,7 +6,7 @@ from starlette.responses import Response
 from src.app.logic.projects import logic_get_project_list, logic_create_project, logic_delete_project, \
     logic_patch_project, logic_get_conflicts
 from src.app.routers.tags import Tags
-from src.app.schemas.projects import ProjectList, Project, ConflictProjectList
+from src.app.schemas.projects import ProjectList, Project, StudentList, InputProject
 from src.app.utils.dependencies import get_edition, get_project
 from src.database.database import get_session
 from src.database.models import Edition
@@ -25,21 +25,23 @@ async def get_projects(db: Session = Depends(get_session), edition: Edition = De
 
 
 @projects_router.post("/", status_code=status.HTTP_201_CREATED, response_class=Response)
-async def create_project(name: str, number_of_students: int, skills: list[int], partners: list[str], coaches: list[int],
+async def create_project(input_project: InputProject,
                          db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Create a new project.users
     """
-    logic_create_project(db, edition, name, number_of_students, skills, partners, coaches)
+    logic_create_project(db, edition,
+                         input_project.name,
+                         input_project.number_of_students,
+                         input_project.skills, input_project.partners, input_project.coaches)
 
 
-@projects_router.get("/conflicts", response_model=ConflictProjectList)
+@projects_router.get("/conflicts", response_model=StudentList)
 async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all projects with conflicts, and the users that
     are causing those conflicts.
     """
-    # return all projects which have more students than listed, and all students who are in more than one project
     return logic_get_conflicts(db, edition)
 
 
@@ -60,10 +62,11 @@ async def get_project(project: Project = Depends(get_project)):
 
 
 @projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-async def patch_project(name: str, number_of_students: int, skills: list[int], partners: list[str],
-                        coaches: list[int], project: Project = Depends(get_project),
+async def patch_project(input_project: InputProject, project: Project = Depends(get_project),
                         db: Session = Depends(get_session)):
     """
     Update a project, changing some fields.
     """
-    logic_patch_project(db, project, name, number_of_students, skills, partners, coaches)
+    logic_patch_project(db, project, input_project.name,
+                        input_project.number_of_students,
+                        input_project.skills, input_project.partners, input_project.coaches)

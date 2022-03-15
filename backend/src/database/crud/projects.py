@@ -15,12 +15,11 @@ def db_add_project(db: Session, edition: Edition, name: str, number_of_students:
     partners_obj = []
     for partner in partners:
         try:
-            partners_obj.append(db.query(Partner).where(partner.name == partner).one())
+            partners_obj.append(db.query(Partner).where(Partner.name == partner).one())
         except NoResultFound:
             partner_obj = Partner(name=partner)
             db.add(partner_obj)
             partners_obj.append(partner_obj)
-
     project = Project(name=name, number_of_students=number_of_students, edition_id=edition.edition_id,
                       skills=skills_obj, coaches=coaches_obj, partners=partners_obj)
 
@@ -49,7 +48,7 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     partners_obj = []
     for partner in partners:
         try:
-            partners_obj.append(db.query(Partner).where(partner.name == partner).one())
+            partners_obj.append(db.query(Partner).where(Partner.name == partner).one())
         except NoResultFound:
             partner_obj = Partner(name=partner)
             db.add(partner_obj)
@@ -63,13 +62,10 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     db.commit()
 
 
-def db_get_all_conflict_projects(db: Session, edition: Edition) -> list[Project]:
-    return db.query(Project).where(len(Project.project_roles) > Project.number_of_students) \
-        .where(Project.edition == edition).all()
-
-
-def db_get_conflict_students_for_project(db: Session, project: Project) -> list[Student]:
-    students = db.query(ProjectRole.student).where(ProjectRole.project_id == project.project_id) \
-        .where(len(ProjectRole.student.project_roles) > 1).all()
-
-    return students
+def db_get_conflict_students(db: Session, edition: Edition) -> list[Student]:
+    students = db.query(Student).where(Student.edition == edition).all()
+    conflicts = []
+    for s in students:
+        if len(s.project_roles) > 1:
+            conflicts.append(s)
+    return conflicts
