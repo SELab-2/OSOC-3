@@ -1,6 +1,5 @@
 from uuid import UUID
 
-import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from src.app.exceptions.parsing import MalformedUUIDError

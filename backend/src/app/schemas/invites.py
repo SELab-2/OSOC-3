@@ -7,6 +7,9 @@ from src.app.schemas.webhooks import CamelCaseModel
 
 
 class EmailAddress(CamelCaseModel):
+    """Model for email addresses
+    Performs basic validation through a regex
+    """
     email: str
 
     @validator("email")
@@ -17,6 +20,9 @@ class EmailAddress(CamelCaseModel):
 
 
 class InviteLink(CamelCaseModel):
+    """Model to represent an InviteLink
+    Sent as a response to API /GET requests
+    """
     invite_link_id: int = Field(alias="id")
     uuid: UUID
     target_email: str = Field(alias="email")
