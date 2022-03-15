@@ -13,5 +13,4 @@ def create_webhook(database: Session, edition: Edition) -> WebhookURL:
     webhook_url: WebhookURL = WebhookURL(edition=edition)
     database.add(webhook_url)
     database.commit()
-    print(webhook_url.uuid)
     return webhook_url
