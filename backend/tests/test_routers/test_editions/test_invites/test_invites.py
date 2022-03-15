@@ -1,4 +1,6 @@
 from json import dumps
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.testclient import TestClient
@@ -39,19 +41,23 @@ def test_create_invite(database_session: Session, test_client: TestClient):
     database_session.add(edition)
     database_session.commit()
 
-    # Verify that entity doesn't exist
-    assert test_client.get("/editions/1/invites/1/").status_code == status.HTTP_404_NOT_FOUND
+    # Verify malformed uuid
+    assert test_client.get("/editions/1/invites/1/").status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    # Verify entity that doesn't exist
+    assert test_client.get("/editions/1/invites/123e4567-e89b-12d3-a456-426614174000").status_code == status.HTTP_404_NOT_FOUND
 
     # Create POST request
     response = test_client.post("/editions/1/invites/", data=dumps({"email": "test@ema.il"}))
     assert response.status_code == status.HTTP_201_CREATED
-    json: dict[str, str] = response.json()
+    json = response.json()
     assert "mailTo" in json
     assert json["mailTo"].startswith("mailto:test@ema.il")
 
     # New entry made in database
-    assert len(test_client.get("/editions/1/invites/").json()["inviteLinks"]) == 1
-    assert test_client.get("/editions/1/invites/1/").status_code == status.HTTP_200_OK
+    json = test_client.get("/editions/1/invites/").json()
+    assert len(json["inviteLinks"]) == 1
+    new_uuid = json["inviteLinks"][0]["uuid"]
+    assert test_client.get(f"/editions/1/invites/{new_uuid}/").status_code == status.HTTP_200_OK
 
     # Invalid POST will send invalid status code
     response = test_client.post("/editions/1/invites/", data=dumps({"email": "invalid field"}))
@@ -66,19 +72,21 @@ def test_delete_invite(database_session: Session, test_client: TestClient):
     database_session.add(edition)
     database_session.commit()
 
+    debug_uuid = "123e4567-e89b-12d3-a456-426614174000"
+
     # Not present yet
-    assert test_client.delete("/editions/1/invites/1").status_code == status.HTTP_404_NOT_FOUND
+    assert test_client.delete(f"/editions/1/invites/{debug_uuid}").status_code == status.HTTP_404_NOT_FOUND
 
     # Create new entry in db
-    invite_link = InviteLink(target_email="test@ema.il", edition=edition)
+    invite_link = InviteLink(target_email="test@ema.il", edition=edition, uuid=UUID(debug_uuid))
     database_session.add(invite_link)
     database_session.commit()
 
     # Remove
-    assert test_client.delete("/editions/1/invites/1").status_code == status.HTTP_204_NO_CONTENT
+    assert test_client.delete(f"/editions/1/invites/{invite_link.uuid}").status_code == status.HTTP_204_NO_CONTENT
 
     # Not found anymore
-    assert test_client.get("/editions/1/invites/1/").status_code == status.HTTP_404_NOT_FOUND
+    assert test_client.get(f"/editions/1/invites/{invite_link.uuid}/").status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_get_invite(database_session: Session, test_client: TestClient):
@@ -86,16 +94,19 @@ def test_get_invite(database_session: Session, test_client: TestClient):
     database_session.add(edition)
     database_session.commit()
 
+    debug_uuid = "123e4567-e89b-12d3-a456-426614174000"
+
     # Not present yet
-    assert test_client.get("/editions/1/invites/1").status_code == status.HTTP_404_NOT_FOUND
+    assert test_client.get(f"/editions/1/invites/{debug_uuid}/").status_code == status.HTTP_404_NOT_FOUND
 
     # Create new entry in db
-    invite_link = InviteLink(target_email="test@ema.il", edition=edition)
+    invite_link = InviteLink(target_email="test@ema.il", edition=edition, uuid=UUID(debug_uuid))
     database_session.add(invite_link)
     database_session.commit()
 
     # Found the correct result now
-    response = test_client.get("/editions/1/invites/1")
+    response = test_client.get(f"/editions/1/invites/{debug_uuid}")
+    json = response.json()
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["id"] == 1
-    assert response.json()["email"] == "test@ema.il"
+    assert json["uuid"] == debug_uuid
+    assert json["email"] == "test@ema.il"

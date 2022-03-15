@@ -29,7 +29,7 @@ async def create_invite(email: EmailAddress, db: Session = Depends(get_session),
     return create_mailto_link(db, edition, email)
 
 
-@invites_router.delete("/{invite_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@invites_router.delete("/{invite_uuid}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
 async def delete_invite(invite_link: InviteLinkDB = Depends(get_invite_link), db: Session = Depends(get_session)):
     """
     Delete an existing invitation link manually so that it can't be used anymore.
@@ -37,7 +37,7 @@ async def delete_invite(invite_link: InviteLinkDB = Depends(get_invite_link), db
     delete_invite_link(db, invite_link)
 
 
-@invites_router.get("/{invite_id}", response_model=InviteLinkModel)
+@invites_router.get("/{invite_uuid}", response_model=InviteLinkModel)
 async def get_invite(invite_link: InviteLinkDB = Depends(get_invite_link)):
     """
     Get a specific invitation link to see if it exists or not. Can be used to verify the validity

@@ -4,11 +4,19 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from starlette import status
 
+from .parsing import MalformedUUIDError
 from .webhooks import WebhookProcessException
 
 
 def install_handlers(app: FastAPI):
     """Install all custom exception handlers"""
+
+    @app.exception_handler(MalformedUUIDError)
+    def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={"message": f"Malformed UUID: {str(_exception)}"}
+        )
 
     # Note: pydantic validation raises a pydantic.ValidationError when validation fails,
     # so it's not possible to catch our own custom ValidationException here!

@@ -1,5 +1,9 @@
+from uuid import UUID
+
+import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
+from src.app.exceptions.parsing import MalformedUUIDError
 from src.database.models import Edition, InviteLink
 
 
@@ -22,9 +26,17 @@ def get_all_pending_invites(db: Session, edition: Edition) -> list[InviteLink]:
     return db.query(InviteLink).where(InviteLink.edition == edition).all()
 
 
-def get_invite_link_by_id(db: Session, invite_id: int) -> InviteLink:
+def get_invite_link_by_uuid(db: Session, invite_uuid: str | UUID) -> InviteLink:
     """Get an invite link by its id
     As the ids are auto-generated per row, there's no need to use the Edition
     from the path parameters as an extra filter
     """
-    return db.query(InviteLink).where(InviteLink.invite_link_id == invite_id).one()
+    # Convert to UUID if necessary
+    if isinstance(invite_uuid, str):
+        try:
+            invite_uuid = UUID(invite_uuid)
+        except ValueError as value_error:
+            # If conversion failed, then the input string was not a valid uuid
+            raise MalformedUUIDError(str(invite_uuid)) from value_error
+
+    return db.query(InviteLink).where(InviteLink.uuid == invite_uuid).one()
