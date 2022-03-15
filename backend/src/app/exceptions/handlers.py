@@ -5,6 +5,7 @@ from starlette import status
 
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, UnauthorizedException
 from .webhooks import WebhookProcessException
+from .register import FailedToAddNewUserException
 
 
 def install_handlers(app: FastAPI):
@@ -44,4 +45,11 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'message': exception.message}
+        )
+
+    @app.exception_handler(FailedToAddNewUserException)
+    def failed_to_add_new_user_exception(_request: Request, exception: FailedToAddNewUserException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while creating a new user'}
         )
