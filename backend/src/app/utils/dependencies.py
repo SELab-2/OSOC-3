@@ -48,6 +48,7 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
 # the return value isn't required
 # Require the user to be authorized, coach or admin doesn't matter
 require_authorization = get_current_active_user
+require_auth = get_current_active_user
 
 
 async def require_admin(user: User = Depends(get_current_active_user)) -> User:
