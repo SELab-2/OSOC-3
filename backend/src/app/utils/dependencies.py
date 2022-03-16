@@ -8,8 +8,9 @@ import settings
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, UnauthorizedException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
+from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.database import get_session
-from src.database.models import Edition, User
+from src.database.models import Edition, InviteLink, User
 
 
 # TODO: Might be nice to use a more descriptive year number here than primary id.
@@ -57,3 +58,7 @@ async def require_admin(user: User = Depends(get_current_active_user)) -> User:
         raise UnauthorizedException()
 
     return user
+
+def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> InviteLink:
+    """Get an invite link from the database, given the id in the path"""
+    return get_invite_link_by_uuid(db, invite_uuid)
