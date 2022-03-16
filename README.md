@@ -16,6 +16,7 @@
 	- [Starting the database](#starting-the-database)
 	- [Starting Backend](#starting-backend)
 	- [Running Tests](#running-tests)
+	- [Database Migrations](#database-migrations)
 
 ## Local Setup Instructions
 
@@ -80,6 +81,12 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 	
 	# Running with hot reloading
 	uvicorn main:app --reload
+	
+	# Database migrations: updating to most recent version
+	alembic upgrade head
+	
+	# Database migrations: generating a new revision
+	alembic revision --auto-generate -m "Your message here"
 	
 	# Testing
 	pytest .
@@ -160,7 +167,7 @@ yarn build
 
 #### Installing Docker and MariaDB
 
-1. Install Docker by following the official installation instructions
+1. Install Docker Engine by following the official installation instructions
 
 	- Linux (choose your distribution): https://docs.docker.com/engine/install/#server 
 
@@ -253,3 +260,19 @@ pylint src
 # Type checking
 mypy src
 ```
+
+#### Database Migrations
+
+We use [`Alembic`](https://alembic.sqlalchemy.org/en/latest/) to manage database migrations.
+
+```shell
+# Updating the current state of the database to the latest version
+alembic upgrade head
+
+# Generating a new revision
+alembic revision --autogenerate -m "Your message here" 
+```
+
+Keep in mind that auto-generated migrations may need manual editing in some edge cases. Always check if you can still upgrade to head, and if the tests still run ([Running Tests](#running-tests)). One of our tests tries to go through every migration in history to the most recent one and back down, in order to verify that all migrations work in the testing environment as well.
+
+More info on upgrading and downgrading (such as relative upgrades) can be found in [`Alembic's documentation`](https://alembic.sqlalchemy.org/en/latest/tutorial.html#relative-migration-identifiers).
