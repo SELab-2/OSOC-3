@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from uuid import uuid4, UUID
 
-from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table
+from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table, UniqueConstraint
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
@@ -273,6 +273,9 @@ student_skills = Table(
 class Suggestion(Base):
     """A suggestion left by a coach about a student"""
     __tablename__ = "suggestions"
+    __table_args__=(
+        UniqueConstraint('coach_id', 'student_id', name='unique_coach_student_suggestion'),
+    )
 
     suggestion_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
