@@ -65,7 +65,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 	# Activate your Virtual Environment
 	source venv/bin/activate
 	
-	# Start the Docker container to run the Database
+	# Start the Docker container to run the database
 	docker compose up -d
 	
 	# Stop the Docker container
