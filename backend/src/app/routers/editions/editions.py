@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List, Optional
+from fastapi import APIRouter, Depends
 from starlette import status
 from sqlalchemy.orm import Session
 
@@ -7,7 +6,7 @@ from src.app.routers.tags import Tags
 from src.app.schemas.editions import EditionBase, Edition, EditionList
 
 from src.database.database import get_session
-from src.database.crud import editions as crud_editions
+from src.app.logic import editions as logic_editions
 
 from .invites import invites_router
 from .projects import projects_router
@@ -43,23 +42,21 @@ async def get_editions(db: Session = Depends(get_session)):
     Returns:
         EditionList: an object with a list of all the editions.
     """
-    return crud_editions.get_editions(db)
+    return logic_editions.get_editions(db)
 
 
-@editions_router.get("/{edition_id}", response_model=Edition | None, tags=[Tags.EDITIONS])
-async def get_editions_by_id(edition_id: int, db: Session = Depends(get_session)):
+@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS])
+async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session)):
     """Get a specific edition.
 
     Args:
+        edition_id (int): the id of the edition that you want to get.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:
         Edition: an edition.
     """
-    result: Optional[Edition] = crud_editions.get_edition_by_id(db, edition_id)
-    if result == None:
-        raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
-    else: return result
+    return logic_editions.get_edition_by_id(db, edition_id)
 
 
 @editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS])
@@ -72,9 +69,7 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     Returns:
         Edition: the newly made edition object.
     """
-    result: Optional[Edition] = crud_editions.create_edition(db, edition)
-    if result == None:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"An edition in {edition.year} already exists")
+    return logic_editions.create_edition(db, edition)
 
 
 @editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS])
@@ -85,7 +80,5 @@ async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
         edition_id (int): the id of the edition that needs to be deleted, if found.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
-    Returns: nothing
     """
-    status: bool = crud_editions.delete_edition(db, edition_id)
-    if not status: raise HTTPException(status_code=404, detail=f"Edition with id {edition_id} not found")
+    logic_editions.delete_edition(db, edition_id)
