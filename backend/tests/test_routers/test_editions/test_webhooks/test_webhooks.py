@@ -27,7 +27,7 @@ def webhook(edition: Edition, database_session: Session) -> WebhookURL:
 
 def test_new_webhook(test_client: TestClient, edition: Edition):
     response = test_client.post(f"/editions/{edition.edition_id}/webhooks/")
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     assert 'uuid' in response.json()
     assert UUID(response.json()['uuid'])
 
@@ -47,7 +47,7 @@ def test_webhook(test_client: TestClient, webhook: WebhookURL, database_session:
         phone_number="0477002266",
     )
     response = test_client.post(f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}", json=event)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
 
     student: Student = database_session.query(Student).first()
     assert student.edition == webhook.edition
@@ -72,7 +72,7 @@ def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL):
         email_address="test@gmail.com",
     )
     response = test_client.post(f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}", json=event)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
 
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
@@ -86,7 +86,7 @@ def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL):
         phone_number="0477002266",
     )
     response = test_client.post(f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}", json=event)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
 
     event: dict = create_webhook_event(
         phone_number="0477002266",
