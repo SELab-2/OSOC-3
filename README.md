@@ -78,7 +78,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 	# Running
 	uvicorn main:app
 	
-	# Runnin with hot reloading
+	# Running with hot reloading
 	uvicorn main:app --reload
 	
 	# Testing
