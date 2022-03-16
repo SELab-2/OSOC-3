@@ -4,6 +4,7 @@
 
 [Local Setup Instructions](#local-setup-instructions)
 
+- [TLDR](#tldr)
 - [Frontend](#frontend)
 	- [Installing Node.js and dependencies](#installing-nodejs-and-dependencies)
 	- [Starting Frontend](#starting-frontend)
@@ -19,6 +20,79 @@
 ## Local Setup Instructions
 
 Below are the instructions on how to set up the frontend and backend. Instructions for backend should be executed in the `/backend` directory, and instructions for frontend should be executed in the `/frontend` directory.
+
+### TLDR
+
+#### Frontend
+
+- Install `Node v16.14`
+
+- Install Yarn (`npm install --global Yarn`)
+
+- Install the dependencies (`yarn install`)
+
+- Available scripts:
+
+	```shell
+	# Running
+	yarn start
+	
+	# Testing
+	yarn test
+	
+	# Linting
+	yarn lint
+	
+	# Building (for production)
+	yarn build
+	```
+
+#### Backend
+
+- Install `Python 3.10.2`
+
+- Install `Docker Engine` (through `Docker Desktop` if not on Linux)
+
+- Install `MariaDB` drivers & connectors
+
+- Create a `Virtual Environment` (`python3 -m venv venv`)
+
+- Install the dependencies (`pip3 install -r requirements.txt -r requirements-dev.txt`)
+
+- Required scripts:
+
+	```shell
+	# Activate your Virtual Environment
+	source venv/bin/activate
+	
+	# Start the Docker container to run the Database
+	docker compose up -d
+	
+	# Stop the Docker container
+	docker compose down
+	```
+
+- Available scripts:
+
+	```shell
+	# Running
+	uvicorn main:app
+	
+	# Runnin with hot reloading
+	uvicorn main:app --reload
+	
+	# Testing
+	pytest .
+	
+	# Testing + coverage report
+	pytest --cov=src .
+	
+	# Linting
+	pylint src
+	
+	# Static type checking
+	mypy src
+	```
 
 ### Frontend
 
@@ -38,6 +112,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 		
 		# Make your shell use the newly-installed version
 		nvm use 16
+		```
 
 2. Install the Yarn package manager
 
@@ -168,6 +243,9 @@ We use [`pytest`](https://docs.pytest.org/en/7.1.x/) as our testing framework, a
 ```shell
 # Tests
 pytest .
+
+# Tests + coverage report
+pytest --cov=src .
 
 # Linting
 pylint src
