@@ -1,6 +1,7 @@
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
+from src.app.schemas.projects import ConflictStudent
 from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
 
 
@@ -62,10 +63,28 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     db.commit()
 
 
-def db_get_conflict_students(db: Session, edition: Edition) -> list[Student]:
+# def db_get_conflict_students(db: Session, edition: Edition) -> list[Student]:
+#     students = db.query(Student).where(Student.edition == edition).all()
+#     conflicts = []
+#     for s in students:
+#         if len(s.project_roles) > 1:
+#             conflicts.append(s)
+#     return conflicts
+
+
+def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStudent]:
+
     students = db.query(Student).where(Student.edition == edition).all()
-    conflicts = []
-    for s in students:
-        if len(s.project_roles) > 1:
-            conflicts.append(s)
-    return conflicts
+    conflict_students = []
+    projs = []
+    for student in students:
+        if len(student.project_roles) > 1:
+            proj_ids = db.query(ProjectRole.project_id).where(ProjectRole.student_id == student.student_id).all()
+            for proj_id in proj_ids:
+                proj_id = proj_id[0]
+                proj = db.query(Project).where(Project.project_id == proj_id).one()
+                projs.append(proj)
+            cp = ConflictStudent(student=student, projects=projs)
+            conflict_students.append(cp)
+    return conflict_students
+

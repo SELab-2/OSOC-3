@@ -6,7 +6,8 @@ from starlette.responses import Response
 from src.app.logic.projects import logic_get_project_list, logic_create_project, logic_delete_project, \
     logic_patch_project, logic_get_conflicts
 from src.app.routers.tags import Tags
-from src.app.schemas.projects import ProjectList, Project, StudentList, InputProject
+from src.app.schemas.projects import ProjectList, Project, InputProject, \
+    ConflictStudentList
 from src.app.utils.dependencies import get_edition, get_project
 from src.database.database import get_session
 from src.database.models import Edition
@@ -36,7 +37,7 @@ async def create_project(input_project: InputProject,
                          input_project.skills, input_project.partners, input_project.coaches)
 
 
-@projects_router.get("/conflicts", response_model=StudentList)
+@projects_router.get("/conflicts", response_model=ConflictStudentList)
 async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all projects with conflicts, and the users that

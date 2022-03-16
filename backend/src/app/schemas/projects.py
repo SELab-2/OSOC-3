@@ -11,7 +11,6 @@ class User(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class Skill(CamelCaseModel):
@@ -21,7 +20,6 @@ class Skill(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class Partner(CamelCaseModel):
@@ -30,7 +28,6 @@ class Partner(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class ProjectRole(CamelCaseModel):
@@ -43,7 +40,6 @@ class ProjectRole(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class Project(CamelCaseModel):
@@ -59,7 +55,6 @@ class Project(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class Student(CamelCaseModel):
@@ -76,23 +71,19 @@ class Student(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
-
-
-class StudentList(CamelCaseModel):
-    students: list[Student]
 
 
 class ProjectList(CamelCaseModel):
     projects: list[Project]
 
 
-class ConflictProject(Project):
-    conflicting_students = list[Student]
+class ConflictStudent(CamelCaseModel):
+    student: Student
+    projects: list[Project]
 
 
-class ConflictProjectList(CamelCaseModel):
-    conflict_projects = list[ConflictProject]
+class ConflictStudentList(CamelCaseModel):
+    conflict_students: list[ConflictStudent]
 
 
 class InputProject(BaseModel):

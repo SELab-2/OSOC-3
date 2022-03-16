@@ -45,6 +45,15 @@ def test_delete_project(database_session: Session, test_client: TestClient):
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
+def test_delete_no_projects(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    database_session.commit()
+
+    response = test_client.delete("/editions/1/projects/1")
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_create_project(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     database_session.commit()
@@ -62,6 +71,25 @@ def test_create_project(database_session: Session, test_client: TestClient):
 
     assert len(json['projects']) == 1
     assert json['projects'][0]['name'] == "test"
+
+
+def test_create_wrong_project(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    database_session.commit()
+
+    response = \
+        test_client.post("/editions/1/projects/",
+                         # project has no name
+                         json={
+                               "number_of_students": 5,
+                               "skills": [], "partners": [], "coaches": []})
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    response2 = test_client.get('/editions/1/projects')
+    json = response2.json()
+
+    assert len(json['projects']) == 0
 
 
 def test_patch_project(database_session: Session, test_client: TestClient):
@@ -84,6 +112,25 @@ def test_patch_project(database_session: Session, test_client: TestClient):
     assert json['projects'][0]['name'] == 'patched'
 
 
+def test_patch_wrong_project(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
+    database_session.add(project)
+    database_session.commit()
+
+    response = \
+        test_client.patch("/editions/1/projects/1",
+                          json={"name": "patched",
+                                "skills": [], "partners": [], "coaches": []})
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    response2 = test_client.get('/editions/1/projects')
+    json = response2.json()
+
+    assert len(json['projects']) == 1
+    assert json['projects'][0]['name'] == 'project'
+
+
 def test_add_student_project(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
@@ -99,6 +146,22 @@ def test_add_student_project(database_session: Session, test_client: TestClient)
 
     assert len(json['projects'][0]['projectRoles']) == 1
     assert json['projects'][0]['projectRoles'][0]['skillId'] == 1
+
+
+def test_add_wrong_student_project(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
+    database_session.add(project)
+    database_session.commit()
+
+    resp = test_client.post("/editions/1/projects/1/students/1", json={"drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    response2 = test_client.get('/editions/1/projects')
+    json = response2.json()
+
+    assert len(json['projects'][0]['projectRoles']) == 0
 
 
 def test_change_student_project(database_session: Session, test_client: TestClient):
@@ -119,6 +182,24 @@ def test_change_student_project(database_session: Session, test_client: TestClie
     assert json['projects'][0]['projectRoles'][0]['skillId'] == 2
 
 
+def test_change_wrong_student_project(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
+    database_session.add(project)
+    database_session.commit()
+
+    logic_add_student_project(database_session, project, 1, 1, 1)
+    resp1 = test_client.patch("/editions/1/projects/1/students/1", json={"skill_id": 2})
+
+    assert resp1.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+    response2 = test_client.get('/editions/1/projects')
+    json = response2.json()
+
+    assert len(json['projects'][0]['projectRoles']) == 1
+    assert json['projects'][0]['projectRoles'][0]['skillId'] == 1
+
+
 def test_delete_student_project(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
@@ -136,10 +217,21 @@ def test_delete_student_project(database_session: Session, test_client: TestClie
     assert len(json['projects'][0]['projectRoles']) == 0
 
 
+def test_delete_student_project_empty(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    project = Project(name="project", edition_id=1, project_id=1, number_of_students=2)
+    database_session.add(project)
+    database_session.commit()
+
+    resp = test_client.delete("/editions/1/projects/1/students/1")
+
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_get_conflicts(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     project = Project(name="project", edition_id=1, project_id=1, number_of_students=1)
-    project2 = Project(name="project2", edition_id=1, project_id=2, number_of_students=1)
+    project2 = Project(name="project2", edition_id=1, project_id=3, number_of_students=1)
     student = Student(student_id=1, first_name="test", last_name="person", preferred_name="test",
                       email_address="a@b.com",
                       alumni=False, edition_id=1)
@@ -158,6 +250,6 @@ def test_get_conflicts(database_session: Session, test_client: TestClient):
     logic_add_student_project(database_session, project2, 1, 2, 1)
     response = test_client.get("/editions/1/projects/conflicts")
     json = response.json()
-
-    assert len(json['students']) == 1
-    assert json['students'][0]['studentId'] == 1
+    assert len(json['conflictStudents']) == 1
+    assert json['conflictStudents'][0]['student']['studentId'] == 1
+    assert len(json['conflictStudents'][0]['projects']) == 2

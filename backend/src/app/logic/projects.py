@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ProjectList, Project, ConflictProjectList, ConflictProject, StudentList
+from src.app.schemas.projects import ProjectList, Project, ConflictStudentList
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
 from src.database.models import Edition
@@ -25,6 +25,6 @@ def logic_patch_project(db: Session, project: Project, name: str, number_of_stud
     db_patch_project(db, project, name, number_of_students, skills, partners, coaches)
 
 
-def logic_get_conflicts(db: Session, edition: Edition) -> StudentList:
-    conflicts = db_get_conflict_students(db,edition)
-    return StudentList(students=conflicts)
+def logic_get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
+    conflicts = db_get_conflict_students(db, edition)
+    return ConflictStudentList(conflict_students=conflicts)
