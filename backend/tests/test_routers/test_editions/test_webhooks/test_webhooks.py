@@ -24,9 +24,3 @@ def test_new_webhook_invalid_edition(test_client: TestClient, edition: Edition):
     assert response.status_code == 404
 
 
-def test_webhook_trigger(test_client: TestClient, edition: Edition):
-    response = test_client.post(f"/editions/{edition.edition_id}/webhooks/")
-    assert response.status_code == 200
-    uuid = response.json()['uuid']
-    response = test_client.post(f"/editions/{edition.edition_id}/webhooks/{uuid}", data={})
-    assert response.status_code == 404
