@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database.database import get_session
 from src.app.schemas.skills import SkillBase, Skill, SkillList
-from src.database.crud import skills as crud_skills
+from src.app.logic import skills as logic_skills
 
 from src.app.schemas.skills import SkillBase
 from src.app.routers.tags import Tags
@@ -23,7 +23,7 @@ async def get_skills(db: Session = Depends(get_session)):
     Returns:
         SkillList: an object with a list of all the skills.
     """
-    return crud_skills.get_skills(db)
+    return logic_skills.get_skills(db)
 
 
 @skills_router.post("/",status_code=status.HTTP_201_CREATED, response_model=Skill, tags=[Tags.SKILLS])
@@ -37,7 +37,7 @@ async def create_skill(skill: SkillBase, db: Session = Depends(get_session)):
     Returns:
         Skill: returns the new skill.
     """
-    return crud_skills.create_skill(db, skill)
+    return logic_skills.create_skill(db, skill)
 
 
 @skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.SKILLS])
@@ -48,5 +48,4 @@ async def delete_skill(skill_id: int, db: Session = Depends(get_session)):
         skill_id (int): the id of the skill.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
     """
-    status: bool = crud_skills.delete_skill(db, skill_id)
-    if not status: raise HTTPException(status_code=404, detail=f"Skill with id {skill_id} not found")
+    logic_skills.delete_skill(db, skill_id)

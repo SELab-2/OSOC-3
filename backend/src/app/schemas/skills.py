@@ -24,7 +24,7 @@ class SkillBase(CamelCaseModel):
         CamelCaseModel (CamelCaseModel): needed to make SkillBase pydantic.
     """
     name: str
-    description: str
+    description: str | None = None
 
 
 class Skill(CamelCaseModel):
@@ -35,7 +35,7 @@ class Skill(CamelCaseModel):
     """
     skill_id: int
     name: str
-    description: str
+    description: str | None = None
 
     class Config:
         orm_mode = True
