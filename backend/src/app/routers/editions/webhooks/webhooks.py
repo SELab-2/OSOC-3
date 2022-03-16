@@ -28,9 +28,7 @@ def webhook(data: WebhookEvent, edition: Edition = Depends(get_edition), databas
     """Receive a webhook event, This is triggered by Tally"""
     try:
         process_webhook(edition, data, database)
-    except Exception as exception:
-        # When processing fails, write the webhook data to a file to make sure it is not lost.
+    except Exception as exception:  # When processing fails, write the webhook data to a file to make sure it is not lost.
         with open(f'failed-webhook-{data.event_id}.json', 'w', encoding='utf-8') as file:
             file.write(data.json())
         raise exception  # Let the exception propagate further.
-    return "OK"
