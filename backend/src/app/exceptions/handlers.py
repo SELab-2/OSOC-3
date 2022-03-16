@@ -32,6 +32,7 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": "You are not authorized to perform this action"}
+        )
     
     @app.exception_handler(MalformedUUIDError)
     def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
