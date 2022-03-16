@@ -5,8 +5,7 @@ from fastapi import FastAPI, APIRouter
 
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import editions_router
-from .routers.skills import skills_router
+from .routers import editions_router, skills_router
 from .exceptions import install_handlers
 
 # Main application
