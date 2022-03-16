@@ -1,3 +1,4 @@
+from unittest.mock import mock_open
 from uuid import UUID
 
 import pytest
@@ -67,7 +68,8 @@ def test_webhook_bad_format(test_client: TestClient, webhook: WebhookURL):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL):
+def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL, mocker):
+    mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
     )
@@ -81,7 +83,8 @@ def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL):
+def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL, mocker):
+    mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
         phone_number="0477002266",
     )
@@ -95,7 +98,8 @@ def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL):
+def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL, mocker):
+    mocker.patch('builtins.open', new_callable=mock_open())
     response = test_client.post(
         f"/editions/{webhook.edition_id}/webhooks/{webhook.uuid}",
         json=WEBHOOK_MISSING_QUESTION
