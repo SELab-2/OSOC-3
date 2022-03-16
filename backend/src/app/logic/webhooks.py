@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from settings import FormMapping
@@ -7,7 +8,12 @@ from src.database.enums import QuestionEnum as QE
 from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
 
 
-def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
+def process_webhook(edition: Edition, data: WebhookEvent, database: Session):
+    """
+    Process webhook data
+
+    Given a form process all required question and save remaining in a generic question table.
+    """
     form: Form = data.data
     questions: list[Question] = form.fields
     extra_questions: list[Question] = []
@@ -36,16 +42,35 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                 extra_questions.append(question)
 
     # Check all attributes are included and not None
-    needed = {'first_name', 'last_name', 'preferred_name', 'email_address', 'phone_number', 'wants_to_be_student_coach', 'edition'}
-    diff = set(attributes.keys()) - needed
+    needed = {
+        'first_name',
+        'last_name',
+        'preferred_name',
+        'email_address',
+        'phone_number',
+        'wants_to_be_student_coach',
+        'edition'
+    }
+
+    diff = set(attributes.keys()).symmetric_difference(needed)
     if len(diff) != 0:
         raise WebhookProcessException(f'Missing questions for Attributes {diff}')
 
     student: Student = Student(**attributes)
 
-    db.add(student)
+    database.add(student)
 
-    for question in extra_questions:
+    process_remaining_questions(student, extra_questions, database)
+
+    try:
+        database.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        raise WebhookProcessException('Unique Check Failed') from error
+
+
+def process_remaining_questions(student: Student, questions: list[Question], database: Session):
+    """Process all remaining questions"""
+    for question in questions:
 
         if QE(question.type) == QE.CHECKBOXES and not question.options:
             continue
@@ -56,28 +81,28 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
             student=student
         )
 
-        db.add(model)
+        database.add(model)
 
         match QE(question.type):
             case QE.MULTIPLE_CHOICE:
                 value: str = question.value
                 for option in question.options:
                     if option.id == value:
-                        db.add(QuestionAnswer(
+                        database.add(QuestionAnswer(
                             answer=option.text,
                             question=model
                         ))
                         break  # Only one answer in multiple choice questions.
             case QE.INPUT_EMAIL | QE.INPUT_LINK | QE.INPUT_TEXT | QE.TEXTAREA | QE.INPUT_PHONE_NUMBER | QE.INPUT_NUMBER:
                 if question.value:
-                    db.add(QuestionAnswer(
+                    database.add(QuestionAnswer(
                         answer=question.value,
                         question=model
                     ))
             case QE.FILE_UPLOAD:
                 if question.value:
                     for upload in question.value:
-                        db.add(QuestionFileAnswer(
+                        database.add(QuestionFileAnswer(
                             file_name=upload.name,
                             url=upload.url,
                             mime_type=upload.mime_type,
@@ -88,11 +113,9 @@ def process_webhook(edition: Edition, data: WebhookEvent, db: Session):
                 for value in question.value:
                     for option in question.options:
                         if option.id == value:
-                            db.add(QuestionAnswer(
+                            database.add(QuestionAnswer(
                                 answer=option.text,
                                 question=model
                             ))
             case _:
                 raise WebhookProcessException('Unknown question type')
-
-    db.commit()
