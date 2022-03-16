@@ -1,1 +1,177 @@
 # OSOC-3
+
+## Table of Contents
+
+[Local Setup Instructions](#local-setup-instructions)
+
+- [Frontend](#frontend)
+	- [Installing Node.js and dependencies](#installing-nodejs-and-dependencies)
+	- [Starting Frontend](#starting-frontend)
+	- [Frontend Tests](#frontend-tests)
+	- [Building Frontend](#building-frontend)
+- [Backend](#backend)
+	- [Installing Docker and MariaDB](#installing-docker-and-mariadb)
+	- [Installing Python and dependencies](#installing-python-and-dependencies)
+	- [Starting the database](#starting-the-database)
+	- [Starting Backend](#starting-backend)
+	- [Running Tests](#running-tests)
+
+## Local Setup Instructions
+
+Below are the instructions on how to set up the frontend and backend. Instructions for backend should be executed in the `/backend` directory, and instructions for frontend should be executed in the `/frontend` directory.
+
+### Frontend
+
+#### Installing Node.js and dependencies
+
+1. Install `Node.js v16.14` if you don't have it already (check using `node --version`)
+
+	- Windows: https://nodejs.org/en/download/
+
+	- Linux, MacOS, and WSL 2: use [`nvm (recommended)`](https://github.com/nvm-sh/nvm#install--update-script) or install [manually](https://nodejs.org/en/download/)
+
+		After installing `nvm` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
+
+		```shell
+		# Install the required Node version
+		nvm install 16.14.1
+		
+		# Make your shell use the newly-installed version
+		nvm use 16
+
+2. Install the Yarn package manager
+
+	```shell
+	npm install --global Yarn
+	```
+
+3. Install the dependencies
+
+	```shell
+	yarn install
+	```
+
+#### Running Frontend
+
+Starting the frontend is very simple. All you have to do is run the command below:
+
+```shell
+yarn start
+```
+
+and the website should open automatically in your browser. In case it doesn't, navigate to `http://localhost:3000/`.
+
+#### Frontend Tests
+
+We use [`Jest`](https://jestjs.io/) as our testing framework, and [`ESLint`](https://eslint.org/) as our linter.
+
+```shell
+# Tests
+yarn test
+
+# Linting
+yarn lint
+```
+
+#### Building Frontend
+
+The build files will be written to `/build`.
+
+```shell
+yarn build
+```
+
+### Backend
+
+#### Installing Docker and MariaDB
+
+1. Install Docker by following the official installation instructions
+
+	- Linux (choose your distribution): https://docs.docker.com/engine/install/#server 
+
+	- MacOS: https://docs.docker.com/desktop/mac/install/
+	- Windows (**needs WSL 2**): https://docs.docker.com/desktop/windows/install/#wsl-2-backend
+
+2. Install the MariaDB drivers & connectors
+	- Linux and WSL 2: `sudo apt install libmariadb3 libmariadb-dev`
+	- MacOS: `brew install mariadb`
+
+#### Installing Python and dependencies
+
+1. Install Python 3.10.2 if you don't have it already (check using `python3 --version`)
+
+- Windows: https://www.python.org/downloads/release/python-3102/
+
+- Linux, MacOS and WSL 2: use [`pyenv (recommended)`](https://github.com/pyenv/pyenv#installation) or install [manually](https://www.python.org/downloads/release/python-3102/)
+
+	After installing `pyenv` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
+
+	```shell
+	pyenv install 3.10.2
+	```
+
+	You don't have to manually change your Python version afterwards. `Pyenv` should pick it up automatically thanks to the [`.python-version`](backend/.python-version) file in the `/backend` directory.
+
+2. Create a [`Virtual Environment`](https://docs.python.org/3/tutorial/venv.html) to install your packages in
+
+	```shell
+	# Create a new Virtual Environment
+	python3 -m venv venv
+	
+	# Activate it
+	source venv/bin/activate
+	```
+
+3. Install the regular dependencies and development dependencies
+
+	```
+	pip3 install -r requirements.txt -r requirements-dev.txt
+
+For all commands below, make sure your `Virtual Environment` is activated at all times. Otherwise, your Python interpreter won't be able to find the correct package.
+
+#### Starting The Database
+
+We use `Docker` containers to run the database server for local development. The credentials used for this container are not secure, but this doesn't matter as they are only used for local development. The container can be started using the following command:
+
+```shell
+docker compose up -d
+```
+
+and stopped using:
+
+```shell
+docker compose down
+```
+
+#### Starting Backend
+
+First, make sure your `Docker` container is running so that the app can connect to the database. See [Starting The Database](#starting-the-database) for more info.
+
+We use [`Uvicorn`](https://www.uvicorn.org/) as our web server to run the API with.
+
+```shell
+uvicorn main:app
+```
+
+For local development, you can enable `hot reloading` by passing the `--reload` option:
+
+```shell
+uvicorn main:app --reload
+```
+
+**Note**: `--reload` should only be used in development, and _**not**_ when hosting the application on a server!
+
+#### Running Tests
+
+We use [`pytest`](https://docs.pytest.org/en/7.1.x/) as our testing framework, and [`pylint`](https://pylint.org/) as our linter. Further, as Python is a dynamically typed language, we use [`mypy`](http://mypy-lang.org/) to perform static type checking.
+
+```shell
+# Tests
+pytest .
+
+# Linting
+pylint src
+
+# Type checking
+mypy src
+```
