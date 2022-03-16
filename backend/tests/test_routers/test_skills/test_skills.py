@@ -13,9 +13,7 @@ def test_get_skills(database_session: Session, test_client: TestClient):
         database_session (Session): a connection with the database
         test_client (TestClient): a client used to do rest calls 
     """
-    skill = Skill()
-    skill.name = "Backend"
-    skill.description = "Must know react"
+    skill = Skill(name="Backend", description = "Must know react")
     database_session.add(skill)
     database_session.commit()
 
@@ -49,9 +47,7 @@ def test_delete_skill(database_session: Session, test_client: TestClient):
         database_session (Session): a connection with the database
         test_client (TestClient): a client used to do rest calls 
     """
-    skill = Skill()
-    skill.name = "Backend"
-    skill.description = "must know react"
+    skill = Skill(name="Backend", description = "Must know react")
     database_session.add(skill)
     database_session.commit()
     database_session.refresh(skill)
