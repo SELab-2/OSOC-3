@@ -7,7 +7,9 @@ import "../../css-files/App.css"
 export const Nav = styled.nav`
     background: #000;
     height: 80px;
-    display: flex;
+    width: 100%;
+    display: flow;
+    position: relative;
     justify-content: space-between;
     padding: 0.5rem calc((100vw - 1000px) / 2);
     z-index: 10;

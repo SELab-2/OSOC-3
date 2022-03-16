@@ -80,6 +80,7 @@ body {
     animation: rotation 20s infinite linear;
 }
 
+
 @keyframes quick-jump {
     0% {
         transform: translateX(0px) translateY(0px);
@@ -88,7 +89,7 @@ body {
         transform: translateX(0px) translateY(0px);
     }
     98% {
-        transform: translateX(60px) translateY(60px);
+        transform: translateX(90px) translateY(90px);
     }
     100% {
         transform: translateX(0px) translateY(0px);
