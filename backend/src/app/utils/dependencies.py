@@ -5,7 +5,7 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
 
 import settings
-from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, UnauthorizedException
+from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
 from src.database.crud.invites import get_invite_link_by_uuid
@@ -25,6 +25,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
 async def get_current_active_user(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its token
     This function is used as a dependency for other functions
+    TODO check if user has any pending coach requests
+        requires coach request logic to be done
     """
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
@@ -55,9 +57,10 @@ require_auth = get_current_active_user
 async def require_admin(user: User = Depends(get_current_active_user)) -> User:
     """Dependency to create an admin-only route"""
     if not user.admin:
-        raise UnauthorizedException()
+        raise MissingPermissionsException()
 
     return user
+
 
 def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> InviteLink:
     """Get an invite link from the database, given the id in the path"""
