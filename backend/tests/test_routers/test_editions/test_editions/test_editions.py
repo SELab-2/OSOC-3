@@ -56,14 +56,14 @@ def test_create_edition(database_session: Session, test_client: TestClient):
     assert test_client.get("/editions/1/").status_code == status.HTTP_404_NOT_FOUND
 
     # Make the post request
-    response = test_client.post("/editions/", data=dumps({"year": 2022}))
+    response = test_client.post("/editions/", json={"year": 2022})
     assert response.status_code == status.HTTP_201_CREATED
     assert test_client.get("/editions/").json()["editions"][0]["year"] == 2022
     assert test_client.get("/editions/").json()["editions"][0]["editionId"] == 1
     assert test_client.get("/editions/1/").status_code == status.HTTP_200_OK
 
     # Try to make an edition in the same year
-    #response = test_client.post("/editions/", data=dumps({"year": 2022}))
+    #response = test_client.post("/editions/", json={"year": 2022})
     #assert response.status_code == status.HTTP_409_CONFLICT
 
 
