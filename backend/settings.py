@@ -1,4 +1,7 @@
+from typing import Any
+
 from environs import Env
+import enum
 
 
 env = Env()
@@ -22,3 +25,21 @@ DB_USE_SQLITE: bool = env.bool("DB_USE_SQLITE", False)
 
 """JWT token key"""
 SECRET_KEY: str = env.str("SECRET_KEY", "4d16a9cc83d74144322e893c879b5f639088c15dc1606b11226abbd7e97f5ee5")
+
+
+@enum.unique
+class FormMapping(enum.Enum):
+    FIRST_NAME = "question_3ExXkL"
+    LAST_NAME = "question_nro6jL"
+    PREFERRED_NAME_OPTION = "question_w4K84o"
+    PREFERRED_NAME = "question_3jlya9"
+    EMAIL = "question_nW8NOQ"
+    PHONE_NUMBER = "question_mea6qo"
+    #CV = "question_wa26Qy"
+    STUDENT_COACH = "question_wz7qEE"
+
+    UNKNOWN = None  # Returned when no specific question can be matched
+
+    @classmethod
+    def _missing_(cls, value: object) -> Any:
+        return FormMapping.UNKNOWN

@@ -15,3 +15,4 @@ class Tags(enum.Enum):
     SKILLS = "skills"
     STUDENTS = "students"
     USERS = "users"
+    WEBHOOKS = "webhooks"

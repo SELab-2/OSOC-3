@@ -8,6 +8,7 @@ from .register import registration_router
 from .skills import skills_router
 from .students import students_router
 from .users import users_router
+from .webhooks import webhooks_router
 
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
@@ -16,7 +17,8 @@ editions_router = APIRouter(prefix="/editions")
 # Register all child routers
 child_routers = [
     invites_router, projects_router, registration_router,
-    skills_router, students_router, users_router
+    skills_router, students_router, users_router,
+    webhooks_router
 ]
 
 for router in child_routers:
