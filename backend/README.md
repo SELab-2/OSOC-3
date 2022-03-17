@@ -2,17 +2,7 @@
 
 ## Setting up a venv and installing dependencies
 
-First, Install Poetry:
-
-```shell
-# Linux & MacOS
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Windows (Powershell)
-(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
-```
-
-Next, create a venv and install the dependencies:
+Create a venv, install Poetry, and then install the dependencies:
 
 ```shell
 # Navigate to this directory
@@ -25,8 +15,8 @@ python3 -m venv venv
 # PyCharm does this automatically, so this is only required if you're using another IDE
 source venv/bin/activate
 
-# Alternatively: activate the venv using Poetry
-poetry shell
+# Install Poetry
+pip3 install poetry
 
 # Install all dependencies and dev dependencies
 poetry install
