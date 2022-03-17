@@ -20,7 +20,7 @@ jobs:
         id: cache
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: venv-${{ runner.os }}-bullseye-3.10.2-v1-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-v1-${{ hashFiles('**/poetry.lock', '**/backend.yml') }}
           restore-keys: |
             venv-${{ runner.os }}-bullseye-3.10.2-v1
 
@@ -35,7 +35,7 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          python -m poetry export --format requirements.txt --output requirements.txt
+          python -m poetry export --dev --format requirements.txt --output requirements.txt
           pip install -r requirements.txt
       - run: pip list -v
 
