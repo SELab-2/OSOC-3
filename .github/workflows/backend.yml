@@ -15,16 +15,13 @@ jobs:
     runs-on: self-hosted
     container: python:3.10.2-alpine
     steps:
-      - run: apk add --no-cache tar bash
+      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-      - uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+
       - uses: actions/cache@v2
         id: cache
         with:
-          path: .venv
+          path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             venv-${{ runner.os }}-
@@ -33,7 +30,10 @@ jobs:
         run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: bash -c "poetry install --no-interaction"
+        run: pip install poetry
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install -n
 
   Test:
     needs: [Dependencies]
