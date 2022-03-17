@@ -68,7 +68,10 @@ pytest = "7.0.1"
 pytest-cov = "3.0.0"
 
 # Pytest-env: env plugin for pytest
-pytest-env="0.6.2"
+pytest-env = "0.6.2"
+
+# Pytest-mock: mocking library for pytest
+pytest-mock = "3.7.0"
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
 sqlalchemy2-stubs="0.0.2a20"
