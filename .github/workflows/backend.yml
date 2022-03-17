@@ -34,7 +34,7 @@ jobs:
         run: apt update
       
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: apt install -y build-essential mariadb-client
+        run: apt install -y build-essential libmariadb-dev
       
       - if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -U pip poetry
