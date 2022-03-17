@@ -32,6 +32,8 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
+          apt update
+          apt install -y build-essential
           pip install -U pip
           pip install poetry
 
