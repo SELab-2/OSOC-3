@@ -47,6 +47,7 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
+      - run: pip list -v
       - run: python -m pytest
 
   Lint:
