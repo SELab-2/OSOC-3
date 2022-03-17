@@ -6,17 +6,17 @@
 
 - [TLDR](#tldr)
 - [Frontend](#frontend)
-	- [Installing Node.js and dependencies](#installing-nodejs-and-dependencies)
-	- [Starting Frontend](#starting-frontend)
-	- [Frontend Tests](#frontend-tests)
-	- [Building Frontend](#building-frontend)
+  - [Installing Node.js and dependencies](#installing-nodejs-and-dependencies)
+  - [Starting Frontend](#starting-frontend)
+  - [Frontend Tests](#frontend-tests)
+  - [Building Frontend](#building-frontend)
 - [Backend](#backend)
-	- [Installing Docker and MariaDB](#installing-docker-and-mariadb)
-	- [Installing Python and dependencies](#installing-python-and-dependencies)
-	- [Starting the database](#starting-the-database)
-	- [Starting Backend](#starting-backend)
-	- [Running Tests](#running-tests)
-	- [Database Migrations](#database-migrations)
+  - [Installing Docker and MariaDB](#installing-docker-and-mariadb)
+  - [Installing Python and dependencies](#installing-python-and-dependencies)
+  - [Starting the database](#starting-the-database)
+  - [Starting Backend](#starting-backend)
+  - [Running Tests](#running-tests)
+  - [Database Migrations](#database-migrations)
 
 ## Local Setup Instructions
 
@@ -34,19 +34,19 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
 - Available scripts:
 
-	```shell
-	# Running
-	yarn start
-	
-	# Testing
-	yarn test
-	
-	# Linting
-	yarn lint
-	
-	# Building (for production)
-	yarn build
-	```
+  ```shell
+  # Running
+  yarn start
+
+  # Testing
+  yarn test
+
+  # Linting
+  yarn lint
+
+  # Building (for production)
+  yarn build
+  ```
 
 #### Backend
 
@@ -62,44 +62,44 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
 - Required scripts:
 
-	```shell
-	# Activate your Virtual Environment
-	source venv/bin/activate
-	
-	# Start the Docker container to run the database
-	docker compose up -d
-	
-	# Stop the Docker container
-	docker compose down
-	```
+  ```shell
+  # Activate your Virtual Environment
+  source venv/bin/activate
+
+  # Start the Docker container to run the database
+  docker compose up -d
+
+  # Stop the Docker container
+  docker compose down
+  ```
 
 - Available scripts:
 
-	```shell
-	# Running
-	uvicorn main:app
-	
-	# Running with hot reloading
-	uvicorn main:app --reload
-	
-	# Database migrations: updating to most recent version
-	alembic upgrade head
-	
-	# Database migrations: generating a new revision
-	alembic revision --auto-generate -m "Your message here"
-	
-	# Testing
-	pytest .
-	
-	# Testing + coverage report
-	pytest --cov=src .
-	
-	# Linting
-	pylint src
-	
-	# Static type checking
-	mypy src
-	```
+  ```shell
+  # Running
+  uvicorn main:app
+
+  # Running with hot reloading
+  uvicorn main:app --reload
+
+  # Database migrations: updating to most recent version
+  alembic upgrade head
+
+  # Database migrations: generating a new revision
+  alembic revision --auto-generate -m "Your message here"
+
+  # Testing
+  pytest .
+
+  # Testing + coverage report
+  pytest --cov=src .
+
+  # Linting
+  pylint src
+
+  # Static type checking
+  mypy src
+  ```
 
 ### Frontend
 
@@ -107,31 +107,31 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
 1. Install `Node.js v16.14` if you don't have it already (check using `node --version`)
 
-	- Windows: https://nodejs.org/en/download/
+   - Windows: https://nodejs.org/en/download/
 
-	- Linux, MacOS, and WSL 2: use [`nvm (recommended)`](https://github.com/nvm-sh/nvm#install--update-script) or install [manually](https://nodejs.org/en/download/)
+   - Linux, MacOS, and WSL 2: use [`nvm (recommended)`](https://github.com/nvm-sh/nvm#install--update-script) or install [manually](https://nodejs.org/en/download/)
 
-		After installing `nvm` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
+     After installing `nvm` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
 
-		```shell
-		# Install the required Node version
-		nvm install 16.14.1
-		
-		# Make your shell use the newly-installed version
-		nvm use 16
-		```
+     ```shell
+     # Install the required Node version
+     nvm install 16.14.1
+
+     # Make your shell use the newly-installed version
+     nvm use 16
+     ```
 
 2. Install the Yarn package manager
 
-	```shell
-	npm install --global yarn
-	```
+   ```shell
+   npm install --global yarn
+   ```
 
 3. Install the dependencies
 
-	```shell
-	yarn install
-	```
+   ```shell
+   yarn install
+   ```
 
 #### Running Frontend
 
@@ -167,14 +167,14 @@ yarn build
 
 1. Install Docker Engine by following the official installation instructions
 
-	- Linux (choose your distribution): https://docs.docker.com/engine/install/#server 
+   - Linux (choose your distribution): https://docs.docker.com/engine/install/#server
 
-	- MacOS: https://docs.docker.com/desktop/mac/install/
-	- Windows (**needs WSL 2**): https://docs.docker.com/desktop/windows/install/#wsl-2-backend
+   - MacOS: https://docs.docker.com/desktop/mac/install/
+   - Windows (**needs WSL 2**): https://docs.docker.com/desktop/windows/install/#wsl-2-backend
 
 2. Install the MariaDB drivers & connectors
-	- Linux and WSL 2: `sudo apt install libmariadb3 libmariadb-dev`
-	- MacOS: `brew install mariadb`
+   - Linux and WSL 2: `sudo apt install libmariadb3 libmariadb-dev`
+   - MacOS: `brew install mariadb`
 
 #### Installing Python and dependencies
 
@@ -184,28 +184,29 @@ yarn build
 
 - Linux, MacOS and WSL 2: use [`pyenv (recommended)`](https://github.com/pyenv/pyenv#installation) or install [manually](https://www.python.org/downloads/release/python-3102/)
 
-	After installing `pyenv` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
+  After installing `pyenv` (and adding it to your `$PATH` or `.bashrc/.zshrc` file), you can install the required version using the command below:
 
-	```shell
-	pyenv install 3.10.2
-	```
+  ```shell
+  pyenv install 3.10.2
+  ```
 
-	You don't have to manually change your Python version afterwards. `Pyenv` should pick it up automatically thanks to the [`.python-version`](backend/.python-version) file in the `/backend` directory.
+  You don't have to manually change your Python version afterwards. `Pyenv` should pick it up automatically thanks to the [`.python-version`](backend/.python-version) file in the `/backend` directory.
 
 2. Create a [`Virtual Environment`](https://docs.python.org/3/tutorial/venv.html) to install your packages in
 
-	```shell
-	# Create a new Virtual Environment
-	python3 -m venv venv
-	
-	# Activate it
-	source venv/bin/activate
-	```
+   ```shell
+   # Create a new Virtual Environment
+   python3 -m venv venv
+
+   # Activate it
+   source venv/bin/activate
+   ```
 
 3. Install the regular dependencies and development dependencies
 
-	```
-	pip3 install -r requirements.txt -r requirements-dev.txt
+   ```
+   pip3 install -r requirements.txt -r requirements-dev.txt
+   ```
 
 For all commands below, make sure your `Virtual Environment` is activated at all times. Otherwise, your Python interpreter won't be able to find the correct package.
 
@@ -226,8 +227,6 @@ docker compose down
 #### Starting Backend
 
 First, make sure your `Docker` container is running so that the app can connect to the database. See [Starting The Database](#starting-the-database) for more info.
-
-We use [`Uvicorn`](https://www.uvicorn.org/) as our web server to run the API with.
 
 ```shell
 uvicorn main:app
@@ -259,14 +258,12 @@ mypy src
 
 #### Database Migrations
 
-We use [`Alembic`](https://alembic.sqlalchemy.org/en/latest/) to manage database migrations.
-
 ```shell
 # Updating the current state of the database to the latest version
 alembic upgrade head
 
 # Generating a new revision
-alembic revision --autogenerate -m "Your message here" 
+alembic revision --autogenerate -m "Your message here"
 ```
 
 Keep in mind that auto-generated migrations may need manual editing in some edge cases. Always check if you can still upgrade to head, and if the tests still run ([Running Tests](#running-tests)). One of our tests tries to go through every migration in history to the most recent one and back down, in order to verify that all migrations work in the testing environment as well.
