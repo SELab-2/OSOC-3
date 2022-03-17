@@ -10,6 +10,9 @@ defaults:
   run:
     working-directory: backend
 
+env:
+  POETRY_VIRTUALENVS_CREATE: false
+
 jobs:
   Dependencies:
     runs-on: self-hosted
@@ -40,7 +43,7 @@ jobs:
         run: pip install -U pip poetry
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install -n
+        run: python -m poetry install -n
 
   Test:
     needs: [Dependencies]
