@@ -54,6 +54,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
+      - run: pip list -v
       - run: poetry run pytest
 
   Lint:
