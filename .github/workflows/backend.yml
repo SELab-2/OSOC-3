@@ -13,9 +13,10 @@ defaults:
 jobs:
   Dependencies:
     runs-on: self-hosted
-    container: python:3.10.2-alpine
+    container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
+      #- run: apk add --no-cache tar
+      
       - uses: actions/checkout@v2
 
       - uses: actions/cache@v2
@@ -26,8 +27,8 @@ jobs:
           restore-keys: |
             venv-${{ runner.os }}-
 
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: apk add gcc musl-dev build-base mariadb-dev libffi-dev cargo
+      #- if: steps.cache.outputs.cache-hit != 'true'
+      #  run: apk add gcc musl-dev build-base mariadb-dev libffi-dev cargo
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -40,7 +41,7 @@ jobs:
   Test:
     needs: [Dependencies]
     runs-on: self-hosted
-    container: python:3.10.2-alpine
+    container: python:3.10.2-slim-bullseye
     steps:
       - run: apk add --no-cache tar
       - uses: actions/checkout@v2
@@ -56,7 +57,7 @@ jobs:
   Lint:
     needs: [Test]
     runs-on: self-hosted
-    container: python:3.10.2-alpine
+    container: python:3.10.2-slim-bullseye
     steps:
       - run: apk add --no-cache tar
       - uses: actions/checkout@v2
@@ -72,7 +73,7 @@ jobs:
   Type:
     needs: [Test]
     runs-on: self-hosted
-    container: python:3.10.2-alpine
+    container: python:3.10.2-slim-bullseye
     steps:
       - run: apk add --no-cache tar
       - uses: actions/checkout@v2
