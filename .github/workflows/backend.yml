@@ -27,7 +27,7 @@ jobs:
             venv-${{ runner.os }}-
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
+        run: apk add gcc musl-dev build-base mariadb-dev libffi-dev cargo
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: |
