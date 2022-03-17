@@ -28,7 +28,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
 - Install `Node v16.14`
 
-- Install Yarn (`npm install --global Yarn`)
+- Install Yarn (`npm install --global yarn`)
 
 - Install the dependencies (`yarn install`)
 
@@ -124,7 +124,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 2. Install the Yarn package manager
 
 	```shell
-	npm install --global Yarn
+	npm install --global yarn
 	```
 
 3. Install the dependencies
@@ -144,8 +144,6 @@ yarn start
 and the website should open automatically in your browser. In case it doesn't, navigate to `http://localhost:3000/`.
 
 #### Frontend Tests
-
-We use [`Jest`](https://jestjs.io/) as our testing framework, and [`ESLint`](https://eslint.org/) as our linter.
 
 ```shell
 # Tests
@@ -244,8 +242,6 @@ uvicorn main:app --reload
 **Note**: `--reload` should only be used in development, and _**not**_ when hosting the application on a server!
 
 #### Running Tests
-
-We use [`pytest`](https://docs.pytest.org/en/7.1.x/) as our testing framework, and [`pylint`](https://pylint.org/) as our linter. Further, as Python is a dynamically typed language, we use [`mypy`](http://mypy-lang.org/) to perform static type checking.
 
 ```shell
 # Tests
