@@ -36,7 +36,9 @@ jobs:
       # - if: steps.cache.outputs.cache-hit != 'true'
       #  run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install --no-interaction
 
-      - run: pip install -r <(poetry export --format requirements.txt)
+      - run: |
+          poetry export --format requirements.txt --output requirements.txt
+          pip install -r requirements.txt
       - run: pip list -v
 
   Test:
