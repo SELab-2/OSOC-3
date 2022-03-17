@@ -36,6 +36,9 @@ jobs:
       - if: steps.cache.outputs.cache-hit != 'true'
         run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install -n
 
+      - run: POETRY_VIRTUALENVS_CREATE=false python -m poetry update
+      - run: pip list -v
+
   Test:
     needs: [Dependencies]
     runs-on: self-hosted
