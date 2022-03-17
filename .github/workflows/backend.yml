@@ -37,7 +37,6 @@ jobs:
         run: |
           python -m poetry export --dev --format requirements.txt --output requirements.txt --without-hashes
           pip install -r requirements.txt
-      - run: pip list -v
 
   Test:
     needs: [Dependencies]
@@ -50,7 +49,6 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
-      - run: pip list -v
       - run: python -m pytest
 
   Lint:
