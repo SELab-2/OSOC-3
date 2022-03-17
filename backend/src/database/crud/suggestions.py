@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from src.database.models import Suggestion, Student, User
 from src.database.enums import DecisionEnum
 
-def create_suggestion(db: Session, user: User, student: Student, decision: DecisionEnum, argumentation: str) -> None:
-    suggestion: Suggestion = Suggestion(student=student, coach=user,suggestion=decision,argumentation=argumentation)
+def create_suggestion(db: Session, user_id: int, student_id: int, decision: DecisionEnum, argumentation: str) -> None:
+    suggestion: Suggestion = Suggestion(student_id=student_id, coach_id=user_id,suggestion=decision,argumentation=argumentation)
     db.add(suggestion)
     db.commit()
 

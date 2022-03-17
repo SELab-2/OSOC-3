@@ -1,14 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
 from .suggestions import students_suggestions_router
+from src.app.utils.dependencies import get_edition, require_authorization
+from src.database.database import get_session
+from src.database.models import Edition, User
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
 students_router.include_router(students_suggestions_router, prefix="/{student_id}")
 
 
 @students_router.get("/")
-async def get_students(edition_id: int):
+async def get_students(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all students.
     """
