@@ -31,11 +31,13 @@ jobs:
       #  run: apk add gcc musl-dev build-base mariadb-dev libffi-dev cargo
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          apt update
-          apt install -y build-essential
-          pip install -U pip
-          pip install poetry
+        run: apt update
+      
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: apt install -y build-essential mariadb-client
+      
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -U pip poetry
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install -n
