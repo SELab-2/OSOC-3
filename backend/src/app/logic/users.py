@@ -64,11 +64,17 @@ def delete_user_as_coach(db: Session, edition_id: int, user_id: int):
     users_crud.delete_user_as_coach(db, edition_id, user_id)
 
 
-def handle_user_request(db: Session, edition_id: int, user_id: int, answer: RequestAnswer):
-    """Accept/Reject user request"""
+def accept_request(db: Session, request_id: int):
+    """
+    Accept user request
+    """
 
-    if answer.accept:
-        users_crud.accept_request(db, edition_id, user_id)
-    else:
-        users_crud.reject_request(db, user_id)
+    users_crud.accept_request(db, request_id)
 
+
+def reject_request(db: Session, request_id: int):
+    """
+    Reject user request
+    """
+
+    users_crud.reject_request(db, request_id)

@@ -1,4 +1,4 @@
-from src.database.models import user_editions, User, Edition
+from src.database.models import user_editions, User, Edition, CoachRequest
 from sqlalchemy.orm import Session
 
 
@@ -47,7 +47,7 @@ def edit_admin_status(db: Session, user_id: int, admin: bool):
 
 def add_coach(db, user_id, edition_id):
     """
-    Add user as admin for the given edition
+    Add user as coach for the given edition
     """
 
     user = db.query(User).where(User.user_id == user_id).one()
@@ -71,3 +71,21 @@ def delete_user_as_coach(db, edition_id, user_id):
     user = db.query(User).where(User.user_id == user_id).one()
     edition = db.query(Edition).where(Edition.edition_id == edition_id).one()
     user.editions.remove(edition)
+
+
+def accept_request(db: Session, request_id: int):
+    """
+    Remove request and add user as coach
+    """
+
+    request = db.query(CoachRequest).where(CoachRequest.request_id == request_id).one()
+    add_coach(db, request.user_id, request.edition_id)
+    db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
+
+
+def reject_request(db: Session, request_id: int):
+    """
+    Remove request
+    """
+
+    db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()

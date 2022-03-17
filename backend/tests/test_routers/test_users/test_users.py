@@ -6,7 +6,7 @@ from starlette import status
 from json import dumps
 
 from src.database import models
-from src.database.models import user_editions
+from src.database.models import user_editions, CoachRequest
 
 
 def test_get_users(db: Session, test_client: TestClient):
@@ -111,61 +111,52 @@ def test_coach(db: Session, test_client: TestClient):
     assert len(coach) == 0
 
 
-# def test_accept_request(db, test_client: TestClient):
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     db.add(user1)
-#
-#     db.commit()
-#
-#     # Create request
-#     request1 = models.CoachRequest(user_id=user1.user_id)
-#     db.add(request1)
-#
-#     # Create edition
-#     edition1 = models.Edition(year=1)
-#     db.add(edition1)
-#
-#     db.commit()
-#
-#     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
-#                                 data=dumps({"accept": True}))
-#     assert response.status_code == status.HTTP_204_NO_CONTENT
-#
-#     requests = db.query(CoachRequest).all()
-#     assert len(requests) == 0
-#
-#     user_role: UserRole = db.query(UserRole).one()
-#     assert user_role.role == RoleEnum.COACH
-#     assert user_role.edition_id == edition1.edition_id
-#     assert user_role.user_id == user1.user_id
-#
-#
-# def test_reject_request_new_user(db, test_client: TestClient):
-#
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     db.add(user1)
-#
-#     db.commit()
-#
-#     # Create request
-#     request1 = models.CoachRequest(user_id=user1.user_id)
-#     db.add(request1)
-#
-#     # Create edition
-#     edition1 = models.Edition(year=1)
-#     db.add(edition1)
-#
-#     db.commit()
-#
-#     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
-#                                 data=dumps({"accept": False}))
-#     assert response.status_code == status.HTTP_204_NO_CONTENT
-#
-#     requests = db.query(CoachRequest).all()
-#     assert len(requests) == 0
-#
-#     response = test_client.post(f"editions/{edition1.edition_id}/users/{user1.user_id}/request",
-#                                 data=dumps({"accept": "INVALID INPUT"}))
-#     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+def test_accept_request(db, test_client: TestClient):
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    db.add(user1)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    db.add(edition1)
+
+    db.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    db.add(request1)
+
+    db.commit()
+
+    response = test_client.post(f"users/requests/{request1.request_id}/accept")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    assert len(user1.editions) == 1
+    assert user1.editions[0].edition_id == edition1.edition_id
+
+
+def test_reject_request(db, test_client: TestClient):
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    db.add(user1)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    db.add(edition1)
+
+    db.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    db.add(request1)
+
+    db.commit()
+
+    response = test_client.post(f"users/requests/{request1.request_id}/reject")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    requests = db.query(CoachRequest).all()
+    assert len(requests) == 0
+
+    response = test_client.post(f"users/requests/INVALID/reject")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

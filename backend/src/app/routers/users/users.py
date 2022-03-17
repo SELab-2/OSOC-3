@@ -43,3 +43,22 @@ async def remove_edition(user_id: int, edition_id: int, db: Session = Depends(ge
     """
 
     logic.remove_coach(db, user_id, edition_id)
+
+
+@users_router.post("/requests/{request_id}/accept", status_code=204)
+async def accept_request(request_id: int, db: Session = Depends(get_session)):
+    """
+    Accept a coach request
+    """
+
+    logic.accept_request(db, request_id)
+
+
+@users_router.post("/requests/{request_id}/reject", status_code=204)
+async def reject_request(request_id: int, db: Session = Depends(get_session)):
+    """
+    Reject a coach request
+    """
+
+    logic.reject_request(db, request_id)
+

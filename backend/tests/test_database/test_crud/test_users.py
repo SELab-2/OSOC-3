@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.database import models
 import src.database.crud.users as users_crud
-from src.database.models import user_editions
+from src.database.models import user_editions, CoachRequest
 
 
 def test_get_users(db: Session):
@@ -93,82 +93,51 @@ def test_coach(db: Session):
     assert len(db.query(user_editions).all()) == 0
 
 
-# def test_accept_request(database_session: Session):
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     database_session.add(user1)
-#
-#     database_session.commit()
-#
-#     # Create request
-#     request1 = models.CoachRequest(user_id=user1.user_id)
-#     database_session.add(request1)
-#
-#     # Create edition
-#     edition1 = models.Edition(year=1)
-#     database_session.add(edition1)
-#
-#     database_session.commit()
-#
-#     users_crud.accept_request(database_session, edition1.edition_id, user1.user_id)
-#
-#     requests = database_session.query(CoachRequest).all()
-#     assert len(requests) == 0
-#
-#     user_role: UserRole = database_session.query(UserRole).one()
-#     assert user_role.role == RoleEnum.COACH
-#     assert user_role.edition_id == edition1.edition_id
-#     assert user_role.user_id == user1.user_id
-#
-#
-# def test_reject_request_new_user(database_session: Session):
-#
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     database_session.add(user1)
-#
-#     database_session.commit()
-#
-#     # Create request
-#     request1 = models.CoachRequest(user_id=user1.user_id)
-#     database_session.add(request1)
-#
-#     database_session.commit()
-#
-#     users_crud.reject_request(database_session, user1.user_id)
-#
-#     requests = database_session.query(CoachRequest).all()
-#     assert len(requests) == 0
-#
-#
-# def test_reject_request_existing_user(database_session: Session):
-#
-#     # Create user
-#     user1 = models.User(name="user1", email="user1@mail.com")
-#     database_session.add(user1)
-#
-#     # Create editions
-#     edition1 = models.Edition(year=1)
-#     database_session.add(edition1)
-#
-#     edition2 = models.Edition(year=2)
-#     database_session.add(edition2)
-#
-#     database_session.commit()
-#
-#     # Create request
-#     request1 = models.CoachRequest(user_id=user1.user_id)
-#     database_session.add(request1)
-#
-#     # Create role
-#     user1_edition1_role = models.UserRole(user_id=user1.user_id, role=RoleEnum.COACH, edition_id=edition1.edition_id)
-#     database_session.add(user1_edition1_role)
-#
-#     users_crud.reject_request(database_session, user1.user_id)
-#
-#     requests = database_session.query(CoachRequest).all()
-#     assert len(requests) == 0
-#
-#     user_roles: list[UserRole] = database_session.query(UserRole).all()
-#     assert len(user_roles) == 1
-#     assert user_roles[0].edition_id == edition1.edition_id
+def test_accept_request(db: Session):
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    db.add(user1)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    db.add(edition1)
+
+    db.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    db.add(request1)
+
+    db.commit()
+
+    users_crud.accept_request(db, request1.request_id)
+
+    requests = db.query(CoachRequest).all()
+    assert len(requests) == 0
+
+    assert user1.editions[0].edition_id == edition1.edition_id
+
+
+
+def test_reject_request_new_user(db: Session):
+
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    db.add(user1)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    db.add(edition1)
+
+    db.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    db.add(request1)
+
+    db.commit()
+
+    users_crud.reject_request(db, request1.request_id)
+
+    requests = db.query(CoachRequest).all()
+    assert len(requests) == 0
