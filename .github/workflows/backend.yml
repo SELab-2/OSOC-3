@@ -47,45 +47,39 @@ jobs:
     runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
+      #- run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
-      - run: |
-          source .venv/bin/activate
-          poetry run pytest
+      - run: poetry run pytest
 
   Lint:
     needs: [Test]
     runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
+      #- run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
-      - run: |
-          source .venv/bin/activate
-          poetry run pylint src tests
+      - run: poetry run pylint src tests
 
   Type:
     needs: [Test]
     runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
+      #- run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
-      - run: |
-          source .venv/bin/activate
-          poetry run mypy src tests
+      - run: poetry run mypy src tests
