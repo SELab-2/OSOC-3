@@ -58,7 +58,7 @@ jobs:
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
       - run: pip list -v
-      - run: python -m poetry run pytest
+      - run: python -m pytest
 
   Lint:
     needs: [Test]
@@ -72,7 +72,7 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
-      - run: python -m poetry run pylint src tests
+      - run: python -m pylint src tests
 
   Type:
     needs: [Test]
@@ -86,4 +86,4 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
-      - run: python -m poetry run mypy src tests
+      - run: python -m mypy src tests
