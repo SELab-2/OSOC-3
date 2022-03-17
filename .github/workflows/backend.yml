@@ -30,7 +30,9 @@ jobs:
         run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: pip install poetry
+        run: |
+          pip install -U pip
+          pip install poetry
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install -n
