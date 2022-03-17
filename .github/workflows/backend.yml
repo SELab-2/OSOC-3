@@ -26,18 +26,17 @@ jobs:
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: apt update
-      
+
       - if: steps.cache.outputs.cache-hit != 'true'
         run: apt install -y build-essential libmariadb-dev
-      
+
       - if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -U pip poetry
 
-      #- if: steps.cache.outputs.cache-hit != 'true'
+      # - if: steps.cache.outputs.cache-hit != 'true'
       #  run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install --no-interaction
 
-      - run: POETRY_VIRTUALENVS_CREATE=false python -m poetry install --no-interaction
-      - run: POETRY_VIRTUALENVS_CREATE=false python -m poetry update
+      - run: pip install -r <(poetry export --format requirements.txt)
       - run: pip list -v
 
   Test:
