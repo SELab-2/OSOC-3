@@ -20,9 +20,9 @@ jobs:
         id: cache
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            venv-${{ runner.os }}-bullseye-3.10-
+            venv-${{ runner.os }}-bullseye-3.10.2-
 
       - if: steps.cache.outputs.cache-hit != 'true'
         run: apt update
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-${{ hashFiles('**/poetry.lock') }}
 
       - run: pip list -v
       - run: python -m pytest
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-${{ hashFiles('**/poetry.lock') }}
 
       - run: python -m pylint src tests
 
@@ -75,6 +75,6 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-${{ hashFiles('**/poetry.lock') }}
 
       - run: python -m mypy src tests
