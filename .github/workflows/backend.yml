@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
-          path: .venv
+          path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
       - run: pip list -v
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
-          path: .venv
+          path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
       - run: poetry run pylint src tests
@@ -80,7 +80,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
-          path: .venv
+          path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10-${{ hashFiles('**/poetry.lock') }}
 
       - run: poetry run mypy src tests
