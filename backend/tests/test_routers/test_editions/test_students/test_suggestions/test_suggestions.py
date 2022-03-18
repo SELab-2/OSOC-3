@@ -80,13 +80,29 @@ def test_get_suggestions_of_student(database_session: Session, test_client: Test
     assert res_json["suggestions"][1]["coach"]["email"] == "admin@ngmail.com"
     assert res_json["suggestions"][1]["suggestion"] == 3
     assert res_json["suggestions"][1]["argumentation"] == "Neen"
-#, json={"suggestion":"OK", "argumentation":"test"}
 
+def test_delete_ghost_suggestion(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "admin@ngmail.com",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.delete("/editions/1/students/1/suggestions/8000", headers={"Authorization": auth}).status_code == status.HTTP_404_NOT_FOUND
 
-"""
-def test_ok(database_session: Session, test_client: TestClient):
-    database_session.add(Edition(year=2022))
-    database_session.commit()
-    response = test_client.post("/editions/1/register/email", json={"name": "Joskes vermeulen","email": "jw@gmail.com", "pw": "test"})
-    assert response.status_code == status.
-"""
+def test_delete_not_autorized(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    assert test_client.delete("/editions/1/students/1/suggestions/8000", headers={"Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
+
+def test_delete_suggestion_admin(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "admin@ngmail.com",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.delete("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}).status_code == status.HTTP_204_NO_CONTENT
+    suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
+    assert len(suggestions) == 0
