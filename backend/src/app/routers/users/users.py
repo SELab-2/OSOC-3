@@ -28,7 +28,7 @@ async def post_edition(user_id: int, admin: AdminPatch, db: Session = Depends(ge
 
 
 @users_router.post("/{user_id}/editions/{edition_id}", status_code=204)
-async def add_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
+async def add_to_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
     """
     Add user as coach of the given edition
     """
