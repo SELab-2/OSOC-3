@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.database.models import Suggestion, Student, User
 
-from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, get_suggestion_by_id
+from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, get_suggestion_by_id, delete_suggestion, update_suggestion
 from tests.fill_database import fill_database
 from src.database.enums import DecisionEnum
 from sqlalchemy.orm.exc import NoResultFound
@@ -112,3 +112,32 @@ def test_get_suggestion_by_id(database_session: Session):
 def test_get_suggestion_by_id_non_existing(database_session: Session):
     with pytest.raises(NoResultFound):
         suggestion: Suggestion = get_suggestion_by_id(database_session, 1)
+
+def test_delete_suggestion(database_session: Session):
+    fill_database(database_session)
+
+    user: User = database_session.query(User).where(User.name == "coach1").first()
+    student: Student = database_session.query(Student).where(Student.email_address == "marta.marquez@example.com").first()
+    
+    create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.YES, "This is a good student")
+    suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    
+    delete_suggestion(database_session, suggestion)
+    
+    suggestions: list[Suggestion] = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).all()
+    assert len(suggestions) == 0
+
+def test_update_suggestion(database_session: Session):
+    fill_database(database_session)
+
+    user: User = database_session.query(User).where(User.name == "coach1").first()
+    student: Student = database_session.query(Student).where(Student.email_address == "marta.marquez@example.com").first()
+    
+    create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.YES, "This is a good student")
+    suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    
+    update_suggestion(database_session, suggestion, DecisionEnum.NO, "Not that good student")
+    
+    new_suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    assert suggestion.suggestion == DecisionEnum.NO
+    assert suggestion.argumentation == "Not that good student"

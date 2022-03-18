@@ -13,3 +13,11 @@ def get_suggestions_of_student(db: Session, student_id: int) -> list[Suggestion]
 
 def get_suggestion_by_id(db: Session, suggestion_id:int) -> Suggestion:
     return db.query(Suggestion).where(Suggestion.suggestion_id == suggestion_id).one()
+
+def delete_suggestion(db: Session, suggestion: Suggestion) -> None:
+    db.delete(suggestion)
+
+def update_suggestion(db: Session, suggestion: Suggestion, decision: DecisionEnum, argumentation: str) -> None:
+    suggestion.suggestion = decision
+    suggestion.argumentation = argumentation
+    db.commit()
