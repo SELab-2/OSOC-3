@@ -14,6 +14,12 @@ def test_no_edition(database_session: Session, test_client: TestClient):
     response = test_client.post("/editions/1/register/email", json={"name": "Joskes vermeulen","email": "jw@gmail.com", "pw": "test"})
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
+def test_not_a_correct_email(database_session: Session, test_client: TestClient):
+    database_session.add(Edition(year=2022))
+    database_session.commit()
+    response = test_client.post("/editions/1/register/email", json={"name": "Joskes vermeulen","email": "jw", "pw": "test"})
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
 def test_duplicate(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     database_session.commit()

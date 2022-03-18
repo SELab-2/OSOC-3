@@ -23,7 +23,6 @@ def test_react_coach_request(database_session: Session):
 
     assert len(a) == 1
     assert a[0].user_id == u.user_id 
-    assert a[0].user == u
     assert u.coach_request == a[0]
 
 def test_create_auth_email(database_session: Session):
@@ -34,6 +33,5 @@ def test_create_auth_email(database_session: Session):
     
     assert len(a) == 1
     assert a[0].user_id == u.user_id
-    assert a[0].user == u
-    assert a[0].pw_hash != "wachtwoord"
+    assert a[0].pw_hash == "wachtwoord"
     assert u.email_auth == a[0]
