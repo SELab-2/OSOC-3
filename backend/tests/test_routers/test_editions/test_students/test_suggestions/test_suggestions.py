@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.testclient import TestClient
+from src.database.enums import DecisionEnum
 from tests.fill_database import fill_database
 from src.database.models import Suggestion, Student, User
 
@@ -107,7 +108,7 @@ def test_delete_suggestion_admin(database_session: Session, test_client: TestCli
     suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
     assert len(suggestions) == 0
 
-def test_detele_suggestion_coach_their_review(database_session: Session, test_client: TestClient):
+def test_delete_suggestion_coach_their_review(database_session: Session, test_client: TestClient):
     fill_database(database_session)
     form = {
         "username": "coach1@noutlook.be",
@@ -119,7 +120,7 @@ def test_detele_suggestion_coach_their_review(database_session: Session, test_cl
     suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
     assert len(suggestions) == 0
 
-def test_detele_suggestion_coach_other_review(database_session: Session, test_client: TestClient):
+def test_delete_suggestion_coach_other_review(database_session: Session, test_client: TestClient):
     fill_database(database_session)
     form = {
         "username": "coach2@noutlook.be",
@@ -130,3 +131,56 @@ def test_detele_suggestion_coach_other_review(database_session: Session, test_cl
     assert test_client.delete("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}).status_code == status.HTTP_403_FORBIDDEN
     suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
     assert len(suggestions) == 1
+
+def test_update_ghost_suggestion(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "admin@ngmail.com",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.put("/editions/1/students/1/suggestions/8000", headers={"Authorization": auth}, json={"suggestion":1, "argumentation":"test"}).status_code == status.HTTP_404_NOT_FOUND
+
+def test_update_not_autorized(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    assert test_client.put("/editions/1/students/1/suggestions/8000", headers={"Authorization": "auth"}, json={"suggestion":1, "argumentation":"test"}).status_code == status.HTTP_401_UNAUTHORIZED
+
+def test_update_suggestion_admin(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "admin@ngmail.com",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={"suggestion":3, "argumentation":"test"}).status_code == status.HTTP_204_NO_CONTENT
+    suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).one()
+    assert suggestion.suggestion == DecisionEnum.NO
+    assert suggestion.argumentation == "test"
+
+def test_update_suggestion_coach_their_review(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "coach1@noutlook.be",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={"suggestion":3, "argumentation":"test"}).status_code == status.HTTP_204_NO_CONTENT
+    suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).one()
+    assert suggestion.suggestion == DecisionEnum.NO
+    assert suggestion.argumentation == "test"
+
+def test_update_suggestion_coach_other_review(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "coach2@noutlook.be",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={"suggestion":3, "argumentation":"test"}).status_code == status.HTTP_403_FORBIDDEN
+    suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).one()
+    assert suggestion.suggestion != DecisionEnum.NO
+    assert suggestion.argumentation != "test"

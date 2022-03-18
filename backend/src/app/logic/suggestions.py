@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.app.schemas.suggestion import NewSuggestion
-from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, delete_suggestion
+from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, delete_suggestion, update_suggestion
 from src.database.models import Suggestion, User
 from src.app.schemas.suggestion import SuggestionListResponse
 from src.app.exceptions.authentication import MissingPermissionsException
@@ -20,3 +20,11 @@ def remove_suggestion(db: Session, suggestion: Suggestion, user: User) -> None:
         delete_suggestion(db, suggestion)
     else:
         raise MissingPermissionsException
+
+def change_suggestion(db: Session, new_suggestion: NewSuggestion, suggestion: Suggestion, user: User) -> None:
+    if(user.admin):
+        update_suggestion(db,suggestion,new_suggestion.suggestion, new_suggestion.argumentation)
+    elif(suggestion.coach == user):
+        update_suggestion(db,suggestion,new_suggestion.suggestion, new_suggestion.argumentation)
+    else:
+        raise MissingPermissionsException    
