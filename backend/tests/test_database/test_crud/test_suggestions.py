@@ -7,6 +7,7 @@ from src.database.models import Suggestion, Student, User
 from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, get_suggestion_by_id
 from tests.fill_database import fill_database
 from src.database.enums import DecisionEnum
+from sqlalchemy.orm.exc import NoResultFound
 
 def test_create_suggestion_yes(database_session: Session):
     fill_database(database_session)
@@ -107,3 +108,7 @@ def test_get_suggestion_by_id(database_session: Session):
     assert suggestion.coach_id == 2
     assert suggestion.suggestion == DecisionEnum.YES
     assert suggestion.argumentation == "Good student"
+
+def test_get_suggestion_by_id_non_existing(database_session: Session):
+    with pytest.raises(NoResultFound):
+        suggestion: Suggestion = get_suggestion_by_id(database_session, 1)
