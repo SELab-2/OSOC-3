@@ -1,5 +1,5 @@
-from src.database.models import user_editions, User, Edition, CoachRequest
 from sqlalchemy.orm import Session
+from src.database.models import user_editions, User, Edition, CoachRequest
 
 
 def get_all_admins(db: Session) -> list[User]:

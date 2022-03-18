@@ -61,4 +61,3 @@ async def reject_request(request_id: int, db: Session = Depends(get_session)):
     """
 
     logic.reject_request(db, request_id)
-

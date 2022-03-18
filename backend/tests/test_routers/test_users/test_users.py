@@ -1,15 +1,17 @@
+from json import dumps
+
 from sqlalchemy.orm import Session
 
 from starlette.testclient import TestClient
 from starlette import status
-
-from json import dumps
 
 from src.database import models
 from src.database.models import user_editions, CoachRequest
 
 
 def test_get_users(database_session: Session, test_client: TestClient):
+    """Test endpoint for getting a list of users"""
+
     # Create users
     user1 = models.User(name="user1", email="user1@mail.com", admin=True)
     database_session.add(user1)
@@ -32,7 +34,7 @@ def test_get_users(database_session: Session, test_client: TestClient):
     ])
 
     # All users
-    response = test_client.get(f"/users")
+    response = test_client.get("/users")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
     assert len(user_ids) == 2
@@ -40,7 +42,7 @@ def test_get_users(database_session: Session, test_client: TestClient):
     assert user2.user_id in user_ids
 
     # All admins
-    response = test_client.get(f"/users?admin=true")
+    response = test_client.get("/users?admin=true")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
     assert [user1.user_id] == user_ids
@@ -62,14 +64,16 @@ def test_get_users(database_session: Session, test_client: TestClient):
     assert len(response.json()['users']) == 0
 
     # Invalid input
-    response = test_client.get(f"/users?admin=INVALID")
+    response = test_client.get("/users?admin=INVALID")
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response = test_client.get(f"/users?edition=INVALID")
+    response = test_client.get("/users?edition=INVALID")
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_edit_admin_status(database_session: Session, test_client: TestClient):
+    """Test endpoint for editing the admin status of a user"""
+
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
     database_session.add(user)
@@ -87,6 +91,8 @@ def test_edit_admin_status(database_session: Session, test_client: TestClient):
 
 
 def test_coach(database_session: Session, test_client: TestClient):
+    """Test endpoind for adding and removing coaches"""
+
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
     database_session.add(user)
@@ -112,6 +118,8 @@ def test_coach(database_session: Session, test_client: TestClient):
 
 
 def test_accept_request(database_session, test_client: TestClient):
+    """Test endpoint for accepting a coach request"""
+
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
@@ -136,6 +144,8 @@ def test_accept_request(database_session, test_client: TestClient):
 
 
 def test_reject_request(database_session, test_client: TestClient):
+    """Test endpoint for rejecting a coach request"""
+
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
@@ -158,5 +168,5 @@ def test_reject_request(database_session, test_client: TestClient):
     requests = database_session.query(CoachRequest).all()
     assert len(requests) == 0
 
-    response = test_client.post(f"users/requests/INVALID/reject")
+    response = test_client.post("users/requests/INVALID/reject")
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

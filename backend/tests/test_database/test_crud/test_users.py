@@ -6,6 +6,8 @@ from src.database.models import user_editions, CoachRequest
 
 
 def test_get_users(database_session: Session):
+    """Test get request for users"""
+
     # Create users
     user1 = models.User(name="user1", email="user1@mail.com", admin=True)
     database_session.add(user1)
@@ -61,6 +63,8 @@ def test_get_users(database_session: Session):
 
 
 def test_edit_admin_status(database_session: Session):
+    """Test changing the admin status of a user"""
+
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
     database_session.add(user)
@@ -74,6 +78,8 @@ def test_edit_admin_status(database_session: Session):
 
 
 def test_coach(database_session: Session):
+    """Test adding a user as admin"""
+
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
     database_session.add(user)
@@ -94,6 +100,8 @@ def test_coach(database_session: Session):
 
 
 def test_accept_request(database_session: Session):
+    """Test accepting a coach request"""
+
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
     database_session.add(user1)
@@ -118,8 +126,8 @@ def test_accept_request(database_session: Session):
     assert user1.editions[0].edition_id == edition1.edition_id
 
 
-
 def test_reject_request_new_user(database_session: Session):
+    """Test rejecting a coach request"""
 
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")

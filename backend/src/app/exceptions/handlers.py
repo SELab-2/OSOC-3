@@ -26,7 +26,7 @@ def install_handlers(app: FastAPI):
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     @app.exception_handler(MalformedUUIDError)
     def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
         return JSONResponse(

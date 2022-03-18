@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.users import UsersListResponse, RequestAnswer, AdminPatch
+from src.app.schemas.users import UsersListResponse, AdminPatch
 import src.database.crud.users as users_crud
 
 
@@ -38,14 +38,6 @@ def add_coach(db: Session, user_id: int, edition_id: int):
     """
 
     users_crud.add_coach(db, user_id, edition_id)
-
-
-def remove_coach(db: Session, user_id: int, edition_id: int):
-    """
-    Remove user as coach for the given edition
-    """
-
-    users_crud.remove_coach(db, user_id, edition_id)
 
 
 def remove_coach(db: Session, user_id: int, edition_id: int):

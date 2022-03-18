@@ -7,8 +7,6 @@ from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
 from .routers import editions_router, login_router
 from .exceptions import install_handlers
-from .routers import editions_router
-from .routers import login_router
 from .routers.users.users import users_router
 
 
