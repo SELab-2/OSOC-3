@@ -101,8 +101,8 @@ def test_edit_admin_status(database_session: Session):
     assert not user.admin
 
 
-def test_coach(database_session: Session):
-    """Test adding a user as admin"""
+def test_add_coach(database_session: Session):
+    """Test adding a user as coach"""
 
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
@@ -118,6 +118,25 @@ def test_coach(database_session: Session):
     coach = database_session.query(user_editions).one()
     assert coach.user_id == user.user_id
     assert coach.edition_id == edition.edition_id
+
+
+def test_remove_coach(database_session: Session):
+    """Test removing a user as coach"""
+
+    # Create user
+    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    database_session.add(user)
+
+    # Create edition
+    edition = models.Edition(year=1)
+    database_session.add(edition)
+
+    database_session.commit()
+
+    # Create coach role
+    database_session.execute(models.user_editions.insert(), [
+        {"user_id": user.user_id, "edition_id": edition.edition_id}
+    ])
 
     users_crud.remove_coach(database_session, user.user_id, edition.edition_id)
     assert len(database_session.query(user_editions).all()) == 0

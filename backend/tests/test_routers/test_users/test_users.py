@@ -120,7 +120,7 @@ def test_edit_admin_status(database_session: Session, test_client: TestClient):
 
 
 def test_coach(database_session: Session, test_client: TestClient):
-    """Test endpoind for adding and removing coaches"""
+    """Test endpoint for adding coaches"""
 
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
@@ -139,6 +139,25 @@ def test_coach(database_session: Session, test_client: TestClient):
     assert coach.user_id == user.user_id
     assert coach.edition_id == edition.edition_id
 
+
+def test_remove_coach(database_session: Session, test_client: TestClient):
+    """Test endpoint for removing coaches"""
+
+    # Create user
+    user = models.User(name="user1", email="user1@mail.com")
+    database_session.add(user)
+
+    # Create edition
+    edition = models.Edition(year=1)
+    database_session.add(edition)
+
+    database_session.commit()
+
+    # Create request
+    request = models.CoachRequest(user_id=user.user_id, edition_id=edition.edition_id)
+    database_session.add(request)
+
+    database_session.commit()
     # Remove coach
     response = test_client.delete(f"/users/{user.user_id}/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
