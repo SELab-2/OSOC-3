@@ -28,7 +28,7 @@ def test_new_user_but_coach_request_failed(database_session: Session):
     users = database_session.query(User).where(User.name == "user1").all()
     assert len(users) == 0
 
-def test_dublicate_user(database_session: Session):
+def test_duplicate_user(database_session: Session):
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
