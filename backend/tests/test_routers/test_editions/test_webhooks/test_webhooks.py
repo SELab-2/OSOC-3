@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database.models import Edition, WebhookURL, Student
+from tests.utils.authorization import AuthClient
 from .data import create_webhook_event, WEBHOOK_EVENT_BAD_FORMAT, WEBHOOK_MISSING_QUESTION
 
 
@@ -26,15 +27,17 @@ def webhook(edition: Edition, database_session: Session) -> WebhookURL:
     return webhook
 
 
-def test_new_webhook(test_client: TestClient, edition: Edition):
-    response = test_client.post(f"/editions/{edition.edition_id}/webhooks/")
+def test_new_webhook(auth_client: AuthClient, edition: Edition):
+    auth_client.admin()
+    response = auth_client.post(f"/editions/{edition.edition_id}/webhooks/")
     assert response.status_code == status.HTTP_201_CREATED
     assert 'uuid' in response.json()
     assert UUID(response.json()['uuid'])
 
 
-def test_new_webhook_invalid_edition(test_client: TestClient, edition: Edition):
-    response = test_client.post(f"/editions/0/webhooks/")
+def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edition):
+    auth_client.admin()
+    response = auth_client.post(f"/editions/0/webhooks/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
