@@ -4,7 +4,7 @@ from src.app.schemas.users import UsersListResponse, AdminPatch
 import src.database.crud.users as users_crud
 
 
-def get_users_list(db: Session, admin: bool, edition_id: int) -> UsersListResponse:
+def get_users_list(db: Session, admin: bool, edition_id: int | None) -> UsersListResponse:
     """
     Query the database for a list of users
     and wrap the result in a pydantic model
