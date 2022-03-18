@@ -57,7 +57,7 @@ def add_coach(db, user_id, edition_id):
 
 def remove_coach(db, user_id, edition_id):
     """
-    Remove user as admin for the given edition
+    Remove user as coach for the given edition
     """
 
     db.execute(user_editions.delete(), {"user_id": user_id, "edition_id": edition_id})
