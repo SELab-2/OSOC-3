@@ -1,5 +1,6 @@
 from json import dumps
 
+import pytest
 from sqlalchemy.orm import Session
 
 from starlette.testclient import TestClient
@@ -9,11 +10,13 @@ from src.database import models
 from src.database.models import user_editions, CoachRequest
 
 
-def test_get_users(database_session: Session, test_client: TestClient):
-    """Test endpoint for getting a list of users"""
+@pytest.fixture
+def data(database_session: Session) -> {str: str}:
+    """Fill database with dummy data"""
 
     # Create users
     user1 = models.User(name="user1", email="user1@mail.com", admin=True)
+
     database_session.add(user1)
     user2 = models.User(name="user2", email="user2@mail.com", admin=False)
     database_session.add(user2)
@@ -33,35 +36,61 @@ def test_get_users(database_session: Session, test_client: TestClient):
         {"user_id": user2.user_id, "edition_id": edition2.edition_id}
     ])
 
+    return {"user1": user1.user_id,
+            "user2": user2.user_id,
+            "edition1": edition1.edition_id,
+            "edition2": edition2.edition_id,
+            }
+
+
+def test_get_all_users(database_session: Session, test_client: TestClient, data: {str: str}):
+    """Test endpoint for getting a list of users"""
+
     # All users
     response = test_client.get("/users")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
     assert len(user_ids) == 2
-    assert user1.user_id in user_ids
-    assert user2.user_id in user_ids
+    assert data["user1"] in user_ids
+    assert data["user2"] in user_ids
+
+
+def test_get_all_admins(database_session: Session, test_client: TestClient, data: {str: str}):
+    """Test endpoint for getting a list of admins"""
 
     # All admins
     response = test_client.get("/users?admin=true")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
-    assert [user1.user_id] == user_ids
+    assert [data["user1"]] == user_ids
+
+
+def test_get_users_from_edition(database_session: Session, test_client: TestClient, data: {str: str}):
+    """Test endpoint for getting a list of users from a given edition"""
 
     # All users from edition
-    response = test_client.get(f"/users?edition={edition2.edition_id}")
+    response = test_client.get(f"/users?edition={data['edition2']}")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
-    assert [user2.user_id] == user_ids
+    assert [data["user2"]] == user_ids
+
+
+def test_get_admins_from_edition(database_session: Session, test_client: TestClient, data: {str: str}):
+    """Test endpoint for getting a list of admins from a given edition"""
 
     # All admins from edition
-    response = test_client.get(f"/users?admin=true&edition={edition1.edition_id}")
+    response = test_client.get(f"/users?admin=true&edition={data['edition1']}")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [user["userId"] for user in response.json()['users']]
-    assert [user1.user_id] == user_ids
+    assert [data["user1"]] == user_ids
 
-    response = test_client.get(f"/users?admin=true&edition={edition2.edition_id}")
+    response = test_client.get(f"/users?admin=true&edition={data['edition2']}")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()['users']) == 0
+
+
+def test_get_users_invalid(database_session: Session, test_client: TestClient, data: {str: str}):
+    """Test endpoint for unvalid input"""
 
     # Invalid input
     response = test_client.get("/users?admin=INVALID")
