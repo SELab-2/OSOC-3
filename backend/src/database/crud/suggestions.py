@@ -10,3 +10,6 @@ def create_suggestion(db: Session, user_id: int, student_id: int, decision: Deci
 
 def get_suggestions_of_student(db: Session, student_id: int) -> list[Suggestion]:
     return db.query(Suggestion).where(Suggestion.student_id == student_id).all()
+
+def get_suggestion_by_id(db: Session, suggestion_id:int) -> Suggestion:
+    return db.query(Suggestion).where(Suggestion.suggestion_id == suggestion_id).one()

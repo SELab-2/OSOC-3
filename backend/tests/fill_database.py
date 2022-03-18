@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from src.database.models import *
 from src.database.enums import *
 from src.app.logic.security import get_password_hash
+from src.database.enums import DecisionEnum
 from datetime import date
 
 def fill_database(db: Session):
@@ -154,7 +155,7 @@ def fill_database(db: Session):
     db.add(partner3)
     db.commit()
 
-    #Project
+    # Project
     project1: Project = Project(name="project1", number_of_students=3, edition=edition, partners=[partner1])
     project2: Project = Project(name="project2", number_of_students=6, edition=edition, partners=[partner2])
     project3: Project = Project(name="project3", number_of_students=2, edition=edition, partners=[partner3])
@@ -165,3 +166,7 @@ def fill_database(db: Session):
     db.add(project4)
     db.commit()
 
+    # Suggestion
+    suggestion: Suggestion = Suggestion(student=student01,coach=coach1, argumentation="Good student", suggestion=DecisionEnum.YES)
+    db.add(suggestion)
+    db.commit()
