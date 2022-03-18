@@ -37,13 +37,13 @@ Below are the instructions on how to set up the frontend and backend. Instructio
   ```shell
   # Running
   yarn start
-
+  
   # Testing
   yarn test
-
+  
   # Linting
   yarn lint
-
+  
   # Building (for production)
   yarn build
   ```
@@ -77,26 +77,26 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
   ```shell
   # Running
-  uvicorn main:app
-
+  uvicorn src.app:app
+  
   # Running with hot reloading
-  uvicorn main:app --reload
-
+  uvicorn src.app:app --reload
+  
   # Database migrations: updating to most recent version
   alembic upgrade head
-
+  
   # Database migrations: generating a new revision
   alembic revision --auto-generate -m "Your message here"
-
+  
   # Testing
   pytest .
-
+  
   # Testing + coverage report
   pytest --cov=src .
-
+  
   # Linting
   pylint src
-
+  
   # Static type checking
   mypy src
   ```
@@ -116,7 +116,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
      ```shell
      # Install the required Node version
      nvm install 16.14.1
-
+  
      # Make your shell use the newly-installed version
      nvm use 16
      ```
@@ -229,13 +229,13 @@ docker compose down
 First, make sure your `Docker` container is running so that the app can connect to the database. See [Starting The Database](#starting-the-database) for more info.
 
 ```shell
-uvicorn main:app
+uvicorn src.app:app
 ```
 
 For local development, you can enable `hot reloading` by passing the `--reload` option:
 
 ```shell
-uvicorn main:app --reload
+uvicorn src.app:app --reload
 ```
 
 **Note**: `--reload` should only be used in development, and _**not**_ when hosting the application on a server!
@@ -268,4 +268,4 @@ alembic revision --autogenerate -m "Your message here"
 
 Keep in mind that auto-generated migrations may need manual editing in some edge cases. Always check if you can still upgrade to head, and if the tests still run ([Running Tests](#running-tests)). One of our tests tries to go through every migration in history to the most recent one and back down, in order to verify that all migrations work in the testing environment as well.
 
-More info on upgrading and downgrading (such as relative upgrades) can be found in [`Alembic's documentation`](https://alembic.sqlalchemy.org/en/latest/tutorial.html#relative-migration-identifiers).
+More info on upgrading and downgrading (such as relative upgrades) can be found in [`Alembic's documentation`](https://alembic.sqlalchemy.org/en/latest/tutorial.html#relative-migration-identifiers)
