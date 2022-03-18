@@ -106,3 +106,27 @@ def test_delete_suggestion_admin(database_session: Session, test_client: TestCli
     assert test_client.delete("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}).status_code == status.HTTP_204_NO_CONTENT
     suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
     assert len(suggestions) == 0
+
+def test_detele_suggestion_coach_their_review(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "coach1@noutlook.be",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.delete("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}).status_code == status.HTTP_204_NO_CONTENT
+    suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
+    assert len(suggestions) == 0
+
+def test_detele_suggestion_coach_other_review(database_session: Session, test_client: TestClient):
+    fill_database(database_session)
+    form = {
+        "username": "coach2@noutlook.be",
+        "password": "wachtwoord"
+    }
+    d = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer "+d
+    assert test_client.delete("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}).status_code == status.HTTP_403_FORBIDDEN
+    suggestions: Suggestion = database_session.query(Suggestion).where(Suggestion.suggestion_id==1).all()
+    assert len(suggestions) == 1
