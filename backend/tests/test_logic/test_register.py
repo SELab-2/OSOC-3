@@ -8,6 +8,7 @@ from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
 def test_create_request(database_session: Session): 
+    """Tests if a normal request can be created"""
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
@@ -23,6 +24,7 @@ def test_create_request(database_session: Session):
     assert len(auth_email) == 1
 
 def test_new_user_but_coach_request_failed(database_session: Session):
+    """Tests when a coach request failed, it gets the correct error and the user is not in the database"""
     nu = NewUser(name="user1", email="email@email.com", pw="wachtwoord")
     with pytest.raises(FailedToAddNewUserException):
         create_request(database_session, nu, None)
@@ -30,6 +32,7 @@ def test_new_user_but_coach_request_failed(database_session: Session):
     assert len(users) == 0
 
 def test_duplicate_user(database_session: Session):
+    """Tests if there is a duplicate, it's not created in the database"""
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
@@ -40,6 +43,7 @@ def test_duplicate_user(database_session: Session):
         create_request(database_session, nu2, edition)
 
 def test_not_a_correct_email(database_session: Session):
+    """Tests when the email is not a correct email adress, it's get the right error"""
     edition = Edition(year = 2022)
     database_session.add(edition)
     database_session.commit()
