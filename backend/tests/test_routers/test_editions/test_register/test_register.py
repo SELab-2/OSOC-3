@@ -14,7 +14,7 @@ def test_no_edition(database_session: Session, test_client: TestClient):
     response = test_client.post("/editions/1/register/email", json={"name": "Joskes vermeulen","email": "jw@gmail.com", "pw": "test"})
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
-def test_dubplicate(database_session: Session, test_client: TestClient):
+def test_duplicate(database_session: Session, test_client: TestClient):
     database_session.add(Edition(year=2022))
     database_session.commit()
     test_client.post("/editions/1/register/email", json={"name": "Joskes vermeulen","email": "jw@gmail.com", "pw": "test"})
