@@ -9,23 +9,23 @@ from src.database import models
 from src.database.models import user_editions, CoachRequest
 
 
-def test_get_users(db: Session, test_client: TestClient):
+def test_get_users(database_session: Session, test_client: TestClient):
     # Create users
     user1 = models.User(name="user1", email="user1@mail.com", admin=True)
-    db.add(user1)
+    database_session.add(user1)
     user2 = models.User(name="user2", email="user2@mail.com", admin=False)
-    db.add(user2)
+    database_session.add(user2)
 
     # Create editions
     edition1 = models.Edition(year=1)
-    db.add(edition1)
+    database_session.add(edition1)
     edition2 = models.Edition(year=2)
-    db.add(edition2)
+    database_session.add(edition2)
 
-    db.commit()
+    database_session.commit()
 
     # Create coach roles
-    db.execute(models.user_editions.insert(), [
+    database_session.execute(models.user_editions.insert(), [
         {"user_id": user1.user_id, "edition_id": edition1.edition_id},
         {"user_id": user2.user_id, "edition_id": edition1.edition_id},
         {"user_id": user2.user_id, "edition_id": edition2.edition_id}
@@ -69,11 +69,11 @@ def test_get_users(db: Session, test_client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_edit_admin_status(db: Session, test_client: TestClient):
+def test_edit_admin_status(database_session: Session, test_client: TestClient):
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
-    db.add(user)
-    db.commit()
+    database_session.add(user)
+    database_session.commit()
 
     response = test_client.patch(f"/users/{user.user_id}",
                                  data=dumps({"admin": True}))
@@ -86,47 +86,47 @@ def test_edit_admin_status(db: Session, test_client: TestClient):
     assert not user.admin
 
 
-def test_coach(db: Session, test_client: TestClient):
+def test_coach(database_session: Session, test_client: TestClient):
     # Create user
     user = models.User(name="user1", email="user1@mail.com", admin=False)
-    db.add(user)
+    database_session.add(user)
 
     # Create edition
     edition = models.Edition(year=1)
-    db.add(edition)
+    database_session.add(edition)
 
-    db.commit()
+    database_session.commit()
 
     # Add coach
     response = test_client.post(f"/users/{user.user_id}/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
-    coach = db.query(user_editions).one()
+    coach = database_session.query(user_editions).one()
     assert coach.user_id == user.user_id
     assert coach.edition_id == edition.edition_id
 
     # Remove coach
     response = test_client.delete(f"/users/{user.user_id}/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
-    coach = db.query(user_editions).all()
+    coach = database_session.query(user_editions).all()
     assert len(coach) == 0
 
 
-def test_accept_request(db, test_client: TestClient):
+def test_accept_request(database_session, test_client: TestClient):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    db.add(user1)
+    database_session.add(user1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    db.add(edition1)
+    database_session.add(edition1)
 
-    db.commit()
+    database_session.commit()
 
     # Create request
     request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
-    db.add(request1)
+    database_session.add(request1)
 
-    db.commit()
+    database_session.commit()
 
     response = test_client.post(f"users/requests/{request1.request_id}/accept")
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -135,27 +135,27 @@ def test_accept_request(db, test_client: TestClient):
     assert user1.editions[0].edition_id == edition1.edition_id
 
 
-def test_reject_request(db, test_client: TestClient):
+def test_reject_request(database_session, test_client: TestClient):
     # Create user
     user1 = models.User(name="user1", email="user1@mail.com")
-    db.add(user1)
+    database_session.add(user1)
 
     # Create edition
     edition1 = models.Edition(year=1)
-    db.add(edition1)
+    database_session.add(edition1)
 
-    db.commit()
+    database_session.commit()
 
     # Create request
     request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
-    db.add(request1)
+    database_session.add(request1)
 
-    db.commit()
+    database_session.commit()
 
     response = test_client.post(f"users/requests/{request1.request_id}/reject")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    requests = db.query(CoachRequest).all()
+    requests = database_session.query(CoachRequest).all()
     assert len(requests) == 0
 
     response = test_client.post(f"users/requests/INVALID/reject")
