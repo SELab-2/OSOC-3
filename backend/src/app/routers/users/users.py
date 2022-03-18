@@ -19,7 +19,7 @@ async def get_users(admin: bool = Query(False), edition: int | None = Query(None
 
 
 @users_router.patch("/{user_id}", status_code=204)
-async def post_edition(user_id: int, admin: AdminPatch, db: Session = Depends(get_session)):
+async def patch_admin_status(user_id: int, admin: AdminPatch, db: Session = Depends(get_session)):
     """
     Set admin-status of user
     """

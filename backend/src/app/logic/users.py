@@ -48,14 +48,6 @@ def remove_coach(db: Session, user_id: int, edition_id: int):
     users_crud.remove_coach(db, user_id, edition_id)
 
 
-def delete_user_as_coach(db: Session, edition_id: int, user_id: int):
-    """
-    Add user as admin for the given edition if not already coach
-    """
-
-    users_crud.delete_user_as_coach(db, edition_id, user_id)
-
-
 def accept_request(db: Session, request_id: int):
     """
     Accept user request
