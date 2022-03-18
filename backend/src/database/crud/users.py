@@ -45,7 +45,7 @@ def edit_admin_status(db: Session, user_id: int, admin: bool):
     db.commit()
 
 
-def add_coach(db, user_id, edition_id):
+def add_coach(db: Session, user_id: int, edition_id: int):
     """
     Add user as coach for the given edition
     """
