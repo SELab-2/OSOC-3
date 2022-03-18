@@ -37,7 +37,7 @@ async def add_to_edition(user_id: int, edition_id: int, db: Session = Depends(ge
 
 
 @users_router.delete("/{user_id}/editions/{edition_id}", status_code=204)
-async def remove_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
+async def remove_from_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
     """
     Remove user as coach of the given edition
     """
