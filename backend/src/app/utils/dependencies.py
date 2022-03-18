@@ -10,13 +10,18 @@ from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.database import get_session
-from src.database.models import Edition, InviteLink, User
+from src.database.models import Edition, InviteLink, Student, User
+from src.database.crud.students import get_student_by_id
 
 
 # TODO: Might be nice to use a more descriptive year number here than primary id.
 def get_edition(edition_id: int, database: Session = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the id in the path"""
     return get_edition_by_id(database, edition_id)
+
+def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
+    """Get the student from the database, given the id in the path"""
+    return get_student_by_id(database, student_id)
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
