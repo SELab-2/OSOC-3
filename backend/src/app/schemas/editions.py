@@ -7,7 +7,7 @@ class EditionBase(CamelCaseModel):
 
 
 class Edition(CamelCaseModel):
-    """Schema of an created edition"""
+    """Schema of a created edition"""
     edition_id: int
     year: int
 
