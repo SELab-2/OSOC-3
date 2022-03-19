@@ -20,6 +20,7 @@
         "sourceType": "module"
     },
     "plugins": [
+        "jest",
         "react",
         "prettier",
         "@typescript-eslint"
