@@ -7328,6 +7328,11 @@ react-scripts@^5.0.0:
   optionalDependencies:
     fsevents "^2.3.2"
 
+react-social-login-buttons@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-social-login-buttons/-/react-social-login-buttons-3.6.0.tgz#2be1cb114d8c0200581ba1c8ec5ea74e89cf7701"
+  integrity sha512-m5E72jHWgC4VBxRziZYQC5kQIzooGRF+dDE97K5JgSlcDPXkNxCjCzP+Qp9fNhNujG7APvPx2Qhzi1BO2xi17Q==
+
 react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
