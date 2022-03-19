@@ -183,7 +183,7 @@ RegisterForm
     font-size: 30px;
 }
 
-.register-form-input-fields input {
+.register-form-input-fields input[type=password], input[type=email]{
     height: 40px;
     width: 400px;
     margin-top: 15px;
@@ -199,4 +199,15 @@ RegisterForm
     background: var(--osoc_red);
     color: white;
     border: none;
+}
+
+
+.login {
+    display: flex;
+}
+
+.border-right {
+    margin-right: 20px;
+    padding-right: 20px;
+    border-right: 5px solid;
 }
