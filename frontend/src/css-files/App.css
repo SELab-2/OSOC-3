@@ -5,6 +5,7 @@
     --osoc_green: #44dba4;
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
+    --background_color: #272741;
 }
 
 * {
@@ -14,7 +15,7 @@
 }
 
 body {
-    background-color: var(--osoc_blue);
+    background-color: var(--background_color);
     color: white;
 }
 
