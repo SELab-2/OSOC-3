@@ -6,6 +6,7 @@
     "@fortawesome/react-fontawesome": "^0.1.17",
     "react-icons": "^4.3.1",
     "react-router-dom": "6",
+    "react-social-login-buttons": "^3.6.0",
     "styled-components": "^5.3.3"
   }
 }
