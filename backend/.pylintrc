@@ -1,9 +1,11 @@
 [MASTER]
 load-plugins=pylint_pytest
+argument-rgx=[a-z_][a-z0-9_]{1,31}$
 disable=
     import-outside-toplevel,
     missing-module-docstring,
     too-few-public-methods,
+extension-pkg-whitelist=pydantic
 
 [FORMAT]
 max-line-length=120

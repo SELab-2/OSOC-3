@@ -17,7 +17,7 @@ from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTim
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
-from src.database.enums import RoleEnum, DecisionEnum, QuestionEnum
+from src.database.enums import DecisionEnum, QuestionEnum
 
 Base = declarative_base()
 
@@ -62,7 +62,9 @@ class CoachRequest(Base):
 
     request_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    edition_id = Column(Integer, ForeignKey("editions.edition_id"), nullable=False)
 
+    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False)
     user: User = relationship("User", back_populates="coach_request", uselist=False)
 
 
@@ -87,7 +89,8 @@ class Edition(Base):
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
     projects: list[Project] = relationship("Project", back_populates="edition")
-    roles: list[UserRole] = relationship("UserRole", back_populates="edition")
+    coaches: list[User] = relationship("User", secondary="user_editions", back_populates="editions")
+    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition")
     students: list[Student] = relationship("Student", back_populates="edition")
     webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition")
 
@@ -208,7 +211,7 @@ class Student(Base):
     email_address = Column(Text, unique=True, nullable=False)
     phone_number = Column(Text, unique=True, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)
-    #cv_url = Column(Text)
+    # cv_url = Column(Text)
     decision = Column(Enum(DecisionEnum), nullable=True, default=DecisionEnum.UNDECIDED)
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
@@ -288,11 +291,12 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     email = Column(Text, unique=True, nullable=False)
+    admin = Column(Boolean, nullable=False, default=False)
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
+    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
     projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
-    roles: list[UserRole] = relationship("UserRole", back_populates="user")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
 
     # Authentication methods
@@ -301,19 +305,11 @@ class User(Base):
     google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False)
 
 
-class UserRole(Base):
-    """Table that stores whether a user is an admin, coach, ...
-    This is stored on a per-edition basis
-    """
-    __tablename__ = "user_roles"
-
-    user_role_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"))
-    role = Column(Enum(RoleEnum), nullable=True)
-    edition_id = Column(Integer, ForeignKey("editions.edition_id"))
-
-    edition: Edition = relationship("Edition", back_populates="roles", uselist=False)
-    user: User = relationship("User", back_populates="roles", uselist=False)
+user_editions = Table(
+    "user_editions", Base.metadata,
+    Column("user_id", ForeignKey("users.user_id")),
+    Column("edition_id", ForeignKey("editions.edition_id"))
+)
 
 
 class WebhookURL(Base):

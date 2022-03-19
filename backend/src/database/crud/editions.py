@@ -4,6 +4,8 @@ from src.app.exceptions.editions import DuplicateInsertException
 from src.database.models import Edition
 from src.app.schemas.editions import EditionBase
 
+from src.database.models import Edition
+
 
 def get_edition_by_id(db: Session, edition_id: int) -> Edition:
     """Get an edition given its primary key
