@@ -23,6 +23,15 @@ yarn add --dev <package_name>
 yarn install
 ```
 
+## Creating a `.env` file
+
+We store information (such as the backend URL) in a `.env` file. In order to be able to work on the frontend, you need to create one yourself in the root of this directory.
+
+You can copy the content of the `.env.example` file (present in this directory) which has default values that will work for development.
+
+1. Create a file named `.env` in the root of this directory
+2. Copy the content from `.env.example` into it
+
 ## Setting up Prettier and ESLint
 
 This directory contains configuration files for `Prettier` and `ESLint`, and depending on your IDE you may have to install or configure these in order for this to work.
