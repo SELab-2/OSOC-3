@@ -5,6 +5,7 @@
     --osoc_green: #44dba4;
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
+    --background_color: #272741;
 }
 
 * {
@@ -14,7 +15,7 @@
 }
 
 body {
-    background-color: var(--osoc_blue);
+    background-color: var(--background_color);
     color: white;
 }
 
@@ -80,6 +81,7 @@ body {
     animation: rotation 20s infinite linear;
 }
 
+
 @keyframes quick-jump {
     0% {
         transform: translateX(0px) translateY(0px);
@@ -88,7 +90,7 @@ body {
         transform: translateX(0px) translateY(0px);
     }
     98% {
-        transform: translateX(60px) translateY(60px);
+        transform: translateX(90px) translateY(90px);
     }
     100% {
         transform: translateX(0px) translateY(0px);
@@ -210,4 +212,25 @@ RegisterForm
     margin-right: 20px;
     padding-right: 20px;
     border-right: 5px solid;
+/*
+PendingPage
+ */
+
+.pending-page-content-container {
+    height: fit-content;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.pending-page-content-container span {
+    font-size: 40px;
+    display: block;
+    position: relative;
+}
+
+.pending-page-content {
+    max-width: 1200px;
 }
