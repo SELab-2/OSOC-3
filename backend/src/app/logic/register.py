@@ -7,7 +7,7 @@ from src.app.exceptions.register import FailedToAddNewUserException
 from src.app.logic.security import get_password_hash
 
 def create_request(db: Session, new_user: NewUser, edition: Edition) -> None:
-    """Create a coach request. But when something failed, the changed aren't commited"""
+    """Create a coach request. If something fails, the changes aren't committed"""
     try:
         user = create_user(db, new_user.name, new_user.email)
         create_auth_email(db, user, get_password_hash(new_user.pw))
