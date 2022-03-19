@@ -4,6 +4,7 @@ from alembic.runtime import migration
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+import settings
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
 from .routers import editions_router, login_router
@@ -19,7 +20,7 @@ app = FastAPI(
 # Add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # TODO
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
