@@ -63,6 +63,7 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={'message': 'Already inserted'}
+        )
 
     @app.exception_handler(WebhookProcessException)
     def webhook_process_exception(_request: Request, exception: WebhookProcessException):
