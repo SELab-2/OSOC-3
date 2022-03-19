@@ -1,5 +1,5 @@
 :root {
-    --osoc_blue: #0a0839;
+    --osoc_blue: #131329;
     --osoc_orange: #fcb70f;
     --osoc_red: #f14a3b;
     --osoc_green: #44dba4;
@@ -14,7 +14,7 @@
 }
 
 body {
-    background-color: var(--react_dark_grey);
+    background-color: var(--osoc_blue);
     color: white;
 }
 
@@ -200,4 +200,28 @@ RegisterForm
     background: var(--osoc_red);
     color: white;
     border: none;
+}
+
+/*
+PendingPage
+ */
+
+.pending-page-content-container {
+    height: fit-content;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.pending-page-content-container span {
+    font-size: 40px;
+    display: block;
+    position: relative;
+}
+
+.pending-page-content {
+    min-width: 800px;
+    max-width: 1200px;
 }
