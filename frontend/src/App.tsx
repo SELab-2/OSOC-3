@@ -9,6 +9,7 @@ import Users from "./views/Users";
 import ProjectsPage from "./views/ProjectsPage";
 import RegisterForm from "./views/RegisterForm";
 import ErrorPage from "./views/ErrorPage";
+import PendingPage from "./views/PendingPage";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/students" element={<Students/>}/>
                 <Route path="/users" element={<Users/>}/>
                 <Route path="/projects" element={<ProjectsPage/>}/>
+                <Route path="/pending" element={(<PendingPage/>)}/>
                 <Route path="*" element={<ErrorPage/>}/>
             </Routes>
         </Router>
