@@ -1,11 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from starlette import status
+from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
+from src.app.schemas.editions import EditionBase, Edition, EditionList
+
+from src.database.database import get_session
+from src.app.logic import editions as logic_editions
 
 from .invites import invites_router
 from .projects import projects_router
 from .register import registration_router
-from .skills import skills_router
 from .students import students_router
 from .users import users_router
 from .webhooks import webhooks_router
@@ -17,8 +22,7 @@ editions_router = APIRouter(prefix="/editions")
 # Register all child routers
 child_routers = [
     invites_router, projects_router, registration_router,
-    skills_router, students_router, users_router,
-    webhooks_router
+    students_router, users_router, webhooks_router
 ]
 
 for router in child_routers:
@@ -28,22 +32,53 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_id}")
 
 
-@editions_router.get("/", tags=[Tags.EDITIONS])
-async def get_editions():
+@editions_router.get("/",response_model=EditionList, tags=[Tags.EDITIONS])
+async def get_editions(db: Session = Depends(get_session)):
+    """Get a list of all editions.
+
+    Args:
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        EditionList: an object with a list of all the editions.
     """
-    Get a list of all editions.
-    """
+    return logic_editions.get_editions(db)
 
 
-@editions_router.post("/", tags=[Tags.EDITIONS])
-async def post_edition():
+@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS])
+async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session)):
+    """Get a specific edition.
+
+    Args:
+        edition_id (int): the id of the edition that you want to get.
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        Edition: an edition.
     """
-    Create a new edition.
-    """
+    return logic_editions.get_edition_by_id(db, edition_id)
 
 
-@editions_router.delete("/{edition_id}", tags=[Tags.EDITIONS])
-async def delete_edition(edition_id: int):
+@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS])
+async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
+    """ Create a new edition.
+
+    Args:
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
+    Returns:
+        Edition: the newly made edition object.
     """
-    Delete an existing edition.
+    return logic_editions.create_edition(db, edition)
+
+
+@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS])
+async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
+    """Delete an existing edition.
+
+    Args:
+        edition_id (int): the id of the edition that needs to be deleted, if found.
+        db (Session, optional): connection with the database. Defaults to Depends(get_session).
+
     """
+    logic_editions.delete_edition(db, edition_id)

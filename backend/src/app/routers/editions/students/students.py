@@ -1,5 +1,9 @@
 from fastapi import APIRouter
 
+from fastapi import Depends
+from src.database.database import get_session
+from sqlalchemy.orm import Session
+
 from src.app.routers.tags import Tags
 from .suggestions import students_suggestions_router
 
@@ -12,6 +16,7 @@ async def get_students(edition_id: int):
     """
     Get a list of all students.
     """
+
 
 
 @students_router.post("/emails")
