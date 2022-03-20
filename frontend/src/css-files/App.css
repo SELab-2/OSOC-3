@@ -23,7 +23,7 @@ body {
     max-width: 800px;
     text-align: center;
     justify-content: center;
-
+    margin-bottom: 50px;
 }
 
 .logo-plus-name {
@@ -58,8 +58,8 @@ body {
     position: absolute;
     width: 20%;
     max-height: 20%;
-    bottom: 15%;
-    left: 15%;
+    bottom: 10%;
+    left: 10%;
     animation: wiggle 5s infinite linear;
 }
 
@@ -74,11 +74,26 @@ body {
 
 .osoc-logo-C {
     position: absolute;
-    width: 20%;
-    height: 20%;
+    width: 15%;
+    height: 15%;
     right: 10%;
-    bottom: 15%;
+    bottom: 10%;
     animation: rotation 20s infinite linear;
+}
+
+.socials-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.socials {
+    min-width: 230px;
+    height: fit-content;
+}
+
+.google-login-container {
+    margin-bottom: 15px;
 }
 
 
