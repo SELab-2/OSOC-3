@@ -17,7 +17,7 @@ from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTim
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
-from src.database.enums import RoleEnum, DecisionEnum, QuestionEnum
+from src.database.enums import DecisionEnum, QuestionEnum
 
 Base = declarative_base()
 

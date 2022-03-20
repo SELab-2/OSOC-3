@@ -13,8 +13,12 @@ class InvalidCredentialsException(ValueError):
     """
 
 
-class UnauthorizedException(ValueError):
+class MissingPermissionsException(ValueError):
     """
     Exception raised when a request to a private route is made without
     a (valid) bearer token provided in the headers
+
+    Also raised when a coach tries to make a request to a route
+    when their application is still pending, and they haven't been
+    accepted yet
     """
