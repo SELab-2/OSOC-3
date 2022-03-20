@@ -96,7 +96,6 @@ body {
     margin-bottom: 15px;
 }
 
-
 @keyframes quick-jump {
     0% {
         transform: translateX(0px) translateY(0px);
@@ -113,7 +112,7 @@ body {
 }
 
 @keyframes rotation {
-    from{
+    from {
         transform: rotate(0deg);
     }
     to {
@@ -200,24 +199,27 @@ RegisterForm
     font-size: 30px;
 }
 
-.register-form-input-fields input[type=password], input[type=email]{
+.register-form-input-fields input[type="password"],
+input[type="email"] {
     height: 40px;
     width: 400px;
     margin-top: 15px;
     margin-bottom: 15px;
     text-align: center;
     font-size: 20px;
+    border-radius: 10px;
+    border-width: 0cm;
 }
 
 .register-button {
     width: 120px;
     height: 35px;
     cursor: pointer;
-    background: var(--osoc_red);
+    background: var(--osoc_green);
     color: white;
     border: none;
+    border-radius: 5px;
 }
-
 
 .login {
     display: flex;
@@ -226,7 +228,7 @@ RegisterForm
 .border-right {
     margin-right: 20px;
     padding-right: 20px;
-    border-right: 5px solid;
+    border-right: 2px solid rgba(182, 182, 182, 0.603);
 }
 /*
 PendingPage
@@ -249,4 +251,8 @@ PendingPage
 
 .pending-page-content {
     max-width: 1200px;
+}
+
+.no-account {
+    padding-bottom: 15px;
 }
