@@ -5,6 +5,7 @@ from src.database.enums import DecisionEnum
 
 
 class User(CamelCaseModel):
+    """Represents a User from the database"""
     user_id: int
     name: str
     email: str
@@ -14,6 +15,7 @@ class User(CamelCaseModel):
 
 
 class Skill(CamelCaseModel):
+    """Represents a Skill from the database"""
     skill_id: int
     name: str
     description: str
@@ -23,6 +25,7 @@ class Skill(CamelCaseModel):
 
 
 class Partner(CamelCaseModel):
+    """Represents a Partner from the database"""
     partner_id: int
     name: str
 
@@ -31,6 +34,7 @@ class Partner(CamelCaseModel):
 
 
 class ProjectRole(CamelCaseModel):
+    """Represents a ProjectRole from the database"""
     student_id: int
     project_id: int
     skill_id: int
@@ -43,6 +47,7 @@ class ProjectRole(CamelCaseModel):
 
 
 class Project(CamelCaseModel):
+    """Represents a Project from the database to return when a GET request happens"""
     project_id: int
     name: str
     number_of_students: int
@@ -58,6 +63,7 @@ class Project(CamelCaseModel):
 
 
 class Student(CamelCaseModel):
+    """Represents a Student from the database to use in ConflictStudent"""
     student_id: int
     first_name: str
     last_name: str
@@ -74,23 +80,28 @@ class Student(CamelCaseModel):
 
 
 class ProjectList(CamelCaseModel):
+    """A list of projects"""
     projects: list[Project]
 
 
 class ConflictStudent(CamelCaseModel):
+    """A student together with the projects they are causing a conflict for"""
     student: Student
     projects: list[Project]
 
 
 class ConflictStudentList(CamelCaseModel):
+    """A list of ConflictStudents"""
     conflict_students: list[ConflictStudent]
 
 
 class ProjectId(CamelCaseModel):
+    """Used for returning the id of a project after creating it"""
     project_id: int
 
 
 class InputProject(BaseModel):
+    """Used for passing the details of a project when creating/patching a project"""
     name: str
     number_of_students: int
     skills: list[int]
@@ -100,6 +111,6 @@ class InputProject(BaseModel):
 
 # TODO: change drafter_id to current user with authentication
 class InputStudentRole(BaseModel):
+    """Used for creating/patching a student role (temporary until authentication is implemented)"""
     skill_id: int
     drafter_id: int
-

@@ -6,11 +6,16 @@ from src.database.models import Project, Edition, Student, ProjectRole, Skill, U
 
 
 def db_get_all_projects(db: Session, edition: Edition) -> list[Project]:
+    """Query all projects from a certain edition from the database"""
     return db.query(Project).where(Project.edition == edition).all()
 
 
 def db_add_project(db: Session, edition: Edition, name: str, number_of_students: int, skills: list[int],
                    partners: list[str], coaches: list[int]) -> ProjectId:
+    """
+    Add a project to the database
+    If there are partner names that are not already in the database, add them
+     """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
     coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
     partners_obj = []
@@ -30,13 +35,15 @@ def db_add_project(db: Session, edition: Edition, name: str, number_of_students:
 
 
 def db_get_project(db: Session, project_id: int) -> Project:
+    """Query a specific project from the database through its ID"""
     return db.query(Project).where(Project.project_id == project_id).one()
 
 
 def db_delete_project(db: Session, project_id: int):
+    """Delete a specific project from the database"""
     proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
-    for pr in proj_roles:
-        db.delete(pr)
+    for proj_role in proj_roles:
+        db.delete(proj_role)
 
     project = db_get_project(db, project_id)
     db.delete(project)
@@ -45,6 +52,10 @@ def db_delete_project(db: Session, project_id: int):
 
 def db_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: list[int],
                      partners: list[str], coaches: list[int]):
+    """
+    Change some fields of a Project in the database
+    If there are partner names that are not already in the database, add them
+    """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
     coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
     partners_obj = []
@@ -65,7 +76,11 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
 
 
 def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStudent]:
-
+    """
+    Query all students that are causing conflicts for a certain edition
+    Return a ConflictStudent for each student that causes a conflict
+    This class contains a student together with all projects they are causing a conflict for
+    """
     students = db.query(Student).where(Student.edition == edition).all()
     conflict_students = []
     projs = []
@@ -76,7 +91,6 @@ def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStud
                 proj_id = proj_id[0]
                 proj = db.query(Project).where(Project.project_id == proj_id).one()
                 projs.append(proj)
-            cp = ConflictStudent(student=student, projects=projs)
-            conflict_students.append(cp)
+            conflict_student = ConflictStudent(student=student, projects=projs)
+            conflict_students.append(conflict_student)
     return conflict_students
-
