@@ -39,11 +39,13 @@ function LoginPage() {
                         <div>
                             <input type="password" name="password" placeholder="Password"/>
                         </div>
+                        <div className="no-account">
+                            Don't have an account? Ask an admin for an invite link
+                        </div>
                         <div>
                             <button className="register-button">Log In</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
