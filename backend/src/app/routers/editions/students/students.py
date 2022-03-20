@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
-from .suggestions import students_suggestions_router
-from src.app.utils.dependencies import get_edition, require_authorization
+from src.app.utils.dependencies import get_edition
 from src.database.database import get_session
-from src.database.models import Edition, User
+from src.database.models import Edition
+
+from .suggestions import students_suggestions_router
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
 students_router.include_router(students_suggestions_router, prefix="/{student_id}")

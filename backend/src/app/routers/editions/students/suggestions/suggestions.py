@@ -27,15 +27,15 @@ async def delete_suggestion(db: Session = Depends(get_session), user: User = Dep
     """
     remove_suggestion(db,suggestion,user)
 
-@students_suggestions_router.put("/{suggestion_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def edit_suggestion(new_suggestion: NewSuggestion, student: Student = Depends(get_student), db: Session = Depends(get_session), user: User = Depends(require_authorization), suggestion: Suggestion = Depends(get_suggestion)):
+@students_suggestions_router.put("/{suggestion_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_student)])
+async def edit_suggestion(new_suggestion: NewSuggestion, db: Session = Depends(get_session), user: User = Depends(require_authorization), suggestion: Suggestion = Depends(get_suggestion)):
     """
     Edit a suggestion you made about a student.
     """
     change_suggestion(db,new_suggestion,suggestion,user)
 
 @students_suggestions_router.get("/", dependencies=[Depends(require_authorization)], status_code=status.HTTP_200_OK, response_model=SuggestionListResponse)
-async def get_suggestion(student: Student = Depends(get_student), db: Session = Depends(get_session)):
+async def get_suggestions(student: Student = Depends(get_student), db: Session = Depends(get_session)):
     """
     Get all suggestions of a student.
     """
