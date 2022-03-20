@@ -5,9 +5,18 @@ import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons
 const axios = require("axios").default;
 
 function LoginPage() {
-
-    function logIn(){
-        axios.get('http://127.0.0.1:8000/login/token').then((response: any) => console.log(response));
+    function logIn() {
+        axios
+            .post("http://127.0.0.1:8000/login/token", {
+                body: JSON.stringify({
+                    username: "fred",
+                    password: "password",
+                }),
+            })
+            .then((response: any) => console.log(response))
+            .catch(function (error: any) {
+                console.log(error);
+            });
     }
 
     return (
@@ -44,7 +53,9 @@ function LoginPage() {
                             Don't have an account? Ask an admin for an invite link
                         </div>
                         <div>
-                            <button className="login-button" onClick={logIn}>Log In</button>
+                            <button className="login-button" onClick={logIn}>
+                                Log In
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -54,5 +65,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
-

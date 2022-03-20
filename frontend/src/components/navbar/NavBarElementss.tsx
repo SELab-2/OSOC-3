@@ -8,7 +8,7 @@ export const Nav = styled.nav`
     background: var(--osoc_blue);
     height: 80px;
     width: 100%;
-    display: flow;
+    display: flex;
     position: relative;
     justify-content: space-between;
     padding: 0.5rem calc((100vw - 1000px) / 2);
