@@ -9,6 +9,10 @@ env = Env()
 # Read the .env file
 env.read_env()
 
+"""API"""
+# Allowed origins (CORS)
+CORS_ORIGINS: list[str] = env.list("CORS_ORIGINS", ["http://localhost:3000"])
+
 """Database"""
 # Name of the database
 DB_NAME: str = env.str("DB_NAME", "osoc_dev")
