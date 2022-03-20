@@ -37,7 +37,7 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
     Returns:
         Edition: the newly made edition object.
     """
-    crud_editions.create_edition(db, edition)
+    return crud_editions.create_edition(db, edition)
 
 
 def delete_edition(db: Session, edition_id: int):
