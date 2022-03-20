@@ -11,7 +11,7 @@ from src.database.models import user_editions, CoachRequest
 
 
 @pytest.fixture
-def data(database_session: Session) -> {str: str}:
+def data(database_session: Session) -> dict[str, str]:
     """Fill database with dummy data"""
 
     # Create users
@@ -43,7 +43,7 @@ def data(database_session: Session) -> {str: str}:
             }
 
 
-def test_get_all_users(database_session: Session, test_client: TestClient, data: {str: str}):
+def test_get_all_users(database_session: Session, test_client: TestClient, data: dict[str, str]):
     """Test endpoint for getting a list of users"""
 
     # All users
@@ -55,7 +55,7 @@ def test_get_all_users(database_session: Session, test_client: TestClient, data:
     assert data["user2"] in user_ids
 
 
-def test_get_all_admins(database_session: Session, test_client: TestClient, data: {str: str}):
+def test_get_all_admins(database_session: Session, test_client: TestClient, data: dict[str, str]):
     """Test endpoint for getting a list of admins"""
 
     # All admins
@@ -65,7 +65,7 @@ def test_get_all_admins(database_session: Session, test_client: TestClient, data
     assert [data["user1"]] == user_ids
 
 
-def test_get_users_from_edition(database_session: Session, test_client: TestClient, data: {str: str}):
+def test_get_users_from_edition(database_session: Session, test_client: TestClient, data: dict[str, str]):
     """Test endpoint for getting a list of users from a given edition"""
 
     # All users from edition
@@ -75,7 +75,7 @@ def test_get_users_from_edition(database_session: Session, test_client: TestClie
     assert [data["user2"]] == user_ids
 
 
-def test_get_admins_from_edition(database_session: Session, test_client: TestClient, data: {str: str}):
+def test_get_admins_from_edition(database_session: Session, test_client: TestClient, data: dict[str, str]):
     """Test endpoint for getting a list of admins from a given edition"""
 
     # All admins from edition
@@ -89,7 +89,7 @@ def test_get_admins_from_edition(database_session: Session, test_client: TestCli
     assert len(response.json()['users']) == 0
 
 
-def test_get_users_invalid(database_session: Session, test_client: TestClient, data: {str: str}):
+def test_get_users_invalid(database_session: Session, test_client: TestClient, data: dict[str, str]):
     """Test endpoint for unvalid input"""
 
     # Invalid input

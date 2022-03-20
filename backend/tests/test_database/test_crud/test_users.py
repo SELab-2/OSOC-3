@@ -7,7 +7,7 @@ from src.database.models import user_editions, CoachRequest
 
 
 @pytest.fixture
-def data(database_session: Session) -> {str: str}:
+def data(database_session: Session) -> dict[str, str]:
     """Fill database with dummy data"""
 
     # Create users
@@ -39,7 +39,7 @@ def data(database_session: Session) -> {str: str}:
             }
 
 
-def test_get_all_users(database_session: Session, data: {str: str}):
+def test_get_all_users(database_session: Session, data: dict[str, str]):
     """Test get request for users"""
 
     # get all users
@@ -50,7 +50,7 @@ def test_get_all_users(database_session: Session, data: {str: str}):
     assert data["user2"] in user_ids
 
 
-def test_get_all_admins(database_session: Session, data: {str: str}):
+def test_get_all_admins(database_session: Session, data: dict[str, str]):
     """Test get request for admins"""
 
     # get all admins
@@ -59,7 +59,7 @@ def test_get_all_admins(database_session: Session, data: {str: str}):
     assert data["user1"] == users[0].user_id
 
 
-def test_get_all_users_from_edition(database_session: Session, data: {str: str}):
+def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for users of a given edition"""
 
     # get all users from edition
@@ -74,7 +74,7 @@ def test_get_all_users_from_edition(database_session: Session, data: {str: str})
     assert data["user2"] == users[0].user_id
 
 
-def test_get_admins_from_edition(database_session: Session, data: {str: str}):
+def test_get_admins_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for admins of a given edition"""
 
     # get all admins from edition
