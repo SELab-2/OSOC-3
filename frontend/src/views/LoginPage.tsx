@@ -37,7 +37,7 @@ function LoginPage() {
                             Don't have an account? Ask an admin for an invite link
                         </div>
                         <div>
-                            <button className="register-button">Log In</button>
+                            <button className="login-button">Log In</button>
                         </div>
                     </div>
                 </div>
