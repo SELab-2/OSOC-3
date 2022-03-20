@@ -200,11 +200,12 @@ RegisterForm
 }
 
 .register-form-input-fields input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="text"] {
     height: 40px;
     width: 400px;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     text-align: center;
     font-size: 20px;
     border-radius: 10px;
@@ -212,6 +213,18 @@ input[type="email"] {
 }
 
 .register-button {
+    height: 40px;
+    width: 400px;
+    margin-top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    background: var(--osoc_green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+.login-button {
     width: 120px;
     height: 35px;
     cursor: pointer;
@@ -222,6 +235,10 @@ input[type="email"] {
 }
 
 .login {
+    display: flex;
+}
+
+.socials-register {
     display: flex;
 }
 

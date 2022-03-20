@@ -1,27 +1,40 @@
 import React from "react";
 import OSOCLetters from "../components/OSOCLetters";
-
 import RegisterButton from "../components/registerFormComponents/RegisterButton";
+
+import {
+    GoogleLoginButton,
+    GithubLoginButton,
+  } from "react-social-login-buttons";
 
 function RegisterForm() {
     return(
         <div>
             <OSOCLetters/>
             <div className="register-form-content-container">
-                <h1>Create an account</h1>
+                <h1 style={{marginBottom:'15px'}}>Create an account</h1>
+                <div style={{marginBottom:'15px', color: "grey"}}>Sign up with your social media account or email address</div>
+                <div className="socials-container-register">
+                        <div className="socials-register">
+                            <GoogleLoginButton text="Register with Google"/>
+                            <GithubLoginButton text="Register with GitHub"/>
+                        </div>
+                </div>
+
+                <h2 style={{margin:'15px'}}>or</h2>
                 
                 <div className="register-form-input-fields">
-                    <span>Email:</span>
                     <div>
-                        <input type="email" name="email" placeholder="example@hotmail.com"/>
+                        <input type="email" name="email" placeholder="Email"/>
                     </div>
-                    <span>Password:</span>
                     <div>
-                        <input type="password" name="email" placeholder="password"/>
+                        <input type="text" name="name" placeholder="Name"/>
                     </div>
-                    <span>Confirm Password:</span>
                     <div>
-                        <input type="password" name="email" placeholder="password"/>
+                        <input type="password" name="password" placeholder="Password"/>
+                    </div>
+                    <div>
+                        <input type="password" name="confirm_password" placeholder="Confirm Password"/>
                     </div>
                 </div>
                 <RegisterButton/>
