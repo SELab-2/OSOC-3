@@ -1,9 +1,9 @@
 # OSOC-3
 
-## Gebruikershandleiding
+## User manual
 
-De gebruikershandleiding is [hier](files/Gebruikershandleiding.pdf) te vinden.
+The user manual can be found [here](files/user_manual.pdf).
 
-## Hoog niveau documentatie van de architectuur en het ontwerp. 
+## High level documentation of the architecture and design. 
 
-Documentatie over de architectuur en het ontwerp is [hier](files/Documentatie_Architectuur_en_Ontwerp.pdf) te vinden.
+Documentation about the architecture and design can be found [here](files/documentation_architecture_and_design.pdf).
