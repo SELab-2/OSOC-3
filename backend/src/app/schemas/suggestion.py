@@ -6,7 +6,7 @@ class NewSuggestion(CamelCaseModel):
     suggestion: DecisionEnum
     argumentation: str
 
-class User(CamelCaseModel):
+class User(CamelCaseModel): #TODO: delete this when user is on develop and use that one
     """
     Model to represent a Coach
     Sent as a response to API /GET requests
@@ -37,3 +37,9 @@ class SuggestionListResponse(CamelCaseModel):
     A list of suggestions models
     """
     suggestions: list[Suggestion]
+
+class SuggestionResponse(CamelCaseModel):
+    """
+    the suggestion that is created
+    """
+    suggestion: Suggestion

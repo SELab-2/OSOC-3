@@ -18,9 +18,14 @@ def test_new_suggestion(database_session: Session, test_client: TestClient):
     }
     d = test_client.post("/login/token", data=form).json()["accessToken"]
     auth = "Bearer "+d
-    assert test_client.post("/editions/1/students/29/suggestions/", headers={"Authorization": auth}, json={"suggestion":1, "argumentation":"test"}).status_code == status.HTTP_201_CREATED
+    resp = test_client.post("/editions/1/students/29/suggestions/", headers={"Authorization": auth}, json={"suggestion":1, "argumentation":"test"})
+    assert resp.status_code == status.HTTP_201_CREATED
     suggestions: list[Suggestion] = database_session.query(Suggestion).where(Suggestion.student_id==29).all()
-    assert len(suggestions) > 0
+    assert len(suggestions) == 1
+    print(resp.json())
+    assert resp.json()["suggestion"]["coach"]["email"] == suggestions[0].coach.email
+    assert DecisionEnum(resp.json()["suggestion"]["suggestion"]) == suggestions[0].suggestion
+    assert resp.json()["suggestion"]["argumentation"] == suggestions[0].argumentation
 
 def test_new_suggestion_not_authorized(database_session: Session, test_client: TestClient):
     """Tests when not authorized you can't add a new suggestion"""

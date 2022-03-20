@@ -15,9 +15,11 @@ def test_create_suggestion_yes(database_session: Session):
     user: User = database_session.query(User).where(User.name == "coach1").first()
     student: Student = database_session.query(Student).where(Student.email_address == "marta.marquez@example.com").first()
     
-    create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.YES, "This is a good student")
+    new_suggestion = create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.YES, "This is a good student")
 
     suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+
+    assert new_suggestion == suggestion
 
     assert suggestion.coach == user
     assert suggestion.student == student
@@ -30,9 +32,11 @@ def test_create_suggestion_no(database_session: Session):
     user: User = database_session.query(User).where(User.name == "coach1").first()
     student: Student = database_session.query(Student).where(Student.email_address == "marta.marquez@example.com").first()
     
-    create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.NO, "This is a not good student")
+    new_suggestion = create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.NO, "This is a not good student")
 
     suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+
+    assert new_suggestion == suggestion
 
     assert suggestion.coach == user
     assert suggestion.student == student
@@ -45,9 +49,11 @@ def test_create_suggestion_maybe(database_session: Session):
     user: User = database_session.query(User).where(User.name == "coach1").first()
     student: Student = database_session.query(Student).where(Student.email_address == "marta.marquez@example.com").first()
     
-    create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.MAYBE, "Idk if it's good student")
+    new_suggestion = create_suggestion(database_session, user.user_id, student.student_id, DecisionEnum.MAYBE, "Idk if it's good student")
 
     suggestion: Suggestion = database_session.query(Suggestion).where(Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+
+    assert new_suggestion == suggestion
 
     assert suggestion.coach == user
     assert suggestion.student == student
