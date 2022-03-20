@@ -2609,10 +2609,14 @@ axe-core@^4.3.5:
   integrity sha512-gd1kmb21kwNuWr6BQz8fv6GNECPBnUasepcoLbekws23NVBLODdsClRZ+bQ8+9Uomf3Sm3+Vwn0oYG9NvwnJCw==
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 axios@*, axios@^0.26.1:
 =======
 axios@^0.26.1:
 >>>>>>> 6a48897 (added axios)
+=======
+axios@^0.26.1:
+>>>>>>> 6a48897adddd21ef060301da2f4565f40221989b
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
   integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
@@ -7231,6 +7235,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     sisteransi "^1.0.5"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 prop-types-extra@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/prop-types-extra/-/prop-types-extra-1.1.1.tgz#58c3b74cbfbb95d304625975aa2f0848329a010b"
@@ -7243,6 +7248,9 @@ prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
 =======
 prop-types@^15.7.2, prop-types@^15.8.1:
 >>>>>>> d267979 (Add missing dependencies)
+=======
+prop-types@^15.7.2, prop-types@^15.8.1:
+>>>>>>> 6a48897adddd21ef060301da2f4565f40221989b
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7397,9 +7405,12 @@ react-error-overlay@^6.0.10:
   integrity sha512-mKR90fX7Pm5seCOfz8q9F+66VCc1PGsWSBxKbITjfKVQHMNF2zudxHnMdJiB1fRCb+XsbQV9sO9DCkgsMQgBIA==
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 react-is@^16.13.1, react-is@^16.3.2:
 =======
 >>>>>>> d267979 (Add missing dependencies)
+=======
+>>>>>>> 6a48897adddd21ef060301da2f4565f40221989b
 react-icons@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.3.1.tgz#2fa92aebbbc71f43d2db2ed1aed07361124e91ca"
@@ -7502,6 +7513,7 @@ react-scripts@^5.0.0:
   optionalDependencies:
     fsevents "^2.3.2"
 
+<<<<<<< HEAD
 react-transition-group@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
@@ -7511,6 +7523,8 @@ react-transition-group@^4.4.2:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+=======
+>>>>>>> 6a48897adddd21ef060301da2f4565f40221989b
 react-social-login-buttons@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/react-social-login-buttons/-/react-social-login-buttons-3.6.0.tgz#2be1cb114d8c0200581ba1c8ec5ea74e89cf7701"
