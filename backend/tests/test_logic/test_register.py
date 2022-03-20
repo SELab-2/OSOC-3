@@ -7,33 +7,29 @@ from src.database.models import AuthEmail, CoachRequest, User, Edition
 from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
-def test_create_request(database_session: Session): 
+
+def test_create_request(database_session: Session):
     """Tests if a normal request can be created"""
-    edition = Edition(year = 2022)
+    edition = Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
     nu = NewUser(name="jos", email="email@email.com", pw="wachtwoord")
     create_request(database_session, nu, edition)
-    
+
     users = database_session.query(User).where(User.name == "jos").all()
     assert len(users) == 1
-    coach_requests = database_session.query(CoachRequest).where(CoachRequest.user == users[0]).all()
-    auth_email = database_session.query(AuthEmail).where(AuthEmail.user == users[0]).all()
+    coach_requests = database_session.query(
+        CoachRequest).where(CoachRequest.user == users[0]).all()
+    auth_email = database_session.query(AuthEmail).where(
+        AuthEmail.user == users[0]).all()
     assert len(coach_requests) == 1
     assert auth_email[0].pw_hash != nu.pw
     assert len(auth_email) == 1
 
-def test_new_user_but_coach_request_failed(database_session: Session):
-    """Tests when a coach request failed, it gets the correct error and the user is not in the database"""
-    nu = NewUser(name="user1", email="email@email.com", pw="wachtwoord")
-    with pytest.raises(FailedToAddNewUserException):
-        create_request(database_session, nu, None)
-    users = database_session.query(User).where(User.name == "user1").all()
-    assert len(users) == 0
 
 def test_duplicate_user(database_session: Session):
     """Tests if there is a duplicate, it's not created in the database"""
-    edition = Edition(year = 2022)
+    edition = Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
     nu1 = NewUser(name="user1", email="email@email.com", pw="wachtwoord1")
@@ -42,9 +38,10 @@ def test_duplicate_user(database_session: Session):
     with pytest.raises(FailedToAddNewUserException):
         create_request(database_session, nu2, edition)
 
+
 def test_not_a_correct_email(database_session: Session):
     """Tests when the email is not a correct email adress, it's get the right error"""
-    edition = Edition(year = 2022)
+    edition = Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
     with pytest.raises(ValueError):
