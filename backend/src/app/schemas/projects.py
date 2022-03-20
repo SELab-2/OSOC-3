@@ -86,6 +86,10 @@ class ConflictStudentList(CamelCaseModel):
     conflict_students: list[ConflictStudent]
 
 
+class ProjectId(CamelCaseModel):
+    project_id: int
+
+
 class InputProject(BaseModel):
     name: str
     number_of_students: int

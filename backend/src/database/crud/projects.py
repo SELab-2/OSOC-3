@@ -1,7 +1,7 @@
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ConflictStudent
+from src.app.schemas.projects import ConflictStudent, ProjectId
 from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
 
 
@@ -9,8 +9,8 @@ def db_get_all_projects(db: Session, edition: Edition) -> list[Project]:
     return db.query(Project).where(Project.edition == edition).all()
 
 
-def db_add_project(db: Session, edition: Edition, name: str, number_of_students: int, skills: [int],
-                   partners: [str], coaches: [int]):
+def db_add_project(db: Session, edition: Edition, name: str, number_of_students: int, skills: list[int],
+                   partners: list[str], coaches: list[int]) -> ProjectId:
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
     coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
     partners_obj = []
@@ -26,6 +26,7 @@ def db_add_project(db: Session, edition: Edition, name: str, number_of_students:
 
     db.add(project)
     db.commit()
+    return ProjectId(project_id=project.project_id)
 
 
 def db_get_project(db: Session, project_id: int) -> Project:
@@ -42,8 +43,8 @@ def db_delete_project(db: Session, project_id: int):
     db.commit()
 
 
-def db_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: [int],
-                     partners: [str], coaches: [int]):
+def db_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: list[int],
+                     partners: list[str], coaches: list[int]):
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
     coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
     partners_obj = []
@@ -61,15 +62,6 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     project.coaches = coaches_obj
     project.partners = partners_obj
     db.commit()
-
-
-# def db_get_conflict_students(db: Session, edition: Edition) -> list[Student]:
-#     students = db.query(Student).where(Student.edition == edition).all()
-#     conflicts = []
-#     for s in students:
-#         if len(s.project_roles) > 1:
-#             conflicts.append(s)
-#     return conflicts
 
 
 def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStudent]:

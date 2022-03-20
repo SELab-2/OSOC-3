@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ProjectList, Project, ConflictStudentList
+from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, ProjectId
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
 from src.database.models import Edition
@@ -12,8 +12,8 @@ def logic_get_project_list(db: Session, edition: Edition) -> ProjectList:
 
 
 def logic_create_project(db: Session, edition: Edition, name: str, number_of_students: int, skills: [int],
-                         partners: [str], coaches: [int]):
-    db_add_project(db, edition, name, number_of_students, skills, partners, coaches)
+                         partners: [str], coaches: [int]) -> ProjectId:
+    return db_add_project(db, edition, name, number_of_students, skills, partners, coaches)
 
 
 def logic_delete_project(db: Session, project_id: int):

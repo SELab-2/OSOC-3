@@ -7,7 +7,7 @@ from src.app.logic.projects import logic_get_project_list, logic_create_project,
     logic_patch_project, logic_get_conflicts
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import ProjectList, Project, InputProject, \
-    ConflictStudentList
+    ConflictStudentList, ProjectId
 from src.app.utils.dependencies import get_edition, get_project
 from src.database.database import get_session
 from src.database.models import Edition
@@ -25,16 +25,16 @@ async def get_projects(db: Session = Depends(get_session), edition: Edition = De
     return logic_get_project_list(db, edition)
 
 
-@projects_router.post("/", status_code=status.HTTP_201_CREATED, response_class=Response)
+@projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProjectId)
 async def create_project(input_project: InputProject,
                          db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
-    Create a new project.users
+    Create a new project
     """
-    logic_create_project(db, edition,
-                         input_project.name,
-                         input_project.number_of_students,
-                         input_project.skills, input_project.partners, input_project.coaches)
+    return logic_create_project(db, edition,
+                                input_project.name,
+                                input_project.number_of_students,
+                                input_project.skills, input_project.partners, input_project.coaches)
 
 
 @projects_router.get("/conflicts", response_model=ConflictStudentList)
