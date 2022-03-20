@@ -2,7 +2,9 @@ from alembic import config
 from alembic import script
 from alembic.runtime import migration
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
+import settings
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
 from .routers import editions_router, login_router
@@ -13,6 +15,15 @@ from .exceptions import install_handlers
 app = FastAPI(
     title="OSOC Team 3",
     version="0.0.1"
+)
+
+# Add middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include all routers
