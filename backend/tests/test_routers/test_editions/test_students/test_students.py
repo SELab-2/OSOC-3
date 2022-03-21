@@ -107,44 +107,78 @@ def auth_admin(test_client: TestClient) -> str:
 def test_set_definitive_decision_no_authorization(database_with_data: Session, test_client: TestClient):
     """tests"""
     assert test_client.put("/editions/1/students/2/decision", headers={
-                            "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
+        "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_set_definitive_decision_coach(database_with_data: Session, test_client: TestClient, auth_coach1):
     """tests"""
     assert test_client.put("/editions/1/students/2/decision", headers={
-                            "Authorization": auth_coach1}).status_code == status.HTTP_403_FORBIDDEN
+        "Authorization": auth_coach1}).status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_set_definitive_decision_on_ghost(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.put("/editions/1/students/100/decision",
-                            headers={"Authorization": auth_admin}).status_code == status.HTTP_404_NOT_FOUND
+                           headers={"Authorization": auth_admin}).status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_set_definitive_decision_wrong_body(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.put("/editions/1/students/1/decision",
-                            headers={"Authorization": auth_admin}).status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+                           headers={"Authorization": auth_admin}).status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_set_definitive_decision_YES(database_with_data: Session, test_client: TestClient, auth_admin: str):
+def test_set_definitive_decision_yes(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.put("/editions/1/students/1/decision",
-                            headers={"Authorization": auth_admin}, json={"decision": 1}).status_code == status.HTTP_204_NO_CONTENT
-    student: Student = database_with_data.query(Student).where(Student.student_id == 1).one()
+                           headers={"Authorization": auth_admin},
+                           json={"decision": 1}).status_code == status.HTTP_204_NO_CONTENT
+    student: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).one()
     assert student.decision == DecisionEnum.YES
 
-def test_set_definitive_decision_NO(database_with_data: Session, test_client: TestClient, auth_admin: str):
+
+def test_set_definitive_decision_no(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.put("/editions/1/students/1/decision",
-                            headers={"Authorization": auth_admin}, json={"decision": 3}).status_code == status.HTTP_204_NO_CONTENT
-    student: Student = database_with_data.query(Student).where(Student.student_id == 1).one()
+                           headers={"Authorization": auth_admin},
+                           json={"decision": 3}).status_code == status.HTTP_204_NO_CONTENT
+    student: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).one()
     assert student.decision == DecisionEnum.NO
 
-def test_set_definitive_decision_MAYBE(database_with_data: Session, test_client: TestClient, auth_admin: str):
+
+def test_set_definitive_decision_maybe(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.put("/editions/1/students/1/decision",
-                            headers={"Authorization": auth_admin}, json={"decision": 2}).status_code == status.HTTP_204_NO_CONTENT
-    student: Student = database_with_data.query(Student).where(Student.student_id == 1).one()
+                           headers={"Authorization": auth_admin},
+                           json={"decision": 2}).status_code == status.HTTP_204_NO_CONTENT
+    student: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).one()
     assert student.decision == DecisionEnum.MAYBE
+
+
+def test_delete_student_no_authorization(database_with_data: Session, test_client: TestClient):
+    """tests"""
+    assert test_client.delete("/editions/1/students/2", headers={
+        "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_delete_student_coach(database_with_data: Session, test_client: TestClient, auth_coach1):
+    """tests"""
+    assert test_client.delete("/editions/1/students/2", headers={
+        "Authorization": auth_coach1}).status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_delete_ghost(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    assert test_client.delete("/editions/1/students/100",
+                              headers={"Authorization": auth_admin}).status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_delete(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    assert test_client.delete("/editions/1/students/1",
+                              headers={"Authorization": auth_admin}).status_code == status.HTTP_204_NO_CONTENT
+    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    assert len(students) == 0

@@ -14,3 +14,9 @@ def set_definitive_decision_on_student(db: Session, student: Student, decision: 
 
     student.decision = decision
     db.commit()
+
+
+def delete_student(db: Session, student: Student) -> None:
+    """Delete a student from the database"""
+    db.delete(student)
+    db.commit()

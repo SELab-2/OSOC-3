@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill
 from src.database.enums import DecisionEnum
-from src.database.crud.students import get_student_by_id, set_definitive_decision_on_student
+from src.database.crud.students import get_student_by_id, set_definitive_decision_on_student, delete_student
 
 
 @pytest.fixture
@@ -70,22 +70,31 @@ def test_no_student(database_with_data: Session):
         get_student_by_id(database_with_data, 5)
 
 
-def test_definitive_decision_on_student_YES(database_with_data: Session):
+def test_definitive_decision_on_student_yes(database_with_data: Session):
+    """Tests for definitive decision yes"""
     student: Student = get_student_by_id(database_with_data, 1)
     set_definitive_decision_on_student(
         database_with_data, student, DecisionEnum.YES)
     assert student.decision == DecisionEnum.YES
 
 
-def test_definitive_decision_on_student_MAYBE(database_with_data: Session):
+def test_definitive_decision_on_student_maybe(database_with_data: Session):
+    """Tests for definitive decision maybe"""
     student: Student = get_student_by_id(database_with_data, 1)
     set_definitive_decision_on_student(
         database_with_data, student, DecisionEnum.MAYBE)
     assert student.decision == DecisionEnum.MAYBE
 
 
-def test_definitive_decision_on_student_NO(database_with_data: Session):
+def test_definitive_decision_on_student_no(database_with_data: Session):
+    """Tests for definitive decision no"""
     student: Student = get_student_by_id(database_with_data, 1)
     set_definitive_decision_on_student(
         database_with_data, student, DecisionEnum.NO)
     assert student.decision == DecisionEnum.NO
+
+
+def test_delete_student(database_with_data: Session):
+    """Tests for deleting a student"""
+    student: Student = get_student_by_id(database_with_data, 1)
+    delete_student
