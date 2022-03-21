@@ -241,7 +241,7 @@ def test_update_suggestion_admin(database_with_data: Session, test_client: TestC
     assert suggestion.argumentation == "test"
 
 
-def test_update_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient, auth_coac1: str):
+def test_update_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient, auth_coach1: str):
     """Tests that a coach can update their own suggestion"""
 
     assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth_coach1}, json={
