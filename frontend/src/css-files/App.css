@@ -258,10 +258,10 @@ PendingPage
 .pending-page-content-container {
     height: fit-content;
     position: absolute;
+    text-align: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-align: center;
 }
 
 .pending-page-content-container span {
@@ -272,11 +272,17 @@ PendingPage
 
 .pending-page-content {
     max-width: 1200px;
+    text-align: center;
+    height: fit-content;
 }
 
-.pending-text {
+.pending-text-container {
+    width: fit-content;
+    display: inline-block;
+}
+
+.pending-text-content {
     display: flex;
-    text-align: center;
 }
 
 .pending-dot-1 {
