@@ -8,6 +8,10 @@
     --background_color: #272741;
 }
 
+.nav-links-hidden {
+    visibility: hidden;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -58,7 +62,7 @@ body {
     position: absolute;
     width: 20%;
     max-height: 20%;
-    bottom: 10%;
+    bottom: 5%;
     left: 10%;
     animation: wiggle 5s infinite linear;
 }

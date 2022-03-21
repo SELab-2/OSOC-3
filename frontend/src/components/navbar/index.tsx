@@ -12,18 +12,20 @@ function NavBar() {
                 </div>
                 <Bars />
                 <NavMenu>
-                    <NavLink to="/students" activeStyle>
-                        Students
-                    </NavLink>
-                    <NavLink to="/users" activeStyle>
-                        Users
-                    </NavLink>
-                    <NavLink to="/projects" activeStyle>
-                        Projects
-                    </NavLink>
-                    <NavLink to="/" activeStyle>
-                        Log out
-                    </NavLink>
+                    <div className="nav-links-hidden">
+                        <NavLink to="/students" activeStyle>
+                            Students
+                        </NavLink>
+                        <NavLink to="/users" activeStyle>
+                            Users
+                        </NavLink>
+                        <NavLink to="/projects" activeStyle>
+                            Projects
+                        </NavLink>
+                        <NavLink to="/" activeStyle>
+                            Log out
+                        </NavLink>
+                    </div>
                 </NavMenu>
             </Nav>
         </>
