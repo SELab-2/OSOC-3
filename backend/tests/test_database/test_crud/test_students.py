@@ -2,7 +2,8 @@ import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill
-from src.database.crud.students import get_student_by_id
+from src.database.enums import DecisionEnum
+from src.database.crud.students import get_student_by_id, set_definitive_decision_on_student
 
 
 @pytest.fixture
@@ -53,6 +54,7 @@ def database_with_data(database_session: Session):
 
     return database_session
 
+
 def test_get_student_by_id(database_with_data: Session):
     """Tests if you get the right student"""
     student: Student = get_student_by_id(database_with_data, 1)
@@ -66,3 +68,24 @@ def test_no_student(database_with_data: Session):
     """Tests if you get an error for a not existing student"""
     with pytest.raises(NoResultFound):
         get_student_by_id(database_with_data, 5)
+
+
+def test_definitive_decision_on_student_YES(database_with_data: Session):
+    student: Student = get_student_by_id(database_with_data, 1)
+    set_definitive_decision_on_student(
+        database_with_data, student, DecisionEnum.YES)
+    assert student.decision == DecisionEnum.YES
+
+
+def test_definitive_decision_on_student_MAYBE(database_with_data: Session):
+    student: Student = get_student_by_id(database_with_data, 1)
+    set_definitive_decision_on_student(
+        database_with_data, student, DecisionEnum.MAYBE)
+    assert student.decision == DecisionEnum.MAYBE
+
+
+def test_definitive_decision_on_student_NO(database_with_data: Session):
+    student: Student = get_student_by_id(database_with_data, 1)
+    set_definitive_decision_on_student(
+        database_with_data, student, DecisionEnum.NO)
+    assert student.decision == DecisionEnum.NO

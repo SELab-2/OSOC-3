@@ -1,5 +1,12 @@
 from sqlalchemy.orm import Session
+from src.database.enums import DecisionEnum
 from src.database.models import Student
 
-def get_student_by_id(database_session: Session, student_id: int) -> Student:
-    return database_session.query(Student).where(Student.student_id == student_id).one()
+
+def get_student_by_id(db: Session, student_id: int) -> Student:
+    return db.query(Student).where(Student.student_id == student_id).one()
+
+
+def set_definitive_decision_on_student(db: Session, student: Student, decision: DecisionEnum) -> None:
+    student.decision = decision
+    db.commit()
