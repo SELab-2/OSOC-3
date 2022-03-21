@@ -8,8 +8,9 @@ from src.app.logic.security import get_password_hash
 
 
 @pytest.fixture
-def database_with_data(database_session: Session):
-    """A function to fill the database with fake data that can easly be used when testing"""
+def database_with_data(database_session: Session) -> Session:
+    """A fixture to fill the database with fake data that can easly be used when testing"""
+
     # Editions
     edition: Edition = Edition(year=2022)
     database_session.add(edition)
@@ -73,19 +74,48 @@ def database_with_data(database_session: Session):
     return database_session
 
 
-def test_new_suggestion(database_with_data: Session, test_client: TestClient):
-    """Tests a new sugesstion"""
+@pytest.fixture
+def auth_coach1(test_client: TestClient) -> str:
+    """A fixture for logging in coach1"""
 
-    email = "coach1@noutlook.be"
-    password = "wachtwoord"
     form = {
-        "username": email,
-        "password": password
+        "username": "coach1@noutlook.be",
+        "password": "wachtwoord"
     }
     token = test_client.post("/login/token", data=form).json()["accessToken"]
     auth = "Bearer " + token
+    return auth
+
+@pytest.fixture
+def auth_coach2(test_client: TestClient) -> str:
+    """A fixture for logging in coach1"""
+
+    form = {
+        "username": "coach2@noutlook.be",
+        "password": "wachtwoord"
+    }
+    token = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer " + token
+    return auth
+
+@pytest.fixture
+def auth_admin(test_client: TestClient) -> str:
+    """A fixture for logging in admin"""
+
+    form = {
+        "username": "admin@ngmail.com",
+        "password": "wachtwoord"
+    }
+    token = test_client.post("/login/token", data=form).json()["accessToken"]
+    auth = "Bearer " + token
+    return auth
+
+
+def test_new_suggestion(database_with_data: Session, test_client: TestClient, auth_coach1):
+    """Tests a new sugesstion"""
+
     resp = test_client.post("/editions/1/students/2/suggestions/", headers={
-                            "Authorization": auth}, json={"suggestion": 1, "argumentation": "test"})
+                            "Authorization": auth_coach1}, json={"suggestion": 1, "argumentation": "test"})
     assert resp.status_code == status.HTTP_201_CREATED
     suggestions: list[Suggestion] = database_with_data.query(
         Suggestion).where(Suggestion.student_id == 2).all()
@@ -102,7 +132,7 @@ def test_new_suggestion(database_with_data: Session, test_client: TestClient):
 def test_new_suggestion_not_authorized(database_with_data: Session, test_client: TestClient):
     """Tests when not authorized you can't add a new suggestion"""
 
-    assert test_client.post("/editions/1/students/2/suggestions/", json={
+    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": "auth"}, json={
                             "suggestion": 1, "argumentation": "test"}).status_code == status.HTTP_401_UNAUTHORIZED
     suggestions: list[Suggestion] = database_with_data.query(
         Suggestion).where(Suggestion.student_id == 2).all()
@@ -116,43 +146,24 @@ def test_get_suggestions_of_student_not_authorized(database_with_data: Session, 
                            "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_get_suggestions_of_ghost(database_with_data: Session, test_client: TestClient):
+def test_get_suggestions_of_ghost(database_with_data: Session, test_client: TestClient, auth_coach1: str):
     """Tests if the student don't exist, you get a 404"""
 
-    email = "coach1@noutlook.be"
-    password = "wachtwoord"
-    form = {
-        "username": email,
-        "password": password
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
     res = test_client.get(
-        "/editions/1/students/9000/suggestions/", headers={"Authorization": auth})
+        "/editions/1/students/9000/suggestions/", headers={"Authorization": auth_coach1})
     assert res.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_get_suggestions_of_student(database_with_data: Session, test_client: TestClient):
+def test_get_suggestions_of_student(database_with_data: Session, test_client: TestClient, auth_coach1: str, auth_admin: str):
     """Tests to get the suggestions of a student"""
 
-    form = {
-        "username": "coach1@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth}, json={
+    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth_coach1}, json={
                             "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_201_CREATED
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth}, json={
+
+    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth_admin}, json={
                             "suggestion": 3, "argumentation": "Neen"}).status_code == status.HTTP_201_CREATED
     res = test_client.get(
-        "/editions/1/students/2/suggestions/", headers={"Authorization": auth})
+        "/editions/1/students/2/suggestions/", headers={"Authorization": auth_admin})
     assert res.status_code == status.HTTP_200_OK
     res_json = res.json()
     assert len(res_json["suggestions"]) == 2
@@ -164,16 +175,10 @@ def test_get_suggestions_of_student(database_with_data: Session, test_client: Te
     assert res_json["suggestions"][1]["argumentation"] == "Neen"
 
 
-def test_delete_ghost_suggestion(database_with_data: Session, test_client: TestClient):
+def test_delete_ghost_suggestion(database_with_data: Session, test_client: TestClient, auth_coach1: str):
     """Tests that you get the correct status code when you delete a not existing suggestion"""
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
     assert test_client.delete("/editions/1/students/1/suggestions/8000", headers={
-                              "Authorization": auth}).status_code == status.HTTP_404_NOT_FOUND
+                              "Authorization": auth_coach1}).status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_delete_not_autorized(database_with_data: Session, test_client: TestClient):
@@ -182,60 +187,40 @@ def test_delete_not_autorized(database_with_data: Session, test_client: TestClie
                               "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_delete_suggestion_admin(database_with_data: Session, test_client: TestClient):
+def test_delete_suggestion_admin(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """Test that an admin can update suggestions"""
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
+
     assert test_client.delete("/editions/1/students/1/suggestions/1", headers={
-                              "Authorization": auth}).status_code == status.HTTP_204_NO_CONTENT
+                              "Authorization": auth_admin}).status_code == status.HTTP_204_NO_CONTENT
     suggestions: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).all()
     assert len(suggestions) == 0
 
 
-def test_delete_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient):
+def test_delete_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient, auth_coach1: str):
     """Tests that a coach can delete their own suggestion"""
-    form = {
-        "username": "coach1@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
+
     assert test_client.delete("/editions/1/students/1/suggestions/1", headers={
-                              "Authorization": auth}).status_code == status.HTTP_204_NO_CONTENT
+                              "Authorization": auth_coach1}).status_code == status.HTTP_204_NO_CONTENT
     suggestions: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).all()
     assert len(suggestions) == 0
 
 
-def test_delete_suggestion_coach_other_review(database_with_data: Session, test_client: TestClient):
+def test_delete_suggestion_coach_other_review(database_with_data: Session, test_client: TestClient, auth_coach2: str):
     """Tests that a coach can't delete other coaches their suggestions"""
-    form = {
-        "username": "coach2@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
+
     assert test_client.delete("/editions/1/students/1/suggestions/1", headers={
-                              "Authorization": auth}).status_code == status.HTTP_403_FORBIDDEN
+                              "Authorization": auth_coach2}).status_code == status.HTTP_403_FORBIDDEN
     suggestions: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).all()
     assert len(suggestions) == 1
 
 
-def test_update_ghost_suggestion(database_with_data: Session, test_client: TestClient):
+def test_update_ghost_suggestion(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """Tests a suggestion that don't exist """
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.put("/editions/1/students/1/suggestions/8000", headers={"Authorization": auth}, json={
+    
+    assert test_client.put("/editions/1/students/1/suggestions/8000", headers={"Authorization": auth_admin}, json={
                            "suggestion": 1, "argumentation": "test"}).status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -245,15 +230,10 @@ def test_update_not_autorized(database_with_data: Session, test_client: TestClie
                            "suggestion": 1, "argumentation": "test"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_update_suggestion_admin(database_with_data: Session, test_client: TestClient):
+def test_update_suggestion_admin(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """Test that an admin can update suggestions"""
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={
+
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth_admin}, json={
                            "suggestion": 3, "argumentation": "test"}).status_code == status.HTTP_204_NO_CONTENT
     suggestion: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).one()
@@ -261,15 +241,10 @@ def test_update_suggestion_admin(database_with_data: Session, test_client: TestC
     assert suggestion.argumentation == "test"
 
 
-def test_update_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient):
+def test_update_suggestion_coach_their_review(database_with_data: Session, test_client: TestClient, auth_coac1: str):
     """Tests that a coach can update their own suggestion"""
-    form = {
-        "username": "coach1@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={
+
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth_coach1}, json={
                            "suggestion": 3, "argumentation": "test"}).status_code == status.HTTP_204_NO_CONTENT
     suggestion: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).one()
@@ -277,15 +252,10 @@ def test_update_suggestion_coach_their_review(database_with_data: Session, test_
     assert suggestion.argumentation == "test"
 
 
-def test_update_suggestion_coach_other_review(database_with_data: Session, test_client: TestClient):
+def test_update_suggestion_coach_other_review(database_with_data: Session, test_client: TestClient, auth_coach2: str):
     """Tests that a coach can't update other coaches their suggestions"""
-    form = {
-        "username": "coach2@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = test_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth}, json={
+
+    assert test_client.put("/editions/1/students/1/suggestions/1", headers={"Authorization": auth_coach2}, json={
                            "suggestion": 3, "argumentation": "test"}).status_code == status.HTTP_403_FORBIDDEN
     suggestion: Suggestion = database_with_data.query(
         Suggestion).where(Suggestion.suggestion_id == 1).one()
