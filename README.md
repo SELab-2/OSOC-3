@@ -165,10 +165,13 @@ yarn build
 
 #### Installing Docker and MariaDB
 
-1. Install Docker Engine by following the official installation instructions
+1. Install Docker Engine and Docker Compose by following the official installation instructions
 
-   - Linux (choose your distribution): https://docs.docker.com/engine/install/#server
+    Note: Docker Desktop installs both Engine and Compose. However, this is only available on MacOS & WSL2. Linux users will have to manually install both of these tools.
 
+   - Linux (choose your distribution):
+      - Docker Engine: https://docs.docker.com/engine/install/#server)
+      - Docker Compose: https://docs.docker.com/compose/install/
    - MacOS: https://docs.docker.com/desktop/mac/install/
    - Windows (**needs WSL 2**): https://docs.docker.com/desktop/windows/install/#wsl-2-backend
 
