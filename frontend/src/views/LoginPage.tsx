@@ -28,7 +28,7 @@ function LoginPage() {
                     <h3>
                         Welcome to the open Summer of Code selections app. After you've logged in
                         with your account, we'll enable your account so you can get started. An
-                        admin will verify you as quick as possible
+                        admin will verify you as quick as possible.
                     </h3>
                 </div>
                 <div className="login">
