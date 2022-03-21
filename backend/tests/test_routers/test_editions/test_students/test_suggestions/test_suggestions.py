@@ -2,8 +2,72 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.testclient import TestClient
 from src.database.enums import DecisionEnum
-from src.database.models import Suggestion
-from tests.fill_database import fill_database
+from src.database.models import Suggestion, Student, User, Edition, Skill, AuthEmail
+from src.app.logic.security import get_password_hash
+
+
+def fill_database(db):
+    """A function to fill the database with fake data that can easly be used when testing"""
+    # Editions
+    edition: Edition = Edition(year=2022)
+    db.add(edition)
+    db.commit()
+
+    # Users
+    admin: User = User(name="admin", email="admin@ngmail.com", admin=True)
+    coach1: User = User(name="coach1", email="coach1@noutlook.be")
+    coach2: User = User(name="coach2", email="coach2@noutlook.be")
+    request: User = User(name="request", email="request@ngmail.com")
+    db.add(admin)
+    db.add(coach1)
+    db.add(coach2)
+    db.add(request)
+    db.commit()
+
+    # AuthEmail
+    pw_hash = get_password_hash("wachtwoord")
+    auth_email_admin: AuthEmail = AuthEmail(user=admin, pw_hash=pw_hash)
+    auth_email_coach1: AuthEmail = AuthEmail(user=coach1, pw_hash=pw_hash)
+    auth_email_coach2: AuthEmail = AuthEmail(user=coach2, pw_hash=pw_hash)
+    auth_email_request: AuthEmail = AuthEmail(user=request, pw_hash=pw_hash)
+    db.add(auth_email_admin)
+    db.add(auth_email_coach1)
+    db.add(auth_email_coach2)
+    db.add(auth_email_request)
+    db.commit()
+
+    # Skill
+    skill1: Skill = Skill(name="skill1", description="something about skill1")
+    skill2: Skill = Skill(name="skill2", description="something about skill2")
+    skill3: Skill = Skill(name="skill3", description="something about skill3")
+    skill4: Skill = Skill(name="skill4", description="something about skill4")
+    skill5: Skill = Skill(name="skill5", description="something about skill5")
+    skill6: Skill = Skill(name="skill6", description="something about skill6")
+    db.add(skill1)
+    db.add(skill2)
+    db.add(skill3)
+    db.add(skill4)
+    db.add(skill5)
+    db.add(skill6)
+    db.commit()
+
+    # Student
+    student01: Student = Student(first_name="Jos", last_name="Vermeulen", preferred_name="Joske",
+                                 email_address="josvermeulen@mail.com", phone_number="0487/86.24.45", alumni=True,
+                                 wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3, skill6])
+    student30: Student = Student(first_name="Marta", last_name="Marquez", preferred_name="Marta",
+                                 email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=True,
+                                 wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill4, skill5])
+
+    db.add(student01)
+    db.add(student30)
+    db.commit()
+
+    # Suggestion
+    suggestion1: Suggestion = Suggestion(
+        student=student01, coach=coach1, argumentation="Good student", suggestion=DecisionEnum.YES)
+    db.add(suggestion1)
+    db.commit()
 
 
 def test_new_suggestion(database_session: Session, test_client: TestClient):
@@ -18,11 +82,11 @@ def test_new_suggestion(database_session: Session, test_client: TestClient):
     }
     token = test_client.post("/login/token", data=form).json()["accessToken"]
     auth = "Bearer " + token
-    resp = test_client.post("/editions/1/students/29/suggestions/", headers={
+    resp = test_client.post("/editions/1/students/2/suggestions/", headers={
                             "Authorization": auth}, json={"suggestion": 1, "argumentation": "test"})
     assert resp.status_code == status.HTTP_201_CREATED
     suggestions: list[Suggestion] = database_session.query(
-        Suggestion).where(Suggestion.student_id == 29).all()
+        Suggestion).where(Suggestion.student_id == 2).all()
     assert len(suggestions) == 1
     print(resp.json())
     assert resp.json()[
@@ -37,7 +101,7 @@ def test_new_suggestion_not_authorized(database_session: Session, test_client: T
     """Tests when not authorized you can't add a new suggestion"""
 
     fill_database(database_session)
-    assert test_client.post("/editions/1/students/29/suggestions/", json={
+    assert test_client.post("/editions/1/students/2/suggestions/", json={
                             "suggestion": 1, "argumentation": "test"}).status_code == status.HTTP_401_UNAUTHORIZED
     suggestions: list[Suggestion] = database_session.query(
         Suggestion).where(Suggestion.student_id == 29).all()
@@ -78,7 +142,7 @@ def test_get_suggestions_of_student(database_session: Session, test_client: Test
     }
     token = test_client.post("/login/token", data=form).json()["accessToken"]
     auth = "Bearer " + token
-    assert test_client.post("/editions/1/students/29/suggestions/", headers={"Authorization": auth}, json={
+    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth}, json={
                             "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_201_CREATED
     form = {
         "username": "admin@ngmail.com",
@@ -86,10 +150,10 @@ def test_get_suggestions_of_student(database_session: Session, test_client: Test
     }
     token = test_client.post("/login/token", data=form).json()["accessToken"]
     auth = "Bearer " + token
-    assert test_client.post("/editions/1/students/29/suggestions/", headers={"Authorization": auth}, json={
+    assert test_client.post("/editions/1/students/2/suggestions/", headers={"Authorization": auth}, json={
                             "suggestion": 3, "argumentation": "Neen"}).status_code == status.HTTP_201_CREATED
     res = test_client.get(
-        "/editions/1/students/29/suggestions/", headers={"Authorization": auth})
+        "/editions/1/students/2/suggestions/", headers={"Authorization": auth})
     assert res.status_code == status.HTTP_200_OK
     res_json = res.json()
     assert len(res_json["suggestions"]) == 2
