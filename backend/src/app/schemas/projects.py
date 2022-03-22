@@ -95,11 +95,6 @@ class ConflictStudentList(CamelCaseModel):
     conflict_students: list[ConflictStudent]
 
 
-class ProjectId(CamelCaseModel):
-    """Used for returning the id of a project after creating it"""
-    project_id: int
-
-
 class InputProject(BaseModel):
     """Used for passing the details of a project when creating/patching a project"""
     name: str

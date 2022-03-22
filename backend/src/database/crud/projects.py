@@ -1,7 +1,7 @@
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ConflictStudent, ProjectId
+from src.app.schemas.projects import ConflictStudent
 from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
 
 
@@ -11,7 +11,7 @@ def db_get_all_projects(db: Session, edition: Edition) -> list[Project]:
 
 
 def db_add_project(db: Session, edition: Edition, name: str, number_of_students: int, skills: list[int],
-                   partners: list[str], coaches: list[int]) -> ProjectId:
+                   partners: list[str], coaches: list[int]) -> Project:
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
@@ -31,7 +31,7 @@ def db_add_project(db: Session, edition: Edition, name: str, number_of_students:
 
     db.add(project)
     db.commit()
-    return ProjectId(project_id=project.project_id)
+    return project
 
 
 def db_get_project(db: Session, project_id: int) -> Project:

@@ -66,6 +66,7 @@ def test_create_project(database_session: Session, test_client: TestClient):
 
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()['projectId'] == 1
+    assert response.json()['name'] == 'test'
 
     response2 = test_client.get('/editions/1/projects')
     json = response2.json()
