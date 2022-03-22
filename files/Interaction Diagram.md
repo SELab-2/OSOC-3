@@ -10,7 +10,7 @@ Each router processes the path and query parameters and the body of a request. T
 
 ## Wrapping
 
-To return the database objects to the API, we first wrap them into API-friendly objects (Pydantic). This also ensures that when something goes wrong, there is a clear error. The wrapping is also done in reverse order. The body of a request is first wrapped in a Pydantic model. The arguments are extracted in the logic layer and passed to the Crud layer.
+To return the database objects to the API, we first wrap them into API-friendly objects (Pydantic). This also ensures that when something goes wrong, there is a clear error. The wrapping is also done in the other direction: the body of a request is first wrapped in a Pydantic model. This allows us to perform validation of fields, and also makes the body easier to work with. The arguments are extracted in the logic layer and passed to the Crud layer.
 
 ## Logic
 
