@@ -98,6 +98,10 @@ def test_delete_edition(database_session: Session, auth_client: AuthClient):
     response = auth_client.delete(f"/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    # Try to make a delete on an edition that doesn't exist
+
+def test_delete_edition_non_existing(database_session: Session, auth_client: AuthClient):
+    """Delete an edition that doesn't exist"""
+    auth_client.admin()
+
     response = auth_client.delete("/edition/1")
     assert response.status_code == status.HTTP_404_NOT_FOUND
