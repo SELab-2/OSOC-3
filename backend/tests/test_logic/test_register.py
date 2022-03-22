@@ -15,7 +15,8 @@ def test_create_request(database_session: Session):
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
     database_session.commit()
-    new_user = NewUser(name="jos", email="email@email.com", pw="wachtwoord", uuid=invite_link.uuid)
+    new_user = NewUser(name="jos", email="email@email.com",
+                       pw="wachtwoord", uuid=invite_link.uuid)
     create_request(database_session, new_user, edition)
 
     users = database_session.query(User).where(User.name == "jos").all()
@@ -38,11 +39,14 @@ def test_duplicate_user(database_session: Session):
     invite_link2: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
     database_session.commit()
-    nu1 = NewUser(name="user1", email="email@email.com", pw="wachtwoord1", uuid=invite_link1.uuid)
-    nu2 = NewUser(name="user2", email="email@email.com", pw="wachtwoord2", uuid=invite_link2.uuid)
+    nu1 = NewUser(name="user1", email="email@email.com",
+                  pw="wachtwoord1", uuid=invite_link1.uuid)
+    nu2 = NewUser(name="user2", email="email@email.com",
+                  pw="wachtwoord2", uuid=invite_link2.uuid)
     create_request(database_session, nu1, edition)
     with pytest.raises(FailedToAddNewUserException):
         create_request(database_session, nu2, edition)
+
 
 def test_use_same_uuid_multiple_times(database_session: Session):
     """Tests that you can't use the same UUID multiple times"""
@@ -51,10 +55,12 @@ def test_use_same_uuid_multiple_times(database_session: Session):
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
     database_session.commit()
-    new_user1 = NewUser(name="jos", email="email@email.com", pw="wachtwoord", uuid=invite_link.uuid)
+    new_user1 = NewUser(name="jos", email="email@email.com",
+                        pw="wachtwoord", uuid=invite_link.uuid)
     create_request(database_session, new_user1, edition)
     with pytest.raises(FailedToAddNewUserException):
-        new_user2 = NewUser(name="jos", email="email2@email.com", pw="wachtwoord", uuid=invite_link.uuid)
+        new_user2 = NewUser(name="jos", email="email2@email.com",
+                            pw="wachtwoord", uuid=invite_link.uuid)
         create_request(database_session, new_user2, edition)
 
 
