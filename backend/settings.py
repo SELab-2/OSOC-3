@@ -30,8 +30,8 @@ DB_USE_SQLITE: bool = env.bool("DB_USE_SQLITE", False)
 """JWT token key"""
 SECRET_KEY: str = env.str("SECRET_KEY", "4d16a9cc83d74144322e893c879b5f639088c15dc1606b11226abbd7e97f5ee5")
 
-"""Site"""
-SITE: str = env.str("SITE", "https://sel2-3.ugent.be/")
+"""Frontend"""
+FRONTEND_URL: str = env.str("FRONTEND_URL", "http://localhost:3000")
 
 @enum.unique
 class FormMapping(enum.Enum):
