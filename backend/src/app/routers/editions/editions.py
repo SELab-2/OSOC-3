@@ -16,6 +16,8 @@ from .webhooks import webhooks_router
 
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
+from ...utils.dependencies import require_admin, require_auth
+
 editions_router = APIRouter(prefix="/editions")
 
 # Register all child routers
@@ -31,7 +33,7 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_id}")
 
 
-@editions_router.get("/",response_model=EditionList, tags=[Tags.EDITIONS])
+@editions_router.get("/",response_model=EditionList, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
 async def get_editions(db: Session = Depends(get_session)):
     """Get a list of all editions.
 
@@ -44,7 +46,7 @@ async def get_editions(db: Session = Depends(get_session)):
     return logic_editions.get_editions(db)
 
 
-@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS])
+@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
 async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session)):
     """Get a specific edition.
 
@@ -58,7 +60,7 @@ async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session))
     return logic_editions.get_edition_by_id(db, edition_id)
 
 
-@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS])
+@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
 async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
     """ Create a new edition.
 
@@ -71,7 +73,7 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     return logic_editions.create_edition(db, edition)
 
 
-@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS])
+@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
 async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
     """Delete an existing edition.
 

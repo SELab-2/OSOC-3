@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from src.app.logic.security import create_access_token
-from src.database.models import User
+from src.database.models import User, Edition
 
 
 class AuthClient(TestClient):
@@ -28,6 +28,20 @@ class AuthClient(TestClient):
         self.session.commit()
 
         self.login(admin)
+
+    def coach(self, edition: Edition):
+        """Sign in as a coach for all future requests
+        Assigns the coach to the edition
+        """
+        # Create a new user in the db
+        coach = User(name="Pytest Coach", email="coach@pytest.email", admin=False)
+
+        # Link the coach to the edition
+        coach.editions.append(edition)
+        self.session.add(coach)
+        self.session.commit()
+
+        self.login(coach)
 
     def login(self, user: User):
         """Sign in as a user for all future requests"""

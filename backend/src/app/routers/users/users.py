@@ -4,12 +4,13 @@ from requests import Session
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse
+from src.app.utils.dependencies import require_admin
 from src.database.database import get_session
 
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 
-@users_router.get("/", response_model=UsersListResponse)
+@users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
 async def get_users(admin: bool = Query(False), edition: int | None = Query(None), db: Session = Depends(get_session)):
     """
     Get users
@@ -18,7 +19,7 @@ async def get_users(admin: bool = Query(False), edition: int | None = Query(None
     return logic.get_users_list(db, admin, edition)
 
 
-@users_router.patch("/{user_id}", status_code=204)
+@users_router.patch("/{user_id}", status_code=204, dependencies=[Depends(require_admin)])
 async def patch_admin_status(user_id: int, admin: AdminPatch, db: Session = Depends(get_session)):
     """
     Set admin-status of user
@@ -27,7 +28,7 @@ async def patch_admin_status(user_id: int, admin: AdminPatch, db: Session = Depe
     logic.edit_admin_status(db, user_id, admin)
 
 
-@users_router.post("/{user_id}/editions/{edition_id}", status_code=204)
+@users_router.post("/{user_id}/editions/{edition_id}", status_code=204, dependencies=[Depends(require_admin)])
 async def add_to_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
     """
     Add user as coach of the given edition
@@ -36,7 +37,7 @@ async def add_to_edition(user_id: int, edition_id: int, db: Session = Depends(ge
     logic.add_coach(db, user_id, edition_id)
 
 
-@users_router.delete("/{user_id}/editions/{edition_id}", status_code=204)
+@users_router.delete("/{user_id}/editions/{edition_id}", status_code=204, dependencies=[Depends(require_admin)])
 async def remove_from_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
     """
     Remove user as coach of the given edition
@@ -45,7 +46,7 @@ async def remove_from_edition(user_id: int, edition_id: int, db: Session = Depen
     logic.remove_coach(db, user_id, edition_id)
 
 
-@users_router.get("/requests", response_model=UserRequestsResponse)
+@users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
 async def get_requests(edition: int | None = Query(None), db: Session = Depends(get_session)):
     """
     Get pending userrequests
@@ -54,7 +55,7 @@ async def get_requests(edition: int | None = Query(None), db: Session = Depends(
     return logic.get_request_list(db, edition)
 
 
-@users_router.post("/requests/{request_id}/accept", status_code=204)
+@users_router.post("/requests/{request_id}/accept", status_code=204, dependencies=[Depends(require_admin)])
 async def accept_request(request_id: int, db: Session = Depends(get_session)):
     """
     Accept a coach request
@@ -63,7 +64,7 @@ async def accept_request(request_id: int, db: Session = Depends(get_session)):
     logic.accept_request(db, request_id)
 
 
-@users_router.post("/requests/{request_id}/reject", status_code=204)
+@users_router.post("/requests/{request_id}/reject", status_code=204, dependencies=[Depends(require_admin)])
 async def reject_request(request_id: int, db: Session = Depends(get_session)):
     """
     Reject a coach request
