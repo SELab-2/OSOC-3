@@ -25,5 +25,6 @@ The crud layer connects to the database via a Session. This layer will modify or
 The crud layer will use an ORM session to create, read, update or delete data in the database.
 
 
-
-![interaction diagram](.\interaction_diagram.png)
+<p align="center">
+  <img src=./interaction_diagram.png />
+</p>
