@@ -5,6 +5,8 @@ from src.app.utils.mailto import generate_mailto_string
 from src.database.crud.invites import create_invite_link, delete_invite_link as delete_link_db, get_all_pending_invites
 from src.database.models import Edition, InviteLink
 
+import settings
+
 
 def delete_invite_link(db: Session, invite_link: InviteLink):
     """Delete an invite link from the database"""
@@ -25,9 +27,8 @@ def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddres
     # Create db entry
     new_link_db = create_invite_link(db, edition, email_address.email)
 
-    # TODO how endpoint? env var?
     # Create endpoint for the user to click on
-    link = f"https://www.osoc_selection_team_3/register/{new_link_db.uuid}"
+    link = f"{settings.SITE}register/{new_link_db.uuid}"
 
     return MailtoLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",

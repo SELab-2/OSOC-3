@@ -50,6 +50,7 @@ def test_create_invite_valid(database_session: Session, test_client: TestClient)
     json = response.json()
     assert "mailTo" in json
     assert json["mailTo"].startswith("mailto:test@ema.il")
+    assert "https%3A//sel2-3.ugent.be/" in json["mailTo"]
 
     # New entry made in database
     json = test_client.get("/editions/1/invites/").json()
