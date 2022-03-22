@@ -21,3 +21,4 @@ def create_auth_email(db: Session, user: User, pw_hash: str) -> AuthEmail:
     auth_email : AuthEmail = AuthEmail(user=user, pw_hash = pw_hash)
     db.add(auth_email)
     db.commit()
+    return auth_email
