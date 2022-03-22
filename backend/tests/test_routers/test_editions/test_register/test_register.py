@@ -36,7 +36,7 @@ def test_use_uuid_multipli_times(database_session: Session, test_client: TestCli
     response = test_client.post("/editions/1/register/email", json={
                                 "name": "Joske Vermeulen", "email": "jw2@gmail.com", "pw": "test",
                                 "uuid": str(invite_link.uuid)})
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_no_valid_uuid(database_session: Session, test_client: TestClient):
@@ -47,7 +47,7 @@ def test_no_valid_uuid(database_session: Session, test_client: TestClient):
     response = test_client.post("/editions/1/register/email", json={
                                 "name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
                                 "uuid": "550e8400-e29b-41d4-a716-446655440000"})
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     users: list[User] = database_session.query(
         User).where(User.email == "jw@gmail.com").all()
     assert len(users) == 0

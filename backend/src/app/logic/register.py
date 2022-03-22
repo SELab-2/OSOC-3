@@ -11,8 +11,8 @@ from src.app.logic.security import get_password_hash
 def create_request(db: Session, new_user: NewUser, edition: Edition) -> None:
     """Create a coach request. If something fails, the changes aren't committed"""
     transaction = db.begin_nested()
+    invite_link: InviteLink = get_invite_link_by_uuid(db, new_user.uuid)
     try:
-        invite_link: InviteLink = get_invite_link_by_uuid(db, new_user.uuid)
         user = create_user(db, new_user.name, new_user.email)
         create_auth_email(db, user, get_password_hash(new_user.pw))
         create_coach_request(db, user, edition)

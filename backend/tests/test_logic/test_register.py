@@ -1,5 +1,6 @@
 import pytest
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import NoResultFound
 
 from src.app.schemas.register import NewUser
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
@@ -58,7 +59,7 @@ def test_use_same_uuid_multiple_times(database_session: Session):
     new_user1 = NewUser(name="jos", email="email@email.com",
                         pw="wachtwoord", uuid=invite_link.uuid)
     create_request(database_session, new_user1, edition)
-    with pytest.raises(FailedToAddNewUserException):
+    with pytest.raises(NoResultFound):
         new_user2 = NewUser(name="jos", email="email2@email.com",
                             pw="wachtwoord", uuid=invite_link.uuid)
         create_request(database_session, new_user2, edition)
