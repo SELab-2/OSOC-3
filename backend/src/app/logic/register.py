@@ -1,4 +1,3 @@
-from pytest import raises
 from sqlalchemy.orm import Session
 
 from src.app.schemas.register import NewUser
