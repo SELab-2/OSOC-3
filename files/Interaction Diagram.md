@@ -1,8 +1,8 @@
 # Interaction Diagram
 
-## App.py
+## Main application
 
-App.py contains the FastApi routers. It loads and adds the various routers.
+The main application contains the FastApi routers. It loads and adds the various routers.
 
 ## Routers
 
@@ -26,4 +26,4 @@ The crud layer will use an ORM session to create, read, update or delete data in
 
 
 
-![](https://i.imgur.com/9uSdtmm.png)
+![interaction diagram](.\interaction_diagram.png)
