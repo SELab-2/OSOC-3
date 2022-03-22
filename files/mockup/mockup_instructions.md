@@ -42,7 +42,14 @@ Here you can see all the mails that have been sent to this student.
 2. Click on select all again. Everything is now deselected.
 3. "Send all" button does nothing in the mockup, but in the real application, all selected students will receive their email.
 4. Click on back button.
-5. Click on "Projects" tab in the navigation bar.
+
+### Select Students Page
+1. Click on "Remove student" button.
+2. Click on "Yes".
+
+Riley is now deleted. Riley is deleted from the list to the left.
+
+3. Click on "Projects" tab in the navigation bar.
 
 ### Projects Page
 1. Click on "Create new project".
