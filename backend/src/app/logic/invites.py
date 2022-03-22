@@ -28,7 +28,7 @@ def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddres
     new_link_db = create_invite_link(db, edition, email_address.email)
 
     # Create endpoint for the user to click on
-    link = f"{settings.SITE}register/{new_link_db.uuid}"
+    link = f"{settings.FRONTEND_URL}register/{new_link_db.uuid}"
 
     return MailtoLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",
