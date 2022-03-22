@@ -1,4 +1,5 @@
 import OSOCLetters from "../components/OSOCLetters";
+import { useState } from "react";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
@@ -6,18 +7,20 @@ const axios = require("axios").default;
 
 function LoginPage() {
     function logIn() {
+        const payload = new FormData();
+        payload.append("username", email);
+        payload.append("password", password);
+
         axios
-            .post("http://127.0.0.1:8000/login/token", {
-                body: JSON.stringify({
-                    username: "fred",
-                    password: "password",
-                }),
-            })
+            .post("http://127.0.0.1:8000/login/token", payload)
             .then((response: any) => console.log(response))
             .catch(function (error: any) {
                 console.log(error);
             });
     }
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     return (
         <div>
@@ -44,10 +47,22 @@ function LoginPage() {
 
                     <div className="register-form-input-fields">
                         <div>
-                            <input type="email" name="email" placeholder="Email" />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
                         </div>
                         <div>
-                            <input type="password" name="password" placeholder="Password" />
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                            />
                         </div>
                         <div className="no-account">
                             Don't have an account? Ask an admin for an invite link
