@@ -40,8 +40,7 @@ def get_hashed_password() -> str:
         print("Passwords did not match. Aborted.", file=sys.stderr)
         exit(2)
 
-    hashed_pw = get_password_hash(first_pass)
-    return hashed_pw
+    return get_password_hash(first_pass)
 
 
 def create_admin(name: str, email: str, pw: str):
