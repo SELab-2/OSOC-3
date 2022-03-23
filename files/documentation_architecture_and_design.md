@@ -1,9 +1,9 @@
 # High level documentation of the architecture and design
 
-This files gives a short description of the used architecture and the design of the project.
+This file gives a short description of the used architecture and the design of the project.
 
 ## Architecture
-A visual representation of our architecture is described in the **deployment diagram**.
+A visual representation of our architecture is described in the [framework graph](files/framework_graph/frameworkgraph.png). More information about the modules can be found [here](files/module_overview_backend.md) and [here](files/module_overview_frontend.md).
 
 ### Presentation Layer
 
@@ -22,5 +22,5 @@ To call the database, and to be able to use the data easily in the domain layer,
 The underlying database technology we use to finally store the data is MariaDB.
 
 ## Design
-The sequence diagrams of our application can be found [here](https://github.com/SELab-2/OSOC-3/tree/develop/files).
+The interaction diagrams of our application can be found [here](files/Interaction Diagram.md).
 In those diagrams, the most important interactions between objects are shown.
