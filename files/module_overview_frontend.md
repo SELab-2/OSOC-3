@@ -10,4 +10,4 @@ These scrips makes request to the API
 
 ## views
 
-Here are all the views we have in the frontend
+Here are all the views we have in the frontend.
