@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../utils/api/api";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
-
-const axios = require("axios").default;
 
 function RegisterForm() {
     function register() {
@@ -26,10 +25,10 @@ function RegisterForm() {
         payload.append("password", password);
         payload.append("confirmPassword", confirmPassword);
 
-        axios
-            .post("http://127.0.0.1:8000/editions/" + edition + "/register/email", payload)
+        axiosInstance
+            .post("/editions/" + edition + "/register/email", payload)
             .then((response: any) => console.log(response))
-            .then(navigate("/students"))
+            .then(() => navigate("/pending"))
             .catch(function (error: any) {
                 console.log(error);
             });

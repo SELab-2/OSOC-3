@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../utils/api/api";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
-
-const axios = require("axios").default;
 
 function LoginPage() {
     function logIn() {
@@ -10,16 +10,18 @@ function LoginPage() {
         payload.append("username", email);
         payload.append("password", password);
 
-        axios
-            .post("http://127.0.0.1:8000/login/token", payload)
+        axiosInstance
+            .post("/login/token", payload)
             .then((response: any) => console.log(response))
+            .then(() => navigate("/students"))
             .catch(function (error: any) {
                 console.log(error);
             });
     }
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
 
     return (
         <div>
