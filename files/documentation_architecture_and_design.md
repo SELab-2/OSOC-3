@@ -22,5 +22,5 @@ To call the database, and to be able to use the data easily in the domain layer,
 The underlying database technology we use to finally store the data is MariaDB.
 
 ## Design
-The interaction diagrams of our application can be found [here](files/Interaction Diagram.md).
+The interaction diagrams of our application can be found [here](files/Interaction&#32;Diagram.md).
 In those diagrams, the most important interactions between objects are shown.
