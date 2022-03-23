@@ -158,11 +158,83 @@ def test_remove_coach(database_session: Session, test_client: TestClient):
     database_session.add(request)
 
     database_session.commit()
+
     # Remove coach
     response = test_client.delete(f"/users/{user.user_id}/editions/{edition.edition_id}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     coach = database_session.query(user_editions).all()
     assert len(coach) == 0
+
+
+def test_get_all_requests(database_session: Session, test_client: TestClient):
+    """Test endpoint for getting all userrequests"""
+
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    user2 = models.User(name="user2", email="user2@mail.com")
+    database_session.add(user1)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    edition2 = models.Edition(year=2)
+    database_session.add(edition1)
+    database_session.add(edition2)
+
+    database_session.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    request2 = models.CoachRequest(user_id=user2.user_id, edition_id=edition2.edition_id)
+    database_session.add(request1)
+    database_session.add(request2)
+
+    database_session.commit()
+
+    response = test_client.get(f"/users/requests")
+    assert response.status_code == status.HTTP_200_OK
+    user_ids = [request["user"]["userId"] for request in response.json()['requests']]
+    assert len(user_ids) == 2
+    assert user1.user_id in user_ids
+    assert user2.user_id in user_ids
+
+
+def test_get_all_requests_from_edition(database_session: Session, test_client: TestClient):
+    """Test endpoint for getting all userrequests of a given edition"""
+
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    user2 = models.User(name="user2", email="user2@mail.com")
+    database_session.add(user1)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    edition2 = models.Edition(year=2)
+    database_session.add(edition1)
+    database_session.add(edition2)
+
+    database_session.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    request2 = models.CoachRequest(user_id=user2.user_id, edition_id=edition2.edition_id)
+    database_session.add(request1)
+    database_session.add(request2)
+
+    database_session.commit()
+
+    response = test_client.get(f"/users/requests?edition={edition1.edition_id}")
+    assert response.status_code == status.HTTP_200_OK
+    requests = response.json()['requests']
+    assert len(requests) == 1
+    assert user1.user_id == requests[0]["user"]["userId"]
+
+    response = test_client.get(f"/users/requests?edition={edition2.edition_id}")
+    assert response.status_code == status.HTTP_200_OK
+    requests = response.json()['requests']
+    assert len(requests) == 1
+    assert user2.user_id == requests[0]["user"]["userId"]
 
 
 def test_accept_request(database_session, test_client: TestClient):

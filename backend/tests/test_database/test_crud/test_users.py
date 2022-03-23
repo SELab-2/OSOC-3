@@ -7,7 +7,7 @@ from src.database.models import user_editions, CoachRequest
 
 
 @pytest.fixture
-def data(database_session: Session) -> dict[str, str]:
+def data(database_session: Session) -> dict[str, int]:
     """Fill database with dummy data"""
 
     # Create users
@@ -39,7 +39,7 @@ def data(database_session: Session) -> dict[str, str]:
             }
 
 
-def test_get_all_users(database_session: Session, data: dict[str, str]):
+def test_get_all_users(database_session: Session, data: dict[str, int]):
     """Test get request for users"""
 
     # get all users
@@ -50,7 +50,7 @@ def test_get_all_users(database_session: Session, data: dict[str, str]):
     assert data["user2"] in user_ids
 
 
-def test_get_all_admins(database_session: Session, data: dict[str, str]):
+def test_get_all_admins(database_session: Session, data: dict[str, int]):
     """Test get request for admins"""
 
     # get all admins
@@ -59,7 +59,7 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     assert data["user1"] == users[0].user_id
 
 
-def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
+def test_get_all_users_from_edition(database_session: Session, data: dict[str, int]):
     """Test get request for users of a given edition"""
 
     # get all users from edition
@@ -74,7 +74,7 @@ def test_get_all_users_from_edition(database_session: Session, data: dict[str, s
     assert data["user2"] == users[0].user_id
 
 
-def test_get_admins_from_edition(database_session: Session, data: dict[str, str]):
+def test_get_admins_from_edition(database_session: Session, data: dict[str, int]):
     """Test get request for admins of a given edition"""
 
     # get all admins from edition
@@ -140,6 +140,74 @@ def test_remove_coach(database_session: Session):
 
     users_crud.remove_coach(database_session, user.user_id, edition.edition_id)
     assert len(database_session.query(user_editions).all()) == 0
+
+
+def test_get_all_requests(database_session: Session):
+    """Test get request for all userrequests"""
+
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    user2 = models.User(name="user2", email="user2@mail.com")
+    database_session.add(user1)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    edition2 = models.Edition(year=2)
+    database_session.add(edition1)
+    database_session.add(edition2)
+
+    database_session.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    request2 = models.CoachRequest(user_id=user2.user_id, edition_id=edition2.edition_id)
+    database_session.add(request1)
+    database_session.add(request2)
+
+    database_session.commit()
+
+    requests = users_crud.get_all_requests(database_session)
+    assert len(requests) == 2
+    assert request1 in requests
+    assert request2 in requests
+    users = [request.user for request in requests]
+    assert user1 in users
+    assert user2 in users
+
+
+def test_get_all_requests_from_edition(database_session: Session):
+    """Test get request for all userrequests of a given edition"""
+
+    # Create user
+    user1 = models.User(name="user1", email="user1@mail.com")
+    user2 = models.User(name="user2", email="user2@mail.com")
+    database_session.add(user1)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1)
+    edition2 = models.Edition(year=2)
+    database_session.add(edition1)
+    database_session.add(edition2)
+
+    database_session.commit()
+
+    # Create request
+    request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
+    request2 = models.CoachRequest(user_id=user2.user_id, edition_id=edition2.edition_id)
+    database_session.add(request1)
+    database_session.add(request2)
+
+    database_session.commit()
+
+    requests = users_crud.get_all_requests_from_edition(database_session, edition1.edition_id)
+    assert len(requests) == 1
+    assert requests[0].user == user1
+
+    requests = users_crud.get_all_requests_from_edition(database_session, edition2.edition_id)
+    assert len(requests) == 1
+    assert requests[0].user == user2
 
 
 def test_accept_request(database_session: Session):
