@@ -59,8 +59,7 @@ def get_request_list(db: Session, edition_id: int | None):
     else:
         requests = users_crud.get_all_requests_from_edition(db, edition_id)
 
-    res = UserRequestsResponse(requests=requests)
-    return res
+    return UserRequestsResponse(requests=requests)
 
 
 def accept_request(db: Session, request_id: int):
