@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css-files/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -14,13 +14,15 @@ import Footer from "./components/Footer";
 import { Container, ContentWrapper } from "./app.styles";
 
 function App() {
+    const [token, setToken] = useState();
+
     return (
         <Router>
             <Container>
                 <NavBar />
                 <ContentWrapper>
                     <Routes>
-                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/" element={<LoginPage setToken={setToken} />} />
                         <Route path="/register" element={<RegisterForm />} />
                         <Route path="/students" element={<Students />} />
                         <Route path="/users" element={<Users />} />
@@ -29,7 +31,7 @@ function App() {
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
                 </ContentWrapper>
-
+                <div>Your token: {token}</div>
                 <Footer />
             </Container>
         </Router>

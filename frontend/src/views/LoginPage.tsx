@@ -5,7 +5,7 @@ import OSOCLetters from "../components/OSOCLetters";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
-function LoginPage() {
+function LoginPage( {setToken}: any ) {
     function logIn() {
         const payload = new FormData();
         payload.append("username", email);
@@ -13,7 +13,9 @@ function LoginPage() {
 
         axiosInstance
             .post("/login/token", payload)
-            .then((response: any) => console.log(response))
+            .then((response: any) => {
+                setToken(response.data.accessToken)
+            })
             .then(() => navigate("/students"))
             .catch(function (error: any) {
                 console.log(error);
