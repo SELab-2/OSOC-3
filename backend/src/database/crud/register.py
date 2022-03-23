@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.database.models import AuthEmail, CoachRequest, User, Edition
 
+
 def create_user(db: Session, name: str, email: str) -> User:
     """Create a user"""
     new_user: User = User(name=name, email=email)
