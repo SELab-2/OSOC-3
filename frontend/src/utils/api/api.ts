@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "../../settings";
 
 export const axiosInstance = axios.create();
-axiosInstance.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+axiosInstance.defaults.baseURL = BASE_URL;

@@ -1,5 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { FooterLink } from "./styles";
+import { BASE_URL } from "../../settings";
 
 export default function FooterLinks() {
     return (
@@ -7,9 +8,7 @@ export default function FooterLinks() {
             <Row>
                 <Col>
                     <h4>API</h4>
-                    <FooterLink href={`${process.env.REACT_APP_BASE_URL}/redoc`}>
-                        Documentation
-                    </FooterLink>
+                    <FooterLink href={`${BASE_URL}/redoc`}>Documentation</FooterLink>
                 </Col>
             </Row>
         </Container>
