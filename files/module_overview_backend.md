@@ -37,7 +37,7 @@ The sub modules of this module are the same of the URI.
 
 ### schemas
 
-These files contains the input and output models.
+These files contain the input and output models.
 
 ### utils
 
