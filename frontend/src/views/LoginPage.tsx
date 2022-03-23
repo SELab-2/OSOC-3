@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/api/api";
+import OSOCLetters from "../components/OSOCLetters";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
@@ -25,7 +26,9 @@ function LoginPage() {
 
     return (
         <div>
+
             <div className="login-page-content-container my-5">
+
                 <div className="welcome-text mx-auto">
                     <h1 className={"mb-5"}>Hi!</h1>
                     <h3>
@@ -35,6 +38,8 @@ function LoginPage() {
                     </h3>
                 </div>
                 <div className="login mx-auto">
+                <OSOCLetters />
+
                     <div className="socials-container">
                         <div className="socials">
                             <div className="google-login-container">

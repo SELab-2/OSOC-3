@@ -1,10 +1,8 @@
 import React from "react";
-import OSOCLetters from "../components/OSOCLetters";
 
 function PendingPage() {
     return(
         <div>
-            <OSOCLetters/>
             <div className="pending-page-content-container">
                 <div className="pending-page-content">
                     <div className="pending-text-container">

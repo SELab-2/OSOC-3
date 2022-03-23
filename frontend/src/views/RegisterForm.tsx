@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/api/api";
+import OSOCLetters from "../components/OSOCLetters";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
@@ -44,6 +45,7 @@ function RegisterForm() {
     return (
         <div>
             <div className="register-form-content-container my-5">
+                <OSOCLetters/>
                 <h1 className={"mb-3"}>Create an account</h1>
                 <div className={"mb-3"} style={{ color: "grey" }}>
                     Sign up with your social media account or email address
