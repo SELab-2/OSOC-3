@@ -57,7 +57,7 @@ Here are all our enums, it's used to not have a static table in our database.
 ### models.py
 
 Here are all the models we need have in our database.  
-For creating a new model and table in our database u use:
+For creating a new model and table in our database, use:
 
 ```python
 class <NameOfTable>(Base):
