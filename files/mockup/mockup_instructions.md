@@ -63,7 +63,7 @@ Nothing happened in mockup, but in the real application the new project will be 
 
 ### No Students Page
 1. Click on "Add".
-2. Click on "Draft As Commnuication".
+2. Click on "Draft As Communication".
 
 ### 3 Students Page
 1. Click on the red "X" next to Kelly Cruickshank.
