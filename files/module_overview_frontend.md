@@ -6,7 +6,7 @@ Here are all components we need for the frotend. Each component is in his own fo
 
 ## utils/api
 
-These scrips makes request to the API
+These scrips make request to the API.
 
 ## views
 
