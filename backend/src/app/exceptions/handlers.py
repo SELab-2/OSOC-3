@@ -1,4 +1,5 @@
 import sqlalchemy.exc
+from .editions import DuplicateInsertException
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -27,7 +28,7 @@ def install_handlers(app: FastAPI):
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     @app.exception_handler(MalformedUUIDError)
     def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
         return JSONResponse(
@@ -56,6 +57,13 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={'message': 'Not Found'}
+        )
+
+    @app.exception_handler(DuplicateInsertException)
+    def duplicate_insert(_request: Request, _exception: DuplicateInsertException):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={'message': 'Already inserted'}
         )
 
     @app.exception_handler(WebhookProcessException)

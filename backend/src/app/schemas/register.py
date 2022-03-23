@@ -1,7 +1,9 @@
+from uuid import UUID
+from src.app.schemas.invites import EmailAddress
 
-from src.app.schemas.webhooks import CamelCaseModel
 
-class NewUser(CamelCaseModel):
+class NewUser(EmailAddress):
+    """The scheme of a new user"""
     name: str
-    email: str
     pw: str
+    uuid: UUID

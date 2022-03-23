@@ -7,8 +7,9 @@ from starlette.middleware.cors import CORSMiddleware
 import settings
 from src.database.engine import engine
 from src.database.exceptions import PendingMigrationsException
-from .routers import editions_router, login_router
+from .routers import editions_router, login_router, skills_router
 from .exceptions import install_handlers
+from .routers.users.users import users_router
 
 
 # Main application
@@ -28,7 +29,9 @@ app.add_middleware(
 
 # Include all routers
 app.include_router(editions_router)
+app.include_router(skills_router)
 app.include_router(login_router)
+app.include_router(users_router)
 
 # Install exception handlers
 install_handlers(app)
