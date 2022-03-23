@@ -2,8 +2,6 @@ import styled from "styled-components";
 
 export const FooterBox = styled.div`
     background-color: var(--osoc_blue);
-    position: absolute;
-    bottom: 0;
     width: 100%;
 `;
 

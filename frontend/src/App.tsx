@@ -11,21 +11,27 @@ import RegisterForm from "./views/RegisterForm";
 import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
 import Footer from "./components/Footer";
+import { Container, ContentWrapper } from "./app.styles";
 
 function App() {
     return (
         <Router>
-            <NavBar />
-            <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterForm />} />
-                <Route path="/students" element={<Students />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/pending" element={<PendingPage />} />
-                <Route path="*" element={<ErrorPage />} />
-            </Routes>
-            <Footer />
+            <Container>
+                <NavBar />
+                <ContentWrapper>
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterForm />} />
+                        <Route path="/students" element={<Students />} />
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/projects" element={<ProjectsPage />} />
+                        <Route path="/pending" element={<PendingPage />} />
+                        <Route path="*" element={<ErrorPage />} />
+                    </Routes>
+                </ContentWrapper>
+
+                <Footer />
+            </Container>
         </Router>
     );
 }

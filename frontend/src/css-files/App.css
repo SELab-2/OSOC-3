@@ -8,6 +8,10 @@
     --background_color: #272741;
 }
 
+#root {
+    height: 100%;
+}
+
 .nav-links-hidden {
     visibility: hidden;
 }
@@ -40,13 +44,11 @@ body {
 }
 
 .login-page-content-container {
-    max-width: 800px;
     height: fit-content;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .osoc-logo-O1 {
@@ -213,7 +215,7 @@ input[type="text"] {
     text-align: center;
     font-size: 20px;
     border-radius: 10px;
-    border-width: 0cm;
+    border-width: 0;
 }
 
 .register-button {
