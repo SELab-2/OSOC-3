@@ -41,7 +41,7 @@ These files contains the input and output models.
 
 ### utils
 
-In ```dependencies.py``` are the functions that are used to get models in our database by and ID, is authorized, and has the right qualifications for routes.  
+In ```dependencies.py``` are the functions that are used to get models in our database by an ID, to check that someone is authorized, and has the right qualifications for routes and other dependency functions.
 Other scripts in this module are things that are needed but don't fit anywhere else.
 
 ## database
