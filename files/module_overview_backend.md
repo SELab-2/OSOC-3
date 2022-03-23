@@ -71,4 +71,4 @@ class <NameOfTable>(Base):
 
 ### crud
 
-In these scripts the data in the database is eddited. The functions are mostly called from the logic module.
+In these scripts the data in the database is edited. The functions are mostly called from the logic module.
