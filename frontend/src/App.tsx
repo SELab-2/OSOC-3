@@ -10,6 +10,7 @@ import ProjectsPage from "./views/ProjectsPage";
 import RegisterForm from "./views/RegisterForm";
 import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
+import Footer from "./components/Footer";
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                 <Route path="/pending" element={<PendingPage />} />
                 <Route path="*" element={<ErrorPage />} />
             </Routes>
+            <Footer />
         </Router>
     );
 }
