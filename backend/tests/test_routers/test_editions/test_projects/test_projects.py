@@ -1,4 +1,3 @@
-from json import dumps
 
 import pytest
 from fastapi.testclient import TestClient
