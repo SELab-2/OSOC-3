@@ -20,6 +20,12 @@ class AuthClient(TestClient):
 
         self.session = session
 
+    def invalid(self):
+        """Sign in with an invalid access token"""
+        self.headers = {
+            "Authorization": "Bearer If I can't scuba, then what has this all been about? What am I working towards?"
+        }
+
     def admin(self):
         """Sign in as an admin for all future requests"""
         # Create a new user in the db
