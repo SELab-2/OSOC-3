@@ -14,8 +14,8 @@ The module has a couple of submodules.
 
 ### exceptions
 
-Here are our own exceptions we raise. Each exception are grouped in the scripts according to the subject when they are raised  
-In handlers.py you find what the backend return when a exception took place. To add a handler of an exception you write in the install_handlers function
+Here are our own exceptions. These are grouped in multiple files according to the subjects that raise them.
+In handlers.py you can see what the backend returns when an exception took place. To add a handler of an exception, write it in the `install_handlers` function.
 
 ```python
 @app.exception_handler(<Exception>)
@@ -28,12 +28,12 @@ def <exception>(_request: Request, _exception: <Exception>):
 
 ### logic
 
-These scripts are the gateway between the routers and the database, but they don't add things directly to it. They are grouped by the subject of each in the database.
+These scripts are the gateway between the routers and the database, but they don't add things directly to it. They are grouped by subject.
 
 ### routers
 
 Here are all the routers of the API. They only progress the request and send them to their corespondending logic file.  
-The sub modules of this module are the same of the URI.
+The submodules of this module have the same names as their URIs.
 
 ### schemas
 
@@ -46,13 +46,13 @@ Other scripts in this module are things that are needed but don't fit anywhere e
 
 ## database
 
-This module is used for all our database code
+This module is used for all of our database code.
 
-our costum code is find in ```enums.py``` and ```models.py```. The other scripts are for having our database up and running in our tests and production.
+Our custom code can be found in ```enums.py``` and ```models.py```. The other scripts are for having our database up and running our tests and production.
 
 ### enums.py
 
-Here are all our enums, it's used to not have a static table in our database.
+Here are all our enums, we use these so we don't have any static tables in our database.
 
 ### models.py
 
