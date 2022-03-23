@@ -1,4 +1,3 @@
-import OSOCLetters from "../components/OSOCLetters";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -45,20 +44,20 @@ function RegisterForm() {
 
     return (
         <div>
-            <OSOCLetters />
-            <div className="register-form-content-container">
-                <h1 style={{ marginBottom: "15px" }}>Create an account</h1>
-                <div style={{ marginBottom: "15px", color: "grey" }}>
+            <div className="register-form-content-container my-5">
+                <h1 className={"mb-3"}>Create an account</h1>
+                <div className={"mb-3"} style={{ color: "grey" }}>
                     Sign up with your social media account or email address
                 </div>
-                <div className="socials-container-register">
+                <div className="socials-container">
                     <div className="socials-register">
                         <GoogleLoginButton text="Register with Google" />
+                        <div className={"border-right"} />
                         <GithubLoginButton text="Register with GitHub" />
                     </div>
                 </div>
 
-                <h2 style={{ margin: "15px" }}>or</h2>
+                <h2 className={"m-3"}>or</h2>
 
                 <div className="register-form-input-fields">
                     <div>
