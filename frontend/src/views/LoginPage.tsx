@@ -1,5 +1,3 @@
-import OSOCLetters from "../components/OSOCLetters";
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/api/api";
@@ -27,17 +25,16 @@ function LoginPage() {
 
     return (
         <div>
-            <OSOCLetters />
-            <div className="login-page-content-container">
-                <div className="welcome-text">
-                    <h1 style={{ marginBottom: "40px" }}>Hi!</h1>
+            <div className="login-page-content-container my-5">
+                <div className="welcome-text mx-auto">
+                    <h1 className={"mb-5"}>Hi!</h1>
                     <h3>
                         Welcome to the open Summer of Code selections app. After you've logged in
                         with your account, we'll enable your account so you can get started. An
                         admin will verify you as quick as possible.
                     </h3>
                 </div>
-                <div className="login">
+                <div className="login mx-auto">
                     <div className="socials-container">
                         <div className="socials">
                             <div className="google-login-container">
