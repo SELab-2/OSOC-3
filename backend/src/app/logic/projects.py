@@ -26,7 +26,7 @@ def logic_delete_project(db: Session, project_id: int):
     db_delete_project(db, project_id)
 
 
-def logic_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: [int],
+def logic_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: list[int],
                         partners: list[str], coaches: list[int]):
     """Make changes to a project"""
     db_patch_project(db, project, name, number_of_students, skills, partners, coaches)

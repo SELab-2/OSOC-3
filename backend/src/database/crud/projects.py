@@ -17,7 +17,7 @@ def db_add_project(db: Session, edition: Edition, name: str, number_of_students:
     If there are partner names that are not already in the database, add them
      """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
-    coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
+    coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in coaches]
     partners_obj = []
     for partner in partners:
         try:
@@ -41,6 +41,8 @@ def db_get_project(db: Session, project_id: int) -> Project:
 
 def db_delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
+    # TODO: Maybe make the relationship between project and project_role cascade on delete? 
+    # so this code is handled by the database
     proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
     for proj_role in proj_roles:
         db.delete(proj_role)
@@ -57,7 +59,7 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     If there are partner names that are not already in the database, add them
     """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
-    coaches_obj = [db.query(User).where(User.user_id) == coach for coach in coaches]
+    coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in coaches]
     partners_obj = []
     for partner in partners:
         try:
