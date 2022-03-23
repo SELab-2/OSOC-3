@@ -2,7 +2,7 @@
 
 ## components
 
-Here are all components we need for the frotend. Each component is in his own folder
+Here are all components we need for the frontend. Each component is in its own folder.
 
 ## utils/api
 
