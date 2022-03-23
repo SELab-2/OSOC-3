@@ -1,5 +1,3 @@
-from calendar import day_abbr
-from click import edit
 import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
