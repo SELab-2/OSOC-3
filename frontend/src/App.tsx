@@ -7,7 +7,7 @@ import LoginPage from "./views/LoginPage/LoginPage";
 import Students from "./views/Students";
 import Users from "./views/Users";
 import ProjectsPage from "./views/ProjectsPage";
-import RegisterForm from "./views/RegisterForm";
+import RegisterForm from "./views/RegisterForm/RegisterForm";
 import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage/PendingPage";
 import Footer from "./components/Footer";
@@ -24,7 +24,7 @@ function App() {
                 <ContentWrapper>
                     <Routes>
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
-                        <Route path="/register" element={<RegisterForm />} />
+                        <Route path="/register/:uuid" element={<RegisterForm />} />
                         <Route path="/students" element={<Students />} />
                         <Route path="/users" element={<Users />} />
                         <Route path="/projects" element={<ProjectsPage />} />
