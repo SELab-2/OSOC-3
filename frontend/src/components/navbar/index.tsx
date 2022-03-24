@@ -1,7 +1,7 @@
 import React from "react";
 import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
 
-function NavBar() {
+function NavBar({token}: any) {
     return (
         <>
             <Nav>
@@ -14,13 +14,16 @@ function NavBar() {
                     <h1> Selections</h1>
                 </div>
                 <Bars />
+                
                 <NavMenu>
-                    <div className="nav-links-hidden">
+                {() => {if(token === ""){
+                    <div className="nav-links">
                         <NavLink to="/students">Students</NavLink>
                         <NavLink to="/users">Users</NavLink>
                         <NavLink to="/projects">Projects</NavLink>
                         <NavLink to="/">Log out</NavLink>
                     </div>
+                }}}
                 </NavMenu>
             </Nav>
         </>

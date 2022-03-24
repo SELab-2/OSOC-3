@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/api/api";
-import OSOCLetters from "../components/OSOCLetters";
+import OSOCLetters from "../components/OSOCLetters/OSOCLetters";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 

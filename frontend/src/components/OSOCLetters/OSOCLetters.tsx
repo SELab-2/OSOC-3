@@ -1,7 +1,8 @@
-import logoO1 from "../images/letters/osoc_orange_o.svg"
-import logoS from "../images/letters/osoc_s.svg"
-import logoO2 from "../images/letters/osoc_red_o.svg"
-import logoC from "../images/letters/osoc_c.svg"
+import logoO1 from "../../images/letters/osoc_orange_o.svg"
+import logoS from "../../images/letters/osoc_s.svg"
+import logoO2 from "../../images/letters/osoc_red_o.svg"
+import logoC from "../../images/letters/osoc_c.svg"
+import "./OSOCLetters.css"
 
 function OSOCLetters() {
     return(
