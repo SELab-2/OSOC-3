@@ -2,10 +2,6 @@
 
 This instruction manual is targeted at servers running `ubuntu server 20.4`. Other distributions will work but might require some extra modifications.
 
-## Table Of Contents
-
-[TOC]
-
 ## Installation
 
 For the setup you can decide for yourself how to organize users. You can create a single user for the whole application, or create 2 separate users. One for the backend and one for the frontend. This last one is the option we will use in the rest of this guide.
