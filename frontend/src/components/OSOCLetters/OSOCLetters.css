@@ -1,0 +1,116 @@
+.osoc-logo-O1 {
+    position: absolute;
+    width: 15%;
+    height: 15%;
+    left: 5%;
+    top: 15%;
+    animation: change-size 5s infinite linear;
+}
+
+.osoc-logo-S {
+    position: absolute;
+    width: 20%;
+    max-height: 20%;
+    bottom: 25%;
+    left: 5%;
+    animation: wiggle 5s infinite linear;
+}
+
+.osoc-logo-O2 {
+    position: absolute;
+    width: 5%;
+    height: 5%;
+    right: 15%;
+    top: 20%;
+    animation: quick-jump 6s infinite linear;
+}
+
+.osoc-logo-C {
+    position: absolute;
+    width: 15%;
+    height: 15%;
+    right: 5%;
+    bottom: 25%;
+    animation: rotation 20s infinite linear;
+}
+
+@keyframes quick-jump {
+    0% {
+        transform: translateX(0px) translateY(0px);
+    }
+    96% {
+        transform: translateX(0px) translateY(0px);
+    }
+    98% {
+        transform: translateX(90px) translateY(90px);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px);
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateX(5px) translateY(5px) rotate(-5deg);
+    }
+    50% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+    75% {
+        transform: translateX(-5px) translateY(-5px) rotate(10deg);
+    }
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg);
+    }
+}
+
+@keyframes change-size {
+    0% {
+        width: 15%;
+        height: 15%;
+        left: 5%;
+        top: 15%;
+    }
+    80% {
+        width: 13%;
+        height: 13%;
+        left: 6%;
+        top: 16%;
+    }
+    93% {
+        width: 13%;
+        height: 13%;
+        left: 6%;
+        top: 16%;
+    }
+    95% {
+        width: 15%;
+        height: 15%;
+        left: 5%;
+        top: 15%;
+    }
+    97% {
+        width: 13%;
+        height: 13%;
+        left: 6%;
+        top: 16%;
+    }
+    100% {
+        width: 15%;
+        height: 15%;
+        left: 5%;
+        top: 15%;
+    }
+}

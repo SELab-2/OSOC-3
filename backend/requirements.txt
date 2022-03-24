@@ -1,0 +1,35 @@
+# Alembic: Database migrations extension for SQLAlchemy
+alembic==1.7.6
+
+# Environs: simplified environment variable parsing
+environs==9.5.0
+
+# FastAPI: API framework
+fastapi==0.74.1
+
+# Uvicorn: ASGI web server implementation
+uvicorn[standard] >=0.12.0,<0.16.0
+
+# MariaDB: Python MariaDB connector
+mariadb==1.0.10
+
+# Requests: HTTP library
+requests==2.27.1
+
+# SQLAlchemy: ORM and database toolkit
+SQLAlchemy==1.4.31
+
+# SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
+sqlalchemy-utils==0.38.2
+
+# Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
+pyhumps==3.5.3
+
+# OAuth2 form data
+python-multipart==0.0.5
+
+# generate and verify JWT tokens
+python-jose[cryptography]==3.3.0
+
+# hash passwords
+passlib[bcrypt]==1.7.4

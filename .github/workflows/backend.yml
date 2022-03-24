@@ -1,0 +1,77 @@
+name: Backend CI
+on:
+  push:
+    paths:
+      - ".github/workflows/backend.yml"
+      - "backend/**"
+      - "!**.md"
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  Dependencies:
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-site-packages-
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements.txt
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install -r requirements-dev.txt
+
+  Test:
+    needs: [Dependencies]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m pytest
+
+  Lint:
+    needs: [Test]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m pylint src tests
+
+  Type:
+    needs: [Test]
+    runs-on: self-hosted
+    container: python:3.10.2-alpine
+    steps:
+      - run: apk add --no-cache tar
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: /usr/local/lib/python3.10/site-packages
+          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+
+      - run: python -m mypy src tests
