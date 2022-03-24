@@ -3,7 +3,9 @@
 ## Table of Contents
 
 [User manual](#user-manual)
+
 [High level documentation of the architecture and design](#high-level-documentation-of-the-architecture-and-design)
+
 [Local Setup Instructions](#local-setup-instructions)
 
 - [TLDR](#tldr)
