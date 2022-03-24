@@ -146,7 +146,7 @@ The mariadb version available in the apt repositories (Currently 10.3) is too ou
 [admin] $ sudo apt install mariadb-server
 ```
 
-Once the server is installed **make sure** to run the `mariadb-secure-instalation` script. This is **very important!** The database will be insecure if not run. 
+Once the server is installed **make sure** to run the `mariadb-secure-installation` script. This is **very important!** The database will be insecure if not run. 
 
 #### Configuring Database
 
