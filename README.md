@@ -21,6 +21,7 @@
   - [Starting Backend](#starting-backend)
   - [Running Tests](#running-tests)
   - [Database Migrations](#database-migrations)
+  - [Adding the initial admin](#adding-the-initial-admin)
 
 ## User manual
 
@@ -284,3 +285,13 @@ alembic revision --autogenerate -m "Your message here"
 Keep in mind that auto-generated migrations may need manual editing in some edge cases. Always check if you can still upgrade to head, and if the tests still run ([Running Tests](#running-tests)). One of our tests tries to go through every migration in history to the most recent one and back down, in order to verify that all migrations work in the testing environment as well.
 
 More info on upgrading and downgrading (such as relative upgrades) can be found in [`Alembic's documentation`](https://alembic.sqlalchemy.org/en/latest/tutorial.html#relative-migration-identifiers)
+
+#### Adding the initial admin
+
+When starting from an empty database, there are no admins yet to create (or accept) pending requests. You can add an admin manually using the [`create_admin.py`](/backend/create_admin.py) script.
+
+```py
+python3 create_admin.py --name name_here --email email@address.here
+```
+
+The script will then show a prompt asking for the admin's password, and another one asking for confirmation. The keys you press are hidden, so the password is not visible in your terminal.
