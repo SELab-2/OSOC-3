@@ -346,7 +346,7 @@ ExecStart=bash -c ". ~/venv-osoc/bin/activate && uvicorn --root-path /api src.ap
 WantedBy=default.target
 ```
 
-Enable lingering to make sure the user service is started even tho the user is not logged in.
+Enable lingering to make sure the user service is started even though the user is not logged in.
 
 ```shell
 [admin] $ sudo loginctl enable-linger backend
