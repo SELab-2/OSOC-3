@@ -208,7 +208,7 @@ See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to gener
 
 #### Installing Python
 
-The backend requires a version of node >= 16. Because apt repositories can be quite outdated and other services on the server might require another version of node we use [asdf](https://asdf-vm.com) to manage to node version for our user. Installations are per user. So we also have to install asdf for the backend user.
+The backend requires a Python version of 3.10.2. Because apt repositories can be quite outdated and other services on the server might require another version of Python we use [asdf](https://asdf-vm.com) to manage the Python version for our user. Installations are per user, so we also have to install asdf for the backend user.
 
 Instructions on how to install asdf for `ubuntu 20.4` can be found in their [documentation](https://asdf-vm.com/guide/getting-started.html#_1-install-dependencies).
 
