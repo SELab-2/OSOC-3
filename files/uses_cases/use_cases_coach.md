@@ -69,3 +69,14 @@ A quick look to see all students who are assigned to 2 or more projects.
 | Actors| Coach |
 | Description of steps | <ol><li>Go to the project overview</li><li>Click a "see all conflicts button"</li></ol> |
 | Alternative flow | No conflicts: <ul><li>A messaged is show "There are no conflicts at this moment"</li></ul> |
+
+## Returning coach
+
+A returning coach that already has an account from a previous edition, don't has to make a new one.
+
+| See all conflicts ||
+| --- | --- |
+| Preconditions |<ul><li>The user has recieved a new register mail.</li><li>The user already has an account</li></ul>|
+| Postconditions | The user made a new coach request|
+| Actors| Coach |
+| Description of steps | <ol><li>Click on a button "I already have an account"</li><li>Log in with there prefered login method</li></ol>|

@@ -29,3 +29,4 @@
 * [Delete edition](uses_cases/use_cases_admin.md#delete-edition)
 * [Invite new coach](uses_cases/use_cases_admin.md#invite-new-coach)
 * [Confirm project](uses_cases/use_cases_admin.md#confirm-project)
+* [Returning coach](uses_cases/use_cases_coach.md#returning-coach)
