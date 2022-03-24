@@ -235,7 +235,7 @@ Then verify the correct installation.
 Python 3.10.2
 ```
 
-Once node is functioning properly you can update pip using:
+Once Python is functioning properly you can update pip using:
 
 ```shell
 [backend] $ pip3 install -U pip
