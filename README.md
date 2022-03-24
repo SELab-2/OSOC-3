@@ -290,7 +290,7 @@ More info on upgrading and downgrading (such as relative upgrades) can be found 
 
 When starting from an empty database, there are no admins yet to create (or accept) pending requests. You can add an admin manually using the [`create_admin.py`](/backend/create_admin.py) script.
 
-```py
+```sh
 python3 create_admin.py --name name_here --email email@address.here
 ```
 
