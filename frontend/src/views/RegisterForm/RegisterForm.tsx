@@ -42,20 +42,25 @@ function RegisterForm() {
 
     const navigate = useNavigate();
 
-    const params  = useParams();
-    const uuid = params.uuid
-    
+    const params = useParams();
+    const uuid = params.uuid;
 
-    return (
+    const [validUuid, setUuid] = useState(false)
+
+    axiosInstance.get("/editions/" + 1 + "/invites/" + uuid).then((response) => {
+        if (response.data.uuid === uuid) {setUuid(true)}
+    });
+    
+    if (validUuid) {return (
         <div>
             <div className="register-form-content-container my-5">
                 <OSOCLetters />
-                
+
                 <h1 className={"mb-3"}>Create an account</h1>
 
                 <div className={"mb-3"} style={{ color: "grey" }}>
-                    Sign up with your social media account or email address. 
-                    Your unique link is not useable again ({uuid})
+                    Sign up with your social media account or email address. Your unique link is not
+                    useable again ({uuid})
                 </div>
                 <div className="socials-container">
                     <div className="socials-register">
@@ -112,7 +117,8 @@ function RegisterForm() {
                 </div>
             </div>
         </div>
-    );
+    );}
+    else return <div>Not a valid register url</div>
 }
 
 export default RegisterForm;
