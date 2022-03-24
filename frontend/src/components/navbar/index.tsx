@@ -2,6 +2,11 @@ import React from "react";
 import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
 
 function NavBar({token}: any) {
+    let hidden = "nav-hidden"
+    if(token){
+        hidden = "nav-links"
+    }
+
     return (
         <>
             <Nav>
@@ -16,14 +21,12 @@ function NavBar({token}: any) {
                 <Bars />
                 
                 <NavMenu>
-                {() => {if(token === ""){
-                    <div className="nav-links">
+                    <div className={hidden}>
                         <NavLink to="/students">Students</NavLink>
                         <NavLink to="/users">Users</NavLink>
                         <NavLink to="/projects">Projects</NavLink>
                         <NavLink to="/">Log out</NavLink>
                     </div>
-                }}}
                 </NavMenu>
             </Nav>
         </>
