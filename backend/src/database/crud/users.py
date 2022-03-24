@@ -73,6 +73,22 @@ def delete_user_as_coach(db: Session, edition_id: int, user_id: int):
     user.editions.remove(edition)
 
 
+def get_all_requests(db: Session):
+    """
+    Get all userrequests
+    """
+
+    return db.query(CoachRequest).join(User).all()
+
+
+def get_all_requests_from_edition(db: Session, edition_id: int):
+    """
+    Get all userrequests from a given edition
+    """
+
+    return db.query(CoachRequest).where(CoachRequest.edition_id == edition_id).join(User).all()
+
+
 def accept_request(db: Session, request_id: int):
     """
     Remove request and add user as coach

@@ -3,7 +3,7 @@ from requests import Session
 
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
-from src.app.schemas.users import UsersListResponse, AdminPatch
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse
 from src.database.database import get_session
 
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
@@ -43,6 +43,15 @@ async def remove_from_edition(user_id: int, edition_id: int, db: Session = Depen
     """
 
     logic.remove_coach(db, user_id, edition_id)
+
+
+@users_router.get("/requests", response_model=UserRequestsResponse)
+async def get_requests(edition: int | None = Query(None), db: Session = Depends(get_session)):
+    """
+    Get pending userrequests
+    """
+
+    return logic.get_request_list(db, edition)
 
 
 @users_router.post("/requests/{request_id}/accept", status_code=204)

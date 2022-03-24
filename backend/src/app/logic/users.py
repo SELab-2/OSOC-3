@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.users import UsersListResponse, AdminPatch
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse
 import src.database.crud.users as users_crud
 
 
@@ -46,6 +46,20 @@ def remove_coach(db: Session, user_id: int, edition_id: int):
     """
 
     users_crud.remove_coach(db, user_id, edition_id)
+
+
+def get_request_list(db: Session, edition_id: int | None):
+    """
+    Query the database for a list of all user requests
+    and wrap the result in a pydantic model
+    """
+
+    if edition_id is None:
+        requests = users_crud.get_all_requests(db)
+    else:
+        requests = users_crud.get_all_requests_from_edition(db, edition_id)
+
+    return UserRequestsResponse(requests=requests)
 
 
 def accept_request(db: Session, request_id: int):
