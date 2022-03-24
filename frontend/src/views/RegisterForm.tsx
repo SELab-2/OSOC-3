@@ -45,7 +45,7 @@ function RegisterForm() {
     return (
         <div>
             <div className="register-form-content-container my-5">
-                <OSOCLetters/>
+                <OSOCLetters />
                 <h1 className={"mb-3"}>Create an account</h1>
                 <div className={"mb-3"} style={{ color: "grey" }}>
                     Sign up with your social media account or email address

@@ -1,13 +1,15 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 function RegisterButton() {
     const navigate = useNavigate();
-    return(
+    return (
         <div>
-            <button onClick={() => navigate("/students")} className="register-button">Register</button>
+            <button onClick={() => navigate("/students")} className="register-button">
+                Register
+            </button>
         </div>
-    )
+    );
 }
 
-export default RegisterButton
+export default RegisterButton;

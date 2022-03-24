@@ -6,7 +6,7 @@ import "./LoginPage.css";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
-function LoginPage( {setToken}: any ) {
+function LoginPage({ setToken }: any) {
     function logIn() {
         const payload = new FormData();
         payload.append("username", email);
@@ -15,7 +15,7 @@ function LoginPage( {setToken}: any ) {
         axiosInstance
             .post("/login/token", payload)
             .then((response: any) => {
-                setToken(response.data.accessToken)
+                setToken(response.data.accessToken);
             })
             .then(() => navigate("/students"))
             .catch(function (error: any) {
@@ -29,9 +29,7 @@ function LoginPage( {setToken}: any ) {
 
     return (
         <div>
-
             <div className="login-page-content-container my-5">
-
                 <div className="welcome-text mx-auto">
                     <h1 className={"mb-5"}>Hi!</h1>
                     <h3>
@@ -41,7 +39,7 @@ function LoginPage( {setToken}: any ) {
                     </h3>
                 </div>
                 <div className="login mx-auto">
-                <OSOCLetters />
+                    <OSOCLetters />
 
                     <div className="socials-container">
                         <div className="socials">

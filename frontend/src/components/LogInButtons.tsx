@@ -1,10 +1,10 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import "../css-files/LogInButtons.css";
 
 function LogInButtons() {
     const navigate = useNavigate();
-    return(
+    return (
         <div className="login-buttons">
             <div>
                 <div className="email-login">
@@ -24,7 +24,7 @@ function LogInButtons() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default LogInButtons
+export default LogInButtons;

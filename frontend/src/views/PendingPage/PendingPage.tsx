@@ -1,8 +1,8 @@
 import React from "react";
-import "./PendingPage.css"
+import "./PendingPage.css";
 
 function PendingPage() {
-    return(
+    return (
         <div>
             <div className="pending-page-content-container">
                 <div className="pending-page-content">
@@ -20,7 +20,7 @@ function PendingPage() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default PendingPage
+export default PendingPage;

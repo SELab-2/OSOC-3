@@ -1,10 +1,10 @@
 import React from "react";
 import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
 
-function NavBar({token}: any) {
-    let hidden = "nav-hidden"
-    if(token){
-        hidden = "nav-links"
+function NavBar({ token }: any) {
+    let hidden = "nav-hidden";
+    if (token) {
+        hidden = "nav-links";
     }
 
     return (
@@ -19,7 +19,7 @@ function NavBar({token}: any) {
                     <h1> Selections</h1>
                 </div>
                 <Bars />
-                
+
                 <NavMenu>
                     <div className={hidden}>
                         <NavLink to="/students">Students</NavLink>
