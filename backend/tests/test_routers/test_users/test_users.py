@@ -194,7 +194,7 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
 
     database_session.commit()
 
-    response = test_client.get(f"/users/requests")
+    response = auth_client.get(f"/users/requests")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [request["user"]["userId"] for request in response.json()['requests']]
     assert len(user_ids) == 2
@@ -228,13 +228,13 @@ def test_get_all_requests_from_edition(database_session: Session, auth_client: A
 
     database_session.commit()
 
-    response = test_client.get(f"/users/requests?edition={edition1.edition_id}")
+    response = auth_client.get(f"/users/requests?edition={edition1.edition_id}")
     assert response.status_code == status.HTTP_200_OK
     requests = response.json()['requests']
     assert len(requests) == 1
     assert user1.user_id == requests[0]["user"]["userId"]
 
-    response = test_client.get(f"/users/requests?edition={edition2.edition_id}")
+    response = auth_client.get(f"/users/requests?edition={edition2.edition_id}")
     assert response.status_code == status.HTTP_200_OK
     requests = response.json()['requests']
     assert len(requests) == 1
