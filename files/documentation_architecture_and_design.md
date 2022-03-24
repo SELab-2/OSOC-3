@@ -3,7 +3,7 @@
 This file gives a short description of the used architecture and the design of the project.
 
 ## Architecture
-A visual representation of our architecture is described in the [framework graph](files/framework_graph/frameworkgraph.png). More information about the modules can be found [here](files/module_overview_backend.md) and [here](files/module_overview_frontend.md).
+A visual representation of our architecture is described in the [framework graph](files/framework_graph/frameworkgraph.png). More information about the modules can be found in the module overviews for [backend](files/module_overview_backend.md) and [frontend](files/module_overview_frontend.md).
 
 ### Presentation Layer
 
