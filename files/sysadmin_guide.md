@@ -165,7 +165,7 @@ GRANT ALL PRIVILEGES ON osoc.* FOR 'backend'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-Afther executing these you shoud be able to login as the backen user.
+After executing these you shoud be able to login as the backend user.
 
 ```shell
 [admin] $ mariadb -u backend -p
