@@ -42,7 +42,7 @@ See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to gener
 
 #### Installing Node and Yarn
 
-The backend requires a version of node >= 16. Because apt repositories can be quite outdated and other services on the server might require another version of node we use [asdf](https://asdf-vm.com) to manage to node version for our user.
+The backend requires a version of node >= 16. Because apt repositories can be quite outdated and other services on the server might require another version of node we use [asdf](https://asdf-vm.com) to manage the node version for our user.
 
 Instructions on how to install asdf for `ubuntu 20.4` can be found in their [documentation](https://asdf-vm.com/guide/getting-started.html#_1-install-dependencies).
 
