@@ -106,7 +106,7 @@ clone the repository using:
 
 #### Building the frontend
 
-Navigate to the frontent folder in the cloned repository and install the dependencies.
+Navigate to the frontend folder in the cloned repository and install the dependencies.
 
 ```shell
 [frontend] $ cd osoc/frontend
@@ -137,7 +137,7 @@ For this guide we chose the first option.
 
 #### Installing Mariadb
 
-The maraidb version available in the apt repositories (Currently 10.3) is too outdated for our application. You should follow the installation as described [here](https://mariadb.com/docs/operations/upgrades/upgrade-community-server-cs10-5-ubuntu20/). A plain command overview of how to install maraidb 10.5.
+The mariadb version available in the apt repositories (Currently 10.3) is too outdated for our application. You should follow the installation as described [here](https://mariadb.com/docs/operations/upgrades/upgrade-community-server-cs10-5-ubuntu20/). A plain command overview of how to install mariadb 10.5.
 
 ```shell
 [admin] $ sudo apt install wget
@@ -235,7 +235,7 @@ Then verify the correct installation.
 Python 3.10.2
 ```
 
-Once node is functioning propperly you can update pip using:
+Once node is functioning properly you can update pip using:
 
 ```shell
 [backend] $ pip3 install -U pip
@@ -280,7 +280,7 @@ clone the repository using:
 
 #### Installing dependencies
 
-We will be installing dependencies in a virtual envirionment. You can create and activate one using the following command:
+We will be installing dependencies in a virtual environment. You can create and activate one using the following command:
 
 ```shell
 [backend] $ python3 -m venv venv-osoc
@@ -289,7 +289,7 @@ We will be installing dependencies in a virtual envirionment. You can create and
 
 To manage dependecies we currently use 2 separate requirements files. Only `requirements.txt` has to be installed. The other one is for development setups. 
 
-Make sure the mariadb librairies are installed.
+Make sure the mariadb libraries are installed.
 
 ```shell
 [admin] $ sudo apt install libmariadb3 libmariadb-dev
@@ -302,7 +302,7 @@ Make sure the mariadb librairies are installed.
 
 #### Configuring the application
 
-All configuration of the application happend trough the `.env` file. Create one according to your needs.
+All configuration of the application happened through the `.env` file. Create one according to your needs.
 
 ```bash
 DB_NAME=osoc
@@ -397,13 +397,13 @@ server {
 }
 ```
 
-It is highly recomended to also install and configure certbot for ssl on your domain. [Guide](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal).
+It is highly recommended to also install and configure certbot for ssl on your domain. [Guide](https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal).
 
 ## Notes
 
 ### Generating SSH Keys
 
-If u need to generate a ssh key in any of the stages we recomend u use a ed25519 key.
+If u need to generate a ssh key in any of the stages we recommend u use a ed25519 key.
 
 They can be generated using the following command.
 
