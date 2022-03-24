@@ -127,7 +127,7 @@ Then build the frontend.
 
 The static build of the site is now located at `/home/frontend/osoc/frontend/build`.
 
-For more information and options about the frontend please refer to the frontend [documentation]().
+For more information and options about the frontend please refer to the frontend [documentation](../frontend/README.md).
 
 ### Mariadb
 
