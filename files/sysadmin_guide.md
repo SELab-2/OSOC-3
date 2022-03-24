@@ -69,7 +69,7 @@ Once node is functioning propperly you can install yarn using:
 
 #### Cloning the repository
 
-If the repository is still private. Cloning using SSH should be used. If it is public HTTPS becomes the simpler option.
+If the repository is still private, cloning using SSH should be used. If it is public HTTPS becomes the simpler option.
 
 ##### Via SSH
 
