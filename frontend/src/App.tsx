@@ -19,7 +19,7 @@ function App() {
     return (
         <Router>
             <Container>
-                <NavBar token={token} />
+                <NavBar token={token} setToken={setToken} />
 
                 <ContentWrapper>
                     <Routes>
