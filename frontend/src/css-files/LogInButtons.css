@@ -1,0 +1,48 @@
+.login-buttons {
+    width: available;
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.login-button {
+    display: block;
+    position: relative;
+    width: 280px;
+    height: 40px;
+    font-size: 25px;
+    padding: 0.2rem;
+    background: white;
+    cursor: pointer;
+    color: var(--react_dark_grey);
+    border-radius: 10px;
+    border-color: black;
+    border-width: 2px;
+}
+
+.login-button-content {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.email-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.google-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.github-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
