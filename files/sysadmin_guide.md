@@ -203,7 +203,7 @@ To be able to login via ssh a sysadmin should add your ssh key to the `authorize
 [backend] $ echo "<ssh-key>" >> /home/backend/.ssh/authorized_keys
 ```
 
-See [Generating SSH Key]() for instructions on how to generate a ssh key. 
+See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to generate an ssh key. 
 
 
 #### Installing Python
