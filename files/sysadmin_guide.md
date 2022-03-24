@@ -160,7 +160,7 @@ CREATE DATABASE osoc;
 
 --Create the backend user and grant access
 CREATE USER 'backend'@'localhost' IDENTIFIED BY '<password>';
-GRANT ALL PRIVILES ON osoc.* FOR 'backend'@'localhost';
+GRANT ALL PRIVILEGES ON osoc.* FOR 'backend'@'localhost';
 
 FLUSH PRIVILEGES;
 ```
