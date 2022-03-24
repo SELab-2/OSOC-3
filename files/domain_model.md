@@ -14,4 +14,7 @@ graph TD;
     H--Is-->E
     H[Project-Role]--Needs-->F;
     F--Has-->I[partner]
+    F--Has-->J[Edition]
+    H--Has-->J
+    E--Has-->J
 ```
