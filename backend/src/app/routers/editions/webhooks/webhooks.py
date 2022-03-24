@@ -5,7 +5,7 @@ from src.database.database import get_session
 from src.database.crud.webhooks import get_webhook, create_webhook
 from src.app.schemas.webhooks import WebhookEvent, WebhookUrlResponse
 from src.database.models import Edition
-from src.app.utils.dependencies import get_edition
+from src.app.utils.dependencies import get_edition, require_admin
 from src.app.routers.tags import Tags
 from src.app.logic.webhooks import process_webhook
 from starlette import status
@@ -18,10 +18,10 @@ def valid_uuid(uuid: str, database: Session = Depends(get_session)):
     get_webhook(database, uuid)
 
 
-# TODO: check admin permission
-@webhooks_router.post("/", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED)
+@webhooks_router.post("/", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
+                      dependencies=[Depends(require_admin)])
 def new(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)):
-    """Create e new webhook for an edition"""
+    """Create a new webhook for an edition"""
     return create_webhook(database, edition)
 
 
