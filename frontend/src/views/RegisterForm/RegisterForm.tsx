@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../utils/api/api";
-import OSOCLetters from "../../components/OSOCLetters/OSOCLetters";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
@@ -54,8 +53,6 @@ function RegisterForm() {
     if (validUuid) {return (
         <div>
             <div className="register-form-content-container my-5">
-                <OSOCLetters />
-
                 <h1 className={"mb-3"}>Create an account</h1>
 
                 <div className={"mb-3"} style={{ color: "grey" }}>

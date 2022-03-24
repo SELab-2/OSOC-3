@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../utils/api/api";
-import OSOCLetters from "../../components/OSOCLetters/OSOCLetters";
 import "./LoginPage.css";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
@@ -39,8 +38,6 @@ function LoginPage({ setToken }: any) {
                     </h3>
                 </div>
                 <div className="login mx-auto">
-                    <OSOCLetters />
-
                     <div className="socials-container">
                         <div className="socials">
                             <div className="google-login-container">
