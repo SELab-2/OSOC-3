@@ -19,7 +19,7 @@ function RegisterForm() {
         }
 
         // TODO this has to change to get the edition the invite belongs to
-        const edition = "2022";
+        const edition = "1";
         const payload = new FormData();
         payload.append("username", email);
         payload.append("name", name);
