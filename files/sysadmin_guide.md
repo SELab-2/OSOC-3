@@ -212,7 +212,7 @@ The backend requires a Python version of 3.10.2. Because apt repositories can be
 
 Instructions on how to install asdf for `ubuntu 20.4` can be found in their [documentation](https://asdf-vm.com/guide/getting-started.html#_1-install-dependencies).
 
-Once installed we can install the node plugin and install the required node version.
+Once installed we can install the Python plugin and install the required Python version.
 
 First you need to install the required dependecies to compile python.
 
