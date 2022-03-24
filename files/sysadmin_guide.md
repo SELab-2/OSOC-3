@@ -179,7 +179,7 @@ Afther executing these you shoud be able to login as the backen user.
 
 #### Creating the user
 
-First create the frontend user from an admin account.
+First create the backend user from an admin account.
 
 ```shell
 [admin] $ sudo useradd -m backend
