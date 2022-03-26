@@ -1,7 +1,7 @@
 import React from "react";
 
-function Users() {
+function UsersPage() {
     return <div>This is the users page</div>;
 }
 
-export default Users;
+export default UsersPage;
