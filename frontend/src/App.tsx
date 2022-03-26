@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css-files/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "./components/navbar";
+import NavBar from "./components/NavBar";
 import LoginPage from "./views/LoginPage/LoginPage";
 import Students from "./views/Students";
 import Users from "./views/Users";

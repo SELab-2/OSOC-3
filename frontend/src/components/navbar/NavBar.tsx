@@ -1,5 +1,6 @@
 import React from "react";
 import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
+import "./navbar.css";
 
 function NavBar({ token }: any, {setToken}: any) {
     let hidden = "nav-hidden";
