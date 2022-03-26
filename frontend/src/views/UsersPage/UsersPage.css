@@ -1,0 +1,57 @@
+.invite-user-container {
+    overflow: hidden;
+}
+
+.invite-user-container input[type="email"] {
+    height: 30px;
+    width: 200px;
+    margin-top: 10px;
+    margin-left: 10px;
+    text-align: center;
+    font-size: 15px;
+    border-radius: 5px;
+    border-width: 0;
+    float: left
+}
+
+.invite-user-container button {
+    width: 90px;
+    height: 30px;
+    cursor: pointer;
+    background: var(--osoc_green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-left: 7px;
+    margin-top: 10px;
+}
+
+.email-field-error {
+    border: 2px solid red !important;
+}
+
+.loader {
+    border: 8px solid var(--osoc_blue);
+    border-top: 8px solid var(--osoc_green);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    margin-left: 37px;
+    margin-top: 10px;
+    float: left;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.link {
+    margin-left: 10px;
+}
+
+.error {
+    margin-left: 10px;
+    color: var(--osoc_red);
+}
