@@ -1,8 +1,8 @@
 import React from "react";
-import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
+import { Nav, NavLink, Bars, NavMenu } from "./NavBarElements";
 import "./navbar.css";
 
-function NavBar({ token }: any, {setToken}: any) {
+function NavBar({ token }: any, { setToken }: any) {
     let hidden = "nav-hidden";
     if (token) {
         hidden = "nav-links";
@@ -26,7 +26,14 @@ function NavBar({ token }: any, {setToken}: any) {
                         <NavLink to="/students">Students</NavLink>
                         <NavLink to="/users">Users</NavLink>
                         <NavLink to="/projects">Projects</NavLink>
-                        <NavLink to="/" onClick={() => {setToken("")}}>Log out</NavLink>
+                        <NavLink
+                            to="/"
+                            onClick={() => {
+                                setToken("");
+                            }}
+                        >
+                            Log out
+                        </NavLink>
                     </div>
                 </NavMenu>
             </Nav>
