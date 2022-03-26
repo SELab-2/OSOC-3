@@ -1,6 +1,7 @@
 import React from "react";
+import "./ProjectsPage.css";
 
-function Home() {
+function ProjectPage() {
     return (
         <div
             style={{
@@ -10,9 +11,9 @@ function Home() {
                 height: "90vh",
             }}
         >
-            <h1>Home</h1>
+            This is the projects page
         </div>
     );
 }
 
-export default Home;
+export default ProjectPage;
