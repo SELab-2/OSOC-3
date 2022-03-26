@@ -215,6 +215,8 @@ More info & tutorials about `react-bootstrap`, including a list of all available
 
 If you create a `.css`-class that you only apply to a single element (or a couple of elements in the same isolated component), it's better to create a `styled-component`. This keeps the `.tsx`-files clean, as there are no unnecessary `className`s on every element. It also makes the code a bit easier to read, as every component now has a name instead of being a `div`. The same goes for inline `style`-tags. **Don't do this**.
 
+As you'll hopefully see in the example below, the resulting code is a lot calmer and less chaotic.
+
 Only create `.css`-files if you really have to.
 
 The name of this file should be `styles.ts`, and be present next to the `.tsx`-file it's for. If you would somehow end up with multiple `styles` in the same directory, prefix them with the name of the component (`Component.styles.ts`).
@@ -238,7 +240,7 @@ import "./Component.css"
 export default function Component() {
     return (
         <div className={"page-content"} style={{ font-weight: "bold" }}>
-        	// ... More divs with a lot more classNames here
+        	{ /* ... More divs with a lot more classNames here */ }
     	</div>
     );
 }
@@ -266,10 +268,9 @@ import { PageContent } from "./styles";
 
 export default function Component() {
     return (
+        {/* Notice how there are no classNames or inline styles, the code is a lot less hectic */}
         <PageContent>
-            {" "}
-            {/* <- Notice how there are no classNames or inline styles */}
-            // ... more styled-components here
+            { /* more styled-components here */ }
         </PageContent>
     );
 }
