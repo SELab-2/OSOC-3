@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/navbar";
 import LoginPage from "./views/LoginPage";
 import Students from "./views/StudentsPage";
-import Users from "./views/UsersPage/UsersPage";
+import Users from "./views/UsersPage/Users";
 import ProjectsPage from "./views/ProjectsPage";
 import RegisterForm from "./views/RegisterPage";
 import ErrorPage from "./views/ErrorPage/ErrorPage";

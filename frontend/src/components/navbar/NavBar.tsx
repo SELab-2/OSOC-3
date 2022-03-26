@@ -1,5 +1,5 @@
 import React from "react";
-import { Nav, NavLink, Bars, NavMenu } from "./NavBarElementss";
+import { Nav, NavLink, Bars, NavMenu } from "./NavBarElements";
 import "./navbar.css";
 
 function NavBar({ token }: any, { setToken }: any) {
