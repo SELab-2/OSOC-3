@@ -8,7 +8,7 @@ A lot of these guidelines revolve around directory structure and cleaner compone
 
 There is a pre-defined `axiosInstance` for you to use, which has things like the base url pre-configured.
 
-*Note that all logic should go to separate files, so the import path here suggests the file is in `/frontend/src/utils/api/`.*
+_Note that all logic should go to separate files, so the import path here suggests the file is in `/frontend/src/utils/api/`._
 
 Don't do
 
@@ -45,7 +45,7 @@ In order to typehint the response of an API call, you can create an `interface`.
 export interface Student {
     id: Number;
     name: string;
-   	age: Number;
+    age: Number;
 }
 ```
 
@@ -59,7 +59,7 @@ interface GetStudentsResponse {
 
 async function getStudents(): GetStudentsResponse {
     const response = await axiosInstance.get("/students");
-    
+
     // The "as [interface]"-keyword will tell TypeScript that the response has the structure of [interface]
     return response as GetStudentsResponse;
 }
@@ -77,14 +77,14 @@ Don't do
 
 ```ts
 interface StudentResponse {
-    id: Number;  // <- Unused field
+    id: Number; // <- Unused field
     name: string;
-    age: Number;  // <- Unused field
+    age: Number; // <- Unused field
     // ...
 }
 
 async function getStudentName(id: Number): string {
-	const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
+    const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
     return response.name;
 }
 ```
@@ -93,11 +93,11 @@ but do
 
 ```ts
 interface StudentResponse {
-    name: string;  // <- Only field we use
+    name: string; // <- Only field we use
 }
 
 async function getStudentName(id: Number): string {
-	const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
+    const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
     return response.name;
 }
 ```
@@ -112,12 +112,10 @@ or, if an interface already exists, do
 import { Student } from "../../data/interfaces/students";
 
 async function getStudentName(id: Number): string {
-	const student = (await axiosInstance.get(`/students/${id}`)) as Student;
+    const student = (await axiosInstance.get(`/students/${id}`)) as Student;
     return response.name;
 }
 ```
-
-
 
 ## Moving pages to separate directories
 
@@ -170,13 +168,11 @@ Don't do
 
 ```tsx
 export default function Component() {
-	return (
-		<div className={ "container" } >
-    		<div className={ "button" } >
-        		{ /* ... */ }
-    	    </div>
-	    </div>
-	);
+    return (
+        <div className={"container"}>
+            <div className={"button"}>{/* ... */}</div>
+        </div>
+    );
 }
 ```
 
@@ -189,9 +185,7 @@ import Container from "react-bootstrap/Container";
 export default function Component() {
     return (
         <Container>
-        	<Button>
-            	{ /* ... */ }
-            </Button>
+            <Button>{/* ... */}</Button>
         </Container>
     );
 }
@@ -260,9 +254,9 @@ import styled from "styled-components";
 // I'm just using a <div> in this example here.
 // styled.h3`` also works just fine.
 export const PageContent = styled.div`
-	color: red;
-	background-color: blue;
-	font-weight: bold;
+    color: red;
+    background-color: blue;
+    font-weight: bold;
 `;
 ```
 
@@ -272,8 +266,10 @@ import { PageContent } from "./styles";
 
 export default function Component() {
     return (
-        <PageContent>  { /* <- Notice how there are no classNames or inline styles */ }
-        	// ... more styled-components here
+        <PageContent>
+            {" "}
+            {/* <- Notice how there are no classNames or inline styles */}
+            // ... more styled-components here
         </PageContent>
     );
 }
@@ -300,7 +296,7 @@ import Container from "react-bootstrap/Container";
 import styled from "styled-components";
 
 export const BoldContainer = styled(Container)`
-	font-weight: bold;
+    font-weight: bold;
 `;
 ```
 
@@ -323,13 +319,9 @@ views
 // SomePage.tsx
 export default function SomePage() {
     return (
-    	<div>
-        	<div>
-            	// Page header, lots of code here	
-            </div>
-            <div>
-                // Page footer, also a lot of code here
-            </div>
+        <div>
+            <div>// Page header, lots of code here</div>
+            <div>// Page footer, also a lot of code here</div>
         </div>
     );
 }
@@ -358,8 +350,8 @@ views
 // SomePage.tsx
 export default function SomePage() {
     return (
-    	<div>
-        	<Header />
+        <div>
+            <Header />
             <Footer />
         </div>
     );
@@ -369,22 +361,14 @@ export default function SomePage() {
 ```tsx
 // Header.tsx
 export default function Header() {
-    return (
-    	<div>
-        	// Either more small components here, or an acceptable amount of code
-        </div>
-    );
+    return <div>// Either more small components here, or an acceptable amount of code</div>;
 }
 ```
 
 ```tsx
 // Footer.tsx
 export default function Footer() {
-    return (
-    	<div>
-        	// Either more small components here, or an acceptable amount of code
-        </div>
-    );
+    return <div>// Either more small components here, or an acceptable amount of code</div>;
 }
 ```
 
@@ -460,4 +444,3 @@ export async function getStudents() {
 // src/utils/api/index.ts
 export { getStudents } from "./students";
 ```
-
