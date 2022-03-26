@@ -12,13 +12,7 @@
     height: 100%;
 }
 
-.nav-links {
-    display: flex;
-}
 
-.nav-hidden {
-    visibility: hidden;
-}
 
 * {
     box-sizing: border-box;
