@@ -1,31 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../utils/api/api";
 import OSOCLetters from "../../components/OSOCLetters";
 import "./LoginPage.css";
+import { logIn } from "../../utils/api/login";
+import { useNavigate } from "react-router-dom";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
 function LoginPage({ setToken }: any) {
-    function logIn() {
-        const payload = new FormData();
-        payload.append("username", email);
-        payload.append("password", password);
-
-        axiosInstance
-            .post("/login/token", payload)
-            .then((response: any) => {
-                setToken(response.data.accessToken);
-            })
-            .then(() => navigate("/students"))
-            .catch(function (error: any) {
-                console.log(error);
-            });
-    }
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const navigate = useNavigate();
+
+    function callLogIn() {
+        logIn({ setToken }, email, password).then(response => {
+            if (response) navigate("/students");
+            else alert("Login failed");
+        });
+    }
 
     return (
         <div>
@@ -40,7 +31,6 @@ function LoginPage({ setToken }: any) {
                 </div>
                 <div className="login mx-auto">
                     <OSOCLetters />
-
                     <div className="socials-container">
                         <div className="socials">
                             <div className="google-login-container">
@@ -50,7 +40,6 @@ function LoginPage({ setToken }: any) {
                         </div>
                     </div>
                     <div className="border-right" />
-
                     <div className="register-form-input-fields">
                         <div>
                             <input
@@ -74,7 +63,7 @@ function LoginPage({ setToken }: any) {
                             Don't have an account? Ask an admin for an invite link
                         </div>
                         <div>
-                            <button className="login-button" onClick={logIn}>
+                            <button className="login-button" onClick={callLogIn}>
                                 Log In
                             </button>
                         </div>

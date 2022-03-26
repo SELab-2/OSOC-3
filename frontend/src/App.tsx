@@ -4,8 +4,8 @@ import "./css-files/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import LoginPage from "./views/LoginPage";
-import Students from "./views/StudentsPage";
-import Users from "./views/UsersPage";
+import StudentsPage from "./views/StudentsPage";
+import UsersPage from "./views/UsersPage";
 import ProjectsPage from "./views/ProjectsPage";
 import RegisterForm from "./views/RegisterPage";
 import ErrorPage from "./views/ErrorPage";
@@ -25,8 +25,8 @@ function App() {
                     <Routes>
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
                         <Route path="/register" element={<RegisterForm />} />
-                        <Route path="/students" element={<Students />} />
-                        <Route path="/users" element={<Users />} />
+                        <Route path="/students" element={<StudentsPage />} />
+                        <Route path="/users" element={<UsersPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/pending" element={<PendingPage />} />
                         <Route path="*" element={<ErrorPage />} />
