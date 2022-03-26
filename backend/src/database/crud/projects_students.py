@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.database.models import Project, ProjectRole
+from src.database.models import Project, ProjectRole, Skill, User, Student
 
 
 def db_remove_student_project(db: Session, project: Project, student_id: int):
@@ -13,6 +13,12 @@ def db_remove_student_project(db: Session, project: Project, student_id: int):
 
 def db_add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Add a student to a project in the database"""
+
+    # check if all parameters exist in the database
+    db.query(Skill).where(Skill.skill_id == skill_id).one()
+    db.query(User).where(User.user_id == drafter_id).one()
+    db.query(Student).where(Student.student_id == student_id).one()
+
     proj_role = ProjectRole(student_id=student_id, project_id=project.project_id, skill_id=skill_id,
                             drafter_id=drafter_id)
     db.add(proj_role)
@@ -21,6 +27,12 @@ def db_add_student_project(db: Session, project: Project, student_id: int, skill
 
 def db_change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Change the role of a student in a project and update the drafter"""
+
+    # check if all parameters exist in the database
+    db.query(Skill).where(Skill.skill_id == skill_id).one()
+    db.query(User).where(User.user_id == drafter_id).one()
+    db.query(Student).where(Student.student_id == student_id).one()
+
     proj_role = db.query(ProjectRole).where(
         ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
     proj_role.drafter_id = drafter_id
