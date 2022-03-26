@@ -350,7 +350,8 @@ components
 			- styles.ts
 views
 	- SomePage
-		- 
+		- SomePage.tsx
+		- SomePage.css
 ```
 
 ```tsx
