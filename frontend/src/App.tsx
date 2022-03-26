@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css-files/App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/navbar";
 import LoginPage from "./views/LoginPage";
 import StudentsPage from "./views/StudentsPage";
 import UsersPage from "./views/UsersPage";
 import ProjectsPage from "./views/ProjectsPage";
-import RegisterForm from "./views/RegisterPage";
+import RegisterPage from "./views/RegisterPage";
 import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
 import Footer from "./components/Footer";
@@ -24,7 +24,7 @@ function App() {
                 <ContentWrapper>
                     <Routes>
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
-                        <Route path="/register" element={<RegisterForm />} />
+                        <Route path="/register/:uuid" element={<RegisterPage />} />
                         <Route path="/students" element={<StudentsPage />} />
                         <Route path="/users" element={<UsersPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />

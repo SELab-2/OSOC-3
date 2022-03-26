@@ -1,31 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../utils/api/api";
-import OSOCLetters from "../../components/OSOCLetters";
-import "./RegisterPage.css";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
-function RegisterForm() {
-    function register() {
+interface RegisterFields {
+    email: string;
+    name: string;
+    uuid: string;
+    pw: string;
+}
+
+function RegisterPage() {
+    function register(uuid: string) {
         // Check if passwords are the same
         if (password !== confirmPassword) {
             alert("Passwords do not match");
             return;
         }
         // Basic email checker
-        if (!/^\w+([\\.-]?\w+-)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
             alert("This is not a valid email");
             return;
         }
 
         // TODO this has to change to get the edition the invite belongs to
-        const edition = "2022";
-        const payload = new FormData();
-        payload.append("username", email);
-        payload.append("name", name);
-        payload.append("password", password);
-        payload.append("confirmPassword", confirmPassword);
+        const edition = "1";
+        const payload: RegisterFields = { email: email, name: name, uuid: uuid, pw: password };
 
         axiosInstance
             .post("/editions/" + edition + "/register/email", payload)
@@ -43,70 +44,84 @@ function RegisterForm() {
 
     const navigate = useNavigate();
 
-    return (
-        <div>
-            <div className="register-form-content-container my-5">
-                <OSOCLetters />
-                <h1 className={"mb-3"}>Create an account</h1>
-                <div className={"mb-3"} style={{ color: "grey" }}>
-                    Sign up with your social media account or email address
-                </div>
-                <div className="socials-container">
-                    <div className="socials-register">
-                        <GoogleLoginButton text="Register with Google" />
-                        <div className={"border-right"} />
-                        <GithubLoginButton text="Register with GitHub" />
-                    </div>
-                </div>
+    const params = useParams();
+    const uuid = params.uuid;
 
-                <h2 className={"m-3"}>or</h2>
+    const [validUuid, setUuid] = useState(false);
 
-                <div className="register-form-input-fields">
-                    <div>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
+    axiosInstance.get("/editions/" + 1 + "/invites/" + uuid).then(response => {
+        if (response.data.uuid === uuid) {
+            setUuid(true);
+        }
+    });
+
+    if (validUuid && uuid) {
+        return (
+            <div>
+                <div className="register-form-content-container my-5">
+                    <h1 className={"mb-3"}>Create an account</h1>
+
+                    <div className={"mb-3"} style={{ color: "grey" }}>
+                        Sign up with your social media account or email address. Your unique link is
+                        not useable again ({uuid})
+                    </div>
+                    <div className="socials-container">
+                        <div className="socials-register">
+                            <GoogleLoginButton text="Register with Google" />
+                            <div className={"border-right"} />
+                            <GithubLoginButton text="Register with GitHub" />
+                        </div>
+                    </div>
+
+                    <h2 className={"m-3"}>or</h2>
+
+                    <div className="register-form-input-fields">
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Name"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                placeholder="Confirm Password"
+                                value={confirmPassword}
+                                onChange={e => setConfirmPassword(e.target.value)}
+                            />
+                        </div>
                     </div>
                     <div>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Name"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                        />
+                        <button onClick={() => register(uuid)} className="register-button">
+                            Register
+                        </button>
                     </div>
-                    <div>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="password"
-                            name="confirm_password"
-                            placeholder="Confirm Password"
-                            value={confirmPassword}
-                            onChange={e => setConfirmPassword(e.target.value)}
-                        />
-                    </div>
-                </div>
-                <div>
-                    <button onClick={register} className="register-button">
-                        Register
-                    </button>
                 </div>
             </div>
-        </div>
-    );
+        );
+    } else return <div>Not a valid register url</div>;
 }
 
-export default RegisterForm;
+export default RegisterPage;
