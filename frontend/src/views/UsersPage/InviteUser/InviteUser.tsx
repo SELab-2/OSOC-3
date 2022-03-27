@@ -33,7 +33,7 @@ function LinkDiv(props: { link: string }) {
     return linkDiv;
 }
 
-export default function InviteUser() {
+export default function InviteUser(props: { edition: string | undefined }) {
     const [email, setEmail] = useState("");
     const [valid, setValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
@@ -50,7 +50,7 @@ export default function InviteUser() {
     const sendInvite = async () => {
         if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
             setLoading(true);
-            const ding = await getInviteLink("edition", email);
+            const ding = await getInviteLink("props.edition", email);
             setLink(ding);
             setLoading(false);
             // TODO: fix email stuff
@@ -62,6 +62,7 @@ export default function InviteUser() {
 
     return (
         <div>
+            <div>{props.edition}</div>
             <InviteContainer>
                 <InviteInput
                     className={valid ? "" : "email-field-error"}
