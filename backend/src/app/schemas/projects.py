@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 from src.database.enums import DecisionEnum
 
 

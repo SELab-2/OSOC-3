@@ -1,5 +1,4 @@
-
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 
 
 class User(CamelCaseModel):
