@@ -24,8 +24,8 @@ function NavBar({ token }: any, { setToken }: any) {
                 <NavMenu>
                     <div className={hidden}>
                         <NavLink to="/students">Students</NavLink>
-                        <NavLink to="/users">Users</NavLink>
                         <NavLink to="/projects">Projects</NavLink>
+                        <NavLink to="/users">Users</NavLink>
                         <NavLink
                             to="/"
                             onClick={() => {

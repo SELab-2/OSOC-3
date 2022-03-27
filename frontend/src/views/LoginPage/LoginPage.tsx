@@ -1,11 +1,15 @@
 import { useState } from "react";
-import "./LoginPage.css";
-import { logIn } from "../../utils/api/login";
 import { useNavigate } from "react-router-dom";
+
+import { logIn } from "../../utils/api/login";
 
 import SocialButtons from "../../components/LoginComponents/SocialButtons";
 import WelcomeText from "../../components/LoginComponents/WelcomeText";
+import Email from "../../components/LoginComponents/InputFields/Email";
+import Password from "../../components/LoginComponents/InputFields/Password";
+
 import { VerticalDivider } from "./styles";
+import "./LoginPage.css";
 
 function LoginPage({ setToken }: any) {
     const [email, setEmail] = useState("");
@@ -27,24 +31,8 @@ function LoginPage({ setToken }: any) {
                     <SocialButtons />
                     <VerticalDivider />
                     <div className="register-form-input-fields">
-                        <div>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                            />
-                        </div>
+                        <Email email={email} setEmail={setEmail} />
+                        <Password password={password} setPassword={setPassword} />
                         <div className="no-account">
                             Don't have an account? Ask an admin for an invite link
                         </div>
