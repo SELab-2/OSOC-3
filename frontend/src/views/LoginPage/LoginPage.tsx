@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 import { logIn } from "../../utils/api/login";
 
-import SocialButtons from "../../components/LoginComponents/SocialButtons";
-import WelcomeText from "../../components/LoginComponents/WelcomeText";
 import Email from "../../components/LoginComponents/InputFields/Email";
 import Password from "../../components/LoginComponents/InputFields/Password";
 
-import { LoginPageContainer, LoginContainer, EmailLoginContainer, VerticalDivider } from "./styles";
+import { WelcomeText, SocialButtons } from "../../components/LoginComponents";
+
+import {
+    LoginPageContainer,
+    LoginContainer,
+    EmailLoginContainer,
+    VerticalDivider,
+    NoAccount,
+    LoginButton,
+} from "./styles";
 import "./LoginPage.css";
 
 function LoginPage({ setToken }: any) {
@@ -33,13 +40,11 @@ function LoginPage({ setToken }: any) {
                     <EmailLoginContainer>
                         <Email email={email} setEmail={setEmail} />
                         <Password password={password} setPassword={setPassword} />
-                        <div className="no-account">
+                        <NoAccount>
                             Don't have an account? Ask an admin for an invite link
-                        </div>
+                        </NoAccount>
                         <div>
-                            <button className="login-button" onClick={callLogIn}>
-                                Log In
-                            </button>
+                            <LoginButton onClick={callLogIn}>Log In</LoginButton>
                         </div>
                     </EmailLoginContainer>
                 </LoginContainer>
