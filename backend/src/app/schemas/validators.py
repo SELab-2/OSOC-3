@@ -12,3 +12,12 @@ def validate_email_format(email_address: str):
     """
     if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email_address):
         raise ValidationException("Malformed email address.")
+
+
+def validate_edition(edition: str):
+    """
+    An edition should not contain any spaces in order for us to use it in
+    the path of various resources, this function checks that.
+    """
+    if not re.fullmatch(r"\w+", edition):
+        raise ValidationException("Spaces detected in the edition name")

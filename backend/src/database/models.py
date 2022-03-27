@@ -86,6 +86,7 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
+    name = Column(Text, unique=True, nullable=False)
     year = Column(Integer, unique=True, nullable=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")

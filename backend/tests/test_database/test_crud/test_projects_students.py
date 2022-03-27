@@ -10,7 +10,7 @@ from src.database.models import Edition, Project, User, Skill, ProjectRole, Stud
 @pytest.fixture
 def database_with_data(database_session: Session) -> Session:
     """fixture for adding data to the database"""
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     project1 = Project(name="project1", edition=edition, number_of_students=2)
     project2 = Project(name="project2", edition=edition, number_of_students=3)

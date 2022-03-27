@@ -4,7 +4,7 @@ from src.database import models
 
 
 def test_user_coach_request(database_session: Session):
-    edition = models.Edition(year=2022)
+    edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
 

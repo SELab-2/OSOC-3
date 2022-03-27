@@ -50,7 +50,7 @@ class Project(CamelCaseModel):
     project_id: int
     name: str
     number_of_students: int
-    edition_id: int
+    edition_name: str
 
     coaches: list[User]
     skills: list[Skill]
@@ -72,7 +72,7 @@ class Student(CamelCaseModel):
     alumni: bool
     decision: DecisionEnum
     wants_to_be_student_coach: bool
-    edition_id: int
+    edition_name: str
 
     class Config:
         orm_mode = True

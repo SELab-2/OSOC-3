@@ -52,12 +52,14 @@ def db_delete_project(db: Session, project_id: int):
     db.commit()
 
 
-def db_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: list[int],
+def db_patch_project(db: Session, project_id: int, name: str, number_of_students: int, skills: list[int],
                      partners: list[str], coaches: list[int]):
     """
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
     """
+    project = db.query(Project).where(Project.project_id == project_id).one()
+
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in skills]
     coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in coaches]
     partners_obj = []
@@ -77,7 +79,7 @@ def db_patch_project(db: Session, project: Project, name: str, number_of_student
     db.commit()
 
 
-def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStudent]:
+def db_get_conflict_students(db: Session, edition: Edition) -> list[(Student, list[Project])]:
     """
     Query all students that are causing conflicts for a certain edition
     Return a ConflictStudent for each student that causes a conflict
@@ -93,6 +95,6 @@ def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStud
                 proj_id = proj_id[0]
                 proj = db.query(Project).where(Project.project_id == proj_id).one()
                 projs.append(proj)
-            conflict_student = ConflictStudent(student=student, projects=projs)
+            conflict_student = (student, projs)
             conflict_students.append(conflict_student)
     return conflict_students

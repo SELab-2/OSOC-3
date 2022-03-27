@@ -14,7 +14,7 @@ def test_create_user(database_session: Session):
 
 def test_react_coach_request(database_session: Session):
     """Tests for creating a coach request"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
     u = create_user(database_session, "jos")
