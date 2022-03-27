@@ -15,10 +15,10 @@ from tests.utils.authorization import AuthClient
 def data(database_session: Session) -> dict[str, str | int]:
     """Fill database with dummy data"""
     # Create users
-    user1 = models.User(name="user1", email="user1@mail.com", admin=True)
+    user1 = models.User(name="user1", admin=True)
 
     database_session.add(user1)
-    user2 = models.User(name="user2", email="user2@mail.com", admin=False)
+    user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
 
     # Create editions
@@ -106,7 +106,7 @@ def test_edit_admin_status(database_session: Session, auth_client: AuthClient):
     """Test endpoint for editing the admin status of a user"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
     database_session.commit()
 
@@ -125,7 +125,7 @@ def test_add_coach(database_session: Session, auth_client: AuthClient):
     """Test endpoint for adding coaches"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
 
     # Create edition
@@ -146,7 +146,7 @@ def test_remove_coach(database_session: Session, auth_client: AuthClient):
     """Test endpoint for removing coaches"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com")
+    user = models.User(name="user1")
     database_session.add(user)
 
     # Create edition
@@ -173,8 +173,8 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
     auth_client.admin()
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
@@ -207,8 +207,8 @@ def test_get_all_requests_from_edition(database_session: Session, auth_client: A
     auth_client.admin()
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
@@ -245,7 +245,7 @@ def test_accept_request(database_session, auth_client: AuthClient):
     """Test endpoint for accepting a coach request"""
     auth_client.admin()
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
@@ -271,7 +271,7 @@ def test_reject_request(database_session, auth_client: AuthClient):
     """Test endpoint for rejecting a coach request"""
     auth_client.admin()
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition

@@ -29,7 +29,7 @@ class AuthClient(TestClient):
     def admin(self):
         """Sign in as an admin for all future requests"""
         # Create a new user in the db
-        admin = User(name="Pytest Admin", email="admin@pytest.email", admin=True)
+        admin = User(name="Pytest Admin", admin=True)
         self.session.add(admin)
         self.session.commit()
 
@@ -40,7 +40,7 @@ class AuthClient(TestClient):
         Assigns the coach to the edition
         """
         # Create a new user in the db
-        coach = User(name="Pytest Coach", email="coach@pytest.email", admin=False)
+        coach = User(name="Pytest Coach", admin=False)
 
         # Link the coach to the edition
         coach.editions.append(edition)
@@ -53,7 +53,7 @@ class AuthClient(TestClient):
         """Sign in as a user for all future requests"""
         self.user = user
 
-        access_token_expires = timedelta(hours=24)
+        access_token_expires = timedelta(hours=24*7)
         access_token = create_access_token(
             data={"sub": str(user.user_id)}, expires_delta=access_token_expires
         )

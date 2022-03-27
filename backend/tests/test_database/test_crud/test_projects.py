@@ -20,7 +20,7 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(project1)
     database_session.add(project2)
     database_session.add(project3)
-    user: User = User(name="coach1", email="user@user.be")
+    user: User = User(name="coach1")
     database_session.add(user)
     skill1: Skill = Skill(name="skill1", description="something about skill1")
     skill2: Skill = Skill(name="skill2", description="something about skill2")

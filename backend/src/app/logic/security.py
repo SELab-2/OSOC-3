@@ -10,7 +10,6 @@ from src.database import models
 
 # Configuration
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_HOURS = 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -43,7 +42,8 @@ def get_password_hash(password: str) -> str:
 # TODO remove this when the users crud has been implemented
 def get_user_by_email(db: Session, email: str) -> models.User:
     """Find a user by their email address"""
-    return db.query(models.User).where(models.User.email == email).one()
+    auth_email = db.query(models.AuthEmail).where(models.AuthEmail.email == email).one()
+    return db.query(models.User).where(models.User.user_id == auth_email.user_id).one()
 
 
 # TODO remove this when the users crud has been implemented

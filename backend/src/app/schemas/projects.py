@@ -8,7 +8,6 @@ class User(CamelCaseModel):
     """Represents a User from the database"""
     user_id: int
     name: str
-    email: str
 
     class Config:
         orm_mode = True

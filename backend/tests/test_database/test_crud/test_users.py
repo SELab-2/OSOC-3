@@ -11,10 +11,10 @@ def data(database_session: Session) -> dict[str, int]:
     """Fill database with dummy data"""
 
     # Create users
-    user1 = models.User(name="user1", email="user1@mail.com", admin=True)
+    user1 = models.User(name="user1", admin=True)
 
     database_session.add(user1)
-    user2 = models.User(name="user2", email="user2@mail.com", admin=False)
+    user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
 
     # Create editions
@@ -90,7 +90,7 @@ def test_edit_admin_status(database_session: Session):
     """Test changing the admin status of a user"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
     database_session.commit()
 
@@ -105,7 +105,7 @@ def test_add_coach(database_session: Session):
     """Test adding a user as coach"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
 
     # Create edition
@@ -124,7 +124,7 @@ def test_remove_coach(database_session: Session):
     """Test removing a user as coach"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
 
     # Create edition
@@ -146,8 +146,8 @@ def test_get_all_requests(database_session: Session):
     """Test get request for all userrequests"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
@@ -180,8 +180,8 @@ def test_get_all_requests_from_edition(database_session: Session):
     """Test get request for all userrequests of a given edition"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
@@ -214,7 +214,7 @@ def test_accept_request(database_session: Session):
     """Test accepting a coach request"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
@@ -241,7 +241,7 @@ def test_reject_request_new_user(database_session: Session):
     """Test rejecting a coach request"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition

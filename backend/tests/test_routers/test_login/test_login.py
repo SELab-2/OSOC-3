@@ -20,12 +20,12 @@ def test_login_existing(database_session: Session, test_client: TestClient):
     password = "password"
 
     # Create new user & auth entries in db
-    user = User(name="test", email=email)
+    user = User(name="test")
 
     database_session.add(user)
     database_session.commit()
 
-    auth = AuthEmail(pw_hash=security.get_password_hash(password))
+    auth = AuthEmail(pw_hash=security.get_password_hash(password), email=email)
     auth.user = user
     database_session.add(auth)
     database_session.commit()
@@ -44,12 +44,12 @@ def test_login_existing_wrong_credentials(database_session: Session, test_client
     password = "password"
 
     # Create new user & auth entries in db
-    user = User(name="test", email=email)
+    user = User(name="test")
 
     database_session.add(user)
     database_session.commit()
 
-    auth = AuthEmail(pw_hash=security.get_password_hash(password))
+    auth = AuthEmail(pw_hash=security.get_password_hash(password), email=email)
     auth.user = user
     database_session.add(auth)
     database_session.commit()

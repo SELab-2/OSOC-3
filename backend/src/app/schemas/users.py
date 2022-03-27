@@ -6,7 +6,6 @@ class User(CamelCaseModel):
 
     user_id: int
     name: str
-    email: str
     admin: bool
 
     class Config:

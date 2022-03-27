@@ -9,7 +9,7 @@ def test_user_coach_request(database_session: Session):
     database_session.commit()
 
     # Passing as user_id
-    user = models.User(name="name", email="email1")
+    user = models.User(name="name")
     database_session.add(user)
     database_session.commit()
 
@@ -20,7 +20,7 @@ def test_user_coach_request(database_session: Session):
     assert req.user == user
 
     # Check if passing as user instead of user_id works
-    user = models.User(name="name", email="email2")
+    user = models.User(name="name")
     database_session.add(user)
     database_session.commit()
 

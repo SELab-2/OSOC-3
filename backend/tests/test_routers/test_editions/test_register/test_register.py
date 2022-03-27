@@ -3,7 +3,7 @@ from starlette import status
 from starlette.testclient import TestClient
 
 
-from src.database.models import Edition, InviteLink, User
+from src.database.models import Edition, InviteLink, User, AuthEmail
 
 
 def test_ok(database_session: Session, test_client: TestClient):
@@ -19,11 +19,12 @@ def test_ok(database_session: Session, test_client: TestClient):
                                 "uuid": str(invite_link.uuid)})
     assert response.status_code == status.HTTP_201_CREATED
     user: User = database_session.query(User).where(
-        User.email == "jw@gmail.com").one()
-    assert user.name == "Joskes vermeulen"
+        User.name == "Joskes vermeulen").one()
+    user_auth: AuthEmail = database_session.query(AuthEmail).where(AuthEmail.email == "jw@gmail.com").one()
+    assert user.user_id == user_auth.user_id
 
 
-def test_use_uuid_multipli_times(database_session: Session, test_client: TestClient):
+def test_use_uuid_multiple_times(database_session: Session, test_client: TestClient):
     """Tests that you can't use the same UUID multiple times"""
     edition: Edition = Edition(year=2022)
     invite_link: InviteLink = InviteLink(
@@ -50,7 +51,7 @@ def test_no_valid_uuid(database_session: Session, test_client: TestClient):
                                 "uuid": "550e8400-e29b-41d4-a716-446655440000"})
     assert response.status_code == status.HTTP_404_NOT_FOUND
     users: list[User] = database_session.query(
-        User).where(User.email == "jw@gmail.com").all()
+        User).where(User.name == "Joskes vermeulen").all()
     assert len(users) == 0
 
 

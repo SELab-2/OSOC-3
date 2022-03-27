@@ -17,7 +17,7 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(project1)
     database_session.add(project2)
     database_session.add(project3)
-    user: User = User(name="coach1", email="user@user.be")
+    user: User = User(name="coach1")
     database_session.add(user)
     skill1: Skill = Skill(name="skill1", description="something about skill1")
     skill2: Skill = Skill(name="skill2", description="something about skill2")
@@ -67,7 +67,6 @@ def test_get_project(database_with_data: Session, test_client: TestClient):
     response = test_client.get("/editions/1/projects/1")
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
-    print(json)
     assert json['name'] == 'project1'
 
 
@@ -218,7 +217,6 @@ def test_patch_project_non_existing_skills(database_with_data: Session, test_cli
 
     response = test_client.get("/editions/1/projects/1")
     json = response.json()
-    print(json)
     assert 100 not in json["skills"]
 
 
@@ -234,7 +232,6 @@ def test_patch_project_non_existing_coach(database_with_data: Session, test_clie
     assert response.status_code == status.HTTP_404_NOT_FOUND
     response = test_client.get("/editions/1/projects/1")
     json = response.json()
-    print(json)
     assert 10 not in json["coaches"]
 
 

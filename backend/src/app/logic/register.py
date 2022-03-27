@@ -1,3 +1,6 @@
+import sqlite3
+
+import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from src.app.schemas.register import NewUser
@@ -13,8 +16,8 @@ def create_request(db: Session, new_user: NewUser, edition: Edition) -> None:
     transaction = db.begin_nested()
     invite_link: InviteLink = get_invite_link_by_uuid(db, new_user.uuid)
     try:
-        user = create_user(db, new_user.name, new_user.email)
-        create_auth_email(db, user, get_password_hash(new_user.pw))
+        user = create_user(db, new_user.name)
+        create_auth_email(db, user, get_password_hash(new_user.pw), new_user.email)
         create_coach_request(db, user, edition)
         delete_invite_link(db, invite_link)
     except Exception as exception:

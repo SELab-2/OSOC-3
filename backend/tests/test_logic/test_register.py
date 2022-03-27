@@ -9,7 +9,6 @@ from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
 
-
 def test_create_request(database_session: Session):
     """Tests if a normal request can be created"""
     edition = Edition(year=2022)
