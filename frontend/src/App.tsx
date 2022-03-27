@@ -1,41 +1,32 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "./components/navbar";
-import LoginPage from "./views/LoginPage";
-import StudentsPage from "./views/StudentsPage";
-import UsersPage from "./views/UsersPage";
-import ProjectsPage from "./views/ProjectsPage";
-import RegisterPage from "./views/RegisterPage";
-import ErrorPage from "./views/ErrorPage";
-import PendingPage from "./views/PendingPage";
-import Footer from "./components/Footer";
-import { Container, ContentWrapper } from "./app.styles";
+import { AuthContext, AuthContextState } from "./contexts";
+import Router from "./Router";
+import { Role } from "./data/enums";
+import { getToken } from "./utils/local-storage";
 
 function App() {
-    const [token, setToken] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+    const [role, setRole] = useState<Role | null>(null);
+    // Default value: check LocalStorage
+    const [token, setToken] = useState<string | null>(getToken());
+
+    // Create AuthContext value
+    const authContextValue: AuthContextState = {
+        isLoggedIn: isLoggedIn,
+        setIsLoggedIn: setIsLoggedIn,
+        role: role,
+        setRole: setRole,
+        token: token,
+        setToken: setToken,
+    };
 
     return (
-        <Router>
-            <Container>
-                <NavBar token={token} setToken={setToken} />
-
-                <ContentWrapper>
-                    <Routes>
-                        <Route path="/" element={<LoginPage setToken={setToken} />} />
-                        <Route path="/register/:uuid" element={<RegisterPage />} />
-                        <Route path="/students" element={<StudentsPage />} />
-                        <Route path="/users" element={<UsersPage />} />
-                        <Route path="/projects" element={<ProjectsPage />} />
-                        <Route path="/pending" element={<PendingPage />} />
-                        <Route path="*" element={<ErrorPage />} />
-                    </Routes>
-                </ContentWrapper>
-                <div>Your token: {token}</div>
-                <Footer />
-            </Container>
-        </Router>
+        // AuthContext should be visible in the entire application
+        <AuthContext.Provider value={authContextValue}>
+            <Router />
+        </AuthContext.Provider>
     );
 }
 
