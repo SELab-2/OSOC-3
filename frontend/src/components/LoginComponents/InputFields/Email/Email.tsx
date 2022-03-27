@@ -1,7 +1,9 @@
+import { Input } from "../styles";
+
 export default function Email({ email, setEmail }: any) {
     return (
         <div>
-            <input
+            <Input
                 type="email"
                 name="email"
                 placeholder="Email"

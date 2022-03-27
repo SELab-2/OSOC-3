@@ -1,7 +1,9 @@
-export default function Password({password, setPassword }: any) {
+import { Input } from "../styles";
+
+export default function Password({ password, setPassword }: any) {
     return (
         <div>
-            <input
+            <Input
                 type="password"
                 name="password"
                 placeholder="Password"
