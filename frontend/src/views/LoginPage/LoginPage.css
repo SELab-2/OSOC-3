@@ -22,15 +22,6 @@
     border-radius: 10px;
 }
 
-.login-button {
-    width: 120px;
-    height: 35px;
-    cursor: pointer;
-    background: var(--osoc_green);
-    color: white;
-    border: none;
-    border-radius: 5px;
-}
 
 
 .socials-register {
@@ -38,6 +29,3 @@
 }
 
 
-.no-account {
-    padding-bottom: 15px;
-}
