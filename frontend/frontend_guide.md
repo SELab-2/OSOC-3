@@ -85,7 +85,7 @@ interface StudentResponse {
 
 async function getStudentName(id: Number): string {
     const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
-    return response.name;
+    return student.name;
 }
 ```
 
@@ -98,7 +98,7 @@ interface StudentResponse {
 
 async function getStudentName(id: Number): string {
     const student = (await axiosInstance.get(`/students/${id}`)) as StudentResponse;
-    return response.name;
+    return student.name;
 }
 ```
 
@@ -113,7 +113,66 @@ import { Student } from "../../data/interfaces/students";
 
 async function getStudentName(id: Number): string {
     const student = (await axiosInstance.get(`/students/${id}`)) as Student;
-    return response.name;
+    return student.name;
+}
+```
+
+## Use `async-await` instead of `.then()`
+
+The old way of handling asynchronous code used `function().then()`. The issue with this is that it becomes quite ugly very quickly, and also leads to the so-called "callback hell". The code executed _after_ the `.then()` **must** be placed inside of it, otherwise there are no guarantees about when or how it will execute. Further, you can't `return` from these callbacks, so things like returning the result of an API call are basically impossible (except for very ugly solutions like creating `Promise`-instances).
+
+You should only use `.then()` when you really have no other choice. For example: when interacting with something that doesn't _allow_ `async function`s.
+
+Don't do
+
+```ts
+function callbackHell(): Response {
+    apiCall().then(response => {
+        // How do you make "callbackHell()" return "response"?
+        // "return" doesn't work here, as we are inside of a lambda
+        otherApiCall().then(otherResponse => {
+            // How do you make "callbackHell()" return "otherResponse"?
+            // "return" doesn't work here either, as we are still inside of a lambda
+        });
+    });
+}
+```
+
+but do
+
+```ts
+// Note the "async" keyword
+async function asyncAwaitHeaven(): Promise<Response> {
+    const response = await apiCall();
+    const otherResponse = await otherApiCall(); // This line is only executed after the previous one is finished
+
+    // You can now very easily return the response of the API call like you normally would
+    return response;
+}
+```
+
+Similarly, `.catch()` can be replaced by the `try-catch` pattern you're probably more familiar with.
+
+Don't do
+
+```ts
+function thenCatch() {
+    apiCall()
+        .then(response => console.log(response))
+        .catch(exception => console.log(exception));
+}
+```
+
+but do
+
+```ts
+async function asyncCatch() {
+    try {
+        const response = await apiCall();
+        console.log(response);
+    } catch (exception) {
+        console.log(exception);
+    }
 }
 ```
 
@@ -162,7 +221,7 @@ This keeps the directories clean, so we don't end up with a thousand `.css` file
 
 ## Use `react-bootstrap`-components instead of adding unnecessary Bootstrap `className`s
 
-`react-bootstrap` has a lot of built-in components that do some basic & commonly used functionality for you. It's cleaner to use these components than to make a `<div className={ "something" }/>` because it keeps the code more readable.
+`react-bootstrap` has a lot of built-in components that do some basic & commonly-used functionality for you. It's cleaner to use these components than to make a `<div className={ "something" }/>` because it keeps the code more readable.
 
 Don't do
 
@@ -267,12 +326,8 @@ export const PageContent = styled.div`
 import { PageContent } from "./styles";
 
 export default function Component() {
-    return (
-        {/* Notice how there are no classNames or inline styles, the code is a lot less hectic */}
-        <PageContent>
-            { /* more styled-components here */ }
-        </PageContent>
-    );
+    // Notice how there are no classNames or inline styles, the code is a lot less hectic
+    return <PageContent>{/* more styled-components here */}</PageContent>;
 }
 ```
 
@@ -362,14 +417,14 @@ export default function SomePage() {
 ```tsx
 // Header.tsx
 export default function Header() {
-    return <div>// Either more small components here, or an acceptable amount of code</div>;
+    return <div>{/* Either more small components here, or an acceptable amount of code */}</div>;
 }
 ```
 
 ```tsx
 // Footer.tsx
 export default function Footer() {
-    return <div>// Either more small components here, or an acceptable amount of code</div>;
+    return <div>{/* Either more small components here, or an acceptable amount of code */}</div>;
 }
 ```
 
@@ -425,6 +480,7 @@ import { axiosInstance } from "../utils/api";
 
 export default function Component() {
     return (
+        // This makes the .tsx less readable
     	<Button onClick={() => axiosInstance.get("/students").then(...)}/>
     );
 }
@@ -444,4 +500,45 @@ export async function getStudents() {
 ```ts
 // src/utils/api/index.ts
 export { getStudents } from "./students";
+```
+
+```tsx
+// Component.tsx
+import { getStudents } from "../utils/api";
+
+export default function Component() {
+    return <Button onClick={getStudents} />;
+}
+```
+
+## Don't add unnecessary lambdas
+
+If a lambda expression does nothing but call another function (**without arguments**), then you might as well use that function.
+
+`() => func()` is the exact same as `func`, but looks a lot more complex than it should be.
+
+Don't do
+
+```ts
+<Button onClick={() => handleClick()} />
+```
+
+but do
+
+```ts
+<Button onClick={handleClick} />
+```
+
+This works for asynchronous functions too.
+
+Don't do
+
+```ts
+<Button onClick={async () => handleClickAsync()} />
+```
+
+but do
+
+```ts
+<Button onClick={handleClickAsync} />
 ```
