@@ -4,7 +4,10 @@ export const InviteContainer = styled.div`
     overflow: hidden;
 `;
 
-export const InviteInput = styled.input`
+export const InviteInput = styled.input.attrs({
+    name: "email",
+    placeholder: "Invite user by email",
+})`
     height: 35px;
     width: 250px;
     font-size: 15px;
