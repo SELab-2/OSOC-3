@@ -1,6 +1,3 @@
-import sqlite3
-
-import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from src.app.schemas.register import NewUser

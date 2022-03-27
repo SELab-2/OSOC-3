@@ -10,7 +10,6 @@ class User(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class UsersListResponse(CamelCaseModel):
@@ -34,7 +33,6 @@ class UserRequest(CamelCaseModel):
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class UserRequestsResponse(CamelCaseModel):

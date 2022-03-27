@@ -23,7 +23,6 @@ def create_coach_request(db: Session, user: User, edition: Edition) -> CoachRequ
 
 def create_auth_email(db: Session, user: User, pw_hash: str, email: str) -> AuthEmail:
     """Create a authentication for email"""
-    print("called")
     auth_email: AuthEmail = AuthEmail(user=user, pw_hash=pw_hash, email=email)
     db.add(auth_email)
     db.commit()
