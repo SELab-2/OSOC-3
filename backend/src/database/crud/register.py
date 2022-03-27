@@ -1,4 +1,4 @@
-import sqlalchemy.exc
+
 from sqlalchemy.orm import Session
 
 from src.app.exceptions.register import FailedToAddNewUserException
@@ -27,3 +27,16 @@ def create_auth_email(db: Session, user: User, pw_hash: str, email: str) -> Auth
     db.add(auth_email)
     db.commit()
     return auth_email
+
+
+def create_user_with_auth(db: Session, name: str, pw_hash: str, email: str) -> User:
+    new_user: User = User(name=name)
+    db.add(new_user)
+    auth_email: AuthEmail = AuthEmail(user=new_user, pw_hash=pw_hash, email=email)
+    db.add(auth_email)
+    try:
+        db.commit()
+    except Exception as exception:
+        raise FailedToAddNewUserException from exception
+
+    return new_user
