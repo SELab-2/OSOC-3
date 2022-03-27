@@ -1,10 +1,4 @@
-.login-page-content-container {
-    height: fit-content;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
+
 
 .register-form-content-container {
     height: fit-content;
@@ -14,26 +8,7 @@
     flex-direction: column;
 }
 
-.register-form-input-fields {
-    text-align: center;
-}
 
-.register-form-input-fields span {
-    font-size: 30px;
-}
-
-.register-form-input-fields input[type="password"],
-input[type="email"],
-input[type="text"] {
-    height: 40px;
-    width: 400px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: 20px;
-    border-radius: 10px;
-    border-width: 0;
-}
 
 .register-button {
     height: 40px;
@@ -57,17 +32,11 @@ input[type="text"] {
     border-radius: 5px;
 }
 
-.login {
-    display: flex;
-}
 
 .socials-register {
     display: flex;
 }
 
-.border-right {
-
-}
 
 .no-account {
     padding-bottom: 15px;
