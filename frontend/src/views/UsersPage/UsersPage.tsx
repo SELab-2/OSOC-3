@@ -1,7 +1,8 @@
 import React from "react";
+import { InviteUser } from "./InviteUser";
 
 function UsersPage() {
-    return <div>This is the users page</div>;
+    return <InviteUser />;
 }
 
 export default UsersPage;
