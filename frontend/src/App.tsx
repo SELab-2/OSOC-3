@@ -26,7 +26,7 @@ function App() {
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
                         <Route path="/register/:uuid" element={<RegisterForm />} />
                         <Route path="/students" element={<Students />} />
-                        <Route path="/users" element={<UsersPage />} />
+                        <Route path="/editions/:edition/users" element={<UsersPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/pending" element={<PendingPage />} />
                         <Route path="*" element={<ErrorPage />} />
