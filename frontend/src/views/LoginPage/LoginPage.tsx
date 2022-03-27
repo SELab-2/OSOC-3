@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { logIn } from "../../utils/api/login";
@@ -13,11 +13,24 @@ import {
     NoAccount,
     LoginButton,
 } from "./styles";
+import "./LoginPage.css";
+import { AuthContext } from "../../contexts";
 
 function LoginPage({ setToken }: any) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const authContext = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // If the user is already logged in, redirect them to
+        // the "students" page instead of showing the login page
+        if (authContext.isLoggedIn) {
+            // TODO find other homepage to go to
+            //  editions?
+            navigate("/students");
+        }
+    }, [navigate, authContext]);
 
     async function callLogIn() {
         try {

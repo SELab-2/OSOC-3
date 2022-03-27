@@ -16,28 +16,34 @@ import Footer from "./components/Footer";
 export default function Router() {
     const authContext = useContext(AuthContext);
 
-    return authContext.isLoggedIn === null ? (
-        <VerifyingTokenPage /> // If verification hasn't completed, show nothing
-    ) : !authContext.isLoggedIn ? ( // If the user isn't logged in, show the login page
-        <LoginPage />
-    ) : (
+    return (
         // If the user IS logged in, render the actual app
         <BrowserRouter>
             <Container>
                 <NavBar token={authContext.token} setToken={authContext.setToken} />
-
                 <ContentWrapper>
-                    <Routes>
-                        <Route path="/" element={<LoginPage setToken={authContext.setToken} />} />
-                        <Route path="/register/:uuid" element={<RegisterPage />} />
-                        <Route path="/students" element={<StudentsPage />} />
-                        <Route path="/users" element={<UsersPage />} />
-                        <Route path="/projects" element={<ProjectsPage />} />
-                        <Route path="/pending" element={<PendingPage />} />
-                        <Route path="*" element={<ErrorPage />} />
-                    </Routes>
+                    {authContext.isLoggedIn === null ? (
+                        // Busy verifying the access token
+                        <VerifyingTokenPage />
+                    ) : !authContext.isLoggedIn ? (
+                        // User is not logged in -> go to login page
+                        <LoginPage />
+                    ) : (
+                        // Logged in -> show app
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<LoginPage setToken={authContext.setToken} />}
+                            />
+                            <Route path="/register/:uuid" element={<RegisterPage />} />
+                            <Route path="/students" element={<StudentsPage />} />
+                            <Route path="/users" element={<UsersPage />} />
+                            <Route path="/projects" element={<ProjectsPage />} />
+                            <Route path="/pending" element={<PendingPage />} />
+                            <Route path="*" element={<ErrorPage />} />
+                        </Routes>
+                    )}
                 </ContentWrapper>
-                <div>Your token: {authContext.token}</div>
                 <Footer />
             </Container>
         </BrowserRouter>
