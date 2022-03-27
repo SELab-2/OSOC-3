@@ -1,14 +1,18 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
 
+interface LoginResponse {
+    accessToken: string;
+}
+
 export async function logIn({ setToken }: any, email: any, password: any) {
     const payload = new FormData();
     payload.append("username", email);
     payload.append("password", password);
     try {
-        await axiosInstance.post("/login/token", payload).then((response: any) => {
-            setToken(response.data.accessToken);
-        });
+        const response = await axiosInstance.post("/login/token", payload);
+        const login = response.data as LoginResponse;
+        await setToken(login.accessToken);
         return true;
     } catch (error) {
         if (axios.isAxiosError(error)) {

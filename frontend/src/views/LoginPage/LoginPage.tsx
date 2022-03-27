@@ -1,10 +1,11 @@
 import { useState } from "react";
-import OSOCLetters from "../../components/OSOCLetters";
 import "./LoginPage.css";
 import { logIn } from "../../utils/api/login";
 import { useNavigate } from "react-router-dom";
 
-import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
+import SocialButtons from "../../components/LoginComponents/SocialButtons";
+import WelcomeText from "../../components/LoginComponents/WelcomeText";
+import { VerticalDivider } from "./styles";
 
 function LoginPage({ setToken }: any) {
     const [email, setEmail] = useState("");
@@ -21,25 +22,10 @@ function LoginPage({ setToken }: any) {
     return (
         <div>
             <div className="login-page-content-container my-5">
-                <div className="welcome-text mx-auto">
-                    <h1 className={"mb-5"}>Hi!</h1>
-                    <h3>
-                        Welcome to the Open Summer of Code selections app. After you've logged in
-                        with your account, we'll enable your account so you can get started. An
-                        admin will verify you as quick as possible.
-                    </h3>
-                </div>
+                <WelcomeText />
                 <div className="login mx-auto">
-                    <OSOCLetters />
-                    <div className="socials-container">
-                        <div className="socials">
-                            <div className="google-login-container">
-                                <GoogleLoginButton />
-                            </div>
-                            <GithubLoginButton />
-                        </div>
-                    </div>
-                    <div className="border-right" />
+                    <SocialButtons />
+                    <VerticalDivider />
                     <div className="register-form-input-fields">
                         <div>
                             <input
