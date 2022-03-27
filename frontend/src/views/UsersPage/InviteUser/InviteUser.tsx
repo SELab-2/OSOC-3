@@ -1,74 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users";
 import "./InviteUsers.css";
 import { InviteInput, InviteButton, Loader, InviteContainer, Link, Error } from "./styles";
 
-export default class InviteUser extends React.Component<
-    {},
-    {
-        email: string;
-        valid: boolean;
-        errorMessage: string | null;
-        loading: boolean;
-        link: string | null;
-    }
-> {
-    constructor(props = {}) {
-        super(props);
-        this.state = { email: "", valid: true, errorMessage: null, loading: false, link: null };
-    }
+export default function InviteUser() {
+    const [email, setEmail] = useState("");
+    const [valid, setValid] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [link, setLink] = useState("");
 
-    setEmail(email: string) {
-        this.setState({ email: email, valid: true, link: null, errorMessage: null });
-    }
+    const changeEmail = function (email: string) {
+        setEmail(email);
+        setValid(true);
+        setLink("");
+        setErrorMessage("");
+    };
 
-    async sendInvite() {
-        if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(this.state.email)) {
-            this.setState({ loading: true });
-            getInviteLink("edition", this.state.email).then(ding => {
-                this.setState({ link: ding, loading: false }); // TODO: fix email stuff
+    const sendInvite = async () => {
+        if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
+            setLoading(true);
+            getInviteLink("edition", email).then(ding => {
+                setLink(ding);
+                setLoading(false);
+                // TODO: fix email stuff
             });
         } else {
-            this.setState({ valid: false, errorMessage: "Invalid email" });
+            setValid(false);
+            setErrorMessage("Invalid email");
         }
-    }
+    };
 
-    render() {
+    const buttonDiv = () => {
         let button;
-        if (this.state.loading) {
+        if (loading) {
             button = <Loader />;
         } else {
             button = (
                 <div>
-                    <InviteButton onClick={() => this.sendInvite()}>Send invite</InviteButton>
+                    <InviteButton onClick={() => sendInvite()}>Send invite</InviteButton>
                 </div>
             );
         }
+        return button;
+    };
 
-        let error = null;
-        if (this.state.errorMessage) {
-            error = <Error>{this.state.errorMessage}</Error>;
+    const errorDiv = () => {
+        let errorDiv = null;
+        if (errorMessage) {
+            errorDiv = <Error>{errorMessage}</Error>;
         }
+        return errorDiv;
+    };
 
-        let link = null;
-        if (this.state.link) {
-            link = <Link>{this.state.link}</Link>;
+    const linkDiv = () => {
+        let linkDiv = null;
+        if (link) {
+            linkDiv = <Link>{link}</Link>;
         }
+        return linkDiv;
+    };
 
-        return (
-            <div>
-                <InviteContainer>
-                    <InviteInput
-                        className={this.state.valid ? "" : "email-field-error"}
-                        placeholder="Invite user by email"
-                        value={this.state.email}
-                        onChange={e => this.setEmail(e.target.value)}
-                    />
-                    {button}
-                </InviteContainer>
-                {error}
-                {link}
-            </div>
-        );
-    }
+    return (
+        <div>
+            <InviteContainer>
+                <InviteInput
+                    className={valid ? "" : "email-field-error"}
+                    placeholder="Invite user by email"
+                    value={email}
+                    onChange={e => changeEmail(e.target.value)}
+                />
+                {buttonDiv()}
+            </InviteContainer>
+            {errorDiv()}
+            {linkDiv()}
+        </div>
+    );
 }
