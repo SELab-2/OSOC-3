@@ -59,6 +59,39 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     assert data["user1"] == users[0].user_id
 
 
+def test_get_user_edition_ids_empty(database_session: Session):
+    """Test getting all editions from a user when there are none"""
+    user = models.User(name="test", email="test@email.com")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_ids(user)
+    assert len(editions) == 0
+
+
+def test_get_user_edition_ids(database_session: Session):
+    """Test getting all editions from a user when they aren't empty"""
+    user = models.User(name="test", email="test@email.com")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_ids(user)
+    assert len(editions) == 0
+
+    # Add user to a new edition
+    edition = models.Edition(year=2022)
+    user.editions.append(edition)
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_ids(user)
+    assert editions == [edition.edition_id]
+
+
 def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for users of a given edition"""
 

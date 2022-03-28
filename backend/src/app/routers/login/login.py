@@ -8,9 +8,11 @@ from sqlalchemy.orm import Session
 
 import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
+from src.app.logic.users import get_user_editions
+from src.app.logic.security import authenticate_user, ACCESS_TOKEN_EXPIRE_HOURS, create_access_token
 from src.app.logic.security import authenticate_user, create_access_token
 from src.app.routers.tags import Tags
-from src.app.schemas.login import Token
+from src.app.schemas.login import Token, UserData
 from src.database.database import get_session
 
 login_router = APIRouter(prefix="/login", tags=[Tags.LOGIN])
@@ -32,4 +34,5 @@ async def login_for_access_token(db: Session = Depends(get_session),
         data={"sub": str(user.user_id)}, expires_delta=access_token_expires
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    user_data = UserData(admin=user.admin, editions=get_user_editions(user))
+    return {"access_token": access_token, "token_type": "bearer", "user": user_data}
