@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import { AuthContext } from "./contexts";
+import React from "react";
 import VerifyingTokenPage from "./views/VerifyingTokenPage";
 import LoginPage from "./views/LoginPage";
 import { Container, ContentWrapper } from "./app.styles";
@@ -12,29 +11,27 @@ import ProjectsPage from "./views/ProjectsPage/ProjectsPage";
 import PendingPage from "./views/PendingPage";
 import ErrorPage from "./views/ErrorPage";
 import Footer from "./components/Footer";
+import { useAuth } from "./contexts/auth-context";
 
 export default function Router() {
-    const authContext = useContext(AuthContext);
+    const { token, setToken, isLoggedIn } = useAuth();
 
     return (
-        // If the user IS logged in, render the actual app
         <BrowserRouter>
             <Container>
-                <NavBar token={authContext.token} setToken={authContext.setToken} />
+                {/* TODO don't pass token & setToken but use useAuth */}
+                {isLoggedIn && <NavBar token={token} setToken={setToken} />}
                 <ContentWrapper>
-                    {authContext.isLoggedIn === null ? (
+                    {isLoggedIn === null ? (
                         // Busy verifying the access token
                         <VerifyingTokenPage />
-                    ) : !authContext.isLoggedIn ? (
+                    ) : !isLoggedIn ? (
                         // User is not logged in -> go to login page
                         <LoginPage />
                     ) : (
-                        // Logged in -> show app
+                        // If the user IS logged in, render the actual app
                         <Routes>
-                            <Route
-                                path="/"
-                                element={<LoginPage setToken={authContext.setToken} />}
-                            />
+                            <Route path="/" element={<LoginPage setToken={setToken} />} />
                             <Route path="/register/:uuid" element={<RegisterPage />} />
                             <Route path="/students" element={<StudentsPage />} />
                             <Route path="/users" element={<UsersPage />} />
@@ -44,7 +41,7 @@ export default function Router() {
                         </Routes>
                     )}
                 </ContentWrapper>
-                <Footer />
+                {isLoggedIn && <Footer />}
             </Container>
         </BrowserRouter>
     );

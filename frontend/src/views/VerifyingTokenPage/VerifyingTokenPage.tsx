@@ -1,12 +1,12 @@
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../../contexts";
+import { useEffect } from "react";
 
 import { setBearerToken } from "../../utils/api";
 import { validateBearerToken } from "../../utils/api/auth";
 import { Role } from "../../data/enums";
+import { useAuth } from "../../contexts/auth-context";
 
 export default function VerifyingTokenPage() {
-    const authContext = useContext(AuthContext);
+    const authContext = useAuth();
 
     useEffect(() => {
         const verifyToken = async () => {
