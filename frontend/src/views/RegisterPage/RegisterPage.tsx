@@ -1,18 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { axiosInstance } from "../../utils/api/api";
+
+import { register } from "../../utils/api/register";
+import { validateRegistrationUrl } from "../../utils/api";
+
+import { Email, Name, Password, ConfirmPassword } from "../../components/RegisterComponents";
 
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
-interface RegisterFields {
-    email: string;
-    name: string;
-    uuid: string;
-    pw: string;
-}
-
 function RegisterPage() {
-    function register(uuid: string) {
+    function callRegister(uuid: string) {
         // Check if passwords are the same
         if (password !== confirmPassword) {
             alert("Passwords do not match");
@@ -26,11 +23,7 @@ function RegisterPage() {
 
         // TODO this has to change to get the edition the invite belongs to
         const edition = "1";
-        const payload: RegisterFields = { email: email, name: name, uuid: uuid, pw: password };
-
-        axiosInstance
-            .post("/editions/" + edition + "/register/email", payload)
-            .then((response: any) => console.log(response))
+        register(edition, email, name, uuid, password)
             .then(() => navigate("/pending"))
             .catch(function (error: any) {
                 console.log(error);
@@ -49,8 +42,8 @@ function RegisterPage() {
 
     const [validUuid, setUuid] = useState(false);
 
-    axiosInstance.get("/editions/" + 1 + "/invites/" + uuid).then(response => {
-        if (response.data.uuid === uuid) {
+    validateRegistrationUrl("1", uuid).then(response => {
+        if (response) {
             setUuid(true);
         }
     });
@@ -76,45 +69,16 @@ function RegisterPage() {
                     <h2 className={"m-3"}>or</h2>
 
                     <div className="register-form-input-fields">
-                        <div>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Name"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <input
-                                type="password"
-                                name="confirm_password"
-                                placeholder="Confirm Password"
-                                value={confirmPassword}
-                                onChange={e => setConfirmPassword(e.target.value)}
-                            />
-                        </div>
+                        <Email email={email} setEmail={setEmail} />
+                        <Name name={name} setName={setName} />
+                        <Password password={password} setPassword={setPassword} />
+                        <ConfirmPassword
+                            confirmPassword={confirmPassword}
+                            setConfirmPassword={setConfirmPassword}
+                        />
                     </div>
                     <div>
-                        <button onClick={() => register(uuid)} className="register-button">
+                        <button onClick={() => callRegister(uuid)} className="register-button">
                             Register
                         </button>
                     </div>
