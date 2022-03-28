@@ -5,7 +5,7 @@ interface LoginResponse {
     accessToken: string;
 }
 
-export async function logIn({ setToken }: any, email: any, password: any) {
+export async function logIn({ setToken }: any, email: string, password: string) {
     const payload = new FormData();
     payload.append("username", email);
     payload.append("password", password);

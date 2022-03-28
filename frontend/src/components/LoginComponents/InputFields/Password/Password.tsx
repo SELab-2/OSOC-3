@@ -1,6 +1,12 @@
 import { Input } from "../styles";
 
-export default function Password({ password, setPassword }: any) {
+export default function Password({
+    password,
+    setPassword,
+}: {
+    password: string;
+    setPassword: (value: string) => void;
+}) {
     return (
         <div>
             <Input

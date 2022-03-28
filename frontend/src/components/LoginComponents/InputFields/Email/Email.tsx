@@ -1,6 +1,12 @@
 import { Input } from "../styles";
 
-export default function Email({ email, setEmail }: any) {
+export default function Email({
+    email,
+    setEmail,
+}: {
+    email: string;
+    setEmail: (value: string) => void;
+}) {
     return (
         <div>
             <Input
