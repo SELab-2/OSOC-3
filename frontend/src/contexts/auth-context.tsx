@@ -1,7 +1,7 @@
 /** Context hook to maintain the authentication state of the user **/
 import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
-import { getToken } from "../utils/local-storage";
+import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
 
 export interface AuthContextState {
     isLoggedIn: boolean | null;
@@ -10,6 +10,8 @@ export interface AuthContextState {
     setRole: (value: Role | null) => void;
     token: string | null;
     setToken: (value: string | null) => void;
+    editions: number[];
+    setEditions: (value: number[]) => void;
 }
 
 /**
@@ -23,6 +25,8 @@ function authDefaultState(): AuthContextState {
         setRole: (_: Role | null) => {},
         token: getToken(),
         setToken: (_: string | null) => {},
+        editions: [],
+        setEditions: (_: number[]) => {},
     };
 }
 
@@ -45,6 +49,7 @@ export function useAuth(): AuthContextState {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     const [role, setRole] = useState<Role | null>(null);
+    const [editions, setEditions] = useState<number[]>([]);
     // Default value: check LocalStorage
     const [token, setToken] = useState<string | null>(getToken());
 
@@ -55,7 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: role,
         setRole: setRole,
         token: token,
-        setToken: setToken,
+        setToken: (value: string | null) => {
+            // Set the token in LocalStorage
+            if (value) {
+                setTokenInStorage(value);
+            }
+
+            setToken(value);
+        },
+        editions: editions,
+        setEditions: setEditions,
     };
 
     return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;

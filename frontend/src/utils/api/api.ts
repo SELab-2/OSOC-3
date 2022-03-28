@@ -12,7 +12,6 @@ export function setBearerToken(value: string | null) {
     // Note: setting to "null" or "undefined" is not possible
     if (value === null) {
         delete axiosInstance.defaults.headers.common.Authorization;
-
         return;
     }
 

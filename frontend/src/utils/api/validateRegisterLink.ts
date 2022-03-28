@@ -25,7 +25,8 @@ export async function validateBearerToken(token: string | null): Promise<User | 
     return {
         userId: 1,
         name: "admin",
-        admin: true,
+        admin: false,
+        editions: [],
     };
 }
 
