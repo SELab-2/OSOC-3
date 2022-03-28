@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { logIn } from "../../utils/api/login";
 
-import Email from "../../components/LoginComponents/InputFields/Email";
-import Password from "../../components/LoginComponents/InputFields/Password";
-
-import { WelcomeText, SocialButtons } from "../../components/LoginComponents";
+import { WelcomeText, SocialButtons, Email, Password } from "../../components/LoginComponents";
 
 import {
     LoginPageContainer,
