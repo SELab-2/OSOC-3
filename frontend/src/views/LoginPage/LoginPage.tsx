@@ -20,11 +20,14 @@ function LoginPage({ setToken }: any) {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    function callLogIn() {
-        logIn({ setToken }, email, password).then(response => {
+    async function callLogIn() {
+        try {
+            const response = await logIn({ setToken }, email, password);
             if (response) navigate("/students");
-            else alert("Login failed");
-        });
+            else alert("Something went wrong when login in");
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
