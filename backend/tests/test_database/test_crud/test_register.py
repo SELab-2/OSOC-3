@@ -18,7 +18,6 @@ def test_react_coach_request(database_session: Session):
     database_session.add(edition)
     database_session.commit()
     u = create_user(database_session, "jos")
-    
     create_coach_request(database_session, u, edition)
     a = database_session.query(CoachRequest).where(CoachRequest.user == u).all()
 

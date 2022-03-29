@@ -13,10 +13,10 @@ class EmailAddress(CamelCaseModel):
     email: str
 
     @validator("email")
-    def valid_format(cls, v):
+    def valid_format(cls, validate):
         """Check that the email is of a valid format"""
-        validate_email_format(v)
-        return v
+        validate_email_format(validate)
+        return validate
 
 
 class InviteLink(CamelCaseModel):
@@ -29,6 +29,7 @@ class InviteLink(CamelCaseModel):
     edition_name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 

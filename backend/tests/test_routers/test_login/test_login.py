@@ -7,6 +7,7 @@ from src.database.models import AuthEmail, User
 
 
 def test_login_non_existing(test_client: TestClient):
+    """Test logging in without an existing account"""
     form = {
         "username": "this user",
         "password": "does not exist"
@@ -16,6 +17,7 @@ def test_login_non_existing(test_client: TestClient):
 
 
 def test_login_existing(database_session: Session, test_client: TestClient):
+    """Test logging in with an existing account"""
     email = "test@ema.il"
     password = "password"
 
@@ -40,6 +42,7 @@ def test_login_existing(database_session: Session, test_client: TestClient):
 
 
 def test_login_existing_wrong_credentials(database_session: Session, test_client: TestClient):
+    """Test logging in with existing, but wrong credentials"""
     email = "test@ema.il"
     password = "password"
 

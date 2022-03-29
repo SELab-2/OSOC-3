@@ -45,24 +45,23 @@ def get_hashed_password() -> str:
 
 def create_admin(name: str, email: str, pw: str):
     """Create a new user in the database"""
-    session = DBSession()
-    transaction = session.begin_nested()
+    with DBSession.begin() as session:
+        try:
+            transaction = session.begin_nested()
+            user = create_user(session, name, commit=False)
+            user.admin = True
 
-    try:
-        user = create_user(session, name, email)
-        user.admin = True
-        session.add(user)
-        session.commit()
+            # Add an email auth entry
+            create_auth_email(session, user, pw, email, commit=False)
+        except sqlalchemy.exc.SQLAlchemyError:
+            # Something went wrong: rollback the transaction & print the error
+            transaction.rollback()
 
-        # Add an email auth entry
-        create_auth_email(session, user, pw)
-    except sqlalchemy.exc.SQLAlchemyError as e:
-        # Something went wrong: rollback the transaction & print the error
-        transaction.rollback()
+            # Print the traceback of the exception
+            print(traceback.format_exc())
+            exit(3)
 
-        # Print the traceback of the exception
-        print(traceback.format_exc())
-        exit(3)
+    session.close()
 
 
 if __name__ == "__main__":

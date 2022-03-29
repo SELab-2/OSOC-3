@@ -40,7 +40,13 @@ def database_session(tables: None) -> Generator[Session, None, None]:
 
     # Clean up connections & rollback transactions
     session.close()
-    transaction.rollback()
+
+    # Transactions can be invalidated when an exception is raised
+    # which causes warnings when running the tests
+    # Check if a transaction is still valid before rolling back
+    if transaction.is_valid:
+        transaction.rollback()
+
     connection.close()
 
 

@@ -14,6 +14,7 @@ class Skill(CamelCaseModel):
     description: str | None = None
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -22,4 +23,5 @@ class SkillList(CamelCaseModel):
     skills: list[Skill]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True

@@ -37,7 +37,7 @@ def test_new_webhook(auth_client: AuthClient, edition: Edition):
 
 def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edition):
     auth_client.admin()
-    response = auth_client.post(f"/editions/invalid/webhooks/")
+    response = auth_client.post("/editions/invalid/webhooks/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -59,11 +59,12 @@ def test_webhook(test_client: TestClient, webhook: WebhookURL, database_session:
     assert student.first_name == "Bob"
     assert student.last_name == "Klonck"
     assert student.preferred_name == "Jhon"
-    assert student.wants_to_be_student_coach == False
+    assert student.wants_to_be_student_coach is False
     assert student.phone_number == "0477002266"
 
 
 def test_webhook_bad_format(test_client: TestClient, webhook: WebhookURL):
+    """Test a badly formatted webhook input"""
     response = test_client.post(
         f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",
         json=WEBHOOK_EVENT_BAD_FORMAT
@@ -72,6 +73,7 @@ def test_webhook_bad_format(test_client: TestClient, webhook: WebhookURL):
 
 
 def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL, mocker):
+    """Test entering a duplicate email address"""
     mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
@@ -87,6 +89,7 @@ def test_webhook_duplicate_email(test_client: TestClient, webhook: WebhookURL, m
 
 
 def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL, mocker):
+    """Test entering a duplicate phone number"""
     mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
         phone_number="0477002266",
@@ -102,6 +105,7 @@ def test_webhook_duplicate_phone(test_client: TestClient, webhook: WebhookURL, m
 
 
 def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL, mocker):
+    """Test submitting a form with a question missing"""
     mocker.patch('builtins.open', new_callable=mock_open())
     response = test_client.post(
         f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",

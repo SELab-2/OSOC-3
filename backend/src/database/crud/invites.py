@@ -14,10 +14,12 @@ def create_invite_link(db: Session, edition: Edition, email_address: str) -> Inv
     return link
 
 
-def delete_invite_link(db: Session, invite_link: InviteLink):
+def delete_invite_link(db: Session, invite_link: InviteLink, commit: bool = True):
     """Delete an invite link from the database"""
     db.delete(invite_link)
-    db.commit()
+
+    if commit:
+        db.commit()
 
 
 def get_all_pending_invites(db: Session, edition: Edition) -> list[InviteLink]:

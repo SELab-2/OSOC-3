@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from starlette import status
 
-from src.database.models import Edition, Project, User, Skill, ProjectRole, Student, Partner
+from src.database.models import Edition, Project, User, Skill, ProjectRole, Student
 
 
 @pytest.fixture

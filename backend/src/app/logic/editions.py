@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.editions import Edition, EditionBase, EditionList
-import src.database.crud.editions as crud_editions 
+from src.app.schemas.editions import EditionBase, EditionList
+import src.database.crud.editions as crud_editions
 from src.database.models import Edition
 
 def get_editions(db: Session) -> EditionList:

@@ -10,7 +10,7 @@ def test_get_editions(database_session: Session, auth_client: AuthClient):
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -45,7 +45,7 @@ def test_get_edition_by_name_coach(database_session: Session, auth_client: AuthC
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -67,7 +67,7 @@ def test_get_edition_by_name_unauthorized(database_session: Session, auth_client
     database_session.add(edition)
     database_session.commit()
 
-    assert auth_client.get(f"/editions/ed2022").status_code == status.HTTP_401_UNAUTHORIZED
+    assert auth_client.get("/editions/ed2022").status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_edition_by_name_not_coach(database_session: Session, auth_client: AuthClient):
@@ -142,7 +142,7 @@ def test_delete_edition_admin(database_session: Session, auth_client: AuthClient
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     auth_client.admin()
 

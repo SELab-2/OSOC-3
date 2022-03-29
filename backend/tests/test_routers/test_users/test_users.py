@@ -3,7 +3,6 @@ from json import dumps
 import pytest
 from sqlalchemy.orm import Session
 
-from starlette.testclient import TestClient
 from starlette import status
 
 from src.database import models
@@ -191,7 +190,7 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
 
     database_session.commit()
 
-    response = auth_client.get(f"/users/requests")
+    response = auth_client.get("/users/requests")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [request["user"]["userId"] for request in response.json()['requests']]
     assert len(user_ids) == 2

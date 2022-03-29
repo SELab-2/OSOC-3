@@ -11,7 +11,7 @@ def test_get_skills(database_session: Session, auth_client: AuthClient):
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     auth_client.admin()
     skill = Skill(name="Backend", description="Must know react")
@@ -32,7 +32,7 @@ def test_create_skill(database_session: Session, auth_client: AuthClient):
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     auth_client.admin()
 
@@ -48,7 +48,7 @@ def test_delete_skill(database_session: Session, auth_client: AuthClient):
 
     Args:
         database_session (Session): a connection with the database
-        auth_client (AuthClient): a client used to do rest calls 
+        auth_client (AuthClient): a client used to do rest calls
     """
     auth_client.admin()
 

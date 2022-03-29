@@ -10,6 +10,7 @@ class User(CamelCaseModel):
     name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -20,6 +21,7 @@ class Skill(CamelCaseModel):
     description: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -29,6 +31,7 @@ class Partner(CamelCaseModel):
     name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -42,6 +45,7 @@ class ProjectRole(CamelCaseModel):
     drafter_id: int
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -58,6 +62,7 @@ class Project(CamelCaseModel):
     project_roles: list[ProjectRole]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -75,6 +80,7 @@ class Student(CamelCaseModel):
     edition_name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -103,7 +109,7 @@ class InputProject(BaseModel):
     coaches: list[int]
 
 
-# TODO: change drafter_id to current user with authentication
+# TO DO: change drafter_id to current user with authentication
 class InputStudentRole(BaseModel):
     """Used for creating/patching a student role (temporary until authentication is implemented)"""
     skill_id: int
