@@ -12,7 +12,6 @@ class EmailAddress(CamelCaseModel):
     """
     email: str
 
-    @classmethod
     @validator("email")
     def valid_format(cls, validate):
         """Check that the email is of a valid format"""
