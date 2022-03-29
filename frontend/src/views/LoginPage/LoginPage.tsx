@@ -13,7 +13,6 @@ import {
     NoAccount,
     LoginButton,
 } from "./styles";
-import "./LoginPage.css";
 
 function LoginPage({ setToken }: any) {
     const [email, setEmail] = useState("");

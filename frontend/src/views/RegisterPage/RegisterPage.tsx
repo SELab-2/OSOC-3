@@ -10,7 +10,11 @@ import {
     Password,
     ConfirmPassword,
     SocialButtons,
+    InfoText,
+    BadInviteLink,
 } from "../../components/RegisterComponents";
+
+import { RegisterFormContainer, Or, RegisterButton } from "./styles";
 
 function RegisterPage() {
     const [validUuid, setUuid] = useState(false);
@@ -22,12 +26,16 @@ function RegisterPage() {
             const response = await validateRegistrationUrl("1", uuid);
             if (response) {
                 setUuid(true);
+            } else {
+                setTimeout(() => {
+                    navigate("/*");
+                }, 5000);
             }
         }
         if (!validUuid) {
             validateUuid();
         }
-    }, [uuid, validUuid]);
+    });
 
     async function callRegister(uuid: string) {
         // Check if passwords are the same
@@ -64,32 +72,24 @@ function RegisterPage() {
     if (validUuid && uuid) {
         return (
             <div>
-                <div className="register-form-content-container my-5">
-                    <h1 className={"mb-3"}>Create an account</h1>
-                    <div className={"mb-3"} style={{ color: "grey" }}>
-                        Sign up with your social media account or email address. Your unique link is
-                        not useable again ({uuid})
-                    </div>
+                <RegisterFormContainer>
+                    <InfoText />
                     <SocialButtons />
-                    <h2 className={"m-3"}>or</h2>
-                    <div className="register-form-input-fields">
-                        <Email email={email} setEmail={setEmail} />
-                        <Name name={name} setName={setName} />
-                        <Password password={password} setPassword={setPassword} />
-                        <ConfirmPassword
-                            confirmPassword={confirmPassword}
-                            setConfirmPassword={setConfirmPassword}
-                        />
-                    </div>
+                    <Or>or</Or>
+                    <Email email={email} setEmail={setEmail} />
+                    <Name name={name} setName={setName} />
+                    <Password password={password} setPassword={setPassword} />
+                    <ConfirmPassword
+                        confirmPassword={confirmPassword}
+                        setConfirmPassword={setConfirmPassword}
+                    />
                     <div>
-                        <button onClick={() => callRegister(uuid)} className="register-button">
-                            Register
-                        </button>
+                        <RegisterButton onClick={() => callRegister(uuid)}>Register</RegisterButton>
                     </div>
-                </div>
+                </RegisterFormContainer>
             </div>
         );
-    } else return <div>Not a valid register url</div>;
+    } else return <BadInviteLink />;
 }
 
 export default RegisterPage;
