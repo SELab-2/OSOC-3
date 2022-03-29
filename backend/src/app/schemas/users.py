@@ -9,6 +9,7 @@ class User(CamelCaseModel):
     admin: bool
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -32,6 +33,7 @@ class UserRequest(CamelCaseModel):
     user: User
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 

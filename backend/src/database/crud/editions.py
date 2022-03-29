@@ -4,8 +4,6 @@ from src.app.exceptions.editions import DuplicateInsertException
 from src.database.models import Edition
 from src.app.schemas.editions import EditionBase
 
-from src.database.models import Edition
-
 
 def get_edition_by_id(db: Session, edition_id: int) -> Edition:
     """Get an edition given its primary key
@@ -49,7 +47,7 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
         db.refresh(new_edition)
         return new_edition
     except exc.SQLAlchemyError as exception:
-        raise DuplicateInsertException(exception)
+        raise DuplicateInsertException(exception) from exception
 
 
 def delete_edition(db: Session, edition_id: int):

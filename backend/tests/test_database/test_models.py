@@ -4,6 +4,7 @@ from src.database import models
 
 
 def test_user_coach_request(database_session: Session):
+    """Test sending a coach request"""
     edition = models.Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
@@ -32,6 +33,7 @@ def test_user_coach_request(database_session: Session):
 
 
 def test_project_partners(database_session: Session):
+    """Test adding a partner to a project"""
     project = models.Project(name="project")
     database_session.add(project)
     database_session.commit()

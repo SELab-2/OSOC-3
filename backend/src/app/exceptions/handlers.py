@@ -1,14 +1,14 @@
 import sqlalchemy.exc
-from .editions import DuplicateInsertException
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from starlette import status
 
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
+from .editions import DuplicateInsertException
 from .parsing import MalformedUUIDError
-from .webhooks import WebhookProcessException
 from .register import FailedToAddNewUserException
+from .webhooks import WebhookProcessException
 
 
 def install_handlers(app: FastAPI):
@@ -74,7 +74,7 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(FailedToAddNewUserException)
-    def failed_to_add_new_user_exception(_request: Request, exception: FailedToAddNewUserException):
+    def failed_to_add_new_user_exception(_request: Request):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while creating a new user'}

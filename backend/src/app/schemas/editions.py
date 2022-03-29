@@ -12,6 +12,7 @@ class Edition(CamelCaseModel):
     year: int
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -20,4 +21,5 @@ class EditionList(CamelCaseModel):
     editions: list[Edition]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True

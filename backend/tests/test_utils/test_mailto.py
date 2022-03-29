@@ -2,6 +2,7 @@ from src.app.utils.mailto import generate_mailto_string
 
 
 def test_mailto():
+    """Test generating mailto links"""
     # Basic
     assert generate_mailto_string(recipient="me",
                                   subject="subject",

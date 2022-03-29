@@ -39,14 +39,14 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# TODO remove this when the users crud has been implemented
+# TO DO remove this when the users crud has been implemented
 def get_user_by_email(db: Session, email: str) -> models.User:
     """Find a user by their email address"""
     auth_email = db.query(models.AuthEmail).where(models.AuthEmail.email == email).one()
     return db.query(models.User).where(models.User.user_id == auth_email.user_id).one()
 
 
-# TODO remove this when the users crud has been implemented
+# TO DO remove this when the users crud has been implemented
 def get_user_by_id(db: Session, user_id: int) -> models.User:
     """Find a user by their id"""
     return db.query(models.User).where(models.User.user_id == user_id).one()

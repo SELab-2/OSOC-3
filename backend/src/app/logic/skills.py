@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.skills import Skill, SkillBase, SkillList
+from src.app.schemas.skills import SkillBase, SkillList
 import src.database.crud.skills as crud_skills
 from src.database.models import Skill
 
