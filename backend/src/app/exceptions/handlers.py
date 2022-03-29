@@ -74,7 +74,7 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(FailedToAddNewUserException)
-    def failed_to_add_new_user_exception(_request: Request):
+    def failed_to_add_new_user_exception(_request: Request, _exception: FailedToAddNewUserException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while creating a new user'}
