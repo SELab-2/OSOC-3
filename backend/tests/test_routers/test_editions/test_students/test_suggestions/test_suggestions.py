@@ -18,10 +18,10 @@ def database_with_data(database_session: Session) -> Session:
     database_session.commit()
 
     # Users
-    admin: User = User(name="admin", email="admin@ngmail.com", admin=True)
-    coach1: User = User(name="coach1", email="coach1@noutlook.be")
-    coach2: User = User(name="coach2", email="coach2@noutlook.be")
-    request: User = User(name="request", email="request@ngmail.com")
+    admin: User = User(name="admin", email="admin@ngmail.com", admin=True, editions=[edition])
+    coach1: User = User(name="coach1", email="coach1@noutlook.be", editions=[edition])
+    coach2: User = User(name="coach2", email="coach2@noutlook.be", editions=[edition])
+    request: User = User(name="request", email="request@ngmail.com", editions=[edition])
     database_session.add(admin)
     database_session.add(coach1)
     database_session.add(coach2)
