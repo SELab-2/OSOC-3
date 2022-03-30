@@ -4,6 +4,6 @@ import App from "./App";
 
 test("renders Open Summer Of Code", () => {
     render(<App />);
-    const linkElement = screen.getByText(/Open Summer Of Code/i);
+    const linkElement = screen.getByText(/Welcome/i);
     expect(linkElement).toBeInTheDocument();
 });

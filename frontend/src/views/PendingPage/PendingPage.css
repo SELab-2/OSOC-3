@@ -1,0 +1,85 @@
+/*
+PendingPage
+ */
+
+.pending-page-content-container {
+    height: fit-content;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pending-page-content-container span {
+    font-size: 40px;
+    display: block;
+    position: relative;
+}
+
+.pending-page-content {
+    max-width: 1200px;
+    text-align: center;
+    height: fit-content;
+}
+
+.pending-text-container {
+    width: fit-content;
+    display: inline-block;
+}
+
+.pending-text-content {
+    display: flex;
+}
+
+.pending-dot-1 {
+    animation: visible-switch-1 2s infinite linear;
+}
+.pending-dot-2 {
+    animation: visible-switch-2 2s infinite linear;
+}
+.pending-dot-3 {
+    animation: visible-switch-3 2s infinite linear;
+}
+@keyframes visible-switch-1 {
+    0% {
+        color: transparent;
+    }
+    24% {
+        color: transparent;
+    }
+    25% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}
+@keyframes visible-switch-2 {
+    0% {
+        color: transparent;
+    }
+    49% {
+        color: transparent;
+    }
+    50% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}
+@keyframes visible-switch-3 {
+    0% {
+        color: transparent;
+    }
+    74% {
+        color: transparent;
+    }
+    75% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}

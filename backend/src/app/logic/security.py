@@ -1,15 +1,12 @@
 from datetime import timedelta, datetime
 
-from fastapi import Depends
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
 from src.database import models
-import settings
-
-from src.database.database import get_session
 
 # Configuration
 ALGORITHM = "HS256"
@@ -25,7 +22,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     if expires_delta is not None:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(hours=24)
+        expire = datetime.utcnow() + timedelta(hours=settings.ACCESS_TOKEN_EXPIRE_HOURS)
 
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)

@@ -6,8 +6,9 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
-from src.app.logic.security import authenticate_user, ACCESS_TOKEN_EXPIRE_HOURS, create_access_token
+from src.app.logic.security import authenticate_user, create_access_token
 from src.app.routers.tags import Tags
 from src.app.schemas.login import Token
 from src.database.database import get_session
@@ -25,8 +26,8 @@ async def login_for_access_token(db: Session = Depends(get_session),
         # Don't use our own error handler here because this should
         # be a 401 instead of a 404
         raise InvalidCredentialsException() from not_found
-    
-    access_token_expires = timedelta(hours=ACCESS_TOKEN_EXPIRE_HOURS)
+
+    access_token_expires = timedelta(hours=settings.ACCESS_TOKEN_EXPIRE_HOURS)
     access_token = create_access_token(
         data={"sub": str(user.user_id)}, expires_delta=access_token_expires
     )
