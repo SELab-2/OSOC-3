@@ -1,4 +1,5 @@
 import sqlalchemy.exc
+from .editions import DuplicateInsertException
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -7,6 +8,7 @@ from starlette import status
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
 from .parsing import MalformedUUIDError
 from .webhooks import WebhookProcessException
+from .register import FailedToAddNewUserException
 
 
 def install_handlers(app: FastAPI):
@@ -26,7 +28,7 @@ def install_handlers(app: FastAPI):
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     @app.exception_handler(MalformedUUIDError)
     def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
         return JSONResponse(
@@ -57,9 +59,23 @@ def install_handlers(app: FastAPI):
             content={'message': 'Not Found'}
         )
 
+    @app.exception_handler(DuplicateInsertException)
+    def duplicate_insert(_request: Request, _exception: DuplicateInsertException):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={'message': 'Already inserted'}
+        )
+
     @app.exception_handler(WebhookProcessException)
     def webhook_process_exception(_request: Request, exception: WebhookProcessException):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'message': exception.message}
+        )
+
+    @app.exception_handler(FailedToAddNewUserException)
+    def failed_to_add_new_user_exception(_request: Request, exception: FailedToAddNewUserException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while creating a new user'}
         )

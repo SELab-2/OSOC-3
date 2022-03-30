@@ -11,6 +11,8 @@ from src.app import app
 from src.database.database import get_session
 from src.database.engine import engine
 
+from tests.utils.authorization import AuthClient
+
 
 @pytest.fixture(scope="session")
 def tables():
@@ -55,3 +57,18 @@ def test_client(database_session: Session) -> TestClient:
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
     return TestClient(app)
+
+
+@pytest.fixture
+def auth_client(database_session: Session) -> AuthClient:
+    """Fixture to get a TestClient that handles authentication"""
+
+    def override_get_session() -> Generator[Session, None, None]:
+        """Inner function to override the Session used in the app
+        A session provided by a fixture will be used instead
+        """
+        yield database_session
+
+    # Replace get_session with a call to this method instead
+    app.dependency_overrides[get_session] = override_get_session
+    return AuthClient(database_session, app)
