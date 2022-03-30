@@ -52,7 +52,7 @@ async def get_edition_by_name(edition_name: str, db: Session = Depends(get_sessi
     """Get a specific edition.
 
     Args:
-        edition_name (str): the id of the edition that you want to get.
+        edition_name (str): the name of the edition that you want to get.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
 
     Returns:

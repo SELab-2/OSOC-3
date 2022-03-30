@@ -91,13 +91,16 @@ class ProjectList(CamelCaseModel):
 
 class ConflictStudent(CamelCaseModel):
     """A student together with the projects they are causing a conflict for"""
-    student: Student
-    projects: list[Project]
+    student_first_name: str
+    student_last_name: str
+    student_id: int
+    projects: list[tuple[int, str]]
 
 
 class ConflictStudentList(CamelCaseModel):
     """A list of ConflictStudents"""
     conflict_students: list[ConflictStudent]
+    edition_name: str
 
 
 class InputProject(BaseModel):

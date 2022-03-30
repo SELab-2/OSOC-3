@@ -42,24 +42,13 @@ def logic_get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
     conflicts = db_get_conflict_students(db, edition)
     conflicts_model = []
     for student, projects in conflicts:
-        student_model = Student(student_id=student.student_id,
-                                first_name=student.first_name,
-                                last_name=student.last_name,
-                                preferred_name=student.preferred_name,
-                                email_address=student.email_address,
-                                phone_number=student.phone_number,
-                                alumni=student.alumni,
-                                decision=student.decision,
-                                wants_to_be_student_coach=student.wants_to_be_student_coach,
-                                edition_name=edition.name)
         projects_model = []
         for project in projects:
-            project_model = Project(project_id=project.project_id, name=project.name,
-                                    number_of_students=project.number_of_students,
-                                    edition_name=edition.name, coaches=project.coaches, skills=project.skills,
-                                    partners=project.partners, project_roles=project.project_roles)
+            project_model = (project.project_id, project.name)
+            print(type(project.project_id))
             projects_model.append(project_model)
 
-        conflicts_model.append(ConflictStudent(student=student_model, projects=projects_model))
+        conflicts_model.append(ConflictStudent(student_id=student.student_id, student_first_name=student.first_name,
+                                               student_last_name=student.last_name, projects=projects_model))
 
-    return ConflictStudentList(conflict_students=conflicts_model)
+    return ConflictStudentList(conflict_students=conflicts_model, edition_name=edition.name)
