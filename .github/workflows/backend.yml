@@ -62,7 +62,7 @@ jobs:
           path: /usr/local/lib/python3.10/site-packages
           key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
-      - run: python -m pylint src tests
+      - run: python -m pylint src
 
   Type:
     needs: [Test]
