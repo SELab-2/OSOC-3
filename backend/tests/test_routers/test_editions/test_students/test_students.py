@@ -168,12 +168,16 @@ def test_delete_student_coach(database_with_data: Session, test_client: TestClie
     """tests"""
     assert test_client.delete("/editions/1/students/2", headers={
         "Authorization": auth_coach1}).status_code == status.HTTP_403_FORBIDDEN
+    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    assert len(students) == 1
 
 
 def test_delete_ghost(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.delete("/editions/1/students/100",
                               headers={"Authorization": auth_admin}).status_code == status.HTTP_404_NOT_FOUND
+    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    assert len(students) == 1
 
 
 def test_delete(database_with_data: Session, test_client: TestClient, auth_admin: str):
@@ -182,3 +186,28 @@ def test_delete(database_with_data: Session, test_client: TestClient, auth_admin
                               headers={"Authorization": auth_admin}).status_code == status.HTTP_204_NO_CONTENT
     students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
     assert len(students) == 0
+
+
+def test_get_student_by_id_no_autorization(database_with_data: Session, test_client: TestClient):
+    """tests"""
+    assert test_client.get("/editions/1/students/1",
+                              headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_get_student_by_id(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    assert test_client.get("/editions/1/students/1",
+                              headers={"Authorization": auth_admin}).status_code == status.HTTP_200_OK
+
+
+def test_get_students_no_autorization(database_with_data: Session, test_client: TestClient):
+    """tests"""
+    assert test_client.get("/editions/1/students/",
+                              headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_get_all_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/",
+                              headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
