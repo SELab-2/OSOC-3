@@ -1,11 +1,11 @@
 import React from "react";
-import "./ErrorPage.css";
+import { ErrorMessage } from "./styles";
 
 function ErrorPage() {
     return (
-        <h1 className="error">
+        <ErrorMessage>
             Oops! This is awkward... You are looking for something that doesn't actually exists.
-        </h1>
+        </ErrorMessage>
     );
 }
 
