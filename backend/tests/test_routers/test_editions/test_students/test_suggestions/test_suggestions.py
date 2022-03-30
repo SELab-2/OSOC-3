@@ -1,3 +1,4 @@
+from re import A
 import pytest
 from sqlalchemy.orm import Session
 from starlette import status
@@ -120,7 +121,6 @@ def test_new_suggestion(database_with_data: Session, test_client: TestClient, au
     suggestions: list[Suggestion] = database_with_data.query(
         Suggestion).where(Suggestion.student_id == 2).all()
     assert len(suggestions) == 1
-    print(resp.json())
     assert resp.json()[
         "suggestion"]["coach"]["email"] == suggestions[0].coach.email
     assert DecisionEnum(resp.json()["suggestion"]
