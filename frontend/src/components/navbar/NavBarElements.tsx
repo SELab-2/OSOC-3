@@ -2,7 +2,7 @@
 import styled from "styled-components";
 import { NavLink as Link } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
-import "../../css-files/App.css";
+import "../../App.css";
 
 export const Nav = styled.nav`
     background: var(--osoc_blue);

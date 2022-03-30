@@ -26,10 +26,6 @@ function RegisterPage() {
             const response = await validateRegistrationUrl("1", uuid);
             if (response) {
                 setUuid(true);
-            } else {
-                setTimeout(() => {
-                    navigate("/*");
-                }, 5000);
             }
         }
         if (!validUuid) {
