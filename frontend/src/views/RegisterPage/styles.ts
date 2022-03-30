@@ -24,4 +24,3 @@ export const RegisterButton = styled.button`
     border: none;
     border-radius: 10px;
 `;
-
