@@ -1,0 +1,19 @@
+.side-menu {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 100vh;
+    border-right: 2px solid darkslategrey;
+}
+
+.search-student {
+    width: 80%;
+    align-self: center;
+    margin-top: 20px;
+}
+
+.roles-dropdown {
+    width: 80%;
+    align-self: center;
+    margin-top: 10px;
+}

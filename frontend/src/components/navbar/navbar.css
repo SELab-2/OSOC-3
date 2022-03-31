@@ -6,6 +6,12 @@
     visibility: hidden;
 }
 
+.line-under-navbar {
+    width: 100%;
+    height: 2px;
+    background-color: darkslategrey;
+}
+
 .logo-plus-name {
     color: #fff;
     display: flex;

@@ -10,7 +10,7 @@ import ProjectsPage from "./views/ProjectsPage";
 import RegisterPage from "./views/RegisterPage";
 import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
-import Footer from "./components/Footer";
+// import Footer from "./components/Footer";
 import { Container, ContentWrapper } from "./app.styles";
 
 function App() {
@@ -32,8 +32,8 @@ function App() {
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
                 </ContentWrapper>
-                <div>Your token: {token}</div>
-                <Footer />
+                {/* <div>Your token: {token}</div>
+                <Footer /> */}
             </Container>
         </Router>
     );

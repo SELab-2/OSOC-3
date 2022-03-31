@@ -37,6 +37,7 @@ function NavBar({ token }: any, { setToken }: any) {
                     </div>
                 </NavMenu>
             </Nav>
+            <div className="line-under-navbar"></div>
         </>
     );
 }
