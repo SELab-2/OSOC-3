@@ -23,9 +23,11 @@ function RegisterPage() {
 
     useEffect(() => {
         async function validateUuid() {
-            const response = await validateRegistrationUrl("1", uuid);
-            if (response) {
-                setUuid(true);
+            if (uuid) {
+                const response = await validateRegistrationUrl("1", uuid);
+                if (response) {
+                    setUuid(true);
+                }
             }
         }
         if (!validUuid) {
