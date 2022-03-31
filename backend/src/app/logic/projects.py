@@ -45,7 +45,6 @@ def logic_get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
         projects_model = []
         for project in projects:
             project_model = (project.project_id, project.name)
-            print(type(project.project_id))
             projects_model.append(project_model)
 
         conflicts_model.append(ConflictStudent(student_id=student.student_id, student_first_name=student.first_name,
