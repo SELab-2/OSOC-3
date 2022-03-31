@@ -13,7 +13,6 @@ import {
     NoAccount,
     LoginButton,
 } from "./styles";
-import "./LoginPage.css";
 import { useAuth } from "../../contexts/auth-context";
 
 function LoginPage() {

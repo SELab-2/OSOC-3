@@ -1,11 +1,12 @@
 import React from "react";
-import "./NotFoundPage.css";
+import { ErrorContainer } from "../styles";
 
 function NotFoundPage() {
     return (
-        <h1 className={"error"}>
-            Oops! This is awkward... You are looking for something that doesn't exist.
-        </h1>
+        <ErrorContainer>
+            <h1>Oops! This is awkward... </h1>
+            <h2>You are looking for something that doesn't exist.</h2>
+        </ErrorContainer>
     );
 }
 
