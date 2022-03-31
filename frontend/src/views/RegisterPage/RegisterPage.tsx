@@ -78,6 +78,7 @@ function RegisterPage() {
                     <ConfirmPassword
                         confirmPassword={confirmPassword}
                         setConfirmPassword={setConfirmPassword}
+                        callRegister={() => callRegister(uuid)}
                     />
                     <div>
                         <RegisterButton onClick={() => callRegister(uuid)}>Register</RegisterButton>
