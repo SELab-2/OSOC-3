@@ -38,7 +38,11 @@ function LoginPage({ setToken }: any) {
                     <VerticalDivider />
                     <EmailLoginContainer>
                         <Email email={email} setEmail={setEmail} />
-                        <Password password={password} setPassword={setPassword} callLogIn={callLogIn} />
+                        <Password
+                            password={password}
+                            setPassword={setPassword}
+                            callLogIn={callLogIn}
+                        />
                         <NoAccount>
                             Don't have an account? Ask an admin for an invite link
                         </NoAccount>

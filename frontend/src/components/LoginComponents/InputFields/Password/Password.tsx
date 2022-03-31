@@ -3,7 +3,7 @@ import { Input } from "../styles";
 export default function Password({
     password,
     setPassword,
-    callLogIn
+    callLogIn,
 }: {
     password: string;
     setPassword: (value: string) => void;
@@ -19,7 +19,7 @@ export default function Password({
                 onChange={e => setPassword(e.target.value)}
                 onKeyPress={e => {
                     if (e.key === "Enter") {
-                        callLogIn()
+                        callLogIn();
                     }
                 }}
             />
