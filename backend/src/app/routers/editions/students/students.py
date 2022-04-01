@@ -5,7 +5,7 @@ from starlette import status
 from src.app.routers.tags import Tags
 from src.app.utils.dependencies import get_student, get_edition, require_admin, require_authorization
 from src.app.logic.students import definitive_decision_on_student, remove_student, get_student_return, get_students_search
-from src.app.schemas.students import NewDecision
+from src.app.schemas.students import NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList
 from src.database.database import get_session
 from src.database.models import Student, Edition
 from .suggestions import students_suggestions_router
@@ -16,11 +16,13 @@ students_router.include_router(
 
 
 @students_router.get("/", dependencies=[Depends(require_authorization)])
-async def get_students(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
+async def get_students(db: Session = Depends(get_session),
+                       commons: CommonQueryParams = Depends(CommonQueryParams),
+                       edition: Edition = Depends(get_edition)) -> ReturnStudentList:
     """
     Get a list of all students.
     """
-    get_students_search(db, edition)
+    return get_students_search(db, edition, commons)
 
 
 @students_router.post("/emails")
@@ -39,7 +41,7 @@ async def delete_student(student: Student = Depends(get_student), db: Session = 
 
 
 @students_router.get("/{student_id}", dependencies=[Depends(require_authorization)])
-async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)):
+async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)) -> ReturnStudent:
     """
     Get information about a specific student.
     """

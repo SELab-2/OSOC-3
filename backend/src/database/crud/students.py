@@ -22,7 +22,7 @@ def delete_student(db: Session, student: Student) -> None:
     db.commit()
 
 
-def get_students(db: Session, edition: Edition ,first_name: str = "", last_name: str = "", alumni: bool = False, student_coach: bool = False, skills: list[Skill] = None) -> list[Student]:
+def get_students(db: Session, edition: Edition, first_name: str = "", last_name: str = "", alumni: bool = False, student_coach: bool = False, skills: list[Skill] = None) -> list[Student]:
     """Get students"""
     query = db.query(Student)\
         .where(Student.edition == edition)\

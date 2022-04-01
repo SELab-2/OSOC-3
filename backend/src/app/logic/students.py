@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from src.app.schemas.students import NewDecision
 from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students
 from src.database.models import Edition, Student
-from src.app.schemas.students import ReturnStudentList, ReturnStudent
+from src.app.schemas.students import ReturnStudentList, ReturnStudent, CommonQueryParams
+
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
     """Set a definitive decion on a student"""
@@ -15,9 +16,11 @@ def remove_student(db: Session, student: Student) -> None:
     delete_student(db, student)
 
 
-def get_students_search(db: Session, edition: Edition) -> ReturnStudentList:
+def get_students_search(db: Session, edition: Edition, commons: CommonQueryParams) -> ReturnStudentList:
     """return all students"""
-    students = get_students(db, edition)
+    # TODO: skill_ids to skill's
+    students = get_students(db, edition, first_name=commons.first_name,
+                            last_name=commons.last_name, alumni=commons.alumni, student_coach=commons.student_coach)
     return ReturnStudentList(students=students)
 
 

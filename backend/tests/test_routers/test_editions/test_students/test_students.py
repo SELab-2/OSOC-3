@@ -211,3 +211,9 @@ def test_get_all_students(database_with_data: Session, test_client: TestClient, 
     response = test_client.get("/editions/1/students/",
                               headers={"Authorization": auth_admin})
     assert response.status_code == status.HTTP_200_OK
+
+def test_get_first_name_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?first_name='jos'",
+                              headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
