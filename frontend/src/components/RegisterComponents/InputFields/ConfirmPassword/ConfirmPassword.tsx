@@ -3,18 +3,25 @@ import { Input } from "../styles";
 export default function ConfirmPassword({
     confirmPassword,
     setConfirmPassword,
+    callRegister,
 }: {
     confirmPassword: string;
     setConfirmPassword: (value: string) => void;
+    callRegister: () => void;
 }) {
     return (
         <div>
             <Input
                 type="password"
-                name="password"
-                placeholder="Password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
+                onKeyPress={e => {
+                    if (e.key === "Enter") {
+                        callRegister();
+                    }
+                }}
             />
         </div>
     );
