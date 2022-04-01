@@ -1,3 +1,5 @@
+from fastapi import Query
+
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum
 
@@ -46,7 +48,7 @@ class CommonQueryParams:
     """search query paramaters"""
 
     def __init__(self, first_name: str = "", last_name: str = "", alumni: bool = False,
-                 student_coach: bool = False, skill_ids: list[int] = None) -> None:
+                 student_coach: bool = False, skill_ids: list[int] = Query([])) -> None:
         """init"""
         self.first_name = first_name
         self.last_name = last_name

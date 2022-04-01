@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from src.app.schemas.students import NewDecision
 from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students
-from src.database.models import Edition, Student
+from src.database.models import Edition, Student, Skill
 from src.app.schemas.students import ReturnStudentList, ReturnStudent, CommonQueryParams
 
 
@@ -18,9 +19,17 @@ def remove_student(db: Session, student: Student) -> None:
 
 def get_students_search(db: Session, edition: Edition, commons: CommonQueryParams) -> ReturnStudentList:
     """return all students"""
-    # TODO: skill_ids to skill's
+    # TODO: use function in crud/skills.py
+    if commons.skill_ids:
+        skills: list[Skill] = db.query(Skill).where(
+            Skill.skill_id.in_(commons.skill_ids)).all()
+        if not skills: #TODO: should this be a costum error with a message or not?
+            raise NoResultFound
+    else:
+        skills = []
     students = get_students(db, edition, first_name=commons.first_name,
-                            last_name=commons.last_name, alumni=commons.alumni, student_coach=commons.student_coach)
+                            last_name=commons.last_name, alumni=commons.alumni,
+                            student_coach=commons.student_coach, skills=skills)
     return ReturnStudentList(students=students)
 
 

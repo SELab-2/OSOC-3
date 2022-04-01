@@ -55,7 +55,7 @@ def database_with_data(database_session: Session) -> Session:
                                  email_address="josvermeulen@mail.com", phone_number="0487/86.24.45", alumni=True,
                                  wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3, skill6])
     student30: Student = Student(first_name="Marta", last_name="Marquez", preferred_name="Marta",
-                                 email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=True,
+                                 email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=False,
                                  wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill4, skill5])
 
     database_session.add(student01)
@@ -168,7 +168,8 @@ def test_delete_student_coach(database_with_data: Session, test_client: TestClie
     """tests"""
     assert test_client.delete("/editions/1/students/2", headers={
         "Authorization": auth_coach1}).status_code == status.HTTP_403_FORBIDDEN
-    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    students: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).all()
     assert len(students) == 1
 
 
@@ -176,7 +177,8 @@ def test_delete_ghost(database_with_data: Session, test_client: TestClient, auth
     """tests"""
     assert test_client.delete("/editions/1/students/100",
                               headers={"Authorization": auth_admin}).status_code == status.HTTP_404_NOT_FOUND
-    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    students: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).all()
     assert len(students) == 1
 
 
@@ -184,36 +186,97 @@ def test_delete(database_with_data: Session, test_client: TestClient, auth_admin
     """tests"""
     assert test_client.delete("/editions/1/students/1",
                               headers={"Authorization": auth_admin}).status_code == status.HTTP_204_NO_CONTENT
-    students: Student = database_with_data.query(Student).where(Student.student_id == 1).all()
+    students: Student = database_with_data.query(
+        Student).where(Student.student_id == 1).all()
     assert len(students) == 0
 
 
 def test_get_student_by_id_no_autorization(database_with_data: Session, test_client: TestClient):
     """tests"""
     assert test_client.get("/editions/1/students/1",
-                              headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
+                           headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_student_by_id(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     assert test_client.get("/editions/1/students/1",
-                              headers={"Authorization": auth_admin}).status_code == status.HTTP_200_OK
+                           headers={"Authorization": auth_admin}).status_code == status.HTTP_200_OK
 
 
 def test_get_students_no_autorization(database_with_data: Session, test_client: TestClient):
     """tests"""
     assert test_client.get("/editions/1/students/",
-                              headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
+                           headers={"Authorization": "auth_admin"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_all_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
     response = test_client.get("/editions/1/students/",
-                              headers={"Authorization": auth_admin})
+                               headers={"Authorization": auth_admin})
     assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 2
+
 
 def test_get_first_name_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
     """tests"""
-    response = test_client.get("/editions/1/students/?first_name='jos'",
-                              headers={"Authorization": auth_admin})
+    response = test_client.get("/editions/1/students/?first_name=Jos",
+                               headers={"Authorization": auth_admin})
     assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+def test_get_last_name_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?last_name=Vermeulen",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+def test_get_alumni_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?alumni=true",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+def test_get_student_coach_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?student_coach=true",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+def test_get_one_skill_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?skill_ids=1",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+    assert response.json()["students"][0]["firstName"] == "Jos"
+
+
+def test_get_multiple_skill_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?skill_ids=4&skill_ids=5",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+    assert response.json()["students"][0]["firstName"] == "Marta"
+
+
+def test_get_multiple_skill_students_no_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?skill_ids=4&skill_ids=6",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 0
+
+
+def test_get_ghost_skill_students(database_with_data: Session, test_client: TestClient, auth_admin: str):
+    """tests"""
+    response = test_client.get("/editions/1/students/?skill_ids=100",
+                               headers={"Authorization": auth_admin})
+    assert response.status_code == status.HTTP_404_NOT_FOUND
