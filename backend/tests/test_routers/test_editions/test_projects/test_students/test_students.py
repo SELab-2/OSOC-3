@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database.models import Edition, Project, User, Skill, ProjectRole, Student
+from tests.utils.authorization import AuthClient
 
 
 @pytest.fixture
@@ -11,29 +12,31 @@ def database_with_data(database_session: Session) -> Session:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
-    project1 = Project(name="project1", edition=edition, number_of_students=2)
-    project2 = Project(name="project2", edition=edition, number_of_students=3)
-    project3 = Project(name="project3", edition=edition, number_of_students=3)
+    skill1: Skill = Skill(name="skill1", description="something about skill1")
+    skill2: Skill = Skill(name="skill2", description="something about skill2")
+    skill3: Skill = Skill(name="skill3", description="something about skill3")
+    skill4: Skill = Skill(name="skill4", description="something about skill4")
+    database_session.add(skill1)
+    database_session.add(skill2)
+    database_session.add(skill3)
+    database_session.add(skill4)
+    project1 = Project(name="project1", edition=edition, number_of_students=2, skills=[skill1, skill2, skill3, skill4])
+    project2 = Project(name="project2", edition=edition, number_of_students=3, skills=[skill1, skill2, skill3, skill4])
+    project3 = Project(name="project3", edition=edition, number_of_students=3, skills=[skill1, skill2, skill3])
     database_session.add(project1)
     database_session.add(project2)
     database_session.add(project3)
     user: User = User(name="coach1")
     database_session.add(user)
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    database_session.add(skill1)
-    database_session.add(skill2)
-    database_session.add(skill3)
     student01: Student = Student(first_name="Jos", last_name="Vermeulen", preferred_name="Joske",
                                  email_address="josvermeulen@mail.com", phone_number="0487/86.24.45", alumni=True,
-                                 wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3])
+                                 wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3, skill4])
     student02: Student = Student(first_name="Isabella", last_name="Christensen", preferred_name="Isabella",
                                  email_address="isabella.christensen@example.com", phone_number="98389723", alumni=True,
-                                 wants_to_be_student_coach=True, edition=edition, skills=[skill2])
+                                 wants_to_be_student_coach=True, edition=edition, skills=[skill2, skill4])
     student03: Student = Student(first_name="Lotte", last_name="Buss", preferred_name="Lotte",
                                  email_address="lotte.buss@example.com", phone_number="0284-0749932", alumni=False,
-                                 wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill3])
+                                 wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill3, skill4])
     database_session.add(student01)
     database_session.add(student02)
     database_session.add(student03)
@@ -42,7 +45,7 @@ def database_with_data(database_session: Session) -> Session:
     project_role2: ProjectRole = ProjectRole(
         student=student01, project=project2, skill=skill3, drafter=user, argumentation="argmunet")
     project_role3: ProjectRole = ProjectRole(
-        student=student02, project=project1, skill=skill1, drafter=user, argumentation="argmunet")
+        student=student02, project=project1, skill=skill2, drafter=user, argumentation="argmunet")
     database_session.add(project_role1)
     database_session.add(project_role2)
     database_session.add(project_role3)
@@ -60,7 +63,7 @@ def current_edition(database_with_data: Session) -> Edition:
 def test_add_student_project(database_with_data: Session, test_client: TestClient):
     """tests add a student to a project"""
     resp = test_client.post(
-        "/editions/1/projects/1/students/3", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 3, "drafter_id": 1})
 
     assert resp.status_code == status.HTTP_201_CREATED
 
@@ -68,7 +71,7 @@ def test_add_student_project(database_with_data: Session, test_client: TestClien
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 3
-    assert json['projects'][0]['projectRoles'][2]['skillId'] == 1
+    assert json['projects'][0]['projectRoles'][2]['skillId'] == 3
 
 
 def test_add_ghost_student_project(database_with_data: Session, test_client: TestClient):
@@ -76,12 +79,12 @@ def test_add_ghost_student_project(database_with_data: Session, test_client: Tes
     student10: list[Student] = database_with_data.query(
         Student).where(Student.student_id == 10).all()
     assert len(student10) == 0
-    response = test_client.get('/editions/1/projects/1')
+    response = test_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = test_client.post(
-        "/editions/ed2022/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/10", json={"skill_id": 3, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     response = test_client.get('/editions/ed2022/projects/1')
@@ -118,7 +121,7 @@ def test_add_student_project_ghost_drafter(database_with_data: Session, test_cli
     assert len(json['projectRoles']) == 2
 
     resp = test_client.post(
-        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 3, "drafter_id": 10})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     response = test_client.get('/editions/ed2022/projects/1')
@@ -159,7 +162,7 @@ def test_add_incomplete_data_student_project(database_session: Session, test_cli
 def test_change_student_project(database_with_data: Session, test_client: TestClient):
     """test change a student project"""
     resp1 = test_client.patch(
-        "/editions/ed2022/projects/1/students/1", json={"skill_id": 2, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/1", json={"skill_id": 4, "drafter_id": 1})
 
     assert resp1.status_code == status.HTTP_204_NO_CONTENT
 
@@ -167,7 +170,7 @@ def test_change_student_project(database_with_data: Session, test_client: TestCl
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 2
-    assert json['projects'][0]['projectRoles'][0]['skillId'] == 2
+    assert json['projects'][0]['projectRoles'][0]['skillId'] == 4
 
 
 def test_change_incomplete_data_student_project(database_with_data: Session, test_client: TestClient):
@@ -194,7 +197,7 @@ def test_change_ghost_student_project(database_with_data: Session, test_client: 
     assert len(json['projectRoles']) == 2
 
     resp = test_client.patch(
-        "/editions/ed2022/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/10", json={"skill_id": 4, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     response = test_client.get('/editions/ed2022/projects/1')
@@ -231,7 +234,7 @@ def test_change_student_project_ghost_drafter(database_with_data: Session, test_
     assert len(json['projectRoles']) == 2
 
     resp = test_client.patch(
-        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 4, "drafter_id": 10})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     response = test_client.get('/editions/ed2022/projects/1')
@@ -283,3 +286,53 @@ def test_get_conflicts(database_with_data: Session, test_client: TestClient):
     assert json['conflictStudents'][0]['student']['studentId'] == 1
     assert len(json['conflictStudents'][0]['projects']) == 2
     assert json['editionName'] == "ed2022"
+
+
+def test_add_student_same_project_role(database_with_data: Session, test_client: TestClient):
+    """Two different students can't have the same project_role"""
+    resp = test_client.post(
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 2, "drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_add_student_project_wrong_project_skill(database_with_data: Session, test_client: TestClient):
+    """A project_role can't be created if the project doesn't require the skill"""
+    resp = test_client.post(
+        "/editions/ed2022/projects/3/students/3", json={"skill_id": 4, "drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_add_student_project_wrong_student_skill(database_with_data: Session, test_client: TestClient):
+    """A project_role can't be created if the student doesn't have the skill"""
+    resp = test_client.post(
+        "/editions/ed2022/projects/1/students/2", json={"skill_id": 1, "drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_confirm_project_role(database_with_data: Session, auth_client: AuthClient):
+    """Confirm a project role for a student without conflicts"""
+    resp = auth_client.post(
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 3, "drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    auth_client.admin()
+    response2 = auth_client.post(
+        "/editions/ed2022/projects/1/students/3/confirm")
+
+    assert response2.status_code == status.HTTP_204_NO_CONTENT
+    pr = database_with_data.query(ProjectRole).where(ProjectRole.student_id == 3) \
+        .where(ProjectRole.project_id == 1).one()
+    assert pr.definitive is True
+
+
+def test_confirm_project_role_conflict(database_with_data: Session, auth_client: AuthClient):
+    """A student who is part of a conflict can't have their project_role confirmed"""
+    auth_client.admin()
+    response2 = auth_client.post(
+        "/editions/ed2022/projects/1/students/1/confirm")
+
+    assert response2.status_code == status.HTTP_409_CONFLICT

@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import Response
 
+from src.app.logic.projects_students import logic_remove_student_project, logic_add_student_project, \
+    logic_change_project_role, logic_confirm_project_role
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import InputStudentRole
-from src.app.utils.dependencies import get_project
+from src.app.utils.dependencies import get_project, require_admin
 from src.database.database import get_session
 from src.database.models import Project
-from src.app.logic.projects_students import logic_remove_student_project, logic_add_student_project, \
-    logic_change_project_role
 
 project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tags.STUDENTS])
 
@@ -41,3 +41,14 @@ async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db
     This is not a definitive decision, but represents a coach drafting the student.
     """
     logic_add_student_project(db, project, student_id, input_sr.skill_id, input_sr.drafter_id)
+
+
+@project_students_router.post("/{student_id}/confirm", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
+                              dependencies=[Depends(require_admin)])
+async def confirm_project_role(student_id: int, db: Session = Depends(get_session),
+                               project: Project = Depends(get_project)):
+    """
+    Definitively add a student to a project (confirm its role).
+    This can only be performed by an admin.
+    """
+    logic_confirm_project_role(db, project, student_id)
