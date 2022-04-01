@@ -61,3 +61,8 @@ def delete_edition(db: Session, edition_name: str):
     edition_to_delete = get_edition_by_name(db, edition_name)
     db.delete(edition_to_delete)
     db.commit()
+
+
+def latest_edition(db: Session) -> Edition:
+    """Returns the latest edition from the database"""
+    return db.query(Edition).all()[-1]

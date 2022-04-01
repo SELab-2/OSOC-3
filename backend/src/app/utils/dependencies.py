@@ -8,7 +8,7 @@ import settings
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
     MissingPermissionsException
 from src.app.logic.security import ALGORITHM, get_user_by_id
-from src.database.crud.editions import get_edition_by_name
+from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.projects import db_get_project
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.database import get_session
@@ -18,6 +18,11 @@ from src.database.models import Edition, InviteLink, User, Project
 def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the name in the path"""
     return get_edition_by_name(database, edition_name)
+
+
+def get_latest_edition(database: Session = Depends(get_session)) -> Edition:
+    """Get the latest edition to verify if it can be modified"""
+    return latest_edition(database)
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
