@@ -279,8 +279,7 @@ def test_get_conflicts(database_with_data: Session, test_client: TestClient):
     """test get the conflicts"""
     response = test_client.get("/editions/ed2022/projects/conflicts")
     json = response.json()
-    print(json)
     assert len(json['conflictStudents']) == 1
-    assert json['conflictStudents'][0]['studentId'] == 1
+    assert json['conflictStudents'][0]['student']['studentId'] == 1
     assert len(json['conflictStudents'][0]['projects']) == 2
     assert json['editionName'] == "ed2022"

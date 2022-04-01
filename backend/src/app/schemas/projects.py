@@ -67,21 +67,16 @@ class Project(CamelCaseModel):
 
 
 class Student(CamelCaseModel):
-    """Represents a Student from the database to use in ConflictStudent"""
+    """Represents a Student to use in ConflictStudent"""
     student_id: int
     first_name: str
     last_name: str
-    preferred_name: str
-    email_address: str
-    phone_number: str | None
-    alumni: bool
-    decision: DecisionEnum
-    wants_to_be_student_coach: bool
-    edition_name: str
 
-    class Config:
-        """Set to ORM mode"""
-        orm_mode = True
+
+class ConflictProject(CamelCaseModel):
+    """A project to be used in ConflictStudent"""
+    project_id: int
+    name: str
 
 
 class ProjectList(CamelCaseModel):
@@ -91,10 +86,8 @@ class ProjectList(CamelCaseModel):
 
 class ConflictStudent(CamelCaseModel):
     """A student together with the projects they are causing a conflict for"""
-    student_first_name: str
-    student_last_name: str
-    student_id: int
-    projects: list[tuple[int, str]]
+    student: Student
+    projects: list[ConflictProject]
 
 
 class ConflictStudentList(CamelCaseModel):

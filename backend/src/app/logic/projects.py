@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, ConflictStudent
+from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, ConflictStudent, \
+    ConflictProject
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
 from src.database.models import Edition
@@ -44,11 +45,12 @@ def logic_get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
     for student, projects in conflicts:
         projects_model = []
         for project in projects:
-            project_model = (project.project_id, project.name)
-            print(type(project.project_id))
+            project_model = ConflictProject(project_id=project.project_id, name=project.name)
             projects_model.append(project_model)
 
-        conflicts_model.append(ConflictStudent(student_id=student.student_id, student_first_name=student.first_name,
-                                               student_last_name=student.last_name, projects=projects_model))
+        conflicts_model.append(ConflictStudent(student=Student(student_id=student.student_id,
+                                                               first_name=student.first_name,
+                                                               last_name=student.last_name),
+                                               projects=projects_model))
 
     return ConflictStudentList(conflict_students=conflicts_model, edition_name=edition.name)
