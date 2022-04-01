@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, ConflictStudent, \
-    ConflictProject
+from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, \
+    ConflictStudent, ConflictProject
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
 from src.database.models import Edition
