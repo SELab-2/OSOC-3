@@ -109,7 +109,7 @@ class InputProject(BaseModel):
     coaches: list[int]
 
 
-# TO DO: change drafter_id to current user with authentication
+# TODO: change drafter_id to current user with authentication
 class InputStudentRole(BaseModel):
     """Used for creating/patching a student role (temporary until authentication is implemented)"""
     skill_id: int

@@ -15,7 +15,7 @@ from src.database.database import get_session
 from src.database.models import Edition, InviteLink, User, Project
 
 
-# TO DO: Might be nice to use a more descriptive year number here than primary id.
+# TODO: Might be nice to use a more descriptive year number here than primary id.
 def get_edition(edition_id: int, database: Session = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the id in the path"""
     return get_edition_by_id(database, edition_id)
