@@ -2,6 +2,7 @@ import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from src.app.schemas.register import NewUser
+from src.app.utils.edition_readonly import check_readonly_edition
 from src.database.models import Edition, InviteLink
 from src.database.crud.register import create_coach_request, create_user, create_auth_email
 from src.database.crud.invites import get_invite_link_by_uuid, delete_invite_link
@@ -11,6 +12,8 @@ from src.app.logic.security import get_password_hash
 
 def create_request(db: Session, new_user: NewUser, edition: Edition) -> None:
     """Create a coach request. If something fails, the changes aren't committed"""
+    check_readonly_edition(db, edition)
+
     invite_link: InviteLink = get_invite_link_by_uuid(db, new_user.uuid)
 
     with db.begin_nested() as transaction:

@@ -20,11 +20,6 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
     return get_edition_by_name(database, edition_name)
 
 
-def get_latest_edition(database: Session = Depends(get_session)) -> Edition:
-    """Get the latest edition to verify if it can be modified"""
-    return latest_edition(database)
-
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
 
 

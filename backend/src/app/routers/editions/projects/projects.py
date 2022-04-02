@@ -47,11 +47,11 @@ async def get_conflicts(db: Session = Depends(get_session), edition: Edition = D
 
 @projects_router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                         dependencies=[Depends(require_admin)])
-async def delete_project(project_id: int, db: Session = Depends(get_session)):
+async def delete_project(project_id: int, db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Delete a specific project.
     """
-    return logic_delete_project(db, project_id)
+    return logic_delete_project(db, project_id, edition)
 
 
 @projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project,
@@ -69,8 +69,9 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 
 @projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                        dependencies=[Depends(require_admin)])
-async def patch_project(project_id: int, input_project: InputProject, db: Session = Depends(get_session)):
+async def patch_project(project_id: int, input_project: InputProject, db: Session = Depends(get_session),
+                        edition: Edition = Depends(get_edition)):
     """
     Update a project, changing some fields.
     """
-    logic_patch_project(db, project_id, input_project)
+    logic_patch_project(db, project_id, input_project, edition)

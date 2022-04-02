@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, \
     ConflictStudent, ConflictProject
+from src.app.utils.edition_readonly import check_readonly_edition
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
 from src.database.models import Edition, Project as ProjectModel
@@ -22,19 +23,25 @@ def logic_get_project_list(db: Session, edition: Edition) -> ProjectList:
 
 def logic_create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
     """Create a new project"""
+    check_readonly_edition(db, edition)
+
     project = db_add_project(db, edition, input_project)
     return Project(project_id=project.project_id, name=project.name, number_of_students=project.number_of_students,
                    edition_name=project.edition.name, coaches=project.coaches, skills=project.skills,
                    partners=project.partners, project_roles=project.project_roles)
 
 
-def logic_delete_project(db: Session, project_id: int):
+def logic_delete_project(db: Session, project_id: int, edition: Edition):
     """Delete a project"""
+    check_readonly_edition(db, edition)
+
     db_delete_project(db, project_id)
 
 
-def logic_patch_project(db: Session, project_id: int, input_project: InputProject):
+def logic_patch_project(db: Session, project_id: int, input_project: InputProject, edition: Edition):
     """Make changes to a project"""
+    check_readonly_edition(db, edition)
+
     db_patch_project(db, project_id, input_project)
 
 
