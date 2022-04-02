@@ -36,3 +36,7 @@ export async function removeCoachFromEdition(userId: number, edition: string) {
 export async function removeCoachFromAllEditions(userId: number) {
     alert("remove " + userId + " from all editions");
 }
+
+export async function addCoachToEdition(userId: number, edition: string) {
+    alert("add " + userId + " to " + edition);
+}
