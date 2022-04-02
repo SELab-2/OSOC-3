@@ -7,6 +7,7 @@ from src.app.schemas.editions import EditionBase, Edition, EditionList
 
 from src.database.database import get_session
 from src.app.logic import editions as logic_editions
+from src.database.models import User
 
 from .invites import invites_router
 from .projects import projects_router
@@ -16,7 +17,8 @@ from .webhooks import webhooks_router
 
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
-from ...utils.dependencies import require_admin, require_auth, require_coach
+from ...exceptions.authentication import MissingPermissionsException
+from ...utils.dependencies import require_admin, require_auth, require_coach, get_current_active_user
 
 editions_router = APIRouter(prefix="/editions")
 
@@ -34,31 +36,40 @@ for router in child_routers:
 
 
 @editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
-async def get_editions(db: Session = Depends(get_session)):
+async def get_editions(db: Session = Depends(get_session), user: User = Depends(get_current_active_user)):
     """Get a list of all editions.
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
+        user (User, optional): the current logged in user. Defaults to Depends(get_current_active_user).
 
     Returns:
         EditionList: an object with a list of all the editions.
     """
-    # TODO only return editions the user can see
-    return logic_editions.get_editions(db)
+    if user.admin:
+        return logic_editions.get_editions(db)
+    else:
+        return EditionList(editions=user.editions)
 
 
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], 
                      dependencies=[Depends(require_coach)])
-async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
+async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session),
+                              user: User = Depends(get_current_active_user)):
     """Get a specific edition.
 
     Args:
         edition_name (str): the name of the edition that you want to get.
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
+        user (User, optional): the current logged in user. Defaults to Depends(get_current_active_user).
 
     Returns:
         Edition: an edition.
     """
-    return logic_editions.get_edition_by_name(db, edition_name)
+    edition = logic_editions.get_edition_by_name(db, edition_name)
+    if not user.admin and edition not in user.editions:
+        raise MissingPermissionsException
+
+    return edition
 
 
 @editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
