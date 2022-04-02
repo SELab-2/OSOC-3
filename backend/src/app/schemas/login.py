@@ -3,11 +3,10 @@ from src.app.schemas.utils import CamelCaseModel
 
 class UserData(CamelCaseModel):
     """User information that can be passed to frontend
-    Includes the id's of the editions a user is coach in
-    TODO replace with names once id-name change is merged
+    Includes the names of the editions a user is coach in
     """
     admin: bool
-    editions: list[int] = []
+    editions: list[str] = []
 
     class Config:
         orm_mode = True

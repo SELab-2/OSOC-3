@@ -18,10 +18,9 @@ def get_all_users(db: Session) -> list[User]:
     return db.query(User).all()
 
 
-def get_user_edition_ids(user: User) -> list[int]:
-    """Get all id's of the editions this user is coach in"""
-    # TODO replace with name
-    return list(map(lambda e: e.edition_id, user.editions))
+def get_user_edition_names(user: User) -> list[str]:
+    """Get all names of the editions this user is coach in"""
+    return list(map(lambda e: e.name, user.editions))
 
 
 def get_users_from_edition(db: Session, edition_name: str) -> list[User]:

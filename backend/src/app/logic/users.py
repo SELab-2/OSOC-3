@@ -25,9 +25,9 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersL
     return UsersListResponse(users=users_orm)
 
 
-def get_user_editions(user: User) -> list[int]:
-    """Get all id's of the editions this user is coach in"""
-    return users_crud.get_user_edition_ids(user)
+def get_user_editions(user: User) -> list[str]:
+    """Get all names of the editions this user is coach in"""
+    return users_crud.get_user_edition_names(user)
 
 
 def edit_admin_status(db: Session, user_id: int, admin: AdminPatch):
