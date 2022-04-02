@@ -32,9 +32,7 @@ async def create_project(input_project: InputProject,
     Create a new project
     """
     return logic_create_project(db, edition,
-                                input_project.name,
-                                input_project.number_of_students,
-                                input_project.skills, input_project.partners, input_project.coaches)
+                                input_project)
 
 
 @projects_router.get("/conflicts", response_model=ConflictStudentList)
@@ -55,7 +53,7 @@ async def delete_project(project_id: int, db: Session = Depends(get_session)):
 
 
 @projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project)
-async def get_project(project: Project = Depends(get_project)):
+async def get_project_route(project: Project = Depends(get_project)):
     """
     Get information about a specific project.
     """
@@ -68,6 +66,4 @@ async def patch_project(input_project: InputProject, project: Project = Depends(
     """
     Update a project, changing some fields.
     """
-    logic_patch_project(db, project, input_project.name,
-                        input_project.number_of_students,
-                        input_project.skills, input_project.partners, input_project.coaches)
+    logic_patch_project(db, project, input_project)

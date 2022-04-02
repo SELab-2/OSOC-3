@@ -1,4 +1,4 @@
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 
 
 class EditionBase(CamelCaseModel):
@@ -12,8 +12,8 @@ class Edition(CamelCaseModel):
     year: int
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class EditionList(CamelCaseModel):
@@ -21,5 +21,5 @@ class EditionList(CamelCaseModel):
     editions: list[Edition]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True

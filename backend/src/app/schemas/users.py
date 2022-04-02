@@ -1,5 +1,4 @@
-
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 
 
 class User(CamelCaseModel):
@@ -7,12 +6,11 @@ class User(CamelCaseModel):
 
     user_id: int
     name: str
-    email: str
     admin: bool
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class UsersListResponse(CamelCaseModel):
@@ -35,8 +33,8 @@ class UserRequest(CamelCaseModel):
     user: User
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class UserRequestsResponse(CamelCaseModel):

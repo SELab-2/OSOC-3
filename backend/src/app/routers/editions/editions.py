@@ -46,7 +46,8 @@ async def get_editions(db: Session = Depends(get_session)):
     return logic_editions.get_editions(db)
 
 
-@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_coach)])
+@editions_router.get("/{edition_id}", response_model=Edition, tags=[Tags.EDITIONS],
+                     dependencies=[Depends(require_coach)])
 async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session)):
     """Get a specific edition.
 
@@ -60,7 +61,8 @@ async def get_edition_by_id(edition_id: int, db: Session = Depends(get_session))
     return logic_editions.get_edition_by_id(db, edition_id)
 
 
-@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
+@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
+                      dependencies=[Depends(require_admin)])
 async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
     """ Create a new edition.
 
@@ -73,7 +75,8 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     return logic_editions.create_edition(db, edition)
 
 
-@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
+@editions_router.delete("/{edition_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
+                        dependencies=[Depends(require_admin)])
 async def delete_edition(edition_id: int, db: Session = Depends(get_session)):
     """Delete an existing edition.
 

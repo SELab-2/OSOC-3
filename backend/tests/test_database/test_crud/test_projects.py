@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 
-from src.app.schemas.projects import ConflictStudent
+from src.app.schemas.projects import ConflictStudent, InputProject
 from src.database.crud.projects import (db_get_all_projects, db_add_project,
                                         db_get_project, db_delete_project,
                                         db_patch_project, db_get_conflict_students)
@@ -20,7 +20,7 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(project1)
     database_session.add(project2)
     database_session.add(project3)
-    user: User = User(name="coach1", email="user@user.be")
+    user: User = User(name="coach1")
     database_session.add(user)
     skill1: Skill = Skill(name="skill1", description="something about skill1")
     skill2: Skill = Skill(name="skill2", description="something about skill2")
@@ -73,10 +73,12 @@ def test_get_all_projects(database_with_data: Session, current_edition: Edition)
 
 def test_add_project_partner_do_not_exist_yet(database_with_data: Session, current_edition: Edition):
     """tests add a project when the project don't exist yet"""
+    non_existing_proj: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
+                                                   partners=["ugent"], coaches=[1])
     assert len(database_with_data.query(Partner).where(
         Partner.name == "ugent").all()) == 0
     new_project: Project = db_add_project(
-        database_with_data, current_edition, "project1", 2, [1, 3], ["ugent"], [1])
+        database_with_data, current_edition, non_existing_proj)
     assert new_project == database_with_data.query(Project).where(
         Project.project_id == new_project.project_id).one()
     new_partner: Partner = database_with_data.query(
@@ -95,11 +97,13 @@ def test_add_project_partner_do_not_exist_yet(database_with_data: Session, curre
 
 def test_add_project_partner_do_exist(database_with_data: Session, current_edition: Edition):
     """tests add a project when the project exist already """
+    existing_proj: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
+                                                   partners=["ugent"], coaches=[1])
     database_with_data.add(Partner(name="ugent"))
     assert len(database_with_data.query(Partner).where(
         Partner.name == "ugent").all()) == 1
     new_project: Project = db_add_project(
-        database_with_data, current_edition, "project1", 2, [1, 3], ["ugent"], [1])
+        database_with_data, current_edition, existing_proj)
     assert new_project == database_with_data.query(Project).where(
         Project.project_id == new_project.project_id).one()
     partner: Partner = database_with_data.query(
@@ -155,16 +159,21 @@ def test_delete_project_with_project_roles(database_with_data: Session, current_
 
 def test_patch_project(database_with_data: Session, current_edition: Edition):
     """tests patch a project"""
+    proj: InputProject = InputProject(name="projec1", number_of_students=2, skills=[1, 3],
+                                                   partners=["ugent"], coaches=[1])
+    proj_patched: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
+                                      partners=["ugent"], coaches=[1])
+
     assert len(database_with_data.query(Partner).where(
         Partner.name == "ugent").all()) == 0
     new_project: Project = db_add_project(
-        database_with_data, current_edition, "projec1", 2, [1, 3], ["ugent"], [1])
+        database_with_data, current_edition, proj)
     assert new_project == database_with_data.query(Project).where(
         Project.project_id == new_project.project_id).one()
     new_partner: Partner = database_with_data.query(
         Partner).where(Partner.name == "ugent").one()
     db_patch_project(database_with_data, new_project,
-                     "project1", 2, [1, 3], ["ugent"], [1])
+                     proj_patched)
 
     assert new_partner in new_project.partners
     assert new_project.name == "project1"

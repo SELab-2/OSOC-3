@@ -4,12 +4,13 @@ from src.database import models
 
 
 def test_user_coach_request(database_session: Session):
+    """Test sending a coach request"""
     edition = models.Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
 
     # Passing as user_id
-    user = models.User(name="name", email="email1")
+    user = models.User(name="name")
     database_session.add(user)
     database_session.commit()
 
@@ -20,7 +21,7 @@ def test_user_coach_request(database_session: Session):
     assert req.user == user
 
     # Check if passing as user instead of user_id works
-    user = models.User(name="name", email="email2")
+    user = models.User(name="name")
     database_session.add(user)
     database_session.commit()
 
@@ -32,6 +33,7 @@ def test_user_coach_request(database_session: Session):
 
 
 def test_project_partners(database_session: Session):
+    """Test adding a partner to a project"""
     project = models.Project(name="project")
     database_session.add(project)
     database_session.commit()

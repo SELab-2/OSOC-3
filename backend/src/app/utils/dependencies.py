@@ -5,7 +5,8 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
 
 import settings
-from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
+from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
+    MissingPermissionsException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_id
 from src.database.crud.projects import db_get_project

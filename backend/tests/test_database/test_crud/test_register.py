@@ -6,20 +6,18 @@ from src.database.crud.register import create_user, create_coach_request, create
 
 def test_create_user(database_session: Session):
     """Tests for creating a user"""
-    create_user(database_session, "jos", "mail@email.com")
+    create_user(database_session, "jos")
 
     a = database_session.query(User).where(User.name == "jos").all()
     assert len(a) == 1
     assert a[0].name == "jos"
-    assert a[0].email == "mail@email.com"
 
 def test_react_coach_request(database_session: Session):
     """Tests for creating a coach request"""
-    edition = Edition(year = 2022)
+    edition = Edition(year=2022)
     database_session.add(edition)
     database_session.commit()
-    u = create_user(database_session, "jos", "mail@email.com")
-    
+    u = create_user(database_session, "jos")
     create_coach_request(database_session, u, edition)
     a = database_session.query(CoachRequest).where(CoachRequest.user == u).all()
 
@@ -29,8 +27,8 @@ def test_react_coach_request(database_session: Session):
 
 def test_create_auth_email(database_session: Session):
     """Tests for creating a auth email"""
-    u = create_user(database_session, "jos", "mail@email.com")
-    create_auth_email(database_session, u, "wachtwoord")
+    u = create_user(database_session, "jos")
+    create_auth_email(database_session, u, "wachtwoord", "mail@email.com")
 
     a = database_session.query(AuthEmail).where(AuthEmail.user == u).all()
     

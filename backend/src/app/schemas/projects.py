@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 from src.database.enums import DecisionEnum
 
 
@@ -8,9 +8,9 @@ class User(CamelCaseModel):
     """Represents a User from the database"""
     user_id: int
     name: str
-    email: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -21,6 +21,7 @@ class Skill(CamelCaseModel):
     description: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -30,6 +31,7 @@ class Partner(CamelCaseModel):
     name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -43,6 +45,7 @@ class ProjectRole(CamelCaseModel):
     drafter_id: int
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -59,6 +62,7 @@ class Project(CamelCaseModel):
     project_roles: list[ProjectRole]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -76,6 +80,7 @@ class Student(CamelCaseModel):
     edition_id: int
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 

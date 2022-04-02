@@ -1,4 +1,4 @@
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 
 
 class SkillBase(CamelCaseModel):
@@ -14,8 +14,8 @@ class Skill(CamelCaseModel):
     description: str | None = None
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True
 
 
 class SkillList(CamelCaseModel):
@@ -23,5 +23,5 @@ class SkillList(CamelCaseModel):
     skills: list[Skill]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
-        allow_population_by_field_name = True

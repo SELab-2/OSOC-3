@@ -9,7 +9,6 @@ from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
 
-
 def test_create_request(database_session: Session):
     """Tests if a normal request can be created"""
     edition = Edition(year=2022)
@@ -46,8 +45,27 @@ def test_duplicate_user(database_session: Session):
     nu2 = NewUser(name="user2", email="email@email.com",
                   pw="wachtwoord2", uuid=invite_link2.uuid)
     create_request(database_session, nu1, edition)
+
     with pytest.raises(FailedToAddNewUserException):
         create_request(database_session, nu2, edition)
+
+    # Verify that second user wasn't added
+    # the first addition was successful, the second wasn't
+    users = database_session.query(User).all()
+    assert len(users) == 1
+    assert users[0].name == nu1.name
+
+    emails = database_session.query(AuthEmail).all()
+    assert len(emails) == 1
+    assert emails[0].user == users[0]
+
+    requests = database_session.query(CoachRequest).all()
+    assert len(requests) == 1
+    assert requests[0].user == users[0]
+
+    # Verify that the link wasn't removed
+    links = database_session.query(InviteLink).all()
+    assert len(links) == 1
 
 
 def test_use_same_uuid_multiple_times(database_session: Session):

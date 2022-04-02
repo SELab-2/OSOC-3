@@ -5,6 +5,7 @@ from src.app.schemas.validators import validate_email_format
 
 
 def test_email_address():
+    """Test the validation of email addresses"""
     with pytest.raises(ValidationException):
         validate_email_format("test")
 
