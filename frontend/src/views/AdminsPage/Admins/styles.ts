@@ -9,8 +9,13 @@ export const AdminsContainer = styled.div`
 
 export const AdminsTable = styled(Table)``;
 
-export const ModalContent = styled.div`
+export const ModalContentGreen = styled.div`
     border: 3px solid var(--osoc_green);
+    background-color: var(--osoc_blue);
+`;
+
+export const ModalContentRed = styled.div`
+    border: 3px solid var(--osoc_red);
     background-color: var(--osoc_blue);
 `;
 

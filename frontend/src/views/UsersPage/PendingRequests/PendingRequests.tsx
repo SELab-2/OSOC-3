@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import Collapsible from "react-collapsible";
 import {
     RequestHeaderTitle,
+    RequestHeaderDiv,
+    OpenArrow,
+    ClosedArrow,
     RequestsTable,
     PendingRequestsContainer,
     AcceptButton,
     RejectButton,
     SpinnerContainer,
     SearchInput,
+    AcceptRejectTh,
 } from "./styles";
 import {
     acceptRequest,
@@ -17,8 +21,21 @@ import {
 } from "../../../utils/api/users/requests";
 import { Spinner } from "react-bootstrap";
 
+function Arrow(props: { open: boolean }) {
+    if (props.open) {
+        return <OpenArrow />;
+    } else {
+        return <ClosedArrow />;
+    }
+}
+
 function RequestHeader(props: { open: boolean }) {
-    return <RequestHeaderTitle>Requests</RequestHeaderTitle>;
+    return (
+        <RequestHeaderDiv>
+            <RequestHeaderTitle>Requests</RequestHeaderTitle>
+            <Arrow open={props.open} />
+        </RequestHeaderDiv>
+    );
 }
 
 function RequestFilter(props: { searchTerm: string; filter: (key: string) => void }) {
@@ -71,7 +88,7 @@ function RequestsList(props: { requests: Request[]; loading: boolean }) {
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Accept/Reject</th>
+                    <AcceptRejectTh>Accept/Reject</AcceptRejectTh>
                 </tr>
             </thead>
             {body}
@@ -121,8 +138,8 @@ export default function PendingRequests(props: { edition: string }) {
         <PendingRequestsContainer>
             <Collapsible
                 trigger={<RequestHeader open={open} />}
-                onOpen={() => setOpen(true)}
-                onClose={() => setOpen(false)}
+                onOpening={() => setOpen(true)}
+                onClosing={() => setOpen(false)}
             >
                 <RequestFilter searchTerm={searchTerm} filter={word => filter(word)} />
                 <RequestsList requests={requests} loading={gettingRequests} />
