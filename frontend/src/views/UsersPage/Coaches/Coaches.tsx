@@ -97,7 +97,7 @@ function CoachesList(props: { coaches: User[]; loading: boolean; edition: string
     const body = (
         <tbody>
             {props.coaches.map(coach => (
-                <CoachItem coach={coach} edition={props.edition} />
+                <CoachItem key={coach.id} coach={coach} edition={props.edition} />
             ))}
         </tbody>
     );
