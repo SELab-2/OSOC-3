@@ -1,12 +1,4 @@
-import axios from "axios";
-import { axiosInstance } from "./api";
-
-export interface User {
-    id: Number;
-    name: string;
-    email: string;
-    admin: boolean;
-}
+import { User } from "./users";
 
 export interface Request {
     id: number;
@@ -17,7 +9,7 @@ export interface GetRequestsResponse {
     requests: Request[];
 }
 
-export async function getRequests(edition: string | undefined): Promise<GetRequestsResponse> {
+export async function getRequests(edition: string): Promise<GetRequestsResponse> {
     const data = {
         requests: [
             {
@@ -59,30 +51,10 @@ export async function getRequests(edition: string | undefined): Promise<GetReque
     // }
 }
 
-/**
- * Get invite link for given email and edition
- */
-export async function getInviteLink(edition: string | undefined, email: string): Promise<string> {
-    try {
-        await axiosInstance
-            .post(`/editions/${edition}/invites/`, { email: email })
-            .then(response => {
-                return response.data.mailTo;
-            });
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return error.message;
-        } else {
-            throw error;
-        }
-    }
-    return "";
+export async function acceptRequest(requestId: number) {
+    alert("Accept " + requestId);
 }
 
-export async function acceptRequest(requestId: Number) {
-    alert("Accept");
-}
-
-export async function rejectRequest(requestId: Number) {
-    alert("Reject");
+export async function rejectRequest(requestId: number) {
+    alert("Reject " + requestId);
 }

@@ -9,26 +9,27 @@ import {
     SpinnerContainer,
     SearchInput,
 } from "./styles";
-import { acceptRequest, getRequests, rejectRequest, Request } from "../../../utils/api/users";
+import {
+    acceptRequest,
+    getRequests,
+    rejectRequest,
+    Request,
+} from "../../../utils/api/users/requests";
 import { Spinner } from "react-bootstrap";
 
 function RequestHeader(props: { open: boolean }) {
-    return <RequestHeaderTitle>Requests {props.open ? "opened" : "closed"}</RequestHeaderTitle>;
+    return <RequestHeaderTitle>Requests</RequestHeaderTitle>;
 }
 
-function RequestFilter(props: {
-    search: boolean;
-    searchTerm: string;
-    filter: (key: string) => void;
-}) {
+function RequestFilter(props: { searchTerm: string; filter: (key: string) => void }) {
     return <SearchInput value={props.searchTerm} onChange={e => props.filter(e.target.value)} />;
 }
 
-function AcceptReject(props: { request_id: number }) {
+function AcceptReject(props: { requestId: number }) {
     return (
         <div>
-            <AcceptButton onClick={() => acceptRequest(props.request_id)}>Accept</AcceptButton>
-            <RejectButton onClick={() => rejectRequest(props.request_id)}>Reject</RejectButton>
+            <AcceptButton onClick={() => acceptRequest(props.requestId)}>Accept</AcceptButton>
+            <RejectButton onClick={() => rejectRequest(props.requestId)}>Reject</RejectButton>
         </div>
     );
 }
@@ -39,7 +40,7 @@ function RequestItem(props: { request: Request }) {
             <td>{props.request.user.name}</td>
             <td>{props.request.user.email}</td>
             <td>
-                <AcceptReject request_id={props.request.id} />
+                <AcceptReject requestId={props.request.id} />
             </td>
         </tr>
     );
@@ -78,7 +79,7 @@ function RequestsList(props: { requests: Request[]; loading: boolean }) {
     );
 }
 
-export default function PendingRequests(props: { edition: string | undefined }) {
+export default function PendingRequests(props: { edition: string }) {
     const [allRequests, setAllRequests] = useState<Request[]>([]);
     const [requests, setRequests] = useState<Request[]>([]);
     const [gettingRequests, setGettingRequests] = useState(true);
@@ -116,7 +117,6 @@ export default function PendingRequests(props: { edition: string | undefined }) 
         setRequests(newRequests);
     };
 
-    // @ts-ignore
     return (
         <PendingRequestsContainer>
             <Collapsible
@@ -124,11 +124,7 @@ export default function PendingRequests(props: { edition: string | undefined }) 
                 onOpen={() => setOpen(true)}
                 onClose={() => setOpen(false)}
             >
-                <RequestFilter
-                    search={requests.length > 0}
-                    searchTerm={searchTerm}
-                    filter={word => filter(word)}
-                />
+                <RequestFilter searchTerm={searchTerm} filter={word => filter(word)} />
                 <RequestsList requests={requests} loading={gettingRequests} />
             </Collapsible>
         </PendingRequestsContainer>

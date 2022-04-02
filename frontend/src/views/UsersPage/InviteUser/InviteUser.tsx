@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getInviteLink } from "../../../utils/api/users";
+import { getInviteLink } from "../../../utils/api/users/users";
 import "./InviteUsers.css";
 import { InviteInput, InviteButton, Loader, InviteContainer, Link, Error } from "./styles";
 
@@ -33,7 +33,7 @@ function LinkDiv(props: { link: string }) {
     return linkDiv;
 }
 
-export default function InviteUser(props: { edition: string | undefined }) {
+export default function InviteUser(props: { edition: string }) {
     const [email, setEmail] = useState("");
     const [valid, setValid] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
@@ -50,7 +50,7 @@ export default function InviteUser(props: { edition: string | undefined }) {
     const sendInvite = async () => {
         if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
             setLoading(true);
-            const ding = await getInviteLink("props.edition", email);
+            const ding = await getInviteLink(props.edition, email);
             setLink(ding);
             setLoading(false);
             // TODO: fix email stuff
@@ -62,7 +62,6 @@ export default function InviteUser(props: { edition: string | undefined }) {
 
     return (
         <div>
-            <div>{props.edition}</div>
             <InviteContainer>
                 <InviteInput
                     className={valid ? "" : "email-field-error"}
