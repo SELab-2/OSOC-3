@@ -1,1 +1,1 @@
-export { validateRegistrationUrl } from "./auth";
+export { validateRegistrationUrl } from "./validateRegisterLink";
