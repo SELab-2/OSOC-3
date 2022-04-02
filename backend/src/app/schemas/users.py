@@ -29,7 +29,7 @@ class UserRequest(CamelCaseModel):
     """Model for a userrequest"""
 
     request_id: int
-    edition_id: int
+    edition_name: str
     user: User
 
     class Config:

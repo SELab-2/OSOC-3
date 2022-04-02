@@ -11,7 +11,7 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 
 @users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
-async def get_users(admin: bool = Query(False), edition: int | None = Query(None), db: Session = Depends(get_session)):
+async def get_users(admin: bool = Query(False), edition: str | None = Query(None), db: Session = Depends(get_session)):
     """
     Get users
     """
@@ -28,26 +28,26 @@ async def patch_admin_status(user_id: int, admin: AdminPatch, db: Session = Depe
     logic.edit_admin_status(db, user_id, admin)
 
 
-@users_router.post("/{user_id}/editions/{edition_id}", status_code=204, dependencies=[Depends(require_admin)])
-async def add_to_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
+@users_router.post("/{user_id}/editions/{edition_name}", status_code=204, dependencies=[Depends(require_admin)])
+async def add_to_edition(user_id: int, edition_name: str, db: Session = Depends(get_session)):
     """
     Add user as coach of the given edition
     """
 
-    logic.add_coach(db, user_id, edition_id)
+    logic.add_coach(db, user_id, edition_name)
 
 
-@users_router.delete("/{user_id}/editions/{edition_id}", status_code=204, dependencies=[Depends(require_admin)])
-async def remove_from_edition(user_id: int, edition_id: int, db: Session = Depends(get_session)):
+@users_router.delete("/{user_id}/editions/{edition_name}", status_code=204, dependencies=[Depends(require_admin)])
+async def remove_from_edition(user_id: int, edition_name: str, db: Session = Depends(get_session)):
     """
     Remove user as coach of the given edition
     """
 
-    logic.remove_coach(db, user_id, edition_id)
+    logic.remove_coach(db, user_id, edition_name)
 
 
 @users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
-async def get_requests(edition: int | None = Query(None), db: Session = Depends(get_session)):
+async def get_requests(edition: str | None = Query(None), db: Session = Depends(get_session)):
     """
     Get pending userrequests
     """
