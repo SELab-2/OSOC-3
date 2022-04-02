@@ -12,7 +12,7 @@ from src.database.models import Edition, Partner, Project, User, Skill, ProjectR
 @pytest.fixture
 def database_with_data(database_session: Session) -> Session:
     """fixture for adding data to the database"""
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     project1 = Project(name="project1", edition=edition, number_of_students=2)
     project2 = Project(name="project2", edition=edition, number_of_students=3)
@@ -56,7 +56,7 @@ def current_edition(database_with_data: Session) -> Edition:
 
 def test_get_all_projects_empty(database_session: Session):
     """test get all projects but there are none"""
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
     projects: list[Project] = db_get_all_projects(
@@ -172,7 +172,7 @@ def test_patch_project(database_with_data: Session, current_edition: Edition):
         Project.project_id == new_project.project_id).one()
     new_partner: Partner = database_with_data.query(
         Partner).where(Partner.name == "ugent").one()
-    db_patch_project(database_with_data, new_project,
+    db_patch_project(database_with_data, new_project.project_id,
                      proj_patched)
 
     assert new_partner in new_project.partners
@@ -181,9 +181,9 @@ def test_patch_project(database_with_data: Session, current_edition: Edition):
 
 def test_get_conflict_students(database_with_data: Session, current_edition: Edition):
     """test if the right ConflictStudent is given"""
-    conflicts: list[ConflictStudent] = db_get_conflict_students(database_with_data, current_edition)
+    conflicts: list[(Student, list[Project])] = db_get_conflict_students(database_with_data, current_edition)
     assert len(conflicts) == 1
-    assert conflicts[0].student.student_id == 1
-    assert len(conflicts[0].projects) == 2
-    assert conflicts[0].projects[0].project_id == 1
-    assert conflicts[0].projects[1].project_id == 2
+    assert conflicts[0][0].student_id == 1
+    assert len(conflicts[0][1]) == 2
+    assert conflicts[0][1][0].project_id == 1
+    assert conflicts[0][1][1].project_id == 2

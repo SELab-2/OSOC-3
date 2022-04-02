@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./css-files/App.css";
+import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/navbar";
-import LoginPage from "./views/LoginPage/LoginPage";
-import Students from "./views/Students";
-import Users from "./views/Users";
+import LoginPage from "./views/LoginPage";
+import StudentsPage from "./views/StudentsPage";
+import UsersPage from "./views/UsersPage";
 import ProjectsPage from "./views/ProjectsPage";
-import RegisterForm from "./views/RegisterForm/RegisterForm";
+import RegisterPage from "./views/RegisterPage";
 import ErrorPage from "./views/ErrorPage";
-import PendingPage from "./views/PendingPage/PendingPage";
+import PendingPage from "./views/PendingPage";
 import Footer from "./components/Footer";
 import { Container, ContentWrapper } from "./app.styles";
 
@@ -24,9 +24,9 @@ function App() {
                 <ContentWrapper>
                     <Routes>
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
-                        <Route path="/register/:uuid" element={<RegisterForm />} />
-                        <Route path="/students" element={<Students />} />
-                        <Route path="/users" element={<Users />} />
+                        <Route path="/register/:uuid" element={<RegisterPage />} />
+                        <Route path="/students" element={<StudentsPage />} />
+                        <Route path="/users" element={<UsersPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/pending" element={<PendingPage />} />
                         <Route path="*" element={<ErrorPage />} />

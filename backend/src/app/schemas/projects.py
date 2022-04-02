@@ -54,7 +54,7 @@ class Project(CamelCaseModel):
     project_id: int
     name: str
     number_of_students: int
-    edition_id: int
+    edition_name: str
 
     coaches: list[User]
     skills: list[Skill]
@@ -67,21 +67,16 @@ class Project(CamelCaseModel):
 
 
 class Student(CamelCaseModel):
-    """Represents a Student from the database to use in ConflictStudent"""
+    """Represents a Student to use in ConflictStudent"""
     student_id: int
     first_name: str
     last_name: str
-    preferred_name: str
-    email_address: str
-    phone_number: str | None
-    alumni: bool
-    decision: DecisionEnum
-    wants_to_be_student_coach: bool
-    edition_id: int
 
-    class Config:
-        """Set to ORM mode"""
-        orm_mode = True
+
+class ConflictProject(CamelCaseModel):
+    """A project to be used in ConflictStudent"""
+    project_id: int
+    name: str
 
 
 class ProjectList(CamelCaseModel):
@@ -92,12 +87,13 @@ class ProjectList(CamelCaseModel):
 class ConflictStudent(CamelCaseModel):
     """A student together with the projects they are causing a conflict for"""
     student: Student
-    projects: list[Project]
+    projects: list[ConflictProject]
 
 
 class ConflictStudentList(CamelCaseModel):
     """A list of ConflictStudents"""
     conflict_students: list[ConflictStudent]
+    edition_name: str
 
 
 class InputProject(BaseModel):
@@ -109,7 +105,7 @@ class InputProject(BaseModel):
     coaches: list[int]
 
 
-# TO DO: change drafter_id to current user with authentication
+# TODO: change drafter_id to current user with authentication
 class InputStudentRole(BaseModel):
     """Used for creating/patching a student role (temporary until authentication is implemented)"""
     skill_id: int

@@ -40,7 +40,7 @@ def db_get_project(db: Session, project_id: int) -> Project:
 
 def db_delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
-    # Maybe make the relationship between project and project_role cascade on delete?
+    # TODO: Maybe make the relationship between project and project_role cascade on delete?
     # so this code is handled by the database
     proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
     for proj_role in proj_roles:
@@ -51,11 +51,13 @@ def db_delete_project(db: Session, project_id: int):
     db.commit()
 
 
-def db_patch_project(db: Session, project: Project, input_project: InputProject):
+def db_patch_project(db: Session, project_id: int, input_project: InputProject):
     """
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
     """
+    project = db.query(Project).where(Project.project_id == project_id).one()
+    
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
     coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
     partners_obj = []
@@ -75,7 +77,7 @@ def db_patch_project(db: Session, project: Project, input_project: InputProject)
     db.commit()
 
 
-def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStudent]:
+def db_get_conflict_students(db: Session, edition: Edition) -> list[(Student, list[Project])]:
     """
     Query all students that are causing conflicts for a certain edition
     Return a ConflictStudent for each student that causes a conflict
@@ -91,6 +93,6 @@ def db_get_conflict_students(db: Session, edition: Edition) -> list[ConflictStud
                 proj_id = proj_id[0]
                 proj = db.query(Project).where(Project.project_id == proj_id).one()
                 projs.append(proj)
-            conflict_student = ConflictStudent(student=student, projects=projs)
+            conflict_student = (student, projs)
             conflict_students.append(conflict_student)
     return conflict_students

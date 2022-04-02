@@ -12,7 +12,7 @@ from src.database.models import Edition, InviteLink
 
 def test_create_invite_link(database_session: Session):
     """Test creation of new invite links"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
 
@@ -27,7 +27,7 @@ def test_create_invite_link(database_session: Session):
 
 def test_delete_invite_link(database_session: Session):
     """Test deletion of existing invite links"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
 
@@ -41,8 +41,8 @@ def test_delete_invite_link(database_session: Session):
 
 def test_get_all_pending_invites_empty(database_session: Session):
     """Test fetching all invites for a given edition when db is empty"""
-    edition_one = Edition(year=2022)
-    edition_two = Edition(year=2023)
+    edition_one = Edition(year=2022, name="ed2022")
+    edition_two = Edition(year=2023, name="ed2023")
     database_session.add(edition_one)
     database_session.add(edition_two)
     database_session.commit()
@@ -57,8 +57,8 @@ def test_get_all_pending_invites_one_present(database_session: Session):
     Test fetching all invites for two editions when only one of them
     has valid entries
     """
-    edition_one = Edition(year=2022)
-    edition_two = Edition(year=2023)
+    edition_one = Edition(year=2022, name="ed2022")
+    edition_two = Edition(year=2023, name="ed2023")
     database_session.add(edition_one)
     database_session.add(edition_two)
     database_session.commit()
@@ -76,8 +76,8 @@ def test_get_all_pending_invites_one_present(database_session: Session):
 
 def test_get_all_pending_invites_two_present(database_session: Session):
     """Test fetching all links for two editions when both of them have data"""
-    edition_one = Edition(year=2022)
-    edition_two = Edition(year=2023)
+    edition_one = Edition(year=2022, name="ed2022")
+    edition_two = Edition(year=2023, name="ed2023")
     database_session.add(edition_one)
     database_session.add(edition_two)
     database_session.commit()
@@ -95,7 +95,7 @@ def test_get_all_pending_invites_two_present(database_session: Session):
 
 def test_get_invite_link_by_uuid_existing(database_session: Session):
     """Test fetching links by uuid's when it exists"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
 
@@ -113,7 +113,7 @@ def test_get_invite_link_by_uuid_non_existing(database_session: Session):
     with pytest.raises(sqlalchemy.exc.NoResultFound):
         get_invite_link_by_uuid(database_session, "123e4567-e89b-12d3-a456-426614174011")
 
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
 

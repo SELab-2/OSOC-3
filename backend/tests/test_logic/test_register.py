@@ -11,7 +11,7 @@ from src.app.exceptions.register import FailedToAddNewUserException
 
 def test_create_request(database_session: Session):
     """Tests if a normal request can be created"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -33,7 +33,7 @@ def test_create_request(database_session: Session):
 
 def test_duplicate_user(database_session: Session):
     """Tests if there is a duplicate, it's not created in the database"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link1: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -70,7 +70,7 @@ def test_duplicate_user(database_session: Session):
 
 def test_use_same_uuid_multiple_times(database_session: Session):
     """Tests that you can't use the same UUID multiple times"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -86,7 +86,7 @@ def test_use_same_uuid_multiple_times(database_session: Session):
 
 def test_not_a_correct_email(database_session: Session):
     """Tests when the email is not a correct email adress, it's get the right error"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
     with pytest.raises(ValueError):

@@ -5,17 +5,18 @@ from src.database.models import Edition
 from src.app.schemas.editions import EditionBase
 
 
-def get_edition_by_id(db: Session, edition_id: int) -> Edition:
-    """Get an edition given its primary key
+def get_edition_by_name(db: Session, edition_name: str) -> Edition:
+    """Get an edition given its name
 
     Args:
         db (Session): connection with the database.
-        edition_id (int): the primary key of the edition you want to find
+        edition_name (str): the name of the edition you want to find
 
     Returns:
         Edition: an edition if found else an exception is raised
     """
-    return db.query(Edition).where(Edition.edition_id == edition_id).one()
+    # TODO: check that name is valid
+    return db.query(Edition).where(Edition.name == edition_name).one()
 
 
 def get_editions(db: Session) -> list[Edition]:
@@ -40,7 +41,7 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
     Returns:
         Edition: the newly made edition object.
     """
-    new_edition: Edition = Edition(year=edition.year)
+    new_edition: Edition = Edition(year=edition.year, name=edition.name)
     db.add(new_edition)
     try:
         db.commit()
@@ -50,13 +51,13 @@ def create_edition(db: Session, edition: EditionBase) -> Edition:
         raise DuplicateInsertException(exception) from exception
 
 
-def delete_edition(db: Session, edition_id: int):
+def delete_edition(db: Session, edition_name: str):
     """Delete an edition.
 
     Args:
         db (Session): connection with the database.
-        edition_id (int): the primary key of the edition that needs to be deleted
+        edition_name (str): the primary key of the edition that needs to be deleted
     """
-    edition_to_delete = get_edition_by_id(db, edition_id)
+    edition_to_delete = get_edition_by_name(db, edition_name)
     db.delete(edition_to_delete)
     db.commit()

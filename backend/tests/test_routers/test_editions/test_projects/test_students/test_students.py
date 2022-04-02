@@ -10,7 +10,7 @@ from tests.utils.authorization import AuthClient
 @pytest.fixture
 def database_with_data(database_session: Session) -> Session:
     """fixture for adding data to the database"""
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     project1 = Project(name="project1", edition=edition, number_of_students=2)
     project2 = Project(name="project2", edition=edition, number_of_students=3)
@@ -62,11 +62,11 @@ def test_add_student_project(database_with_data: Session, auth_client: AuthClien
     """Tests adding a student to a project"""
     auth_client.admin()
     resp = auth_client.post(
-        "/editions/1/projects/1/students/3", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 1})
 
     assert resp.status_code == status.HTTP_201_CREATED
 
-    response2 = auth_client.get('/editions/1/projects')
+    response2 = auth_client.get('/editions/ed2022/projects')
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 3
@@ -79,15 +79,15 @@ def test_add_ghost_student_project(database_with_data: Session, auth_client: Aut
     student10: list[Student] = database_with_data.query(
         Student).where(Student.student_id == 10).all()
     assert len(student10) == 0
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.post(
-        "/editions/1/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -98,15 +98,16 @@ def test_add_student_project_non_existing_skill(database_with_data: Session, aut
     skill10: list[Skill] = database_with_data.query(
         Skill).where(Skill.skill_id == 10).all()
     assert len(skill10) == 0
-    response = auth_client.get('/editions/1/projects/1')
+
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.post(
-        "/editions/1/projects/1/students/3", json={"skill_id": 10, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 10, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -118,15 +119,15 @@ def test_add_student_project_ghost_drafter(database_with_data: Session, auth_cli
         User).where(User.user_id == 10).all()
     assert len(user10) == 0
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.post(
-        "/editions/1/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -139,25 +140,25 @@ def test_add_student_to_ghost_project(database_with_data: Session, auth_client: 
     assert len(project10) == 0
 
     resp = auth_client.post(
-        "/editions/1/projects/10/students/1", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/10/students/1", json={"skill_id": 1, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_add_incomplete_data_student_project(database_session: Session, auth_client: AuthClient):
     """Tests adding a student with incomplete data"""
     auth_client.admin()
-    database_session.add(Edition(year=2022))
+    database_session.add(Edition(year=2022, name="ed2022"))
     project = Project(name="project", edition_id=1,
                       project_id=1, number_of_students=2)
     database_session.add(project)
     database_session.commit()
 
     resp = auth_client.post(
-        "/editions/1/projects/1/students/1", json={"drafter_id": 1})
+        "/editions/ed2022/projects/1/students/1", json={"drafter_id": 1})
 
     assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response2 = auth_client.get('/editions/1/projects')
+    response2 = auth_client.get('/editions/ed2022/projects')
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 0
@@ -167,11 +168,11 @@ def test_change_student_project(database_with_data: Session, auth_client: AuthCl
     """Tests changing a student's project"""
     auth_client.admin()
     resp1 = auth_client.patch(
-        "/editions/1/projects/1/students/1", json={"skill_id": 2, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/1", json={"skill_id": 2, "drafter_id": 1})
 
     assert resp1.status_code == status.HTTP_204_NO_CONTENT
 
-    response2 = auth_client.get('/editions/1/projects')
+    response2 = auth_client.get('/editions/ed2022/projects')
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 2
@@ -182,11 +183,11 @@ def test_change_incomplete_data_student_project(database_with_data: Session, aut
     """Tests changing a student's project with incomplete data"""
     auth_client.admin()
     resp1 = auth_client.patch(
-        "/editions/1/projects/1/students/1", json={"skill_id": 2})
+        "/editions/ed2022/projects/1/students/1", json={"skill_id": 2})
 
     assert resp1.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response2 = auth_client.get('/editions/1/projects')
+    response2 = auth_client.get('/editions/ed2022/projects')
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 2
@@ -199,15 +200,16 @@ def test_change_ghost_student_project(database_with_data: Session, auth_client: 
     student10: list[Student] = database_with_data.query(
         Student).where(Student.student_id == 10).all()
     assert len(student10) == 0
-    response = auth_client.get('/editions/1/projects/1')
+
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.patch(
-        "/editions/1/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/10", json={"skill_id": 1, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -218,15 +220,16 @@ def test_change_student_project_non_existing_skill(database_with_data: Session, 
     skill10: list[Skill] = database_with_data.query(
         Skill).where(Skill.skill_id == 10).all()
     assert len(skill10) == 0
-    response = auth_client.get('/editions/1/projects/1')
+
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.patch(
-        "/editions/1/projects/1/students/3", json={"skill_id": 10, "drafter_id": 1})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 10, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -238,15 +241,15 @@ def test_change_student_project_ghost_drafter(database_with_data: Session, auth_
         User).where(User.user_id == 10).all()
     assert len(user10) == 0
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
     resp = auth_client.patch(
-        "/editions/1/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 10})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/1/projects/1')
+    response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 2
 
@@ -259,18 +262,18 @@ def test_change_student_to_ghost_project(database_with_data: Session, auth_clien
     assert len(project10) == 0
 
     resp = auth_client.patch(
-        "/editions/1/projects/10/students/1", json={"skill_id": 1, "drafter_id": 1})
+        "/editions/ed2022/projects/10/students/1", json={"skill_id": 1, "drafter_id": 1})
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_delete_student_project(database_with_data: Session, auth_client: AuthClient):
     """Tests deleting a student from a project"""
     auth_client.admin()
-    resp = auth_client.delete("/editions/1/projects/1/students/1")
+    resp = auth_client.delete("/editions/ed2022/projects/1/students/1")
 
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
-    response2 = auth_client.get('/editions/1/projects')
+    response2 = auth_client.get('/editions/ed2022/projects')
     json = response2.json()
 
     assert len(json['projects'][0]['projectRoles']) == 1
@@ -279,13 +282,13 @@ def test_delete_student_project(database_with_data: Session, auth_client: AuthCl
 def test_delete_student_project_empty(database_session: Session, auth_client: AuthClient):
     """Tests deleting a student from a project that isn't assigned"""
     auth_client.admin()
-    database_session.add(Edition(year=2022))
+    database_session.add(Edition(year=2022, name="ed2022"))
     project = Project(name="project", edition_id=1,
                       project_id=1, number_of_students=2)
     database_session.add(project)
     database_session.commit()
 
-    resp = auth_client.delete("/editions/1/projects/1/students/1")
+    resp = auth_client.delete("/editions/ed2022/projects/1/students/1")
 
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
@@ -293,8 +296,9 @@ def test_delete_student_project_empty(database_session: Session, auth_client: Au
 def test_get_conflicts(database_with_data: Session, auth_client: AuthClient):
     """Test getting the conflicts"""
     auth_client.admin()
-    response = auth_client.get("/editions/1/projects/conflicts")
+    response = auth_client.get("/editions/ed2022/projects/conflicts")
     json = response.json()
     assert len(json['conflictStudents']) == 1
     assert json['conflictStudents'][0]['student']['studentId'] == 1
     assert len(json['conflictStudents'][0]['projects']) == 2
+    assert json['editionName'] == "ed2022"

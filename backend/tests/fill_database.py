@@ -11,7 +11,7 @@ from src.app.logic.security import get_password_hash
 def fill_database(db: Session):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     db.add(edition)
     db.commit()
 
