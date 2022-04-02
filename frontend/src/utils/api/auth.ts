@@ -10,24 +10,16 @@ export async function validateBearerToken(token: string | null): Promise<User | 
     // No token stored -> can't validate anything
     if (token === null) return null;
 
-    // TODO uncomment once it works
-    // try {
-    //     const response = await axiosInstance.get("/users/current");
-    //     return response.data as User;
-    // } catch (error) {
-    //     if (axios.isAxiosError(error)) {
-    //         return null;
-    //     } else {
-    //         throw error;
-    //     }
-    // }
-
-    return {
-        userId: 1,
-        name: "admin",
-        admin: false,
-        editions: [],
-    };
+    try {
+        const response = await axiosInstance.get("/users/current");
+        return response.data as User;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**

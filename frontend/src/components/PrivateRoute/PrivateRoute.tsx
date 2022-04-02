@@ -6,6 +6,6 @@ import { Navigate, Outlet } from "react-router-dom";
  */
 export default function PrivateRoute() {
     const { isLoggedIn } = useAuth();
-    // TODO check edition once routes have been moved over
+    // TODO check edition existence & access once routes have been moved over
     return isLoggedIn ? <Outlet /> : <Navigate to={"/"} />;
 }

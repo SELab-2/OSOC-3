@@ -48,7 +48,7 @@ function RegisterPage() {
         }
 
         // TODO this has to change to get the edition the invite belongs to
-        const edition = "1";
+        const edition = "ed2022";
         try {
             const response = await register(edition, email, name, uuid, password);
             if (response) {

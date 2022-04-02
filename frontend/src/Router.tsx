@@ -17,13 +17,12 @@ import { NotFoundPage } from "./views/errors";
 import ForbiddenPage from "./views/errors/ForbiddenPage";
 
 export default function Router() {
-    const { token, setToken, isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
 
     return (
         <BrowserRouter>
             <Container>
-                {/* TODO don't pass token & setToken but use useAuth */}
-                {isLoggedIn && <NavBar token={token} setToken={setToken} />}
+                {isLoggedIn && <NavBar />}
                 <ContentWrapper>
                     {isLoggedIn === null ? (
                         // Busy verifying the access token
