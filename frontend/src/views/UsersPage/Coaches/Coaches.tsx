@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { CoachesTitle, CoachesContainer, CoachesTable, ModalContent } from "./styles";
-import { User } from "../../../utils/api/users/users";
+import { getUsers, User } from "../../../utils/api/users/users";
 import { SearchInput, SpinnerContainer } from "../PendingRequests/styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import {
     getCoaches,
     removeCoachFromAllEditions,
     removeCoachFromEdition,
+    addCoachToEdition,
 } from "../../../utils/api/users/coaches";
+import { AddAdminButton, ModalContentGreen } from "../../AdminsPage/Admins/styles";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 function CoachesHeader() {
     return <CoachesTitle>Coaches</CoachesTitle>;
@@ -21,6 +24,62 @@ function CoachFilter(props: {
     return <SearchInput value={props.searchTerm} onChange={e => props.filter(e.target.value)} />;
 }
 
+function AddCoach(props: { users: User[]; edition: string }) {
+    const [show, setShow] = useState(false);
+    const [selected, setSelected] = useState<User | undefined>(undefined);
+
+    const handleClose = () => {
+        setSelected(undefined);
+        setShow(false);
+    };
+    const handleShow = () => setShow(true);
+
+    return (
+        <>
+            <AddAdminButton variant="primary" onClick={handleShow}>
+                Add coach
+            </AddAdminButton>
+
+            <Modal show={show} onHide={handleClose}>
+                <ModalContentGreen>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add Coach</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Typeahead
+                            onChange={selected => {
+                                setSelected(selected[0] as User);
+                            }}
+                            options={props.users}
+                            labelKey="email"
+                            filterBy={["email", "name"]}
+                            emptyLabel="No users found."
+                            placeholder={"user's email address"}
+                        />
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            onClick={() => {
+                                if (selected !== undefined) {
+                                    addCoachToEdition(selected.id, props.edition);
+                                }
+                                handleClose();
+                            }}
+                            disabled={selected === undefined}
+                        >
+                            Add {selected?.name} as coach
+                        </Button>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                        </Button>
+                    </Modal.Footer>
+                </ModalContentGreen>
+            </Modal>
+        </>
+    );
+}
+
 function RemoveCoach(props: { coach: User; edition: string }) {
     const [show, setShow] = useState(false);
 
@@ -29,7 +88,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button variant="primary" size="sm" onClick={handleShow}>
                 Remove
             </Button>
 
@@ -119,6 +178,7 @@ function CoachesList(props: { coaches: User[]; loading: boolean; edition: string
 export default function Coaches(props: { edition: string }) {
     const [allCoaches, setAllCoaches] = useState<User[]>([]);
     const [coaches, setCoaches] = useState<User[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [gettingCoaches, setGettingCoaches] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
@@ -135,6 +195,19 @@ export default function Coaches(props: { edition: string }) {
                 .catch(function (error: any) {
                     console.log(error);
                     setGettingCoaches(false);
+                });
+            getUsers()
+                .then(response => {
+                    const users = [];
+                    for (const user of response.users) {
+                        if (!allCoaches.some(e => e.id === user.id)) {
+                            users.push(user);
+                        }
+                    }
+                    setUsers(users);
+                })
+                .catch(function (error: any) {
+                    console.log(error);
                 });
         }
     });
@@ -161,6 +234,7 @@ export default function Coaches(props: { edition: string }) {
                 searchTerm={searchTerm}
                 filter={word => filter(word)}
             />
+            <AddCoach users={users} edition={props.edition} />
             <CoachesList coaches={coaches} loading={gettingCoaches} edition={props.edition} />
         </CoachesContainer>
     );

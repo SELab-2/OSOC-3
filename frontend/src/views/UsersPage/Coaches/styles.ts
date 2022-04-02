@@ -14,24 +14,7 @@ export const CoachesTitle = styled.div`
     font-size: 25px;
 `;
 
-export const RemoveFromEditionButton = styled.button`
-    background-color: var(--osoc_red);
-    margin-left: 3px;
-    padding-bottom: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-`;
-
 export const CoachesTable = styled(Table)``;
-
-export const PopupDiv = styled.div`
-    background-color: var(--osoc_red);
-    width: 200px;
-    height: 100px;
-    position: absolute;
-    right: 0;
-    top: 0;
-`;
 
 export const ModalContent = styled.div`
     border: 3px solid var(--osoc_red);

@@ -102,7 +102,7 @@ function RemoveAdmin(props: { admin: User }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button variant="primary" size="sm" onClick={handleShow}>
                 Remove
             </Button>
 
