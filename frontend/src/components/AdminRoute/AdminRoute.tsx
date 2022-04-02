@@ -4,8 +4,8 @@ import { Role } from "../../data/enums";
 
 /**
  * React component for admin-only routes
- * Goes to login page if not authenticated, and to 403
- * if not admin
+ * Goes to the [[LoginPage]] if not authenticated, and to the [[ForbiddenPage]]
+ * (status 403) if not admin
  */
 export default function AdminRoute() {
     const { isLoggedIn, role } = useAuth();

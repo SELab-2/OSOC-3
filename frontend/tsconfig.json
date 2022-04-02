@@ -25,8 +25,15 @@
     ],
     "typedocOptions": {
         "entryPoints": [
-            "src/"
+            "src/App.tsx",
+            "src/Router.tsx",
+            "src/components",
+            "src/contexts",
+            "src/data",
+            "src/utils",
+            "src/views"
         ],
+        "name": "OSOC 3 - Frontend Documentation",
         "out": "docs"
     }
 }
