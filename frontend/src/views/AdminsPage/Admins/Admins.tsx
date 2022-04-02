@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { AdminsContainer, AdminsTable, ModalContent, AddAdminButton, Warning } from "./styles";
+import {
+    AdminsContainer,
+    AdminsTable,
+    ModalContentGreen,
+    ModalContentRed,
+    AddAdminButton,
+    Warning,
+} from "./styles";
 import { getUsers, User } from "../../../utils/api/users/users";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { addAdmin, getAdmins, removeAdmin } from "../../../utils/api/users/admins";
+import {
+    addAdmin,
+    getAdmins,
+    removeAdmin,
+    removeAdminAndCoach,
+} from "../../../utils/api/users/admins";
 import { SearchInput, SpinnerContainer } from "../../UsersPage/PendingRequests/styles";
 import { Typeahead } from "react-bootstrap-typeahead";
 
@@ -16,7 +28,11 @@ function AdminFilter(props: {
 
 function AddWarning(props: { name: string | undefined }) {
     if (props.name !== undefined) {
-        return <Warning> Warning: {props.name} will be able to edit/delete all data. </Warning>;
+        return (
+            <Warning>
+                Warning: {props.name} will be able to edit/delete all data and manage admin roles.
+            </Warning>
+        );
     }
     return null;
 }
@@ -38,19 +54,20 @@ function AddAdmin(props: { users: User[] }) {
             </AddAdminButton>
 
             <Modal show={show} onHide={handleClose}>
-                <ModalContent>
+                <ModalContentGreen>
                     <Modal.Header closeButton>
                         <Modal.Title>Add Admin</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Typeahead
                             onChange={selected => {
-                                // @ts-ignore
-                                setSelected(selected[0]);
+                                setSelected(selected[0] as User);
                             }}
                             options={props.users}
-                            labelKey={user => `${user.name} (${user.email})`}
+                            labelKey="email"
                             filterBy={["email", "name"]}
+                            emptyLabel="No users found."
+                            placeholder={"email"}
                         />
                         <AddWarning name={selected?.name} />
                     </Modal.Body>
@@ -71,7 +88,7 @@ function AddAdmin(props: { users: User[] }) {
                             Cancel
                         </Button>
                     </Modal.Footer>
-                </ModalContent>
+                </ModalContentGreen>
             </Modal>
         </>
     );
@@ -90,7 +107,7 @@ function RemoveAdmin(props: { admin: User }) {
             </Button>
 
             <Modal show={show} onHide={handleClose}>
-                <ModalContent>
+                <ModalContentRed>
                     <Modal.Header closeButton>
                         <Modal.Title>Remove Admin</Modal.Title>
                     </Modal.Header>
@@ -114,7 +131,7 @@ function RemoveAdmin(props: { admin: User }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeAdmin(props.admin.id);
+                                removeAdminAndCoach(props.admin.id);
                                 handleClose();
                             }}
                         >
@@ -124,7 +141,7 @@ function RemoveAdmin(props: { admin: User }) {
                             Cancel
                         </Button>
                     </Modal.Footer>
-                </ModalContent>
+                </ModalContentRed>
             </Modal>
         </>
     );

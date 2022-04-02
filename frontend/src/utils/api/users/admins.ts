@@ -42,3 +42,7 @@ export async function addAdmin(userId: number) {
 export async function removeAdmin(userId: number) {
     alert("remove " + userId + " as admin");
 }
+
+export async function removeAdminAndCoach(userId: number) {
+    alert("remove " + userId + " as admin & coach");
+}
