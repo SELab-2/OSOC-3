@@ -8,11 +8,7 @@ function ButtonDiv(props: { loading: boolean; onClick: () => void }) {
     if (props.loading) {
         buttonDiv = <Loader />;
     } else {
-        buttonDiv = (
-            <div>
-                <InviteButton onClick={props.onClick}>Send invite</InviteButton>
-            </div>
-        );
+        buttonDiv = <InviteButton onClick={props.onClick}>Send invite</InviteButton>;
     }
     return buttonDiv;
 }

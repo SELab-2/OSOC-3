@@ -6,6 +6,7 @@ import NavBar from "./components/navbar";
 import LoginPage from "./views/LoginPage/LoginPage";
 import Students from "./views/Students";
 import UsersPage from "./views/UsersPage/UsersPage";
+import AdminsPage from "./views/AdminsPage/AdminsPage";
 import ProjectsPage from "./views/ProjectsPage";
 import RegisterForm from "./views/RegisterForm/RegisterForm";
 import ErrorPage from "./views/ErrorPage";
@@ -27,6 +28,7 @@ function App() {
                         <Route path="/register/:uuid" element={<RegisterForm />} />
                         <Route path="/students" element={<Students />} />
                         <Route path="/editions/:edition/users" element={<UsersPage />} />
+                        <Route path="/admins" element={<AdminsPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/pending" element={<PendingPage />} />
                         <Route path="*" element={<ErrorPage />} />

@@ -1,16 +1,17 @@
 import styled, { keyframes } from "styled-components";
+import { Button } from "react-bootstrap";
 
 export const InviteContainer = styled.div`
-    overflow: hidden;
+    clear: both;
 `;
 
 export const InviteInput = styled.input.attrs({
     name: "email",
     placeholder: "Invite user by email",
 })`
-    height: 35px;
-    width: 250px;
-    font-size: 15px;
+    height: 30px;
+    width: 200px;
+    font-size: 13px;
     margin-top: 10px;
     margin-left: 10px;
     text-align: center;
@@ -19,14 +20,12 @@ export const InviteInput = styled.input.attrs({
     float: left;
 `;
 
-export const InviteButton = styled.button`
-    width: 90px;
-    height: 35px;
+export const InviteButton = styled(Button).attrs({
+    size: "sm",
+})`
     cursor: pointer;
     background: var(--osoc_green);
     color: white;
-    border: none;
-    border-radius: 5px;
     margin-left: 7px;
     margin-top: 10px;
 `;

@@ -60,7 +60,7 @@ function RequestsList(props: { requests: Request[]; loading: boolean }) {
     const body = (
         <tbody>
             {props.requests.map(request => (
-                <RequestItem request={request} />
+                <RequestItem key={request.id} request={request} />
             ))}
         </tbody>
     );
