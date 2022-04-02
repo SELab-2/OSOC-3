@@ -264,7 +264,6 @@ def test_patch_wrong_project(database_session: Session, auth_client: AuthClient)
 
     response = \
         auth_client.patch("/editions/ed2022/projects/1",
-        test_client.patch("/editions/ed2022/projects/1",
                           json={"name": "patched",
                                 "skills": [], "partners": [], "coaches": []})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
