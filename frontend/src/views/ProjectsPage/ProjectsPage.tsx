@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getProjects } from "../../utils/api/projects";
 import "./ProjectsPage.css";
 
 import { ProjectCard } from "../../components/ProjectsComponents";
@@ -6,6 +7,21 @@ import { ProjectCard } from "../../components/ProjectsComponents";
 import { CardsGrid } from "./styles";
 
 function ProjectPage() {
+    const [projects, setProjects] = useState();
+
+    useEffect(() => {
+        async function callProjects() {
+            const response = await getProjects("1");
+            if (response) {
+                console.log(response);
+                setProjects(response);
+            }
+        }
+        if (!projects) {
+            callProjects();
+        } else console.log("hello");
+    });
+
     return (
         <div>
             <CardsGrid>
