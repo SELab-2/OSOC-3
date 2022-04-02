@@ -5,9 +5,14 @@ export const CardContainer = styled.div`
     border-radius: 20px;
     margin: 20px;
     margin-bottom: 5px;
-    padding: 20px 50px 20px 20px;
+    padding: 20px 20px 20px 20px;
     background-color: #323252;
     box-shadow: 5px 5px 15px #131329;
+`;
+
+export const TitleContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
 `;
 
 export const CoachesContainer = styled.div`
@@ -22,6 +27,7 @@ export const CoachContainer = styled.div`
     text-align: center;
     padding: 10px;
     max-width: 50%;
+    min-width: 20%;
     text-overflow: ellipsis;
     overflow: hidden;
 `;
@@ -31,6 +37,6 @@ export const Delete = styled.button`
     padding: 5px 10px;
     border: 0;
     border-radius: 5px;
-    margin-top: 20px;
-    margin-left: 100%;
+    max-height: 35px;
+    margin-left: 5%;
 `;
