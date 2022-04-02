@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 
 export const RequestHeaderTitle = styled.div`
     padding-bottom: 3px;
@@ -27,15 +27,17 @@ export const PendingRequestsContainer = styled.div`
     margin: 10px auto auto;
 `;
 
-export const AcceptButton = styled.button`
+export const AcceptButton = styled(Button)`
     background-color: var(--osoc_green);
+    color: black;
     padding-bottom: 3px;
     padding-left: 3px;
     padding-right: 3px;
 `;
 
-export const RejectButton = styled.button`
+export const RejectButton = styled(Button)`
     background-color: var(--osoc_red);
+    color: black;
     margin-left: 3px;
     padding-bottom: 3px;
     padding-left: 3px;
