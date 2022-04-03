@@ -3,9 +3,9 @@ import { useAuth } from "../../contexts/auth-context";
 import { Role } from "../../data/enums";
 
 /**
- * React component for admin-only routes
- * Goes to the [[LoginPage]] if not authenticated, and to the [[ForbiddenPage]]
- * (status 403) if not admin
+ * React component for admin-only routes.
+ * Redirects to the [[LoginPage]] (status 401) if not authenticated,
+ * and to the [[ForbiddenPage]] (status 403) if not admin.
  *
  * Example usage:
  * ```ts

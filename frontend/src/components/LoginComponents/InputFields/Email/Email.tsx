@@ -1,7 +1,7 @@
 import { Input } from "../styles";
 
 /**
- * Input field for email addresses
+ * Input field for email addresses.
  * @param email getter for the state of the email address
  * @param setEmail setter for the state of the email address
  */
