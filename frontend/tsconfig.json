@@ -24,6 +24,7 @@
         "src"
     ],
     "typedocOptions": {
+        "hideGenerator": true,
         "entryPoints": [
             "src/App.tsx",
             "src/Router.tsx",

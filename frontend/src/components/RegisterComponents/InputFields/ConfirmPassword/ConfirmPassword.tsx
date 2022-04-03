@@ -1,5 +1,11 @@
 import { Input } from "../styles";
 
+/**
+ * Input field for passwords (confirmation), submits when pressing the Enter key
+ * @param confirmPassword getter for the state of the password
+ * @param setConfirmPassword setter for the state of the password
+ * @param callRegister callback that tries to register the user
+ */
 export default function ConfirmPassword({
     confirmPassword,
     setConfirmPassword,

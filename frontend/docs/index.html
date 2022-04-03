@@ -10,33 +10,42 @@
 <p><em>- You install Yarn</em></p>
 <pre><code class="language-bash"><span class="hl-0">npm install --global yarn</span>
 </code></pre>
-<p>:heavy_exclamation_mark: Do <strong>not</strong> use <code>npm</code> anymore! Yarn and npm shouldn&#39;t be used at the same time. </p>
+<p>:heavy_exclamation_mark: Do <strong>not</strong> use <code>npm</code> anymore! Yarn and npm shouldn&#39;t be used at the same
+time.</p>
 <pre><code class="language-bash"><span class="hl-1"># Installing new package</span><br/><span class="hl-0">yarn add &lt;package_name&gt;</span><br/><br/><span class="hl-1"># Installing new package as a dev dependency</span><br/><span class="hl-0">yarn add --dev &lt;package_name&gt;</span><br/><br/><span class="hl-1"># Installing all packages listed in package.json</span><br/><span class="hl-0">yarn install</span>
 </code></pre>
 
 <a href="#setting-up-prettier-and-eslint" id="setting-up-prettier-and-eslint" style="color: inherit; text-decoration: none;">
   <h2>Setting up Prettier and ESLint</h2>
 </a>
-<p>This directory contains configuration files for <code>Prettier</code> and <code>ESLint</code>, and depending on your IDE you may have to install or configure these in order for this to work.</p>
+<p>This directory contains configuration files for <code>Prettier</code> and <code>ESLint</code>, and depending on your IDE
+you may have to install or configure these in order for this to work.</p>
 
 <a href="#prettier" id="prettier" style="color: inherit; text-decoration: none;">
   <h3>Prettier</h3>
 </a>
-<p>Prettier is a code formatter that enforces your code to follow a specific style. Examples include automatically adding semicolons (;) at the end of every line, converting single-quoted strings (&#39;a&#39;) to double-quoted strings (<code>&quot;a&quot;</code>), etc.</p>
+<p>Prettier is a code formatter that enforces your code to follow a specific style. Examples include
+automatically adding semicolons (;) at the end of every line, converting single-quoted strings (&#39;a&#39;)
+to double-quoted strings (<code>&quot;a&quot;</code>), etc.</p>
 
 <a href="#eslint" id="eslint" style="color: inherit; text-decoration: none;">
   <h3>ESLint</h3>
 </a>
-<p>ESLint is, as the name suggests, a linter that reviews your code for bad practices and ugly constructions.</p>
+<p>ESLint is, as the name suggests, a linter that reviews your code for bad practices and ugly
+constructions.</p>
 
 <a href="#jetbrains-webstorm" id="jetbrains-webstorm" style="color: inherit; text-decoration: none;">
   <h3>JetBrains WebStorm</h3>
 </a>
-<p>When using WebStorm, Prettier and ESLint are supported by default. ESLint is enabled automatically if a <code>.eslintrc</code> file is present, but you <em>do</em> have to enable Prettier in the settings.</p>
+<p>When using WebStorm, Prettier and ESLint are supported by default. ESLint is enabled automatically
+if a <code>.eslintrc</code> file is present, but you <em>do</em> have to enable Prettier in the settings.</p>
 <ol>
-<li>Make sure the packages were installed by running <code>yarn install</code>, as <code>Prettier</code> and <code>ESLint</code> are among them.</li>
-<li>In the search bar, type in &quot;Prettier&quot; (or navigate to <code>Languages &amp; Frameworks &gt; JavaScript &gt; Prettier</code> manually).</li>
-<li>If the <code>Prettier package</code>-field is still empty, click the dropdown. WebStorm should automatically list the Prettier from your local <code>node-modules</code> directory.</li>
+<li>Make sure the packages were installed by running <code>yarn install</code>, as <code>Prettier</code> and <code>ESLint</code> are
+among them.</li>
+<li>In the search bar, type in &quot;Prettier&quot; (or navigate
+to <code>Languages &amp; Frameworks &gt; JavaScript &gt; Prettier</code> manually).</li>
+<li>If the <code>Prettier package</code>-field is still empty, click the dropdown. WebStorm should automatically
+list the Prettier from your local <code>node-modules</code> directory.</li>
 <li>Select the <code>On &#39;Reformat Code&#39; action</code> and <code>On save</code> checkboxes.</li>
 </ol>
 <p><img src="md-assets/readme/webstorm-prettier.png" alt="Prettier WebStorm configuration"></p>
@@ -44,21 +53,29 @@
 <a href="#visual-studio-code" id="visual-studio-code" style="color: inherit; text-decoration: none;">
   <h3>Visual Studio Code</h3>
 </a>
-<p>Visual Studio Code requires an extension for Prettier and ESLint to work, as they are not present in the editor.</p>
+<p>Visual Studio Code requires an extension for Prettier and ESLint to work, as they are not present in
+the editor.</p>
 <ol>
-<li><p>Make sure the packages were installed by running <code>yarn install</code>, as <code>Prettier</code> and <code>ESLint</code> are among them</p>
+<li><p>Make sure the packages were installed by running <code>yarn install</code>, as <code>Prettier</code> and <code>ESLint</code> are
+among them</p>
 </li>
-<li><p>Install the <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier extension</a>.</p>
+<li><p>Install
+the <a href="https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode">Prettier extension</a>
+.</p>
 </li>
-<li><p>Install the <a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint extension</a>.</p>
+<li><p>Install
+the <a href="https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint">ESLint extension</a>
+.</p>
 </li>
 <li><p>Select <code>Prettier</code> as the default formatter in the <code>Editor: Default Formatter</code> dropdown option.</p>
-<p> <img src="md-assets/readme/vscode-default-formatter.png" alt="VSCode: Default Formatter setting"></p>
+<p><img src="md-assets/readme/vscode-default-formatter.png" alt="VSCode: Default Formatter setting"></p>
 </li>
 <li><p>Enable the <code>Editor: Format On Save</code> option.</p>
-<p> <img src="md-assets/readme/vscode-format-on-save.png" alt="VSCode: Format On Save setting"></p>
+<p><img src="md-assets/readme/vscode-format-on-save.png" alt="VSCode: Format On Save setting"></p>
 </li>
-<li><p>The path to the <code>Prettier</code> config file, and the module in <code>node_modules</code> should be detected <strong>automatically</strong>. In case it isn&#39;t (see <a href="#try-it-out">Try it out!</a>, you can always fill in the fields in <code>Prettier: Config Path</code> and <code>Prettier: Prettier Path</code>.</p>
+<li><p>The path to the <code>Prettier</code> config file, and the module in <code>node_modules</code> should be detected **
+automatically**. In case it isn&#39;t (see <a href="#try-it-out">Try it out!</a>, you can always fill in the
+fields in <code>Prettier: Config Path</code> and <code>Prettier: Prettier Path</code>.</p>
 </li>
 </ol>
 
@@ -77,7 +94,8 @@
 </li>
 <li><p>Prettier: you should see a semicolon being added at the end of the line automatically</p>
 </li>
-<li><p>ESLint: you should get a warning on <code>variable</code> telling you that it was never used, and also that it should be marked as <code>const</code> because it&#39;s never reassigned.</p>
+<li><p>ESLint: you should get a warning on <code>variable</code> telling you that it was never used, and also that
+it should be marked as <code>const</code> because it&#39;s never reassigned.</p>
 </li>
 <li><p>Don&#39;t forget to remove the <code>test.ts</code> file again :)</p>
 </li>
@@ -102,6 +120,12 @@
 <a href="#yarn-build" id="yarn-build" style="color: inherit; text-decoration: none;">
   <h3><code>yarn build</code></h3>
 </a>
-<p>Builds the app for production to the <code>build</code> folder. It correctly bundles React in production mode and optimizes the build for the best performance.</p>
+<p>Builds the app for production to the <code>build</code> folder. It correctly bundles React in production mode
+and optimizes the build for the best performance.</p>
 <p>The build is minified and the filenames include the hashes.</p>
-</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Modules</a></li><li class=" tsd-kind-module"><a href="modules/App.html">App</a></li><li class=" tsd-kind-module"><a href="modules/Router.html">Router</a></li><li class=" tsd-kind-module"><a href="modules/components.html">components</a></li><li class=" tsd-kind-module"><a href="modules/contexts.html">contexts</a></li><li class=" tsd-kind-module"><a href="modules/data.html">data</a></li><li class=" tsd-kind-module"><a href="modules/utils.html">utils</a></li><li class=" tsd-kind-module"><a href="modules/views.html">views</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li><li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
+
+<a href="#yarn-docs" id="yarn-docs" style="color: inherit; text-decoration: none;">
+  <h3><code>yarn docs</code></h3>
+</a>
+<p>Auto-generates documentation for our code. The output can be found in the <code>/docs</code> folder.</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Modules</a></li><li class=" tsd-kind-module"><a href="modules/App.html">App</a></li><li class=" tsd-kind-module"><a href="modules/Router.html">Router</a></li><li class=" tsd-kind-module"><a href="modules/components.html">components</a></li><li class=" tsd-kind-module"><a href="modules/contexts.html">contexts</a></li><li class=" tsd-kind-module"><a href="modules/data.html">data</a></li><li class=" tsd-kind-module"><a href="modules/utils.html">utils</a></li><li class=" tsd-kind-module"><a href="modules/views.html">views</a></li></ul></nav></div></div></div><footer class=""><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li><li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="overlay"></div><script src="assets/main.js"></script></body></html>
