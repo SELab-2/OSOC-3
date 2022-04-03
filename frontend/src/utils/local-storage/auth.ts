@@ -3,8 +3,12 @@ import { StorageKey } from "../../data/enums";
 /**
  * Write the new value of a token into LocalStorage
  */
-export function setToken(value: string) {
-    localStorage.setItem(StorageKey.BEARER_TOKEN, value);
+export function setToken(value: string | null) {
+    if (value === null) {
+        localStorage.removeItem(StorageKey.BEARER_TOKEN);
+    } else {
+        localStorage.setItem(StorageKey.BEARER_TOKEN, value);
+    }
 }
 
 /**

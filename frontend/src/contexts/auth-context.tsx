@@ -61,11 +61,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole: setRole,
         token: token,
         setToken: (value: string | null) => {
-            // Set the token in LocalStorage
-            if (value) {
-                setTokenInStorage(value);
+            // Log the user out if token is null
+            if (value === null) {
+                setIsLoggedIn(false);
             }
 
+            // Set the token in LocalStorage
+            setTokenInStorage(value);
             setToken(value);
         },
         editions: editions,
