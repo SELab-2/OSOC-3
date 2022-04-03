@@ -15,5 +15,5 @@ export function setBearerToken(value: string | null) {
         return;
     }
 
-    axiosInstance.defaults.headers.common.Authorization = value;
+    axiosInstance.defaults.headers.common.Authorization = `Bearer ${value}`;
 }
