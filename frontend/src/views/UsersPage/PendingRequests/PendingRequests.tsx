@@ -12,6 +12,7 @@ import {
     SpinnerContainer,
     SearchInput,
     AcceptRejectTh,
+    Error,
 } from "./styles";
 import {
     acceptRequest,
@@ -38,8 +39,18 @@ function RequestHeader(props: { open: boolean }) {
     );
 }
 
-function RequestFilter(props: { searchTerm: string; filter: (key: string) => void }) {
-    return <SearchInput value={props.searchTerm} onChange={e => props.filter(e.target.value)} />;
+function RequestFilter(props: {
+    searchTerm: string;
+    filter: (key: string) => void;
+    show: boolean;
+}) {
+    if (props.show) {
+        return (
+            <SearchInput value={props.searchTerm} onChange={e => props.filter(e.target.value)} />
+        );
+    } else {
+        return null;
+    }
 }
 
 function AcceptReject(props: { requestId: number }) {
@@ -63,7 +74,7 @@ function RequestItem(props: { request: Request }) {
     );
 }
 
-function RequestsList(props: { requests: Request[]; loading: boolean }) {
+function RequestsList(props: { requests: Request[]; loading: boolean; gotData: boolean }) {
     if (props.loading) {
         return (
             <SpinnerContainer>
@@ -71,7 +82,11 @@ function RequestsList(props: { requests: Request[]; loading: boolean }) {
             </SpinnerContainer>
         );
     } else if (props.requests.length === 0) {
-        return <div>No requests</div>;
+        if (props.gotData) {
+            return <div>No requests</div>;
+        } else {
+            return null;
+        }
     }
 
     const body = (
@@ -99,24 +114,29 @@ function RequestsList(props: { requests: Request[]; loading: boolean }) {
 export default function PendingRequests(props: { edition: string }) {
     const [allRequests, setAllRequests] = useState<Request[]>([]);
     const [requests, setRequests] = useState<Request[]>([]);
-    const [gettingRequests, setGettingRequests] = useState(true);
+    const [gettingRequests, setGettingRequests] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
     const [open, setOpen] = useState(false);
+    const [error, setError] = useState("");
+
+    async function getData() {
+        try {
+            const response = await getRequests(props.edition);
+            setAllRequests(response.requests);
+            setRequests(response.requests);
+            setGotData(true);
+            setGettingRequests(false);
+        } catch (exception) {
+            setError("Oops, something went wrong...");
+            setGettingRequests(false);
+        }
+    }
 
     useEffect(() => {
-        if (!gotData) {
-            getRequests(props.edition)
-                .then(response => {
-                    setRequests(response.requests);
-                    setAllRequests(response.requests);
-                    setGettingRequests(false);
-                    setGotData(true);
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                    setGettingRequests(false);
-                });
+        if (!gotData && !gettingRequests && !error) {
+            setGettingRequests(true);
+            getData();
         }
     });
 
@@ -141,8 +161,13 @@ export default function PendingRequests(props: { edition: string }) {
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                <RequestFilter searchTerm={searchTerm} filter={word => filter(word)} />
-                <RequestsList requests={requests} loading={gettingRequests} />
+                <RequestFilter
+                    searchTerm={searchTerm}
+                    filter={word => filter(word)}
+                    show={requests.length > 0}
+                />
+                <RequestsList requests={requests} loading={gettingRequests} gotData={gotData} />
+                <Error> {error} </Error>
             </Collapsible>
         </PendingRequestsContainer>
     );

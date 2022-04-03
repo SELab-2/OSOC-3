@@ -74,3 +74,7 @@ export const SpinnerContainer = styled.div`
     align-items: center;
     margin: 20px;
 `;
+
+export const Error = styled.div`
+    color: var(--osoc_red);
+`;
