@@ -157,8 +157,10 @@ def test_remove_coach(database_session: Session):
     """Test removing a user as coach"""
 
     # Create user
-    user = models.User(name="user1", admin=False)
-    database_session.add(user)
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
 
     # Create edition
     edition = models.Edition(year=1, name="ed1")
@@ -168,11 +170,12 @@ def test_remove_coach(database_session: Session):
 
     # Create coach role
     database_session.execute(models.user_editions.insert(), [
-        {"user_id": user.user_id, "edition_id": edition.edition_id}
+        {"user_id": user1.user_id, "edition_id": edition.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition.edition_id}
     ])
 
-    users_crud.remove_coach(database_session, user.user_id, edition.name)
-    assert len(database_session.query(user_editions).all()) == 0
+    users_crud.remove_coach(database_session, user1.user_id, edition.name)
+    assert len(database_session.query(user_editions).all()) == 1
 
 
 def test_get_all_requests(database_session: Session):

@@ -55,7 +55,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "lint": "eslint . --ext js,ts",
+        "lint": "eslint . --ext js,ts,jsx,tsx",
         "test": "react-scripts test --watchAll=false"
     },
     "eslintConfig": {
