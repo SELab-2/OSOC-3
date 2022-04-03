@@ -24,15 +24,30 @@ function CoachFilter(props: {
     return <SearchInput value={props.searchTerm} onChange={e => props.filter(e.target.value)} />;
 }
 
-function AddCoach(props: { users: User[]; edition: string }) {
+function AddCoach(props: { users: User[]; edition: string; refresh: () => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
+    const [error, setError] = useState("");
 
     const handleClose = () => {
         setSelected(undefined);
         setShow(false);
     };
     const handleShow = () => setShow(true);
+
+    async function addCoach(userId: number) {
+        try {
+            const added = await addCoachToEdition(userId, props.edition);
+            if (added) {
+                props.refresh();
+                handleClose();
+            } else {
+                setError("Something went wrong. Failed to add coach");
+            }
+        } catch (error) {
+            setError("Something went wrong. Failed to add coach");
+        }
+    }
 
     return (
         <>
@@ -53,7 +68,7 @@ function AddCoach(props: { users: User[]; edition: string }) {
                             id="non-coach-users"
                             options={props.users}
                             labelKey="name"
-                            filterBy={["email", "name"]}
+                            filterBy={["name"]}
                             emptyLabel="No users found."
                             placeholder={"user's name"}
                         />
@@ -63,9 +78,8 @@ function AddCoach(props: { users: User[]; edition: string }) {
                             variant="primary"
                             onClick={() => {
                                 if (selected !== undefined) {
-                                    addCoachToEdition(selected.userId, props.edition);
+                                    addCoach(selected.userId);
                                 }
-                                handleClose();
                             }}
                             disabled={selected === undefined}
                         >
@@ -74,6 +88,7 @@ function AddCoach(props: { users: User[]; edition: string }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
+                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentGreen>
             </Modal>
@@ -81,11 +96,35 @@ function AddCoach(props: { users: User[]; edition: string }) {
     );
 }
 
-function RemoveCoach(props: { coach: User; edition: string }) {
+function RemoveCoach(props: { coach: User; edition: string; refresh: () => void }) {
     const [show, setShow] = useState(false);
+    const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        setError("");
+    };
+
+    async function removeCoach(userId: number, allEditions: boolean) {
+        try {
+            let removed;
+            if (allEditions) {
+                removed = await removeCoachFromAllEditions(userId);
+            } else {
+                removed = await removeCoachFromEdition(userId, props.edition);
+            }
+
+            if (removed) {
+                props.refresh();
+                handleClose();
+            } else {
+                setError("Something went wrong. Failed to remove coach");
+            }
+        } catch (error) {
+            setError("Something went wrong. Failed to remove coach");
+        }
+    }
 
     return (
         <>
@@ -106,8 +145,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeCoachFromAllEditions(props.coach.userId);
-                                handleClose();
+                                removeCoach(props.coach.userId, true);
                             }}
                         >
                             Remove from all editions
@@ -115,8 +153,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeCoachFromEdition(props.coach.userId, props.edition);
-                                handleClose();
+                                removeCoach(props.coach.userId, false);
                             }}
                         >
                             Remove from {props.edition}
@@ -124,6 +161,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
+                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContent>
             </Modal>
@@ -131,13 +169,13 @@ function RemoveCoach(props: { coach: User; edition: string }) {
     );
 }
 
-function CoachItem(props: { coach: User; edition: string }) {
+function CoachItem(props: { coach: User; edition: string; refresh: () => void }) {
     return (
         <tr>
             <td>{props.coach.name}</td>
             <td>{props.coach.email}</td>
             <td>
-                <RemoveCoach coach={props.coach} edition={props.edition} />
+                <RemoveCoach coach={props.coach} edition={props.edition} refresh={props.refresh} />
             </td>
         </tr>
     );
@@ -148,6 +186,7 @@ function CoachesList(props: {
     loading: boolean;
     edition: string;
     gotData: boolean;
+    refresh: () => void;
 }) {
     if (props.loading) {
         return (
@@ -166,7 +205,12 @@ function CoachesList(props: {
     const body = (
         <tbody>
             {props.coaches.map(coach => (
-                <CoachItem key={coach.userId} coach={coach} edition={props.edition} />
+                <CoachItem
+                    key={coach.userId}
+                    coach={coach}
+                    edition={props.edition}
+                    refresh={props.refresh}
+                />
             ))}
         </tbody>
     );
@@ -195,6 +239,8 @@ export default function Coaches(props: { edition: string }) {
     const [error, setError] = useState("");
 
     async function getData() {
+        setGettingData(true);
+        setGotData(false);
         try {
             const coachResponse = await getCoaches(props.edition);
             setAllCoaches(coachResponse.users);
@@ -203,7 +249,7 @@ export default function Coaches(props: { edition: string }) {
             const UsersResponse = await getUsers();
             const users = [];
             for (const user of UsersResponse.users) {
-                if (!allCoaches.some(e => e.userId === user.userId)) {
+                if (!coachResponse.users.some(e => e.userId === user.userId)) {
                     users.push(user);
                 }
             }
@@ -219,7 +265,6 @@ export default function Coaches(props: { edition: string }) {
 
     useEffect(() => {
         if (!gotData && !gettingData && !error) {
-            setGettingData(true);
             getData();
         }
     }, [gotData, gettingData, error, getData]);
@@ -243,12 +288,13 @@ export default function Coaches(props: { edition: string }) {
                 searchTerm={searchTerm}
                 filter={word => filter(word)}
             />
-            <AddCoach users={users} edition={props.edition} />
+            <AddCoach users={users} edition={props.edition} refresh={getData} />
             <CoachesList
                 coaches={coaches}
                 loading={gettingData}
                 edition={props.edition}
                 gotData={gotData}
+                refresh={getData}
             />
             <Error> {error} </Error>
         </CoachesContainer>

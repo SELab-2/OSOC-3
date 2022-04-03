@@ -117,7 +117,10 @@ function RemoveAdmin(props: { admin: User; refresh: () => void }) {
     const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        setError("");
+    };
 
     async function removeUserAsAdmin(userId: number, removeCoach: boolean) {
         try {
@@ -130,7 +133,6 @@ function RemoveAdmin(props: { admin: User; refresh: () => void }) {
 
             if (removed) {
                 props.refresh();
-                handleClose();
             } else {
                 setError("Something went wrong. Failed to remove admin");
             }
@@ -162,7 +164,9 @@ function RemoveAdmin(props: { admin: User; refresh: () => void }) {
                             variant="primary"
                             onClick={() => {
                                 removeUserAsAdmin(props.admin.userId, false);
-                                handleClose();
+                                if (!error) {
+                                    handleClose();
+                                }
                             }}
                         >
                             Remove admin
@@ -171,7 +175,9 @@ function RemoveAdmin(props: { admin: User; refresh: () => void }) {
                             variant="primary"
                             onClick={() => {
                                 removeUserAsAdmin(props.admin.userId, true);
-                                handleClose();
+                                if (!error) {
+                                    handleClose();
+                                }
                             }}
                         >
                             Remove as admin and coach
@@ -252,6 +258,7 @@ export default function Admins() {
 
     async function getData() {
         setGettingData(true);
+        setGotData(false);
         try {
             const response = await getAdmins();
             setAllAdmins(response.users);

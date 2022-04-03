@@ -10,14 +10,17 @@ export async function getCoaches(edition: string): Promise<GetCoachesResponse> {
     return response.data as GetCoachesResponse;
 }
 
-export async function removeCoachFromEdition(userId: number, edition: string) {
-    alert("remove " + userId + " from " + edition);
+export async function removeCoachFromEdition(userId: number, edition: string): Promise<boolean> {
+    const response = await axiosInstance.delete(`/users/${userId}/editions/${edition}`);
+    return response.status === 204;
 }
 
-export async function removeCoachFromAllEditions(userId: number) {
-    alert("remove " + userId + " from all editions");
+export async function removeCoachFromAllEditions(userId: number): Promise<boolean> {
+    // TODO: sent correct DELETE
+    return false;
 }
 
-export async function addCoachToEdition(userId: number, edition: string) {
-    alert("add " + userId + " to " + edition);
+export async function addCoachToEdition(userId: number, edition: string): Promise<boolean> {
+    const response = await axiosInstance.post(`/users/${userId}/editions/${edition}`);
+    return response.status === 204;
 }
