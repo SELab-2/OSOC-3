@@ -11,7 +11,14 @@ export async function validateBearerToken(token: string | null): Promise<User | 
     if (token === null) return null;
 
     try {
-        const response = await axiosInstance.get("/users/current");
+        // Add header manually here instead of setting the default
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+
+        const response = await axiosInstance.get("/users/current", config);
         return response.data as User;
     } catch (error) {
         if (axios.isAxiosError(error)) {
