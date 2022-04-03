@@ -12,6 +12,7 @@ import ErrorPage from "./views/ErrorPage";
 import PendingPage from "./views/PendingPage";
 // import Footer from "./components/Footer";
 import { Container, ContentWrapper } from "./app.styles";
+import StudentInfoPage from "./views/StudentInfoPage";
 
 function App() {
     const [token, setToken] = useState("");
@@ -26,6 +27,7 @@ function App() {
                         <Route path="/" element={<LoginPage setToken={setToken} />} />
                         <Route path="/register/:uuid" element={<RegisterPage />} />
                         <Route path="/students" element={<StudentsPage />} />
+                        <Route path="/students/:studentid" element={<StudentInfoPage />} />
                         <Route path="/users" element={<UsersPage />} />
                         <Route path="/projects" element={<ProjectsPage />} />
                         <Route path="/pending" element={<PendingPage />} />

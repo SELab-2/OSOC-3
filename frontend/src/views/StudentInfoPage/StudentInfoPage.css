@@ -1,0 +1,60 @@
+.student-information {
+    padding: 20px;
+}
+
+.student-info-page {
+    display: flex;
+}
+
+.fullname {
+    display: flex;
+}
+
+.firstname{
+    padding-right: 10px;
+}
+
+.lastname, .firstname {
+    color: var(--osoc_orange);
+}
+
+.prefered-name {
+    font-size: 20px;
+}
+
+.line-break {
+    background-color: #163542;
+    height: 3px;
+    width: 420px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.email-field, .alumni-field, .phonenumber-field, .studentcoach-field, .roles-field {
+    display: flex;
+}
+
+.email-field p, .phonenumber-field p, .alumni-field p, .studentcoach-field p {
+    position: absolute;
+    margin-left: 250px;
+}
+
+.roles-in-roles-field {
+    position: absolute;
+    margin-left: 75px;
+}
+
+.student-information-section {
+    color: var(--osoc_orange);
+}
+
+.remove-student {
+    position: absolute;
+    width: 150px;
+    height: 35px;
+    right: 5%;
+    top: 12%;
+    color: white;
+    background-color: var(--osoc_red);
+    border: 4px solid var(--osoc_red);
+}

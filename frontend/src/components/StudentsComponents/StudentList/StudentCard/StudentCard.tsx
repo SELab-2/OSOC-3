@@ -1,7 +1,6 @@
 import React from "react";
 import {
     CardStudent,
-    CardConfirmColorBlock,
     CardStudentInfo,
     CardVerticalContainer,
     CardHorizontalContainer,
@@ -9,16 +8,23 @@ import {
     CardStudentName,
     CardAmountSuggestions,
 } from "./styles";
+import { useNavigate } from "react-router-dom";
 
-export default function StudentCard() {
+interface Props {
+    name: string;
+}
+
+export default function StudentCard(props: Props) {
+    const navigate = useNavigate();
+
     return (
         <>
-            <CardStudent>
-                <CardConfirmColorBlock />
+            <CardStudent onClick={() => navigate(`/students/${props.name}`)}>
+                {/* <CardConfirmColorBlock /> */}
                 <CardStudentInfo>
                     <CardVerticalContainer>
                         <CardHorizontalContainer>
-                            <CardStudentName>Riley Pacocha</CardStudentName>
+                            <CardStudentName>{props.name}</CardStudentName>
                             <CardAmountSuggestions>6</CardAmountSuggestions>
                         </CardHorizontalContainer>
                         <CardSuggestionBar />
