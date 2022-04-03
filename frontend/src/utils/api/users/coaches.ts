@@ -1,32 +1,13 @@
 import { User } from "./users";
+import { axiosInstance } from "../api";
 
 export interface GetCoachesResponse {
     coaches: User[];
 }
 
 export async function getCoaches(edition: string): Promise<GetCoachesResponse> {
-    const data = {
-        coaches: [
-            {
-                id: 3,
-                name: "Bert",
-                email: "bert@mail.be",
-                admin: false,
-            },
-            {
-                id: 4,
-                name: "Tiebe",
-                email: "tiebe@mail.be",
-                admin: false,
-            },
-        ],
-    };
-
-    // eslint-disable-next-line promise/param-names
-    const delay = () => new Promise(res => setTimeout(res, 100));
-    await delay();
-
-    return data;
+    const response = await axiosInstance.get(`/users/?admin=false&edition=${edition}`);
+    return response.data as GetCoachesResponse;
 }
 
 export async function removeCoachFromEdition(userId: number, edition: string) {

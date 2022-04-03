@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CoachesTitle, CoachesContainer, CoachesTable, ModalContent } from "./styles";
 import { getUsers, User } from "../../../utils/api/users/users";
-import { SearchInput, SpinnerContainer } from "../PendingRequests/styles";
+import { Error, SearchInput, SpinnerContainer } from "../PendingRequests/styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import {
     getCoaches,
@@ -142,7 +142,12 @@ function CoachItem(props: { coach: User; edition: string }) {
     );
 }
 
-function CoachesList(props: { coaches: User[]; loading: boolean; edition: string }) {
+function CoachesList(props: {
+    coaches: User[];
+    loading: boolean;
+    edition: string;
+    gotData: boolean;
+}) {
     if (props.loading) {
         return (
             <SpinnerContainer>
@@ -150,7 +155,11 @@ function CoachesList(props: { coaches: User[]; loading: boolean; edition: string
             </SpinnerContainer>
         );
     } else if (props.coaches.length === 0) {
-        return <div>No coaches for this edition</div>;
+        if (props.gotData) {
+            return <div>No coaches for this edition</div>;
+        } else {
+            return null;
+        }
     }
 
     const body = (
@@ -179,36 +188,38 @@ export default function Coaches(props: { edition: string }) {
     const [allCoaches, setAllCoaches] = useState<User[]>([]);
     const [coaches, setCoaches] = useState<User[]>([]);
     const [users, setUsers] = useState<User[]>([]);
-    const [gettingCoaches, setGettingCoaches] = useState(true);
+    const [gettingData, setGettingData] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
+    const [error, setError] = useState("");
+
+    async function getData() {
+        try {
+            const coachResponse = await getCoaches(props.edition);
+            setAllCoaches(coachResponse.coaches);
+            setCoaches(coachResponse.coaches);
+
+            const UsersResponse = await getUsers();
+            const users = [];
+            for (const user of UsersResponse.users) {
+                if (!allCoaches.some(e => e.id === user.id)) {
+                    users.push(user);
+                }
+            }
+            setUsers(users);
+
+            setGotData(true);
+            setGettingData(false);
+        } catch (exception) {
+            setError("Oops, something went wrong...");
+            setGettingData(false);
+        }
+    }
 
     useEffect(() => {
-        if (!gotData) {
-            getCoaches(props.edition)
-                .then(response => {
-                    setCoaches(response.coaches);
-                    setAllCoaches(response.coaches);
-                    setGettingCoaches(false);
-                    setGotData(true);
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                    setGettingCoaches(false);
-                });
-            getUsers()
-                .then(response => {
-                    const users = [];
-                    for (const user of response.users) {
-                        if (!allCoaches.some(e => e.id === user.id)) {
-                            users.push(user);
-                        }
-                    }
-                    setUsers(users);
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                });
+        if (!gotData && !gettingData && !error) {
+            setGettingData(true);
+            getData();
         }
     });
 
@@ -235,7 +246,13 @@ export default function Coaches(props: { edition: string }) {
                 filter={word => filter(word)}
             />
             <AddCoach users={users} edition={props.edition} />
-            <CoachesList coaches={coaches} loading={gettingCoaches} edition={props.edition} />
+            <CoachesList
+                coaches={coaches}
+                loading={gettingData}
+                edition={props.edition}
+                gotData={gotData}
+            />
+            <Error> {error} </Error>
         </CoachesContainer>
     );
 }

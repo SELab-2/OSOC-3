@@ -24,7 +24,7 @@ function NavBar() {
                     <div className={hidden}>
                         <NavLink to="/students">Students</NavLink>
                         <NavLink to="/projects">Projects</NavLink>
-                        <NavLink to="/users">Users</NavLink>
+                        <NavLink to="/editions/2023/users">Users</NavLink>
                         <NavLink
                             to="/"
                             onClick={() => {

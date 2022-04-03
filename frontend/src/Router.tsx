@@ -37,7 +37,7 @@ export default function Router() {
                             <Route path={"/students"} element={<PrivateRoute />}>
                                 <Route path="" element={<StudentsPage />} />
                             </Route>
-                            <Route path="/users" element={<AdminRoute />}>
+                            <Route path="/editions/:edition/users" element={<AdminRoute />}>
                                 <Route path={""} element={<UsersPage />} />
                             </Route>
                             <Route path="/projects" element={<ProjectsPage />} />
