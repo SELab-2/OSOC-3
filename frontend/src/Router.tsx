@@ -16,6 +16,10 @@ import AdminRoute from "./components/AdminRoute";
 import { NotFoundPage } from "./views/errors";
 import ForbiddenPage from "./views/errors/ForbiddenPage";
 
+/**
+ * Router component to render different pages depending on the current url. Renders
+ * the [[VerifyingTokenPage]] if the bearer token is still being validated.
+ */
 export default function Router() {
     const { isLoggedIn } = useAuth();
 

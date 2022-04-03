@@ -4,13 +4,15 @@ import "./App.css";
 import Router from "./Router";
 import { AuthProvider } from "./contexts";
 
-function App() {
+/**
+ * Main application component. Wraps the [[Router]] in an [[AuthProvider]] so that
+ * the [[AuthContextState]] is available throughout the entire application.
+ */
+export default function App() {
     return (
-        // AuthContext should be visible in the entire application
+        // AuthContext should be available in the entire application
         <AuthProvider>
             <Router />
         </AuthProvider>
     );
 }
-
-export default App;
