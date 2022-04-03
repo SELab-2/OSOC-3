@@ -22,7 +22,7 @@ export default function ProjectCard({
             <h3>{client}</h3>
             <CoachesContainer>
                 {coaches.map((element, _index) => (
-                    <CoachContainer>{element}</CoachContainer>
+                    <CoachContainer key={_index}>{element}</CoachContainer>
                 ))}
             </CoachesContainer>
         </CardContainer>
