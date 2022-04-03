@@ -53,6 +53,7 @@ def add_coach(db: Session, user_id: int, edition_name: str):
     user = db.query(User).where(User.user_id == user_id).one()
     edition = db.query(Edition).where(Edition.name == edition_name).one()
     user.editions.append(edition)
+    db.commit()
 
 
 def remove_coach(db: Session, user_id: int, edition_name: str):
@@ -60,17 +61,11 @@ def remove_coach(db: Session, user_id: int, edition_name: str):
     Remove user as coach for the given edition
     """
     edition = db.query(Edition).where(Edition.name == edition_name).one()
-    db.execute(user_editions.delete(), {"user_id": user_id, "edition_id": edition.edition_id})
-
-
-def delete_user_as_coach(db: Session, edition_name: str, user_id: int):
-    """
-    Add user as admin for the given edition if not already coach
-    """
-
-    user = db.query(User).where(User.user_id == user_id).one()
-    edition = db.query(Edition).where(Edition.name == edition_name).one()
-    user.editions.remove(edition)
+    db.query(user_editions)\
+        .where(user_editions.c.user_id == user_id)\
+        .where(user_editions.c.edition_id == edition.edition_id)\
+        .delete()
+    db.commit()
 
 
 def get_all_requests(db: Session) -> list[CoachRequest]:
