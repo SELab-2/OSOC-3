@@ -28,8 +28,6 @@ export default function VerifyingTokenPage() {
         verifyToken();
     }, [authContext]);
 
-    setBearerToken("test");
-
     // This will be replaced later on
     return <h1>Loading...</h1>;
 }
