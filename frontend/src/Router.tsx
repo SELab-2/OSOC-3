@@ -15,6 +15,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
 import { NotFoundPage } from "./views/errors";
 import ForbiddenPage from "./views/errors/ForbiddenPage";
+import AdminsPage from "./views/AdminsPage/AdminsPage";
 
 export default function Router() {
     const { isLoggedIn } = useAuth();
@@ -39,6 +40,9 @@ export default function Router() {
                             </Route>
                             <Route path="/editions/:edition/users" element={<AdminRoute />}>
                                 <Route path={""} element={<UsersPage />} />
+                            </Route>
+                            <Route path="/admins" element={<AdminRoute />}>
+                                <Route path={""} element={<AdminsPage />} />
                             </Route>
                             <Route path="/projects" element={<ProjectsPage />} />
                             <Route path="/pending" element={<PendingPage />} />

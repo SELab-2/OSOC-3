@@ -1,48 +1,27 @@
 import { User } from "./users";
+import { axiosInstance } from "../api";
 
 export interface GetAdminsResponse {
-    admins: User[];
+    users: User[];
 }
 
 export async function getAdmins(): Promise<GetAdminsResponse> {
-    const data = {
-        admins: [
-            {
-                id: 5,
-                name: "Ward",
-                email: "ward@mail.be",
-                admin: true,
-            },
-            {
-                id: 6,
-                name: "Francis",
-                email: "francis@mail.be",
-                admin: true,
-            },
-            {
-                id: 7,
-                name: "Clement",
-                email: "clement@mail.be",
-                admin: true,
-            },
-        ],
-    };
-
-    // eslint-disable-next-line promise/param-names
-    const delay = () => new Promise(res => setTimeout(res, 100));
-    await delay();
-
-    return data;
+    const response = await axiosInstance.get(`/users?admin=true`);
+    return response.data as GetAdminsResponse;
 }
 
-export async function addAdmin(userId: number) {
-    alert("add " + userId + " as admin");
+export async function addAdmin(userId: number): Promise<boolean> {
+    const response = await axiosInstance.patch(`/users/${userId}`, { admin: true });
+    return response.status === 204;
 }
 
 export async function removeAdmin(userId: number) {
-    alert("remove " + userId + " as admin");
+    const response = await axiosInstance.patch(`/users/${userId}`, { admin: false });
+    return response.status === 204;
 }
 
 export async function removeAdminAndCoach(userId: number) {
-    alert("remove " + userId + " as admin & coach");
+    const response = await axiosInstance.patch(`/users/${userId}`, { admin: false });
+    // TODO: remove user from all editions
+    return response.status === 204;
 }

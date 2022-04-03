@@ -50,11 +50,12 @@ function AddCoach(props: { users: User[]; edition: string }) {
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                             }}
+                            id="non-coach-users"
                             options={props.users}
-                            labelKey="email"
+                            labelKey="name"
                             filterBy={["email", "name"]}
                             emptyLabel="No users found."
-                            placeholder={"user's email address"}
+                            placeholder={"user's name"}
                         />
                     </Modal.Body>
                     <Modal.Footer>
@@ -62,7 +63,7 @@ function AddCoach(props: { users: User[]; edition: string }) {
                             variant="primary"
                             onClick={() => {
                                 if (selected !== undefined) {
-                                    addCoachToEdition(selected.id, props.edition);
+                                    addCoachToEdition(selected.userId, props.edition);
                                 }
                                 handleClose();
                             }}
@@ -105,7 +106,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeCoachFromAllEditions(props.coach.id);
+                                removeCoachFromAllEditions(props.coach.userId);
                                 handleClose();
                             }}
                         >
@@ -114,7 +115,7 @@ function RemoveCoach(props: { coach: User; edition: string }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeCoachFromEdition(props.coach.id, props.edition);
+                                removeCoachFromEdition(props.coach.userId, props.edition);
                                 handleClose();
                             }}
                         >
@@ -165,7 +166,7 @@ function CoachesList(props: {
     const body = (
         <tbody>
             {props.coaches.map(coach => (
-                <CoachItem key={coach.id} coach={coach} edition={props.edition} />
+                <CoachItem key={coach.userId} coach={coach} edition={props.edition} />
             ))}
         </tbody>
     );
@@ -196,13 +197,13 @@ export default function Coaches(props: { edition: string }) {
     async function getData() {
         try {
             const coachResponse = await getCoaches(props.edition);
-            setAllCoaches(coachResponse.coaches);
-            setCoaches(coachResponse.coaches);
+            setAllCoaches(coachResponse.users);
+            setCoaches(coachResponse.users);
 
             const UsersResponse = await getUsers();
             const users = [];
             for (const user of UsersResponse.users) {
-                if (!allCoaches.some(e => e.id === user.id)) {
+                if (!allCoaches.some(e => e.userId === user.userId)) {
                     users.push(user);
                 }
             }
@@ -221,16 +222,13 @@ export default function Coaches(props: { edition: string }) {
             setGettingData(true);
             getData();
         }
-    });
+    }, [gotData, gettingData, error, getData]);
 
     const filter = (word: string) => {
         setSearchTerm(word);
         const newCoaches: User[] = [];
         for (const coach of allCoaches) {
-            if (
-                coach.name.toUpperCase().includes(word.toUpperCase()) ||
-                coach.email.toUpperCase().includes(word.toUpperCase())
-            ) {
+            if (coach.name.toUpperCase().includes(word.toUpperCase())) {
                 newCoaches.push(coach);
             }
         }

@@ -2,11 +2,11 @@ import { User } from "./users";
 import { axiosInstance } from "../api";
 
 export interface GetCoachesResponse {
-    coaches: User[];
+    users: User[];
 }
 
 export async function getCoaches(edition: string): Promise<GetCoachesResponse> {
-    const response = await axiosInstance.get(`/users/?admin=false&edition=${edition}`);
+    const response = await axiosInstance.get(`/users/?edition=${edition}`);
     return response.data as GetCoachesResponse;
 }
 

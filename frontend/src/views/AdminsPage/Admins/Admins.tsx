@@ -15,7 +15,7 @@ import {
     removeAdmin,
     removeAdminAndCoach,
 } from "../../../utils/api/users/admins";
-import { SearchInput, SpinnerContainer } from "../../UsersPage/PendingRequests/styles";
+import { Error, SearchInput, SpinnerContainer } from "../../UsersPage/PendingRequests/styles";
 import { Typeahead } from "react-bootstrap-typeahead";
 
 function AdminFilter(props: {
@@ -37,15 +37,33 @@ function AddWarning(props: { name: string | undefined }) {
     return null;
 }
 
-function AddAdmin(props: { users: User[] }) {
+function AddAdmin(props: { users: User[]; refresh: () => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
+    const [error, setError] = useState("");
 
     const handleClose = () => {
         setSelected(undefined);
         setShow(false);
     };
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+        setError("");
+    };
+
+    async function addUserAsAdmin(userId: number) {
+        try {
+            const added = await addAdmin(userId);
+            if (added) {
+                props.refresh();
+                handleClose();
+            } else {
+                setError("Something went wrong. Failed to add admin");
+            }
+        } catch (error) {
+            setError("Something went wrong. Failed to add admin");
+        }
+    }
 
     return (
         <>
@@ -63,11 +81,11 @@ function AddAdmin(props: { users: User[] }) {
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                             }}
+                            id="non-admin-users"
                             options={props.users}
-                            labelKey="email"
-                            filterBy={["email", "name"]}
+                            labelKey="name"
                             emptyLabel="No users found."
-                            placeholder={"email"}
+                            placeholder={"name"}
                         />
                         <AddWarning name={selected?.name} />
                     </Modal.Body>
@@ -76,9 +94,8 @@ function AddAdmin(props: { users: User[] }) {
                             variant="primary"
                             onClick={() => {
                                 if (selected !== undefined) {
-                                    addAdmin(selected.id);
+                                    addUserAsAdmin(selected.userId);
                                 }
-                                handleClose();
                             }}
                             disabled={selected === undefined}
                         >
@@ -87,6 +104,7 @@ function AddAdmin(props: { users: User[] }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
+                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentGreen>
             </Modal>
@@ -94,11 +112,32 @@ function AddAdmin(props: { users: User[] }) {
     );
 }
 
-function RemoveAdmin(props: { admin: User }) {
+function RemoveAdmin(props: { admin: User; refresh: () => void }) {
     const [show, setShow] = useState(false);
+    const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    async function removeUserAsAdmin(userId: number, removeCoach: boolean) {
+        try {
+            let removed;
+            if (removeCoach) {
+                removed = await removeAdminAndCoach(userId);
+            } else {
+                removed = await removeAdmin(userId);
+            }
+
+            if (removed) {
+                props.refresh();
+                handleClose();
+            } else {
+                setError("Something went wrong. Failed to remove admin");
+            }
+        } catch (error) {
+            setError("Something went wrong. Failed to remove admin");
+        }
+    }
 
     return (
         <>
@@ -122,7 +161,7 @@ function RemoveAdmin(props: { admin: User }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeAdmin(props.admin.id);
+                                removeUserAsAdmin(props.admin.userId, false);
                                 handleClose();
                             }}
                         >
@@ -131,7 +170,7 @@ function RemoveAdmin(props: { admin: User }) {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeAdminAndCoach(props.admin.id);
+                                removeUserAsAdmin(props.admin.userId, true);
                                 handleClose();
                             }}
                         >
@@ -140,6 +179,7 @@ function RemoveAdmin(props: { admin: User }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
+                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentRed>
             </Modal>
@@ -147,19 +187,24 @@ function RemoveAdmin(props: { admin: User }) {
     );
 }
 
-function AdminItem(props: { admin: User }) {
+function AdminItem(props: { admin: User; refresh: () => void }) {
     return (
         <tr>
             <td>{props.admin.name}</td>
             <td>{props.admin.email}</td>
             <td>
-                <RemoveAdmin admin={props.admin} />
+                <RemoveAdmin admin={props.admin} refresh={props.refresh} />
             </td>
         </tr>
     );
 }
 
-function AdminsList(props: { admins: User[]; loading: boolean }) {
+function AdminsList(props: {
+    admins: User[];
+    loading: boolean;
+    gotData: boolean;
+    refresh: () => void;
+}) {
     if (props.loading) {
         return (
             <SpinnerContainer>
@@ -167,13 +212,17 @@ function AdminsList(props: { admins: User[]; loading: boolean }) {
             </SpinnerContainer>
         );
     } else if (props.admins.length === 0) {
-        return <div>No admins? #rip</div>;
+        if (props.gotData) {
+            return <div>No admins</div>;
+        } else {
+            return null;
+        }
     }
 
     const body = (
         <tbody>
             {props.admins.map(admin => (
-                <AdminItem key={admin.id} admin={admin} />
+                <AdminItem key={admin.userId} admin={admin} refresh={props.refresh} />
             ))}
         </tbody>
     );
@@ -196,47 +245,46 @@ export default function Admins() {
     const [allAdmins, setAllAdmins] = useState<User[]>([]);
     const [admins, setAdmins] = useState<User[]>([]);
     const [users, setUsers] = useState<User[]>([]);
-    const [gettingAdmins, setGettingAdmins] = useState(true);
+    const [gettingData, setGettingData] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
+    const [error, setError] = useState("");
+
+    async function getData() {
+        setGettingData(true);
+        try {
+            const response = await getAdmins();
+            setAllAdmins(response.users);
+            setAdmins(response.users);
+
+            const usersResponse = await getUsers();
+            const users = [];
+            for (const user of usersResponse.users) {
+                if (!response.users.some(e => e.userId === user.userId)) {
+                    users.push(user);
+                }
+            }
+            setUsers(users);
+
+            setGotData(true);
+            setGettingData(false);
+        } catch (exception) {
+            setError("Oops, something went wrong...");
+            setGettingData(false);
+        }
+    }
 
     useEffect(() => {
-        if (!gotData) {
-            getAdmins()
-                .then(response => {
-                    setAdmins(response.admins);
-                    setAllAdmins(response.admins);
-                    setGettingAdmins(false);
-                    setGotData(true);
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                    setGettingAdmins(false);
-                });
-            getUsers()
-                .then(response => {
-                    const users = [];
-                    for (const user of response.users) {
-                        if (!allAdmins.some(e => e.id === user.id)) {
-                            users.push(user);
-                        }
-                    }
-                    setUsers(users);
-                })
-                .catch(function (error: any) {
-                    console.log(error);
-                });
+        if (!gotData && !gettingData && !error) {
+            getData();
         }
-    });
+    }, [gotData, gettingData, error, getData]);
 
     const filter = (word: string) => {
         setSearchTerm(word);
         const newCoaches: User[] = [];
         for (const admin of allAdmins) {
-            if (
-                admin.name.toUpperCase().includes(word.toUpperCase()) ||
-                admin.email.toUpperCase().includes(word.toUpperCase())
-            ) {
+            if (admin.name.toUpperCase().includes(word.toUpperCase())) {
                 newCoaches.push(admin);
             }
         }
@@ -246,12 +294,13 @@ export default function Admins() {
     return (
         <AdminsContainer>
             <AdminFilter
-                search={admins.length > 0}
+                search={allAdmins.length > 0}
                 searchTerm={searchTerm}
                 filter={word => filter(word)}
             />
-            <AddAdmin users={users} />
-            <AdminsList admins={admins} loading={gettingAdmins} />
+            <AddAdmin users={users} refresh={getData} />
+            <AdminsList admins={admins} loading={gettingData} gotData={gotData} refresh={getData} />
+            <Error> {error} </Error>
         </AdminsContainer>
     );
 }

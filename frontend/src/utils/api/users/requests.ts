@@ -2,7 +2,7 @@ import { User } from "./users";
 import { axiosInstance } from "../api";
 
 export interface Request {
-    id: number;
+    requestId: number;
     user: User;
 }
 
@@ -11,7 +11,7 @@ export interface GetRequestsResponse {
 }
 
 export async function getRequests(edition: string): Promise<GetRequestsResponse> {
-    const response = await axiosInstance.get(`/users/requests/?edition=${edition}`);
+    const response = await axiosInstance.get(`/users/requests?edition=${edition}`);
     return response.data as GetRequestsResponse;
 }
 

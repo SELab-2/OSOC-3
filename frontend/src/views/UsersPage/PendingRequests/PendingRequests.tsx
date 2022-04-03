@@ -68,7 +68,7 @@ function RequestItem(props: { request: Request }) {
             <td>{props.request.user.name}</td>
             <td>{props.request.user.email}</td>
             <td>
-                <AcceptReject requestId={props.request.id} />
+                <AcceptReject requestId={props.request.requestId} />
             </td>
         </tr>
     );
@@ -92,7 +92,7 @@ function RequestsList(props: { requests: Request[]; loading: boolean; gotData: b
     const body = (
         <tbody>
             {props.requests.map(request => (
-                <RequestItem key={request.id} request={request} />
+                <RequestItem key={request.requestId} request={request} />
             ))}
         </tbody>
     );
@@ -138,16 +138,13 @@ export default function PendingRequests(props: { edition: string }) {
             setGettingRequests(true);
             getData();
         }
-    });
+    }, [gotData, gettingRequests, error, getData]);
 
     const filter = (word: string) => {
         setSearchTerm(word);
         const newRequests: Request[] = [];
         for (const request of allRequests) {
-            if (
-                request.user.name.toUpperCase().includes(word.toUpperCase()) ||
-                request.user.email.toUpperCase().includes(word.toUpperCase())
-            ) {
+            if (request.user.name.toUpperCase().includes(word.toUpperCase())) {
                 newRequests.push(request);
             }
         }
@@ -164,7 +161,7 @@ export default function PendingRequests(props: { edition: string }) {
                 <RequestFilter
                     searchTerm={searchTerm}
                     filter={word => filter(word)}
-                    show={requests.length > 0}
+                    show={allRequests.length > 0}
                 />
                 <RequestsList requests={requests} loading={gettingRequests} gotData={gotData} />
                 <Error> {error} </Error>
