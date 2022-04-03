@@ -1,7 +1,7 @@
 import { StorageKey } from "../../data/enums";
 
 /**
- * Write the new value of a token into LocalStorage
+ * Function to set a new value for the bearer token in LocalStorage.
  */
 export function setToken(value: string | null) {
     if (value === null) {
@@ -12,8 +12,8 @@ export function setToken(value: string | null) {
 }
 
 /**
- * Pull the user's token out of LocalStorage
- * Returns null if there is no token in LocalStorage yet
+ * Function to pull the user's token out of LocalStorage.
+ * Returns `null` if there is no token in LocalStorage yet.
  */
 export function getToken(): string | null {
     return localStorage.getItem(StorageKey.BEARER_TOKEN);
