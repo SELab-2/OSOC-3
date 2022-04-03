@@ -5,6 +5,10 @@ import { validateBearerToken } from "../../utils/api/auth";
 import { Role } from "../../data/enums";
 import { useAuth } from "../../contexts/auth-context";
 
+/**
+ * Placeholder page shown while the bearer token found in LocalStorage is being verified.
+ * If the token is valid, redirects to the application. Otherwise, redirects to the [[LoginPage]].
+ */
 export default function VerifyingTokenPage() {
     const authContext = useAuth();
 

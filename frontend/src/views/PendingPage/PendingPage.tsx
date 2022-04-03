@@ -8,7 +8,11 @@ import {
     PendingText,
 } from "./styles";
 
-function PendingPage() {
+/**
+ * Page shown when your request to access an edition hasn't been accepted
+ * (or rejected) yet.
+ */
+export default function PendingPage() {
     return (
         <div>
             <PendingPageContainer>
@@ -29,5 +33,3 @@ function PendingPage() {
         </div>
     );
 }
-
-export default PendingPage;
