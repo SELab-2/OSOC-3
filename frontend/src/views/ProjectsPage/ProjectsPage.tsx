@@ -30,6 +30,12 @@ function ProjectPage() {
 
     return (
         <div>
+            <div>
+                <input placeholder="project name"></input>
+                <button>Search</button>
+                <button>Create Project</button>
+            </div>
+
             <CardsGrid>
                 {projects.map((project, _index) => (
                     <ProjectCard
@@ -39,7 +45,6 @@ function ProjectPage() {
                         key={_index}
                     />
                 ))}
-
                 <ProjectCard
                     name="Project 1"
                     client="client 1"
