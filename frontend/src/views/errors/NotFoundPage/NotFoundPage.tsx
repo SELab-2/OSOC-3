@@ -1,7 +1,10 @@
 import React from "react";
 import { ErrorContainer } from "../styles";
 
-function NotFoundPage() {
+/**
+ * Page shown when going to a url for a page that doesn't exist.
+ */
+export default function NotFoundPage() {
     return (
         <ErrorContainer>
             <h1>Oops! This is awkward... </h1>
@@ -9,5 +12,3 @@ function NotFoundPage() {
         </ErrorContainer>
     );
 }
-
-export default NotFoundPage;

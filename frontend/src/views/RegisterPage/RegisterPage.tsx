@@ -16,7 +16,11 @@ import {
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
 
-function RegisterPage() {
+/**
+ * Page where a user can register a new account. If the uuid in the url is invalid,
+ * this renders the [[BadInviteLink]] component instead.
+ */
+export default function RegisterPage() {
     const [validUuid, setUuid] = useState(false);
     const params = useParams();
     const uuid = params.uuid;
@@ -90,5 +94,3 @@ function RegisterPage() {
         );
     } else return <BadInviteLink />;
 }
-
-export default RegisterPage;

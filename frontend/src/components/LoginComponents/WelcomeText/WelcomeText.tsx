@@ -1,5 +1,8 @@
 import { WelcomeTextContainer } from "./styles";
 
+/**
+ * Text displayed on the [[LoginPage]] to welcome the users to the application.
+ */
 export default function WelcomeText() {
     return (
         <WelcomeTextContainer>

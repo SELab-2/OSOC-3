@@ -3,6 +3,9 @@ import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
 import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
 
+/**
+ * Interface that holds the data stored in the AuthContext.
+ */
 export interface AuthContextState {
     isLoggedIn: boolean | null;
     setIsLoggedIn: (value: boolean | null) => void;
@@ -15,7 +18,9 @@ export interface AuthContextState {
 }
 
 /**
- * Create a placeholder default value for the state
+ * Function to create a (placeholder) default value for the state.
+ * These values are never used, but React context hooks expect a default value
+ * so there is no way around it.
  */
 function authDefaultState(): AuthContextState {
     return {
@@ -33,7 +38,7 @@ function authDefaultState(): AuthContextState {
 const AuthContext = React.createContext<AuthContextState>(authDefaultState());
 
 /**
- * Custom React hook to use our authentication context
+ * Custom React hook to use our authentication context.
  */
 export function useAuth(): AuthContextState {
     return useContext(AuthContext);
@@ -41,10 +46,10 @@ export function useAuth(): AuthContextState {
 
 /**
  * Provider for auth that creates getters, setters, maintains state, and
- * provides default values
+ * provides default values.
  *
- * Not strictly necessary but keeps the main App clean by handling this
- * code here instead
+ * This keeps the main [[App]] component code clean by handling this
+ * boilerplate here instead.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);

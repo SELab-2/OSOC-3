@@ -3,7 +3,11 @@ import { Bars, Nav, NavLink, NavMenu } from "./NavBarElements";
 import "./navbar.css";
 import { useAuth } from "../../contexts/auth-context";
 
-function NavBar() {
+/**
+ * NavBar displayed at the top of the page.
+ * Links are hidden if the user is not authorized to see them.
+ */
+export default function NavBar() {
     const { token, setToken } = useAuth();
     const hidden = token ? "nav-links" : "nav-hidden";
 
@@ -39,5 +43,3 @@ function NavBar() {
         </>
     );
 }
-
-export default NavBar;

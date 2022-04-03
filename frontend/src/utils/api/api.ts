@@ -5,7 +5,8 @@ export const axiosInstance = axios.create();
 axiosInstance.defaults.baseURL = BASE_URL;
 
 /**
- * Set the default bearer token in the request headers
+ * Function to set the default bearer token in the request headers.
+ * Passing `null` as the value will remove the header instead.
  */
 export function setBearerToken(value: string | null) {
     // Remove the header
