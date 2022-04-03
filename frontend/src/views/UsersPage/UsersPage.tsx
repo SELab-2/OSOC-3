@@ -1,10 +1,13 @@
 import React from "react";
-import { InviteUser } from "./InviteUser";
-import { PendingRequests } from "./PendingRequests";
-import { Coaches } from "./Coaches";
 import { useParams, useNavigate } from "react-router-dom";
 import { UsersPageDiv, AdminsButton, UsersHeader } from "./styles";
+import { Coaches } from "../../components/UsersComponents/Coaches";
+import { InviteUser } from "../../components/UsersComponents/InviteUser";
+import { PendingRequests } from "../../components/UsersComponents/PendingRequests";
 
+/**
+ * Page for admins to manage coach and admin settings.
+ */
 function UsersPage() {
     const params = useParams();
     const navigate = useNavigate();

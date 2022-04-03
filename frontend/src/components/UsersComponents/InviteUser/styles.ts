@@ -30,6 +30,16 @@ export const InviteButton = styled(Button).attrs({
     margin-top: 10px;
 `;
 
+export const CopyButton = styled(Button).attrs({
+    size: "sm",
+})`
+    cursor: pointer;
+    background: var(--osoc_orange);
+    color: black;
+    margin-left: 7px;
+    margin-top: 10px;
+`;
+
 const rotate = keyframes`
   from {
     transform: rotate(0deg);

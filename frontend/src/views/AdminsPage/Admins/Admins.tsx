@@ -15,7 +15,11 @@ import {
     removeAdmin,
     removeAdminAndCoach,
 } from "../../../utils/api/users/admins";
-import { Error, SearchInput, SpinnerContainer } from "../../UsersPage/PendingRequests/styles";
+import {
+    Error,
+    SearchInput,
+    SpinnerContainer,
+} from "../../../components/UsersComponents/PendingRequests/styles";
 import { Typeahead } from "react-bootstrap-typeahead";
 
 function AdminFilter(props: {

@@ -1,33 +1,8 @@
 import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users/users";
-import "./InviteUsers.css";
-import { InviteInput, InviteButton, Loader, InviteContainer, Link, Error } from "./styles";
-
-function ButtonDiv(props: { loading: boolean; onClick: () => void }) {
-    let buttonDiv;
-    if (props.loading) {
-        buttonDiv = <Loader />;
-    } else {
-        buttonDiv = <InviteButton onClick={props.onClick}>Send invite</InviteButton>;
-    }
-    return buttonDiv;
-}
-
-function ErrorDiv(props: { errorMessage: string }) {
-    let errorDiv = null;
-    if (props.errorMessage) {
-        errorDiv = <Error>{props.errorMessage}</Error>;
-    }
-    return errorDiv;
-}
-
-function LinkDiv(props: { link: string }) {
-    let linkDiv = null;
-    if (props.link) {
-        linkDiv = <Link>{props.link}</Link>;
-    }
-    return linkDiv;
-}
+import "./InviteUser.css";
+import { InviteInput, InviteContainer } from "./styles";
+import { ButtonsDiv, ErrorDiv, LinkDiv } from "./InviteUserComponents";
 
 export default function InviteUser(props: { edition: string }) {
     const [email, setEmail] = useState("");
@@ -43,13 +18,22 @@ export default function InviteUser(props: { edition: string }) {
         setErrorMessage("");
     };
 
-    const sendInvite = async () => {
+    const sendInvite = async (copyInvite: boolean) => {
         if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
             setLoading(true);
-            const ding = await getInviteLink(props.edition, email);
-            setLink(ding);
-            setLoading(false);
-            // TODO: fix email stuff
+            try {
+                const response = await getInviteLink(props.edition, email);
+                if (copyInvite) {
+                    await navigator.clipboard.writeText(response.mailTo);
+                } else {
+                    window.open(response.mailTo);
+                }
+                setLoading(false);
+                setEmail("");
+            } catch (error) {
+                setLoading(false);
+                setErrorMessage("Something went wrong");
+            }
         } else {
             setValid(false);
             setErrorMessage("Invalid email");
@@ -64,7 +48,7 @@ export default function InviteUser(props: { edition: string }) {
                     value={email}
                     onChange={e => changeEmail(e.target.value)}
                 />
-                <ButtonDiv loading={loading} onClick={sendInvite} />
+                <ButtonsDiv loading={loading} sendInvite={sendInvite} />
             </InviteContainer>
             <ErrorDiv errorMessage={errorMessage} />
             <LinkDiv link={link} />

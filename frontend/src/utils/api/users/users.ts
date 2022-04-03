@@ -1,6 +1,8 @@
-import axios from "axios";
 import { axiosInstance } from "../api";
 
+/**
+ *  Interface for a user
+ */
 export interface User {
     userId: number;
     name: string;
@@ -8,31 +10,31 @@ export interface User {
     admin: boolean;
 }
 
-/**
- * Get invite link for given email and edition
- */
-export async function getInviteLink(edition: string, email: string): Promise<string> {
-    try {
-        await axiosInstance
-            .post(`/editions/${edition}/invites/`, { email: email })
-            .then(response => {
-                return response.data.mailTo;
-            });
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return error.message;
-        } else {
-            throw error;
-        }
-    }
-    return "";
-}
-
-export interface GetUsersResponse {
+export interface UsersList {
     users: User[];
 }
 
-export async function getUsers(): Promise<GetUsersResponse> {
+/**
+ * Interface for a mailto link
+ */
+export interface MailTo {
+    mailTo: string;
+    link: string;
+}
+
+/**
+ * Get invite link for given email and edition
+ */
+export async function getInviteLink(edition: string, email: string): Promise<MailTo> {
+    const response = await axiosInstance.post(`/editions/${edition}/invites/`, { email: email });
+    console.log(response);
+    return response.data as MailTo;
+}
+
+/**
+ * Get all users
+ */
+export async function getUsers(): Promise<UsersList> {
     const response = await axiosInstance.get(`/users`);
-    return response.data as GetUsersResponse;
+    return response.data as UsersList;
 }
