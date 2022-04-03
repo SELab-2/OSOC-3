@@ -6,25 +6,40 @@ import { ProjectCard } from "../../components/ProjectsComponents";
 
 import { CardsGrid } from "./styles";
 
+interface Project {
+    name: string;
+    partners: any[];
+}
+
 function ProjectPage() {
-    const [projects, setProjects] = useState();
+    const [projects, setProjects] = useState<Array<Project>>([]);
+    const [gotProjects, setGotProjects] = useState(false);
 
     useEffect(() => {
         async function callProjects() {
             const response = await getProjects("1");
             if (response) {
-                console.log(response);
-                setProjects(response);
+                setGotProjects(true);
+                setProjects(response.projects);
             }
         }
-        if (!projects) {
+        if (!gotProjects) {
             callProjects();
-        } else console.log("hello");
+        }
     });
 
     return (
         <div>
             <CardsGrid>
+                {projects.map((project, _index) => (
+                    <ProjectCard
+                        key={project}
+                        name={project.name}
+                        client={project.partners[0].name}
+                        coaches={["Miet", "Bart"]}
+                    />
+                ))}
+
                 <ProjectCard
                     name="Project 1"
                     client="client 1"

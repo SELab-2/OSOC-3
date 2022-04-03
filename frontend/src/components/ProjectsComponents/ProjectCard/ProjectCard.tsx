@@ -21,7 +21,7 @@ export default function ProjectCard({
 
             <h3>{client}</h3>
             <CoachesContainer>
-                {coaches.map((element, index) => (
+                {coaches.map((element, _index) => (
                     <CoachContainer>{element}</CoachContainer>
                 ))}
             </CoachesContainer>

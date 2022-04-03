@@ -3,9 +3,7 @@ import { axiosInstance } from "./api";
 
 export async function getProjects(edition: string) {
     try {
-        const response = await axiosInstance.get("/editions/" + edition + "/projects");
-        console.log(response);
-        
+        const response = await axiosInstance.get("/editions/" + edition + "/projects");        
         const projects = response.data;
         return projects;
     } catch (error) {
