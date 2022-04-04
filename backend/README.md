@@ -20,6 +20,10 @@ pip3 install poetry
 
 # Install all dependencies and dev dependencies
 poetry install
+
+# Use the existing venv instead of creating a new one
+poetry config virtualenvs.create false
+poetry config virtualenvs.in-project true
 ```
 
 Note that, in case your IDE does not do this automatically, you have to run `source venv/bin/activate` every time you want to run the backend, as otherwise your interpreter won't be able to find the packages.
