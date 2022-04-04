@@ -3,7 +3,6 @@ from json import dumps
 import pytest
 from sqlalchemy.orm import Session
 
-from starlette.testclient import TestClient
 from starlette import status
 
 from src.database import models
@@ -15,16 +14,16 @@ from tests.utils.authorization import AuthClient
 def data(database_session: Session) -> dict[str, str | int]:
     """Fill database with dummy data"""
     # Create users
-    user1 = models.User(name="user1", email="user1@mail.com", admin=True)
+    user1 = models.User(name="user1", admin=True)
 
     database_session.add(user1)
-    user2 = models.User(name="user2", email="user2@mail.com", admin=False)
+    user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
 
     # Create editions
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed1")
     database_session.add(edition1)
-    edition2 = models.Edition(year=2)
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition2)
 
     database_session.commit()
@@ -38,8 +37,8 @@ def data(database_session: Session) -> dict[str, str | int]:
 
     return {"user1": user1.user_id,
             "user2": user2.user_id,
-            "edition1": edition1.edition_id,
-            "edition2": edition2.edition_id,
+            "edition1": edition1.name,
+            "edition2": edition2.name,
             }
 
 
@@ -98,15 +97,12 @@ def test_get_users_invalid(database_session: Session, auth_client: AuthClient, d
     response = auth_client.get("/users?admin=INVALID")
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    response = auth_client.get("/users?edition=INVALID")
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
 
 def test_edit_admin_status(database_session: Session, auth_client: AuthClient):
     """Test endpoint for editing the admin status of a user"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
     database_session.commit()
 
@@ -125,17 +121,17 @@ def test_add_coach(database_session: Session, auth_client: AuthClient):
     """Test endpoint for adding coaches"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
 
     # Create edition
-    edition = models.Edition(year=1)
+    edition = models.Edition(year=1, name="ed1")
     database_session.add(edition)
 
     database_session.commit()
 
     # Add coach
-    response = auth_client.post(f"/users/{user.user_id}/editions/{edition.edition_id}")
+    response = auth_client.post(f"/users/{user.user_id}/editions/{edition.name}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     coach = database_session.query(user_editions).one()
     assert coach.user_id == user.user_id
@@ -146,11 +142,11 @@ def test_remove_coach(database_session: Session, auth_client: AuthClient):
     """Test endpoint for removing coaches"""
     auth_client.admin()
     # Create user
-    user = models.User(name="user1", email="user1@mail.com")
+    user = models.User(name="user1")
     database_session.add(user)
 
     # Create edition
-    edition = models.Edition(year=1)
+    edition = models.Edition(year=1, name="ed1")
     database_session.add(edition)
 
     database_session.commit()
@@ -162,7 +158,7 @@ def test_remove_coach(database_session: Session, auth_client: AuthClient):
     database_session.commit()
 
     # Remove coach
-    response = auth_client.delete(f"/users/{user.user_id}/editions/{edition.edition_id}")
+    response = auth_client.delete(f"/users/{user.user_id}/editions/{edition.name}")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     coach = database_session.query(user_editions).all()
     assert len(coach) == 0
@@ -173,14 +169,14 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
     auth_client.admin()
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
     # Create edition
-    edition1 = models.Edition(year=1)
-    edition2 = models.Edition(year=2)
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition1)
     database_session.add(edition2)
 
@@ -194,7 +190,7 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
 
     database_session.commit()
 
-    response = auth_client.get(f"/users/requests")
+    response = auth_client.get("/users/requests")
     assert response.status_code == status.HTTP_200_OK
     user_ids = [request["user"]["userId"] for request in response.json()['requests']]
     assert len(user_ids) == 2
@@ -207,14 +203,14 @@ def test_get_all_requests_from_edition(database_session: Session, auth_client: A
     auth_client.admin()
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
     # Create edition
-    edition1 = models.Edition(year=1)
-    edition2 = models.Edition(year=2)
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition1)
     database_session.add(edition2)
 
@@ -228,13 +224,13 @@ def test_get_all_requests_from_edition(database_session: Session, auth_client: A
 
     database_session.commit()
 
-    response = auth_client.get(f"/users/requests?edition={edition1.edition_id}")
+    response = auth_client.get(f"/users/requests?edition={edition1.name}")
     assert response.status_code == status.HTTP_200_OK
     requests = response.json()['requests']
     assert len(requests) == 1
     assert user1.user_id == requests[0]["user"]["userId"]
 
-    response = auth_client.get(f"/users/requests?edition={edition2.edition_id}")
+    response = auth_client.get(f"/users/requests?edition={edition2.name}")
     assert response.status_code == status.HTTP_200_OK
     requests = response.json()['requests']
     assert len(requests) == 1
@@ -245,11 +241,11 @@ def test_accept_request(database_session, auth_client: AuthClient):
     """Test endpoint for accepting a coach request"""
     auth_client.admin()
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed1")
     database_session.add(edition1)
 
     database_session.commit()
@@ -271,11 +267,11 @@ def test_reject_request(database_session, auth_client: AuthClient):
     """Test endpoint for rejecting a coach request"""
     auth_client.admin()
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed1")
     database_session.add(edition1)
 
     database_session.commit()

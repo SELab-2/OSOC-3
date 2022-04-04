@@ -32,9 +32,7 @@ async def create_project(input_project: InputProject,
     Create a new project
     """
     return logic_create_project(db, edition,
-                                input_project.name,
-                                input_project.number_of_students,
-                                input_project.skills, input_project.partners, input_project.coaches)
+                                input_project)
 
 
 @projects_router.get("/conflicts", response_model=ConflictStudentList)
@@ -59,15 +57,16 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
     """
     Get information about a specific project.
     """
-    return project
+    project_model = Project(project_id=project.project_id, name=project.name,
+                            number_of_students=project.number_of_students,
+                            edition_name=project.edition.name, coaches=project.coaches, skills=project.skills,
+                            partners=project.partners, project_roles=project.project_roles)
+    return project_model
 
 
 @projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-async def patch_project(input_project: InputProject, project: ProjectModel = Depends(get_project),
-                        db: Session = Depends(get_session)):
+async def patch_project(project_id: int, input_project: InputProject, db: Session = Depends(get_session)):
     """
     Update a project, changing some fields.
     """
-    logic_patch_project(db, project, input_project.name,
-                        input_project.number_of_students,
-                        input_project.skills, input_project.partners, input_project.coaches)
+    logic_patch_project(db, project_id, input_project)

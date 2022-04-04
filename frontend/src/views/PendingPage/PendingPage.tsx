@@ -1,24 +1,31 @@
 import React from "react";
 import "./PendingPage.css";
 
+import {
+    PendingPageContainer,
+    PendingContainer,
+    PendingTextContainer,
+    PendingText,
+} from "./styles";
+
 function PendingPage() {
     return (
         <div>
-            <div className="pending-page-content-container">
-                <div className="pending-page-content">
-                    <div className="pending-text-container">
-                        <div className="pending-text-content">
+            <PendingPageContainer>
+                <PendingContainer>
+                    <PendingTextContainer>
+                        <PendingText>
                             <h1>Your request is pending</h1>
                             <h1 className="pending-dot-1">.</h1>
                             <h1 className="pending-dot-2">.</h1>
                             <h1 className="pending-dot-3">.</h1>
-                        </div>
-                    </div>
+                        </PendingText>
+                    </PendingTextContainer>
                     <div>
                         <h1>Please wait until an admin approves your request!</h1>
                     </div>
-                </div>
-            </div>
+                </PendingContainer>
+            </PendingPageContainer>
         </div>
     );
 }

@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Session
 
 import src.database.crud.editions as crud_editions
-from src.app.schemas.editions import Edition, EditionBase, EditionList
+from src.app.schemas.editions import EditionBase, EditionList
 from src.database.models import Edition as EditionModel
-
 
 def get_editions(db: Session) -> EditionList:
     """Get a list of all editions.
@@ -17,7 +16,7 @@ def get_editions(db: Session) -> EditionList:
     return EditionList(editions=crud_editions.get_editions(db))
 
 
-def get_edition_by_id(db: Session, edition_id: int) -> EditionModel:
+def get_edition_by_name(db: Session, edition_name: str) -> EditionModel:
     """Get a specific edition.
 
     Args:
@@ -26,7 +25,7 @@ def get_edition_by_id(db: Session, edition_id: int) -> EditionModel:
     Returns:
         Edition: an edition.
     """
-    return crud_editions.get_edition_by_id(db, edition_id)
+    return crud_editions.get_edition_by_name(db, edition_name)
 
 
 def create_edition(db: Session, edition: EditionBase) -> EditionModel:
@@ -41,13 +40,13 @@ def create_edition(db: Session, edition: EditionBase) -> EditionModel:
     return crud_editions.create_edition(db, edition)
 
 
-def delete_edition(db: Session, edition_id: int):
+def delete_edition(db: Session, edition_name: str):
     """Delete an existing edition.
 
     Args:
         db (Session): connection with the database.
-        edition_id (int): the id of the edition that needs to be deleted, if found.
+        edition_name (str): the name of the edition that needs to be deleted, if found.
 
     Returns: nothing
     """
-    crud_editions.delete_edition(db, edition_id)
+    crud_editions.delete_edition(db, edition_name)

@@ -3,7 +3,7 @@ from uuid import UUID
 from pydantic import Field, validator
 
 from src.app.schemas.validators import validate_email_format
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.utils import CamelCaseModel
 
 
 class EmailAddress(CamelCaseModel):
@@ -13,10 +13,10 @@ class EmailAddress(CamelCaseModel):
     email: str
 
     @validator("email")
-    def valid_format(cls, v):
+    def valid_format(cls, validate):
         """Check that the email is of a valid format"""
-        validate_email_format(v)
-        return v
+        validate_email_format(validate)
+        return validate
 
 
 class InviteLink(CamelCaseModel):
@@ -26,9 +26,10 @@ class InviteLink(CamelCaseModel):
     invite_link_id: int = Field(alias="id")
     uuid: UUID
     target_email: str = Field(alias="email")
-    edition_id: int
+    edition_name: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 

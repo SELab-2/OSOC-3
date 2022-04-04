@@ -24,7 +24,8 @@ async def get_skills(db: Session = Depends(get_session)):
     return logic_skills.get_skills(db)
 
 
-@skills_router.post("/",status_code=status.HTTP_201_CREATED, response_model=Skill, tags=[Tags.SKILLS], dependencies=[Depends(require_auth)])
+@skills_router.post("/",status_code=status.HTTP_201_CREATED, response_model=Skill, tags=[Tags.SKILLS],
+                    dependencies=[Depends(require_auth)])
 async def create_skill(skill: SkillBase, db: Session = Depends(get_session)):
     """Add a new skill into the database.
 
@@ -38,7 +39,8 @@ async def create_skill(skill: SkillBase, db: Session = Depends(get_session)):
     return logic_skills.create_skill(db, skill)
 
 
-@skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.SKILLS], dependencies=[Depends(require_auth)])
+@skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.SKILLS],
+                      dependencies=[Depends(require_auth)])
 async def delete_skill(skill_id: int, db: Session = Depends(get_session)):
     """Delete an existing skill.
 

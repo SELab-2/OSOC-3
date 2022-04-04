@@ -2,6 +2,7 @@ from src.app.logic import security
 
 
 def test_hashing():
+    """Test the hashing of passwords"""
     password = "I love inside jokes. I’d love to be a part of one someday"
     hashed = security.get_password_hash(password)
 

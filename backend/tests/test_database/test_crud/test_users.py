@@ -7,20 +7,20 @@ from src.database.models import user_editions, CoachRequest
 
 
 @pytest.fixture
-def data(database_session: Session) -> dict[str, int]:
+def data(database_session: Session) -> dict[str, str]:
     """Fill database with dummy data"""
 
     # Create users
-    user1 = models.User(name="user1", email="user1@mail.com", admin=True)
+    user1 = models.User(name="user1", admin=True)
 
     database_session.add(user1)
-    user2 = models.User(name="user2", email="user2@mail.com", admin=False)
+    user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
 
     # Create editions
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed1")
     database_session.add(edition1)
-    edition2 = models.Edition(year=2)
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition2)
 
     database_session.commit()
@@ -34,8 +34,8 @@ def data(database_session: Session) -> dict[str, int]:
 
     return {"user1": user1.user_id,
             "user2": user2.user_id,
-            "edition1": edition1.edition_id,
-            "edition2": edition2.edition_id,
+            "edition1": edition1.name,
+            "edition2": edition2.name,
             }
 
 
@@ -50,7 +50,7 @@ def test_get_all_users(database_session: Session, data: dict[str, int]):
     assert data["user2"] in user_ids
 
 
-def test_get_all_admins(database_session: Session, data: dict[str, int]):
+def test_get_all_admins(database_session: Session, data: dict[str, str]):
     """Test get request for admins"""
 
     # get all admins
@@ -59,7 +59,7 @@ def test_get_all_admins(database_session: Session, data: dict[str, int]):
     assert data["user1"] == users[0].user_id
 
 
-def test_get_all_users_from_edition(database_session: Session, data: dict[str, int]):
+def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for users of a given edition"""
 
     # get all users from edition
@@ -74,7 +74,7 @@ def test_get_all_users_from_edition(database_session: Session, data: dict[str, i
     assert data["user2"] == users[0].user_id
 
 
-def test_get_admins_from_edition(database_session: Session, data: dict[str, int]):
+def test_get_admins_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for admins of a given edition"""
 
     # get all admins from edition
@@ -90,7 +90,7 @@ def test_edit_admin_status(database_session: Session):
     """Test changing the admin status of a user"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
     database_session.commit()
 
@@ -105,16 +105,16 @@ def test_add_coach(database_session: Session):
     """Test adding a user as coach"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
+    user = models.User(name="user1", admin=False)
     database_session.add(user)
 
     # Create edition
-    edition = models.Edition(year=1)
+    edition = models.Edition(year=1, name="ed1")
     database_session.add(edition)
 
     database_session.commit()
 
-    users_crud.add_coach(database_session, user.user_id, edition.edition_id)
+    users_crud.add_coach(database_session, user.user_id, edition.name)
     coach = database_session.query(user_editions).one()
     assert coach.user_id == user.user_id
     assert coach.edition_id == edition.edition_id
@@ -124,36 +124,39 @@ def test_remove_coach(database_session: Session):
     """Test removing a user as coach"""
 
     # Create user
-    user = models.User(name="user1", email="user1@mail.com", admin=False)
-    database_session.add(user)
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
 
     # Create edition
-    edition = models.Edition(year=1)
+    edition = models.Edition(year=1, name="ed1")
     database_session.add(edition)
 
     database_session.commit()
 
     # Create coach role
     database_session.execute(models.user_editions.insert(), [
-        {"user_id": user.user_id, "edition_id": edition.edition_id}
+        {"user_id": user1.user_id, "edition_id": edition.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition.edition_id}
     ])
 
-    users_crud.remove_coach(database_session, user.user_id, edition.edition_id)
-    assert len(database_session.query(user_editions).all()) == 0
+    users_crud.remove_coach(database_session, user1.user_id, edition.name)
+    assert len(database_session.query(user_editions).all()) == 1
 
 
 def test_get_all_requests(database_session: Session):
     """Test get request for all userrequests"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
     # Create edition
-    edition1 = models.Edition(year=1)
-    edition2 = models.Edition(year=2)
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition1)
     database_session.add(edition2)
 
@@ -180,14 +183,14 @@ def test_get_all_requests_from_edition(database_session: Session):
     """Test get request for all userrequests of a given edition"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
-    user2 = models.User(name="user2", email="user2@mail.com")
+    user1 = models.User(name="user1")
+    user2 = models.User(name="user2")
     database_session.add(user1)
     database_session.add(user2)
 
     # Create edition
-    edition1 = models.Edition(year=1)
-    edition2 = models.Edition(year=2)
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition1)
     database_session.add(edition2)
 
@@ -201,11 +204,11 @@ def test_get_all_requests_from_edition(database_session: Session):
 
     database_session.commit()
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition1.edition_id)
+    requests = users_crud.get_all_requests_from_edition(database_session, edition1.name)
     assert len(requests) == 1
     assert requests[0].user == user1
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition2.edition_id)
+    requests = users_crud.get_all_requests_from_edition(database_session, edition2.name)
     assert len(requests) == 1
     assert requests[0].user == user2
 
@@ -214,11 +217,11 @@ def test_accept_request(database_session: Session):
     """Test accepting a coach request"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed1")
     database_session.add(edition1)
 
     database_session.commit()
@@ -241,11 +244,11 @@ def test_reject_request_new_user(database_session: Session):
     """Test rejecting a coach request"""
 
     # Create user
-    user1 = models.User(name="user1", email="user1@mail.com")
+    user1 = models.User(name="user1")
     database_session.add(user1)
 
     # Create edition
-    edition1 = models.Edition(year=1)
+    edition1 = models.Edition(year=1, name="ed2022")
     database_session.add(edition1)
 
     database_session.commit()
