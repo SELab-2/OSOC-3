@@ -56,7 +56,7 @@ def authenticate_user(db: Session, email: str, password: str) -> models.User:
     """Match an email/password combination to a User model"""
     user = get_user_by_email(db, email)
 
-    if not verify_password(password, user.email_auth.pw_hash):
+    if user.email_auth.pw_hash is None or not verify_password(password, user.email_auth.pw_hash):
         raise InvalidCredentialsException()
 
     return user
