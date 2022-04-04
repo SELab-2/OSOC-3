@@ -4,6 +4,12 @@ import { Spinner } from "react-bootstrap";
 import React from "react";
 import RequestListItem from "./RequestListItem";
 
+/**
+ * A list of [[RequestListItem]]s.
+ * @param props.requests A list of requests which need to be shown.
+ * @param props.loading Waiting for data.
+ * @param props.gotData Data is received.
+ */
 export default function RequestList(props: {
     requests: Request[];
     loading: boolean;

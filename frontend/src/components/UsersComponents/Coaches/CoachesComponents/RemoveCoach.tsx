@@ -8,6 +8,13 @@ import { Button, Modal } from "react-bootstrap";
 import { ModalContent } from "../styles";
 import { Error } from "../../PendingRequests/styles";
 
+/**
+ * A button and popup to remove a user as coach from the given edition or all editions.
+ * The popup gives the choice between removing the user as coach from this edition or all editions.
+ * @param props.coach The coach which can be removed.
+ * @param props.edition The edition of which the coach can be removed.
+ * @param props.refresh A function which will be called when a user is removed as coach.
+ */
 export default function RemoveCoach(props: { coach: User; edition: string; refresh: () => void }) {
     const [show, setShow] = useState(false);
     const [error, setError] = useState("");

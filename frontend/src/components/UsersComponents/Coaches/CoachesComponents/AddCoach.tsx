@@ -6,6 +6,13 @@ import { Button, Modal } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { Error } from "../../PendingRequests/styles";
 
+/**
+ * A button and popup to add a new coach to the given edition.
+ * The popup consists of a field to search for a user.
+ * @param props.users A list of all users which can be added as coach to the edition.
+ * @param props.edition The edition to which users need to be added.
+ * @param props.refresh A function which will be called when a user is added as coach.
+ */
 export default function AddCoach(props: { users: User[]; edition: string; refresh: () => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);

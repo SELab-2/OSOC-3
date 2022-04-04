@@ -3,8 +3,16 @@ import { SpinnerContainer } from "../../PendingRequests/styles";
 import { Spinner } from "react-bootstrap";
 import { CoachesTable } from "../styles";
 import React from "react";
-import { CoachItem } from "./index";
+import { CoachListItem } from "./index";
 
+/**
+ * A list of [[CoachListItem]]s.
+ * @param props.coaches The list of coaches which needs to be shown.
+ * @param props.loading Data is not available yet.
+ * @param props.edition The edition.
+ * @param props.gotData All data is received.
+ * @param props.refresh A function which will be called when a coach is removed.
+ */
 export default function CoachList(props: {
     coaches: User[];
     loading: boolean;
@@ -29,7 +37,7 @@ export default function CoachList(props: {
     const body = (
         <tbody>
             {props.coaches.map(coach => (
-                <CoachItem
+                <CoachListItem
                     key={coach.userId}
                     coach={coach}
                     edition={props.edition}

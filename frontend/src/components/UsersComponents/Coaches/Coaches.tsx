@@ -6,18 +6,18 @@ import { getCoaches } from "../../../utils/api/users/coaches";
 import { CoachList, AddCoach } from "./CoachesComponents";
 
 /**
- *
- * @param props
- * @constructor
+ * List of coaches of the given edition.
+ * This includes a searchfield and the option to remove and add coaches.
+ * @param props.edition The edition of which coaches need to be shown.
  */
 export default function Coaches(props: { edition: string }) {
-    const [allCoaches, setAllCoaches] = useState<User[]>([]);
-    const [coaches, setCoaches] = useState<User[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const [gettingData, setGettingData] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [gotData, setGotData] = useState(false);
-    const [error, setError] = useState("");
+    const [allCoaches, setAllCoaches] = useState<User[]>([]); // All coaches from the edition
+    const [coaches, setCoaches] = useState<User[]>([]); // All coaches after filter
+    const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
+    const [gettingData, setGettingData] = useState(false); // Waiting for data
+    const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [gotData, setGotData] = useState(false); // Received data
+    const [error, setError] = useState(""); // Error message
 
     async function getData() {
         setGettingData(true);
@@ -50,6 +50,11 @@ export default function Coaches(props: { edition: string }) {
         }
     }, [gotData, gettingData, error, getData]);
 
+    /**
+     * Apply a filter to the coach list.
+     * Only keep coaches who's name contain the searchterm.
+     * @param {string} word a searchterm which a coach needs to contain
+     */
     const filter = (word: string) => {
         setSearchTerm(word);
         const newCoaches: User[] = [];

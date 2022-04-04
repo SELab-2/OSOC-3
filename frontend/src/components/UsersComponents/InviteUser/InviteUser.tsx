@@ -2,19 +2,23 @@ import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users/users";
 import "./InviteUser.css";
 import { InviteInput, InviteContainer } from "./styles";
-import { ButtonsDiv, ErrorDiv, LinkDiv } from "./InviteUserComponents";
+import { ButtonsDiv, ErrorDiv } from "./InviteUserComponents";
 
+/**
+ * A component to invite a user as coach to a given edition.
+ * Contains an input field for the email address of the new user
+ * and a button to get a mailto link which contains the invite link or just the invite link.
+ * @param props.edition The edition whereto the person will be invited.
+ */
 export default function InviteUser(props: { edition: string }) {
-    const [email, setEmail] = useState("");
-    const [valid, setValid] = useState(true);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [link, setLink] = useState("");
+    const [email, setEmail] = useState(""); // The email address which is entered
+    const [valid, setValid] = useState(true); // The given email address is valid (or still being typed)
+    const [errorMessage, setErrorMessage] = useState(""); // An error message
+    const [loading, setLoading] = useState(false); // The invite link is being created
 
     const changeEmail = function (email: string) {
         setEmail(email);
         setValid(true);
-        setLink("");
         setErrorMessage("");
     };
 
@@ -51,7 +55,6 @@ export default function InviteUser(props: { edition: string }) {
                 <ButtonsDiv loading={loading} sendInvite={sendInvite} />
             </InviteContainer>
             <ErrorDiv errorMessage={errorMessage} />
-            <LinkDiv link={link} />
         </div>
     );
 }

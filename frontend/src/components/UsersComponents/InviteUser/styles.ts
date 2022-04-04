@@ -62,10 +62,6 @@ export const Loader = styled.div`
     float: left;
 `;
 
-export const Link = styled.div`
-    margin-left: 10px;
-`;
-
 export const Error = styled.div`
     margin-left: 10px;
     color: var(--osoc_red);

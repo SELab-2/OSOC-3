@@ -2,20 +2,21 @@ import React, { useEffect, useState } from "react";
 import Collapsible from "react-collapsible";
 import { PendingRequestsContainer, Error } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
-import { RequestFilter, RequestsHeader } from "./PendingRequestsComponents";
+import { RequestFilter, RequestList, RequestsHeader } from "./PendingRequestsComponents";
 
-function RequestsList(props: { loading: boolean; gotData: boolean; requests: Request[] }) {
-    return null;
-}
-
+/**
+ * A collapsible component which contains all coach requests for a given edition.
+ * Every request can be accepted or rejected.
+ * @param props.edition The edition.
+ */
 export default function PendingRequests(props: { edition: string }) {
-    const [allRequests, setAllRequests] = useState<Request[]>([]);
-    const [requests, setRequests] = useState<Request[]>([]);
-    const [gettingRequests, setGettingRequests] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [gotData, setGotData] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [error, setError] = useState("");
+    const [allRequests, setAllRequests] = useState<Request[]>([]); // All requests for the given edition
+    const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
+    const [gettingRequests, setGettingRequests] = useState(false); // Waiting for data
+    const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [gotData, setGotData] = useState(false); // Received data
+    const [open, setOpen] = useState(false); // Collapsible is open
+    const [error, setError] = useState(""); // Error message
 
     async function getData() {
         try {
@@ -60,7 +61,7 @@ export default function PendingRequests(props: { edition: string }) {
                     filter={word => filter(word)}
                     show={allRequests.length > 0}
                 />
-                <RequestsList requests={requests} loading={gettingRequests} gotData={gotData} />
+                <RequestList requests={requests} loading={gettingRequests} gotData={gotData} />
                 <Error> {error} </Error>
             </Collapsible>
         </PendingRequestsContainer>
