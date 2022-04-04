@@ -45,7 +45,6 @@ class Form(CamelCaseModel):
     """The form data containing all the questions"""
     response_id: str
     submission_id: str
-    response_id: str
     form_id: str
     form_name: str
     created_at: str
