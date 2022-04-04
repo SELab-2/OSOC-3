@@ -1,8 +1,9 @@
 from sqlalchemy.orm import Session
 
+import src.database.crud.editions as crud_editions
 from src.app.schemas.editions import Edition, EditionBase, EditionList
-import src.database.crud.editions as crud_editions 
-from src.database.models import Edition
+from src.database.models import Edition as EditionModel
+
 
 def get_editions(db: Session) -> EditionList:
     """Get a list of all editions.
@@ -16,7 +17,7 @@ def get_editions(db: Session) -> EditionList:
     return EditionList(editions=crud_editions.get_editions(db))
 
 
-def get_edition_by_id(db: Session, edition_id: int) -> Edition:
+def get_edition_by_id(db: Session, edition_id: int) -> EditionModel:
     """Get a specific edition.
 
     Args:
@@ -28,7 +29,7 @@ def get_edition_by_id(db: Session, edition_id: int) -> Edition:
     return crud_editions.get_edition_by_id(db, edition_id)
 
 
-def create_edition(db: Session, edition: EditionBase) -> Edition:
+def create_edition(db: Session, edition: EditionBase) -> EditionModel:
     """ Create a new edition.
 
     Args:

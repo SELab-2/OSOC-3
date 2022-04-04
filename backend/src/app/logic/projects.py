@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.app.schemas.projects import ProjectList, Project, ConflictStudentList
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
-from src.database.models import Edition
+from src.database.models import Edition, Project as ProjectModel
 
 
 def logic_get_project_list(db: Session, edition: Edition) -> ProjectList:
@@ -26,7 +26,7 @@ def logic_delete_project(db: Session, project_id: int):
     db_delete_project(db, project_id)
 
 
-def logic_patch_project(db: Session, project: Project, name: str, number_of_students: int, skills: list[int],
+def logic_patch_project(db: Session, project: ProjectModel, name: str, number_of_students: int, skills: list[int],
                         partners: list[str], coaches: list[int]):
     """Make changes to a project"""
     db_patch_project(db, project, name, number_of_students, skills, partners, coaches)

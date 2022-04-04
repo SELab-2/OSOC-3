@@ -10,7 +10,7 @@ from src.app.schemas.projects import ProjectList, Project, InputProject, \
     ConflictStudentList
 from src.app.utils.dependencies import get_edition, get_project
 from src.database.database import get_session
-from src.database.models import Edition
+from src.database.models import Edition, Project as ProjectModel
 from .students import project_students_router
 
 projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
@@ -55,7 +55,7 @@ async def delete_project(project_id: int, db: Session = Depends(get_session)):
 
 
 @projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project)
-async def get_project(project: Project = Depends(get_project)):
+async def get_project_route(project: ProjectModel = Depends(get_project)):
     """
     Get information about a specific project.
     """
@@ -63,7 +63,7 @@ async def get_project(project: Project = Depends(get_project)):
 
 
 @projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-async def patch_project(input_project: InputProject, project: Project = Depends(get_project),
+async def patch_project(input_project: InputProject, project: ProjectModel = Depends(get_project),
                         db: Session = Depends(get_session)):
     """
     Update a project, changing some fields.
