@@ -4,7 +4,7 @@ from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, 
     ConflictStudent, ConflictProject
 from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
-from src.database.models import Edition
+from src.database.models import Edition, Project as ProjectModel
 
 
 def logic_get_project_list(db: Session, edition: Edition) -> ProjectList:

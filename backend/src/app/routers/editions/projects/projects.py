@@ -10,7 +10,7 @@ from src.app.schemas.projects import ProjectList, Project, InputProject, \
     ConflictStudentList
 from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach
 from src.database.database import get_session
-from src.database.models import Edition, Project as ProjectDB
+from src.database.models import Edition, Project as ProjectModel
 from .students import project_students_router
 
 projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
@@ -56,7 +56,7 @@ async def delete_project(project_id: int, db: Session = Depends(get_session)):
 
 @projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project,
                      dependencies=[Depends(require_coach)])
-async def get_project_route(project: Project = Depends(get_project)):
+async def get_project_route(project: ProjectModel = Depends(get_project)):
     """
     Get information about a specific project.
     """

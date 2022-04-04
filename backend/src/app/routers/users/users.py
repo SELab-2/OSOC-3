@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
