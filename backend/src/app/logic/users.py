@@ -48,6 +48,14 @@ def remove_coach(db: Session, user_id: int, edition_name: str):
     users_crud.remove_coach(db, user_id, edition_name)
 
 
+def remove_coach_all_editions(db: Session, user_id: int):
+    """
+    Remove user as coach from all editions
+    """
+
+    users_crud.remove_coach_all_editions(db, user_id)
+
+
 def get_request_list(db: Session, edition_name: str | None) -> UserRequestsResponse:
     """
     Query the database for a list of all user requests

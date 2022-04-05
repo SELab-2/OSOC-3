@@ -145,6 +145,37 @@ def test_remove_coach(database_session: Session):
     assert len(database_session.query(user_editions).all()) == 1
 
 
+def test_remove_coach_all_editions(database_session: Session):
+    """Test removing a user as coach from all editions"""
+
+    # Create user
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
+    edition3 = models.Edition(year=3, name="ed3")
+    database_session.add(edition1)
+    database_session.add(edition2)
+    database_session.add(edition3)
+
+    database_session.commit()
+
+    # Create coach role
+    database_session.execute(models.user_editions.insert(), [
+        {"user_id": user1.user_id, "edition_id": edition1.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition2.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition3.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition2.edition_id},
+    ])
+
+    users_crud.remove_coach_all_editions(database_session, user1.user_id)
+    assert len(database_session.query(user_editions).all()) == 1
+
+
 def test_get_all_requests(database_session: Session):
     """Test get request for all userrequests"""
 

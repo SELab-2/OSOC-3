@@ -46,6 +46,15 @@ async def remove_from_edition(user_id: int, edition_name: str, db: Session = Dep
     logic.remove_coach(db, user_id, edition_name)
 
 
+@users_router.delete("/{user_id}/editions", status_code=204, dependencies=[Depends(require_admin)])
+async def remove_from_all_edition(user_id: int, db: Session = Depends(get_session)):
+    """
+    Remove user as coach from all editions
+    """
+
+    logic.remove_coach_all_editions(db, user_id)
+
+
 @users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
 async def get_requests(edition: str | None = Query(None), db: Session = Depends(get_session)):
     """

@@ -31,7 +31,11 @@ def get_admins_from_edition(db: Session, edition_name: str) -> list[User]:
     Get all admins from the given edition
     """
     edition = db.query(Edition).where(Edition.name == edition_name).one()
-    return db.query(User).where(User.admin).join(user_editions).filter(user_editions.c.edition_id == edition.edition_id).all()
+    return db.query(User)\
+        .where(User.admin)\
+        .join(user_editions)\
+        .filter(user_editions.c.edition_id == edition.edition_id)\
+        .all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):
@@ -60,11 +64,21 @@ def remove_coach(db: Session, user_id: int, edition_name: str):
     """
     Remove user as coach for the given edition
     """
+
     edition = db.query(Edition).where(Edition.name == edition_name).one()
     db.query(user_editions)\
         .where(user_editions.c.user_id == user_id)\
         .where(user_editions.c.edition_id == edition.edition_id)\
         .delete()
+    db.commit()
+
+
+def remove_coach_all_editions(db: Session, user_id: int):
+    """
+    Remove user as coach from all editions
+    """
+
+    db.query(user_editions).where(user_editions.c.user_id == user_id).delete()
     db.commit()
 
 
