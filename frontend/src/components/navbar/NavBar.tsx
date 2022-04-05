@@ -1,12 +1,11 @@
 import React from "react";
-import { Nav, NavLink, Bars, NavMenu } from "./NavBarElements";
+import { Bars, Nav, NavLink, NavMenu } from "./NavBarElements";
 import "./navbar.css";
+import { useAuth } from "../../contexts/auth-context";
 
-function NavBar({ token }: any, { setToken }: any) {
-    let hidden = "nav-hidden";
-    if (token) {
-        hidden = "nav-links";
-    }
+function NavBar() {
+    const { token, setToken } = useAuth();
+    const hidden = token ? "nav-links" : "nav-hidden";
 
     return (
         <>
@@ -29,7 +28,7 @@ function NavBar({ token }: any, { setToken }: any) {
                         <NavLink
                             to="/"
                             onClick={() => {
-                                setToken("");
+                                setToken(null);
                             }}
                         >
                             Log out

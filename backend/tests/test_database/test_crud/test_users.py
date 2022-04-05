@@ -59,6 +59,39 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     assert data["user1"] == users[0].user_id
 
 
+def test_get_user_edition_names_empty(database_session: Session):
+    """Test getting all editions from a user when there are none"""
+    user = models.User(name="test")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert len(editions) == 0
+
+
+def test_get_user_edition_names(database_session: Session):
+    """Test getting all editions from a user when they aren't empty"""
+    user = models.User(name="test")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert len(editions) == 0
+
+    # Add user to a new edition
+    edition = models.Edition(year=2022, name="ed2022")
+    user.editions.append(edition)
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert editions == [edition.name]
+
+
 def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
     """Test get request for users of a given edition"""
 
@@ -147,7 +180,6 @@ def test_remove_coach(database_session: Session):
 
 def test_get_all_requests(database_session: Session):
     """Test get request for all userrequests"""
-
     # Create user
     user1 = models.User(name="user1")
     user2 = models.User(name="user2")

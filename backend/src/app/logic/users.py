@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest
 import src.database.crud.users as users_crud
+from src.database.models import User
 
 
 def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersListResponse:
@@ -22,6 +23,11 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersL
             users_orm = users_crud.get_users_from_edition(db, edition_name)
 
     return UsersListResponse(users=users_orm)
+
+
+def get_user_editions(user: User) -> list[str]:
+    """Get all names of the editions this user is coach in"""
+    return users_crud.get_user_edition_names(user)
 
 
 def edit_admin_status(db: Session, user_id: int, admin: AdminPatch):
