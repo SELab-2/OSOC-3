@@ -53,6 +53,7 @@ def test_create_invite_valid(database_session: Session, auth_client: AuthClient)
     json = response.json()
     assert "mailTo" in json
     assert json["mailTo"].startswith("mailto:test@ema.il")
+    assert "inviteLink" in json
 
     # New entry made in database
     json = auth_client.get("/editions/ed2022/invites/").json()

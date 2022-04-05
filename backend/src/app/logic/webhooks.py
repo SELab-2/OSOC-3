@@ -1,9 +1,11 @@
+from typing import cast
+
 import sqlalchemy.exc
 from sqlalchemy.orm import Session
 
 from settings import FormMapping
 from src.app.exceptions.webhooks import WebhookProcessException
-from src.app.schemas.webhooks import WebhookEvent, Question, Form
+from src.app.schemas.webhooks import WebhookEvent, Question, Form, QuestionUpload, QuestionOption
 from src.database.enums import QuestionEnum as QE
 from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
 
@@ -18,10 +20,9 @@ def process_webhook(edition: Edition, data: WebhookEvent, database: Session):
     questions: list[Question] = form.fields
     extra_questions: list[Question] = []
 
-    attributes: dict[str, str | int] = {'edition': edition}
+    attributes: dict = {'edition': edition}
 
     for question in questions:
-        question: Question
         match FormMapping(question.key):
             case FormMapping.FIRST_NAME:
                 attributes['first_name'] = question.value
@@ -34,10 +35,11 @@ def process_webhook(edition: Edition, data: WebhookEvent, database: Session):
             case FormMapping.PHONE_NUMBER:
                 attributes['phone_number'] = question.value
             case FormMapping.STUDENT_COACH:
-                for option in question.options:
-                    if option.id == question.value:
-                        attributes['wants_to_be_student_coach'] = "yes" in option.text.lower()
-                        break  # Only 2 options, Yes and No.
+                if question.options is not None:
+                    for option in question.options:
+                        if option.id == question.value:
+                            attributes['wants_to_be_student_coach'] = "yes" in option.text.lower()
+                            break  # Only 2 options, Yes and No.
             case _:
                 extra_questions.append(question)
 
@@ -76,7 +78,7 @@ def process_remaining_questions(student: Student, questions: list[Question], dat
             continue
 
         model = QuestionModel(
-            type=question.type,
+            type=QE(question.type),
             question=question.label,
             student=student
         )
@@ -85,8 +87,9 @@ def process_remaining_questions(student: Student, questions: list[Question], dat
 
         match QE(question.type):
             case QE.MULTIPLE_CHOICE:
-                value: str = question.value
-                for option in question.options:
+                value: str = cast(str, question.value)
+                options = cast(list[QuestionOption], question.options)
+                for option in options:
                     if option.id == value:
                         database.add(QuestionAnswer(
                             answer=option.text,
@@ -96,12 +99,13 @@ def process_remaining_questions(student: Student, questions: list[Question], dat
             case QE.INPUT_EMAIL | QE.INPUT_LINK | QE.INPUT_TEXT | QE.TEXTAREA | QE.INPUT_PHONE_NUMBER | QE.INPUT_NUMBER:
                 if question.value:
                     database.add(QuestionAnswer(
-                        answer=question.value,
+                        answer=cast(str, question.value),
                         question=model
                     ))
             case QE.FILE_UPLOAD:
                 if question.value:
-                    for upload in question.value:
+                    uploads = cast(list[QuestionUpload], question.value)
+                    for upload in uploads:
                         database.add(QuestionFileAnswer(
                             file_name=upload.name,
                             url=upload.url,
@@ -110,8 +114,10 @@ def process_remaining_questions(student: Student, questions: list[Question], dat
                             question=model
                         ))
             case QE.CHECKBOXES:
-                for value in question.value:
-                    for option in question.options:
+                answers = cast(list[str], question.value)
+                for value in answers:
+                    options = cast(list[QuestionOption], question.options)
+                    for option in options:
                         if option.id == value:
                             database.add(QuestionAnswer(
                                 answer=option.text,

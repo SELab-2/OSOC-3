@@ -77,7 +77,7 @@ def db_patch_project(db: Session, project_id: int, input_project: InputProject):
     db.commit()
 
 
-def db_get_conflict_students(db: Session, edition: Edition) -> list[(Student, list[Project])]:
+def db_get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, list[Project]]]:
     """
     Query all students that are causing conflicts for a certain edition
     Return a ConflictStudent for each student that causes a conflict
