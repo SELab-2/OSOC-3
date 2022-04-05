@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users/users";
 import "./InviteUser.css";
 import { InviteInput, InviteContainer } from "./styles";
-import { ButtonsDiv, ErrorDiv } from "./InviteUserComponents";
+import { ButtonsDiv, ErrorDiv, MessageDiv } from "./InviteUserComponents";
 
 /**
  * A component to invite a user as coach to a given edition.
@@ -15,11 +15,13 @@ export default function InviteUser(props: { edition: string }) {
     const [valid, setValid] = useState(true); // The given email address is valid (or still being typed)
     const [errorMessage, setErrorMessage] = useState(""); // An error message
     const [loading, setLoading] = useState(false); // The invite link is being created
+    const [message, setMessage] = useState(""); // A message to confirm link created
 
     const changeEmail = function (email: string) {
         setEmail(email);
         setValid(true);
         setErrorMessage("");
+        setMessage("");
     };
 
     const sendInvite = async (copyInvite: boolean) => {
@@ -28,19 +30,23 @@ export default function InviteUser(props: { edition: string }) {
             try {
                 const response = await getInviteLink(props.edition, email);
                 if (copyInvite) {
-                    await navigator.clipboard.writeText(response.mailTo);
+                    await navigator.clipboard.writeText(response.inviteLink);
+                    setMessage("Copied invite link for " + email);
                 } else {
                     window.open(response.mailTo);
+                    setMessage("Created mail for " + email);
                 }
                 setLoading(false);
                 setEmail("");
             } catch (error) {
                 setLoading(false);
                 setErrorMessage("Something went wrong");
+                setMessage("");
             }
         } else {
             setValid(false);
             setErrorMessage("Invalid email");
+            setMessage("");
         }
     };
 
@@ -54,6 +60,7 @@ export default function InviteUser(props: { edition: string }) {
                 />
                 <ButtonsDiv loading={loading} sendInvite={sendInvite} />
             </InviteContainer>
+            <MessageDiv message={message} />
             <ErrorDiv errorMessage={errorMessage} />
         </div>
     );

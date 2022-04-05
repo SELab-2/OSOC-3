@@ -19,7 +19,7 @@ export interface UsersList {
  */
 export interface MailTo {
     mailTo: string;
-    link: string;
+    inviteLink: string;
 }
 
 /**
@@ -27,7 +27,6 @@ export interface MailTo {
  */
 export async function getInviteLink(edition: string, email: string): Promise<MailTo> {
     const response = await axiosInstance.post(`/editions/${edition}/invites/`, { email: email });
-    console.log(response);
     return response.data as MailTo;
 }
 

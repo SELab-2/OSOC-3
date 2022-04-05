@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import { Button } from "react-bootstrap";
 
 export const InviteContainer = styled.div`
     clear: both;
@@ -14,30 +13,11 @@ export const InviteInput = styled.input.attrs({
     font-size: 13px;
     margin-top: 10px;
     margin-left: 10px;
+    margin-right: 5px;
     text-align: center;
     border-radius: 5px;
     border-width: 0;
     float: left;
-`;
-
-export const InviteButton = styled(Button).attrs({
-    size: "sm",
-})`
-    cursor: pointer;
-    background: var(--osoc_green);
-    color: white;
-    margin-left: 7px;
-    margin-top: 10px;
-`;
-
-export const CopyButton = styled(Button).attrs({
-    size: "sm",
-})`
-    cursor: pointer;
-    background: var(--osoc_orange);
-    color: black;
-    margin-left: 7px;
-    margin-top: 10px;
 `;
 
 const rotate = keyframes`
@@ -65,4 +45,12 @@ export const Loader = styled.div`
 export const Error = styled.div`
     margin-left: 10px;
     color: var(--osoc_red);
+`;
+
+export const Message = styled.div`
+    margin-left: 10px;
+`;
+
+export const InviteButton = styled.div`
+    padding-top: 10px;
 `;
