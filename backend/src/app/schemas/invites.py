@@ -41,6 +41,9 @@ class InvitesListResponse(CamelCaseModel):
     invite_links: list[InviteLink]
 
 
-class MailtoLink(CamelCaseModel):
-    """A response containing a mailto link to invite a user with"""
+class NewInviteLink(CamelCaseModel):
+    """A response containing a mailto link to invite a user with
+    Also contains the regular link in case the user wants to invite manually
+    """
     mail_to: str
+    invite_link: str

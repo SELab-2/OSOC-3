@@ -8,16 +8,16 @@ from src.app.logic.projects import logic_get_project_list, logic_create_project,
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import ProjectList, Project, InputProject, \
     ConflictStudentList
-from src.app.utils.dependencies import get_edition, get_project
+from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach
 from src.database.database import get_session
-from src.database.models import Edition, Project as ProjectDB
+from src.database.models import Edition, Project as ProjectModel
 from .students import project_students_router
 
 projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
 projects_router.include_router(project_students_router, prefix="/{project_id}")
 
 
-@projects_router.get("/", response_model=ProjectList)
+@projects_router.get("/", response_model=ProjectList, dependencies=[Depends(require_coach)])
 async def get_projects(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all projects.
@@ -25,7 +25,8 @@ async def get_projects(db: Session = Depends(get_session), edition: Edition = De
     return logic_get_project_list(db, edition)
 
 
-@projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Project)
+@projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Project,
+                      dependencies=[Depends(require_admin)])
 async def create_project(input_project: InputProject,
                          db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
@@ -35,7 +36,7 @@ async def create_project(input_project: InputProject,
                                 input_project)
 
 
-@projects_router.get("/conflicts", response_model=ConflictStudentList)
+@projects_router.get("/conflicts", response_model=ConflictStudentList, dependencies=[Depends(require_coach)])
 async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all projects with conflicts, and the users that
@@ -44,7 +45,8 @@ async def get_conflicts(db: Session = Depends(get_session), edition: Edition = D
     return logic_get_conflicts(db, edition)
 
 
-@projects_router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@projects_router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
+                        dependencies=[Depends(require_admin)])
 async def delete_project(project_id: int, db: Session = Depends(get_session)):
     """
     Delete a specific project.
@@ -52,8 +54,9 @@ async def delete_project(project_id: int, db: Session = Depends(get_session)):
     return logic_delete_project(db, project_id)
 
 
-@projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project)
-async def get_project_route(project: Project = Depends(get_project)):
+@projects_router.get("/{project_id}", status_code=status.HTTP_200_OK, response_model=Project,
+                     dependencies=[Depends(require_coach)])
+async def get_project_route(project: ProjectModel = Depends(get_project)):
     """
     Get information about a specific project.
     """
@@ -64,7 +67,8 @@ async def get_project_route(project: Project = Depends(get_project)):
     return project_model
 
 
-@projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
+                       dependencies=[Depends(require_admin)])
 async def patch_project(project_id: int, input_project: InputProject, db: Session = Depends(get_session)):
     """
     Update a project, changing some fields.
