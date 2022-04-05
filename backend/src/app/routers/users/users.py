@@ -47,7 +47,7 @@ async def remove_from_edition(user_id: int, edition_name: str, db: Session = Dep
 
 
 @users_router.delete("/{user_id}/editions", status_code=204, dependencies=[Depends(require_admin)])
-async def remove_from_all_edition(user_id: int, db: Session = Depends(get_session)):
+async def remove_from_all_editions(user_id: int, db: Session = Depends(get_session)):
     """
     Remove user as coach from all editions
     """
