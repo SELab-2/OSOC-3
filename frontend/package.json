@@ -47,11 +47,13 @@
         "eslint-plugin-react": "^7.28.0",
         "eslint-plugin-standard": "^5.0.0",
         "jest": "^27.5.1",
-        "prettier": "^2.5.1"
+        "prettier": "^2.5.1",
+        "typedoc": "^0.22.13"
     },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
+        "docs": "typedoc",
         "lint": "eslint . --ext js,ts,jsx,tsx",
         "test": "react-scripts test --watchAll=false"
     },

@@ -11,6 +11,13 @@ interface LoginResponse {
     };
 }
 
+/**
+ * Function that logs the user in via their email and password. If email/password were
+ * valid, this will automatically set the [[AuthContextState]], and set the token in LocalStorage.
+ * @param auth reference to the [[AuthContextState]]
+ * @param email email entered
+ * @param password password entered
+ */
 export async function logIn(auth: AuthContextState, email: string, password: string) {
     const payload = new FormData();
     payload.append("username", email);

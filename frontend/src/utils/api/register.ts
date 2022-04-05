@@ -8,6 +8,14 @@ interface RegisterFields {
     pw: string;
 }
 
+/**
+ * Function to register a user in the backend.
+ * @param edition the name of the edition that the user is registering for
+ * @param email the email entered
+ * @param name the name entered
+ * @param uuid the uuid of the invitation link that was used
+ * @param password the password entered
+ */
 export async function register(
     edition: string,
     email: string,

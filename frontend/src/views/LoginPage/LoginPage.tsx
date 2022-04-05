@@ -3,19 +3,22 @@ import { useNavigate } from "react-router-dom";
 
 import { logIn } from "../../utils/api/login";
 
-import { WelcomeText, SocialButtons, Email, Password } from "../../components/LoginComponents";
+import { Email, Password, SocialButtons, WelcomeText } from "../../components/LoginComponents";
 
 import {
-    LoginPageContainer,
-    LoginContainer,
     EmailLoginContainer,
-    VerticalDivider,
-    NoAccount,
     LoginButton,
+    LoginContainer,
+    LoginPageContainer,
+    NoAccount,
+    VerticalDivider,
 } from "./styles";
 import { useAuth } from "../../contexts/auth-context";
 
-function LoginPage() {
+/**
+ * Page where users can log in to the application.
+ */
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const authCtx = useAuth();
@@ -68,5 +71,3 @@ function LoginPage() {
         </div>
     );
 }
-
-export default LoginPage;
