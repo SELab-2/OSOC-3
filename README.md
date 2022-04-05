@@ -71,7 +71,9 @@ Below are the instructions on how to set up the frontend and backend. Instructio
 
 - Create a `Virtual Environment` (`python3 -m venv venv`)
 
-- Install the dependencies (`pip3 install -r requirements.txt -r requirements-dev.txt`)
+- Install `Poetry` (`pip3 install poetry`)
+
+- Install the dependencies (`poetry install`)
 
 - Required scripts:
 
@@ -129,7 +131,7 @@ Below are the instructions on how to set up the frontend and backend. Instructio
      ```shell
      # Install the required Node version
      nvm install 16.14.1
-  
+      
      # Make your shell use the newly-installed version
      nvm use 16
      ```
@@ -218,10 +220,24 @@ yarn build
    source venv/bin/activate
    ```
 
-3. Install the regular dependencies and development dependencies
+3. Install Poetry and configure it to use the `Virtual Environment` we created in the previous step
+
+   ```shell
+   pip3 install poetry
+   
+   # Use the existing venv instead of creating a new one
+   poetry config virtualenvs.create false
+   poetry config virtualenvs.in-project true
+   ```
+   
+3. Install the dependencies
 
    ```
-   pip3 install -r requirements.txt -r requirements-dev.txt
+   # Install all dependencies
+   poetry install
+   
+   # Only install production dependencies
+   poetry install --no-dev
    ```
 
 For all commands below, make sure your `Virtual Environment` is activated at all times. Otherwise, your Python interpreter won't be able to find the correct package.
