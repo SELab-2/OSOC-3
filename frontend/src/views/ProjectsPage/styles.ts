@@ -9,7 +9,7 @@ export const CardsGrid = styled.div`
 `;
 
 export const SearchField = styled.input`
-    margin: 20px 5px 20px 20px;
+    margin: 20px 5px 5px 20px;
     padding: 5px 10px;
     background-color: #131329;
     color: white;
@@ -26,7 +26,7 @@ export const SearchButton = styled.button`
 `
 
 export const CreateButton = styled.button`
-    margin: 20px;
+    margin-left: 25px;
     padding: 5px 10px;
     background-color: #44dba4;
     color: white;
@@ -34,5 +34,6 @@ export const CreateButton = styled.button`
     border-radius: 10px;
 `
 export const OwnProject = styled(Form.Check)`
+    margin-top: 10px;
     margin-left: 20px;
 `

@@ -1,30 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getProjects } from "../../utils/api/projects";
 import "./ProjectsPage.css";
-
 import { ProjectCard } from "../../components/ProjectsComponents";
-
 import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
-
 import { useAuth } from "../../contexts/auth-context";
-
-interface Partner {
-    name: string;
-}
-
-interface Coach {
-    name: string;
-    userId: number;
-}
-
-interface Project {
-    name: string;
-    numberOfStudents: number;
-    partners: Partner[];
-    coaches: Coach[];
-    editionName: string;
-    projectId: string;
-}
+import { Project } from "../../data/interfaces";
 
 function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
@@ -36,7 +16,10 @@ function ProjectPage() {
 
     const { userId } = useAuth();
 
-    const searchProjects = useCallback(() => {
+    /**
+     * Uses to filter the results based onto search string and own projects
+     */
+    useEffect(() => {
         const results: Project[] = [];
         projectsAPI.forEach(project => {
             let ownsProject = true;
@@ -56,12 +39,11 @@ function ProjectPage() {
             }
         });
         setProjects(results);
-    }, [ownProjects, projectsAPI, searchString, userId]);
+    }, [projectsAPI, ownProjects, searchString, userId]);
 
-    useEffect(() => {
-        searchProjects();
-    }, [ownProjects, searchProjects]);
-
+    /**
+     * Used to fetch the projects
+     */
     useEffect(() => {
         async function callProjects() {
             setGotProjects(true);
@@ -82,14 +64,9 @@ function ProjectPage() {
                 <SearchField
                     value={searchString}
                     onChange={e => setSearchString(e.target.value)}
-                    onKeyPress={e => {
-                        if (e.key === "Enter") {
-                            searchProjects();
-                        }
-                    }}
                     placeholder="project name"
-                ></SearchField>
-                <SearchButton onClick={searchProjects}>Search</SearchButton>
+                />
+                <SearchButton>Search</SearchButton>
                 <CreateButton>Create Project</CreateButton>
             </div>
             <OwnProject
@@ -99,7 +76,6 @@ function ProjectPage() {
                 checked={ownProjects}
                 onChange={() => {
                     setOwnProjects(!ownProjects);
-                    searchProjects();
                 }}
             />
 
