@@ -47,7 +47,7 @@ function ProjectPage() {
                         name={project.name}
                         client={project.partners[0].name}
                         numberOfStudents={project.numberOfStudents}
-                        coaches={["Langemietnaamdielangis", "Bart"]}
+                        coaches={["Langemietnaamdielangis", "Bart met een lange naam", "dfjdf", "kdjfdif", "kfjdif"]}
                         key={_index}
                     />
                 ))}

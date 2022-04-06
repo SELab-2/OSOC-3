@@ -3,8 +3,7 @@ import styled from "styled-components";
 export const CardContainer = styled.div`
     border: 2px solid #1a1a36;
     border-radius: 20px;
-    margin: 20px;
-    margin-bottom: 5px;
+    margin: 10px 20px;
     padding: 20px 20px 20px 20px;
     background-color: #323252;
     box-shadow: 5px 5px 15px #131329;
@@ -20,23 +19,29 @@ export const Title = styled.h2`
     overflow: hidden;
 `;
 
-export const Client = styled.h5`
+export const ClientContainer = styled.div`
     display: flex;
-    align-items: center;
+    align-items: top;
+    justify-content: space-between;
     color: lightgray;
+`;
+
+export const Client = styled.h5`
     text-overflow: ellipsis;
     overflow: hidden;
 `;
 
 export const NumberOfStudents = styled.div`
-    margin-left: auto;
+    margin-left: 2.5%;
     display: flex;
     align-items: center;
+    margin-bottom: 4px;
 `;
 
 export const CoachesContainer = styled.div`
     display: flex;
     margin-top: 20px;
+    overflow-x: scroll;
 `;
 
 export const CoachContainer = styled.div`
@@ -44,12 +49,16 @@ export const CoachContainer = styled.div`
     border-radius: 10px;
     margin-right: 10px;
     text-align: center;
-    padding: 10px;
-    max-width: 50%;
-    min-width: 20%;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    padding: 10px 20px;
+    width: fit-content;
+    max-width: 20vw;
 `;
+
+export const CoachText = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`
 
 export const Delete = styled.button`
     background-color: #f14a3b;
