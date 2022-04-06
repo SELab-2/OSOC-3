@@ -28,10 +28,7 @@ export default function LoginPage() {
         // If the user is already logged in, redirect them to
         // the "students" page instead of showing the login page
         if (authCtx.isLoggedIn) {
-            // TODO find other homepage to go to
-            //  perhaps editions?
-            //  (the rest requires an edition)
-            navigate("/students");
+            navigate("/editions");
         }
     }, [authCtx.isLoggedIn, navigate]);
 

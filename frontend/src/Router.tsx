@@ -3,7 +3,7 @@ import VerifyingTokenPage from "./views/VerifyingTokenPage";
 import LoginPage from "./views/LoginPage";
 import { Container, ContentWrapper } from "./app.styles";
 import NavBar from "./components/navbar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import RegisterPage from "./views/RegisterPage";
 import StudentsPage from "./views/StudentsPage/StudentsPage";
 import UsersPage from "./views/UsersPage";
@@ -38,16 +38,49 @@ export default function Router() {
                         <Routes>
                             <Route path={"/"} element={<LoginPage />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
-                            <Route path={"/students"} element={<PrivateRoute />}>
-                                <Route path="" element={<StudentsPage />} />
+                            <Route path={"/admins"} element={<AdminRoute />}>
+                                {/* TODO admins page */}
+                                <Route path={""} element={<div />} />
                             </Route>
-                            <Route path="/users" element={<AdminRoute />}>
-                                <Route path={""} element={<UsersPage />} />
+                            <Route path={"/editions"} element={<PrivateRoute />}>
+                                {/* TODO editions page */}
+                                <Route path={""} element={<div />} />
+                                <Route path={"new"} element={<AdminRoute />}>
+                                    {/* TODO create edition page */}
+                                    <Route path={""} element={<div />} />
+                                </Route>
+                                <Route path={":edition_id"} element={<Outlet />}>
+                                    {/* TODO edition page? do we need? maybe just some nav/links? */}
+                                    <Route path={""} element={<div />} />
+
+                                    {/* Projects routes */}
+                                    <Route path="projects" element={<Outlet />}>
+                                        <Route path={""} element={<ProjectsPage />} />
+                                        <Route path={"new"} element={<AdminRoute />}>
+                                            {/* TODO create project page */}
+                                            <Route path={""} element={<div />} />
+                                        </Route>
+                                        {/* TODO project page */}
+                                        <Route path={":id"} element={<div />} />
+                                    </Route>
+
+                                    {/* Students routes */}
+                                    <Route path={"students"} element={<StudentsPage />} />
+                                    {/* TODO student page */}
+                                    <Route path={"students/:id"} element={<div />} />
+                                    {/* TODO student emails page */}
+                                    <Route path={"students/:id/emails"} element={<div />} />
+
+                                    {/* Users routes */}
+                                    <Route path="users" element={<AdminRoute />}>
+                                        <Route path={""} element={<UsersPage />} />
+                                    </Route>
+                                </Route>
                             </Route>
-                            <Route path="/projects" element={<ProjectsPage />} />
                             <Route path="/pending" element={<PendingPage />} />
                             <Route path={"/403-forbidden"} element={<ForbiddenPage />} />
-                            <Route path="*" element={<NotFoundPage />} />
+                            <Route path={"/404-not-found"} element={<NotFoundPage />} />
+                            <Route path="*" element={<Navigate to={"/404-not-found"} />} />
                         </Routes>
                     )}
                 </ContentWrapper>
