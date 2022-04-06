@@ -7,7 +7,12 @@ def get_all_admins(db: Session) -> list[User]:
     Get all admins
     """
 
-    return db.query(User).where(User.admin).join(AuthEmail, isouter=True).join(AuthGitHub, isouter=True).join(AuthGoogle, isouter=True).all()
+    return db.query(User)\
+        .where(User.admin)\
+        .join(AuthEmail, isouter=True)\
+        .join(AuthGitHub, isouter=True)\
+        .join(AuthGoogle, isouter=True)\
+        .all()
 
 
 def get_all_users(db: Session) -> list[User]:

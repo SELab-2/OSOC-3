@@ -17,6 +17,7 @@ class User(CamelCaseModel):
 
 
 def user_model_to_schema(model_user: ModelUser) -> User:
+    """Create User Schema from User Model"""
     auth_type: str | None = None
     email: str | None = None
     if model_user.email_auth is not None:
