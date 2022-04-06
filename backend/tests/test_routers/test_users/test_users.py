@@ -45,6 +45,8 @@ def data(database_session: Session) -> dict[str, str | int]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": email_auth1.email,
+            "email2": github_auth1.email
             }
 
 
@@ -59,6 +61,17 @@ def test_get_all_users(database_session: Session, auth_client: AuthClient, data:
     assert len(user_ids) == 2
     assert data["user1"] in user_ids
     assert data["user2"] in user_ids
+
+
+def test_get_users_response(database_session: Session, auth_client: AuthClient, data: dict[str, str]):
+    """Test the response model of a user"""
+    auth_client.admin()
+    response = auth_client.get("/users")
+    users = response.json()["users"]
+    user1 = [user for user in users if user["userId"] == data["user1"]][0]
+    assert user1["email"] == data["email1"]
+    user2 = [user for user in users if user["userId"] == data["user2"]][0]
+    assert user2["email"] == data["email2"]
 
 
 def test_get_all_admins(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):

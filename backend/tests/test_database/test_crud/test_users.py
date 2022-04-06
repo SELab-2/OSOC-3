@@ -41,6 +41,7 @@ def data(database_session: Session) -> dict[str, str]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": "user1@mail.com"
             }
 
 
