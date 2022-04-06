@@ -37,6 +37,8 @@ export default function Router() {
                         // the LoginPage
                         <Routes>
                             <Route path={"/"} element={<LoginPage />} />
+                            {/* Redirect /login to the login page */}
+                            <Route path={"/login"} element={<Navigate to={"/"} replace />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
                             <Route path={"/admins"} element={<AdminRoute />}>
                                 {/* TODO admins page */}
