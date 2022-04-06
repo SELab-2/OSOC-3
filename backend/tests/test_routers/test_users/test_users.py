@@ -28,6 +28,12 @@ def data(database_session: Session) -> dict[str, str | int]:
 
     database_session.commit()
 
+    email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    database_session.add(email_auth1)
+    database_session.add(github_auth1)
+    database_session.commit()
+
     # Create coach roles
     database_session.execute(models.user_editions.insert(), [
         {"user_id": user1.user_id, "edition_id": edition1.edition_id},

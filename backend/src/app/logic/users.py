@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest, user_model_to_schema
 import src.database.crud.users as users_crud
 from src.database.models import User
 
@@ -22,7 +22,10 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersL
         else:
             users_orm = users_crud.get_users_from_edition(db, edition_name)
 
-    return UsersListResponse(users=users_orm)
+    users = []
+    for user in users_orm:
+        users.append(user_model_to_schema(user))
+    return UsersListResponse(users=users)
 
 
 def get_user_editions(user: User) -> list[str]:
