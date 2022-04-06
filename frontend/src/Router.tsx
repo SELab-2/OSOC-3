@@ -82,7 +82,7 @@ export default function Router() {
                             <Route path="/pending" element={<PendingPage />} />
                             <Route path={"/403-forbidden"} element={<ForbiddenPage />} />
                             <Route path={"/404-not-found"} element={<NotFoundPage />} />
-                            <Route path="*" element={<Navigate to={"/404-not-found"} />} />
+                            <Route path="*" element={<Navigate to={"/404-not-found"} replace />} />
                         </Routes>
                     )}
                 </ContentWrapper>
