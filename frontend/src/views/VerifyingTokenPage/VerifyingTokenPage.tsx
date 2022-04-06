@@ -25,6 +25,7 @@ export default function VerifyingTokenPage() {
                 setBearerToken(authContext.token);
                 authContext.setIsLoggedIn(true);
                 authContext.setRole(response.admin ? Role.ADMIN : Role.COACH);
+                authContext.setUserId(response.userId)
             }
         };
 

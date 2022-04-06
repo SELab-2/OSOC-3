@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Form } from "react-bootstrap";
 
 export const CardsGrid = styled.div`
     display: grid;
@@ -31,4 +32,7 @@ export const CreateButton = styled.button`
     color: white;
     border: none;
     border-radius: 10px;
+`
+export const OwnProject = styled(Form.Check)`
+    margin-left: 20px;
 `
