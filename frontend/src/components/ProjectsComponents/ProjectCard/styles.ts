@@ -1,3 +1,4 @@
+import { Modal } from "react-bootstrap";
 import styled from "styled-components";
 
 export const CardContainer = styled.div`
@@ -11,6 +12,7 @@ export const CardContainer = styled.div`
 
 export const TitleContainer = styled.div`
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
 `;
 
@@ -62,9 +64,15 @@ export const CoachText = styled.div`
 
 export const Delete = styled.button`
     background-color: #f14a3b;
-    padding: 5px 10px;
+    padding: 5px 5px;
     border: 0;
     border-radius: 5px;
-    max-height: 35px;
+    max-height: 30px;
     margin-left: 5%;
+    display: flex;
+    align-items: center;
 `;
+
+export const PopUp = styled(Modal)`
+
+`
