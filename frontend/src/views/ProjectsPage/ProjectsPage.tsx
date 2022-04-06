@@ -4,7 +4,7 @@ import "./ProjectsPage.css";
 
 import { ProjectCard } from "../../components/ProjectsComponents";
 
-import { CardsGrid } from "./styles";
+import { CardsGrid, CreateButton, SearchButton, SearchField } from "./styles";
 
 interface Partner {
     name: string;
@@ -36,9 +36,9 @@ function ProjectPage() {
     return (
         <div>
             <div>
-                <input placeholder="project name"></input>
-                <button>Search</button>
-                <button>Create Project</button>
+                <SearchField placeholder="project name"></SearchField>
+                <SearchButton>Search</SearchButton>
+                <CreateButton>Create Project</CreateButton>
             </div>
 
             <CardsGrid>
