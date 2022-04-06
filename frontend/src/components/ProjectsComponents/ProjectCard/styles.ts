@@ -18,12 +18,21 @@ export const TitleContainer = styled.div`
 export const Title = styled.h2`
     text-overflow: ellipsis;
     overflow: hidden;
-`
+`;
 
-export const Client = styled.h3`
+export const Client = styled.h5`
+    display: flex;
+    align-items: center;
+    color: lightgray;
     text-overflow: ellipsis;
     overflow: hidden;
-`
+`;
+
+export const NumberOfStudents = styled.div`
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+`;
 
 export const CoachesContainer = styled.div`
     display: flex;

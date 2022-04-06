@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { getProjects } from "../../utils/api/projects";
 import "./ProjectsPage.css";
 
-import  {ProjectCard}  from "../../components/ProjectsComponents";
+import { ProjectCard } from "../../components/ProjectsComponents";
 
 import { CardsGrid } from "./styles";
 
 interface Partner {
-    name: string
+    name: string;
 }
 
 interface Project {
     name: string;
+    numberOfStudents: number;
     partners: Partner[];
 }
 
@@ -45,11 +46,11 @@ function ProjectPage() {
                     <ProjectCard
                         name={project.name}
                         client={project.partners[0].name}
+                        numberOfStudents={project.numberOfStudents}
                         coaches={["Langemietnaamdielangis", "Bart"]}
                         key={_index}
                     />
                 ))}
-                
             </CardsGrid>
         </div>
     );
