@@ -14,8 +14,9 @@ import {
 import { BsPersonFill } from "react-icons/bs";
 import { TiDeleteOutline } from "react-icons/ti";
 
-import { Modal, Button } from "react-bootstrap";
 import { useState } from "react";
+
+import Modal from "../Modal"
 
 export default function ProjectCard({
     name,
@@ -39,25 +40,7 @@ export default function ProjectCard({
                 <Delete onClick={handleShow}>
                     <TiDeleteOutline size={"20px"} />
                 </Delete>
-
-                <>
-                    <Modal show={show} onHide={handleClose}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Confirm delete</Modal.Title>
-                        </Modal.Header>
-
-                        <Modal.Body>Are you sure you want to delete {name}?</Modal.Body>
-
-                        <Modal.Footer>
-                            <Button variant={"secondary"} onClick={handleClose}>
-                                Close
-                            </Button>
-                            <Button variant={"primary"} onClick={handleClose}>
-                                Submit
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                </>
+                <Modal show={show} handleClose={handleClose} name={name}></Modal>
             </TitleContainer>
             <ClientContainer>
                 <Client>{client}</Client>

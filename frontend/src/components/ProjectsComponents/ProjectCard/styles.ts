@@ -76,3 +76,4 @@ export const Delete = styled.button`
 export const PopUp = styled(Modal)`
 
 `
+
