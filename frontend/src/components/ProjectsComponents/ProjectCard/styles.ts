@@ -15,6 +15,16 @@ export const TitleContainer = styled.div`
     justify-content: space-between;
 `;
 
+export const Title = styled.h2`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`
+
+export const Client = styled.h3`
+    text-overflow: ellipsis;
+    overflow: hidden;
+`
+
 export const CoachesContainer = styled.div`
     display: flex;
     margin-top: 20px;

@@ -1,4 +1,12 @@
-import { CardContainer, CoachesContainer, CoachContainer, Delete, TitleContainer } from "./styles";
+import {
+    CardContainer,
+    CoachesContainer,
+    CoachContainer,
+    Delete,
+    TitleContainer,
+    Title,
+    Client
+} from "./styles";
 
 export default function ProjectCard({
     name,
@@ -12,14 +20,13 @@ export default function ProjectCard({
     return (
         <CardContainer>
             <TitleContainer>
-                <div>
-                    <h2>{name}</h2>
-                </div>
-
+                <Title>
+                    {name}
+                </Title>
                 <Delete>X</Delete>
             </TitleContainer>
 
-            <h3>{client}</h3>
+            <Client>{client}</Client>
             <CoachesContainer>
                 {coaches.map((element, _index) => (
                     <CoachContainer key={_index}>{element}</CoachContainer>
