@@ -112,6 +112,7 @@ def accept_request(db: Session, request_id: int):
     edition = db.query(Edition).where(Edition.edition_id == request.edition_id).one()
     add_coach(db, request.user_id, edition.name)
     db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
+    db.commit()
 
 
 def reject_request(db: Session, request_id: int):
@@ -120,3 +121,4 @@ def reject_request(db: Session, request_id: int):
     """
 
     db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
+    db.commit()

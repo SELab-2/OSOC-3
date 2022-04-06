@@ -32,7 +32,7 @@ export async function removeAdmin(userId: number) {
  * @param {number} userId The id of the user
  */
 export async function removeAdminAndCoach(userId: number) {
-    const response = await axiosInstance.patch(`/users/${userId}`, { admin: false });
-    // TODO: remove user from all editions
-    return response.status === 204;
+    const response1 = await axiosInstance.patch(`/users/${userId}`, { admin: false });
+    const response2 = await axiosInstance.delete(`/users/${userId}/editions`);
+    return response1.status === 204 && response2.status === 204;
 }

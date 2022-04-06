@@ -29,8 +29,9 @@ export async function getRequests(edition: string): Promise<GetRequestsResponse>
  * Accept a coach request
  * @param {number} requestId The id of the request
  */
-export async function acceptRequest(requestId: number) {
-    alert("Accept " + requestId);
+export async function acceptRequest(requestId: number): Promise<Boolean> {
+    const response = await axiosInstance.post(`/users/requests/${requestId}/accept`);
+    return response.status === 204;
 }
 
 /**
@@ -38,5 +39,6 @@ export async function acceptRequest(requestId: number) {
  * @param {number} requestId The id of the request
  */
 export async function rejectRequest(requestId: number) {
-    alert("Reject " + requestId);
+    const response = await axiosInstance.post(`/users/requests/${requestId}/reject`);
+    return response.status === 204;
 }

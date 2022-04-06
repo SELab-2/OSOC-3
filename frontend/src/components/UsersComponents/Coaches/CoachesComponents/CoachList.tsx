@@ -1,7 +1,7 @@
 import { User } from "../../../../utils/api/users/users";
 import { SpinnerContainer } from "../../PendingRequests/styles";
 import { Spinner } from "react-bootstrap";
-import { CoachesTable } from "../styles";
+import { CoachesTable, RemoveTh } from "../styles";
 import React from "react";
 import { CoachListItem } from "./index";
 
@@ -53,7 +53,7 @@ export default function CoachList(props: {
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Remove from edition</th>
+                    <RemoveTh>Remove from edition</RemoveTh>
                 </tr>
             </thead>
             {body}

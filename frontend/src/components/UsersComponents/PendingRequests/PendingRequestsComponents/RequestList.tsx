@@ -9,11 +9,13 @@ import RequestListItem from "./RequestListItem";
  * @param props.requests A list of requests which need to be shown.
  * @param props.loading Waiting for data.
  * @param props.gotData Data is received.
+ * @param props.refresh A function which will be called when a request is accepted/rejected.
  */
 export default function RequestList(props: {
     requests: Request[];
     loading: boolean;
     gotData: boolean;
+    refresh: (coachAdded: boolean) => void;
 }) {
     if (props.loading) {
         return (
@@ -32,7 +34,11 @@ export default function RequestList(props: {
     const body = (
         <tbody>
             {props.requests.map(request => (
-                <RequestListItem key={request.requestId} request={request} />
+                <RequestListItem
+                    key={request.requestId}
+                    request={request}
+                    refresh={props.refresh}
+                />
             ))}
         </tbody>
     );

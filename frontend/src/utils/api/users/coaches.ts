@@ -25,8 +25,8 @@ export async function removeCoachFromEdition(userId: number, edition: string): P
  * @param {number} userId The user's id
  */
 export async function removeCoachFromAllEditions(userId: number): Promise<boolean> {
-    // TODO: sent correct DELETE
-    return false;
+    const response = await axiosInstance.delete(`/users/${userId}/editions`);
+    return response.status === 204;
 }
 
 /**

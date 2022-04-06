@@ -1,54 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { CoachesTitle, CoachesContainer } from "./styles";
-import { getUsers, User } from "../../../utils/api/users/users";
+import { User } from "../../../utils/api/users/users";
 import { Error, SearchInput } from "../PendingRequests/styles";
-import { getCoaches } from "../../../utils/api/users/coaches";
 import { CoachList, AddCoach } from "./CoachesComponents";
 
 /**
  * List of coaches of the given edition.
  * This includes a searchfield and the option to remove and add coaches.
  * @param props.edition The edition of which coaches need to be shown.
+ * @param props.allCoaches The list of all coaches of the current edition.
+ * @param props.users A list of all users who can be added as coach.
+ * @param props.refresh A function which will be called when a coach is added/removed.
+ * @param props.gotData All data is received.
+ * @param props.gettingData Data is not available yet.
+ * @param props.error An error message.
  */
-export default function Coaches(props: { edition: string }) {
-    const [allCoaches, setAllCoaches] = useState<User[]>([]); // All coaches from the edition
+export default function Coaches(props: {
+    edition: string;
+    allCoaches: User[];
+    users: User[];
+    refresh: () => void;
+    gotData: boolean;
+    gettingData: boolean;
+    error: string;
+}) {
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches after filter
-    const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
-    const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
-    const [gotData, setGotData] = useState(false); // Received data
-    const [error, setError] = useState(""); // Error message
-
-    async function getData() {
-        setGettingData(true);
-        setGotData(false);
-        try {
-            const coachResponse = await getCoaches(props.edition);
-            setAllCoaches(coachResponse.users);
-            setCoaches(coachResponse.users);
-
-            const UsersResponse = await getUsers();
-            const users = [];
-            for (const user of UsersResponse.users) {
-                if (!coachResponse.users.some(e => e.userId === user.userId)) {
-                    users.push(user);
-                }
-            }
-            setUsers(users);
-
-            setGotData(true);
-            setGettingData(false);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
-            setGettingData(false);
-        }
-    }
 
     useEffect(() => {
-        if (!gotData && !gettingData && !error) {
-            getData();
+        const newCoaches: User[] = [];
+        for (const coach of props.allCoaches) {
+            if (coach.name.toUpperCase().includes(searchTerm.toUpperCase())) {
+                newCoaches.push(coach);
+            }
         }
-    }, [gotData, gettingData, error, getData]);
+        setCoaches(newCoaches);
+    }, [props.allCoaches, searchTerm]);
 
     /**
      * Apply a filter to the coach list.
@@ -58,7 +45,7 @@ export default function Coaches(props: { edition: string }) {
     const filter = (word: string) => {
         setSearchTerm(word);
         const newCoaches: User[] = [];
-        for (const coach of allCoaches) {
+        for (const coach of props.allCoaches) {
             if (coach.name.toUpperCase().includes(word.toUpperCase())) {
                 newCoaches.push(coach);
             }
@@ -70,15 +57,15 @@ export default function Coaches(props: { edition: string }) {
         <CoachesContainer>
             <CoachesTitle>Coaches</CoachesTitle>
             <SearchInput value={searchTerm} onChange={e => filter(e.target.value)} />
-            <AddCoach users={users} edition={props.edition} refresh={getData} />
+            <AddCoach users={props.users} edition={props.edition} refresh={props.refresh} />
             <CoachList
                 coaches={coaches}
-                loading={gettingData}
+                loading={props.gettingData}
                 edition={props.edition}
-                gotData={gotData}
-                refresh={getData}
+                gotData={props.gotData}
+                refresh={props.refresh}
             />
-            <Error> {error} </Error>
+            <Error> {props.error} </Error>
         </CoachesContainer>
     );
 }

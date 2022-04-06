@@ -9,7 +9,7 @@ import { RequestFilter, RequestList, RequestsHeader } from "./PendingRequestsCom
  * Every request can be accepted or rejected.
  * @param props.edition The edition.
  */
-export default function PendingRequests(props: { edition: string }) {
+export default function PendingRequests(props: { edition: string; refreshCoaches: () => void }) {
     const [allRequests, setAllRequests] = useState<Request[]>([]); // All requests for the given edition
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
     const [gettingRequests, setGettingRequests] = useState(false); // Waiting for data
@@ -17,6 +17,13 @@ export default function PendingRequests(props: { edition: string }) {
     const [gotData, setGotData] = useState(false); // Received data
     const [open, setOpen] = useState(false); // Collapsible is open
     const [error, setError] = useState(""); // Error message
+
+    function refresh(coachAdded: boolean) {
+        getData();
+        if (coachAdded) {
+            props.refreshCoaches();
+        }
+    }
 
     async function getData() {
         try {
@@ -61,7 +68,12 @@ export default function PendingRequests(props: { edition: string }) {
                     filter={word => filter(word)}
                     show={allRequests.length > 0}
                 />
-                <RequestList requests={requests} loading={gettingRequests} gotData={gotData} />
+                <RequestList
+                    requests={requests}
+                    loading={gettingRequests}
+                    gotData={gotData}
+                    refresh={refresh}
+                />
                 <Error> {error} </Error>
             </Collapsible>
         </PendingRequestsContainer>

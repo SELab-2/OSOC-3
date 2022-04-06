@@ -1,6 +1,7 @@
 import { User } from "../../../../utils/api/users/users";
 import React from "react";
 import RemoveCoach from "./RemoveCoach";
+import { RemoveTd } from "../styles";
 
 /**
  * An item from [[CoachList]] which represents one coach.
@@ -18,9 +19,9 @@ export default function CoachListItem(props: {
         <tr>
             <td>{props.coach.name}</td>
             <td>{props.coach.email}</td>
-            <td>
+            <RemoveTd>
                 <RemoveCoach coach={props.coach} edition={props.edition} refresh={props.refresh} />
-            </td>
+            </RemoveTd>
         </tr>
     );
 }

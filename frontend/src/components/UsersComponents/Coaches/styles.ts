@@ -20,3 +20,13 @@ export const ModalContent = styled.div`
     border: 3px solid var(--osoc_red);
     background-color: var(--osoc_blue);
 `;
+
+export const RemoveTh = styled.th`
+    width: 200px;
+    text-align: center;
+`;
+
+export const RemoveTd = styled.td`
+    text-align: center;
+    vertical-align: middle;
+`;

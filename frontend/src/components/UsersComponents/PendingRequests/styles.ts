@@ -17,14 +17,14 @@ export const RequestHeaderTitle = styled.div`
 export const OpenArrow = styled(BiDownArrow)`
     margin-top: 13px;
     margin-left: 10px;
-    offset-position: 0px 30px;
+    offset-position: 0 30px;
 `;
 
 export const ClosedArrow = styled(BiDownArrow)`
     margin-top: 13px;
     margin-left: 10px;
     transform: rotate(-90deg);
-    offset: 0px 30px;
+    offset: 0 30px;
 `;
 
 export const SearchInput = styled.input.attrs({
@@ -46,7 +46,13 @@ export const PendingRequestsContainer = styled.div`
 `;
 
 export const AcceptRejectTh = styled.th`
-    width: 150px;
+    width: 200px;
+    text-align: center;
+`;
+
+export const AcceptRejectTd = styled.td`
+    text-align: center;
+    vertical-align: middle;
 `;
 
 export const AcceptButton = styled(Button)`
@@ -77,4 +83,6 @@ export const SpinnerContainer = styled.div`
 
 export const Error = styled.div`
     color: var(--osoc_red);
+    width: 100%;
+    margin: auto;
 `;
