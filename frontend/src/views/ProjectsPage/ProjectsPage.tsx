@@ -14,6 +14,8 @@ interface Project {
     name: string;
     numberOfStudents: number;
     partners: Partner[];
+    editionName: string;
+    projectId: string;
 }
 
 function ProjectPage() {
@@ -22,11 +24,11 @@ function ProjectPage() {
 
     useEffect(() => {
         async function callProjects() {
+            setGotProjects(true);
             const response = await getProjects("summerof2022");
             if (response) {
-                setGotProjects(true);
                 setProjects(response.projects);
-            }
+            } else setGotProjects(false);
         }
         if (!gotProjects) {
             callProjects();
@@ -47,7 +49,16 @@ function ProjectPage() {
                         name={project.name}
                         client={project.partners[0].name}
                         numberOfStudents={project.numberOfStudents}
-                        coaches={["Langemietnaamdielangis", "Bart met een lange naam", "dfjdf", "kdjfdif", "kfjdif"]}
+                        coaches={[
+                            "Langemietnaamdielangis",
+                            "Bart met een lange naam",
+                            "dfjdf",
+                            "kdjfdif",
+                            "kfjdif",
+                        ]}
+                        edition={project.editionName}
+                        id={project.projectId}
+                        refreshEditions={() => setGotProjects(false)}
                         key={_index}
                     />
                 ))}

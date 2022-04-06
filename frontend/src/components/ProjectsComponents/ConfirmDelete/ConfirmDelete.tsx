@@ -1,16 +1,18 @@
-import { StyledModal, Button, ModalFooter, ModalHeader, DeleteButton } from "./styles";
+import { StyledModal, ModalFooter, ModalHeader, Button, DeleteButton } from "./styles";
 
-export default function Modal({
-    show,
+export default function ConfirmDelete({
+    visible,
     handleClose,
+    handleConfirm,
     name,
 }: {
-    show: boolean;
+    visible: boolean;
+    handleConfirm: () => void;
     handleClose: () => void;
     name: string;
 }) {
     return (
-        <StyledModal show={show} onHide={handleClose}>
+        <StyledModal show={visible} onHide={handleClose}>
             <ModalHeader closeButton>
                 <StyledModal.Title>Confirm delete</StyledModal.Title>
             </ModalHeader>
@@ -19,7 +21,7 @@ export default function Modal({
 
             <ModalFooter>
                 <Button onClick={handleClose}>Cancel</Button>
-                <DeleteButton onClick={handleClose}>Delete</DeleteButton>
+                <DeleteButton onClick={handleConfirm}>Delete</DeleteButton>
             </ModalFooter>
         </StyledModal>
     );
