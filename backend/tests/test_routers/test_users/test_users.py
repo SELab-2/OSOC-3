@@ -46,7 +46,9 @@ def data(database_session: Session) -> dict[str, str | int]:
             "edition1": edition1.name,
             "edition2": edition2.name,
             "email1": email_auth1.email,
-            "email2": github_auth1.email
+            "email2": github_auth1.email,
+            "auth_type1": "email",
+            "auth_type2": "github"
             }
 
 
@@ -69,9 +71,11 @@ def test_get_users_response(database_session: Session, auth_client: AuthClient, 
     response = auth_client.get("/users")
     users = response.json()["users"]
     user1 = [user for user in users if user["userId"] == data["user1"]][0]
-    assert user1["email"] == data["email1"]
+    assert user1["auth"]["email"] == data["email1"]
+    assert user1["auth"]["authType"] == data["auth_type1"]
     user2 = [user for user in users if user["userId"] == data["user2"]][0]
-    assert user2["email"] == data["email2"]
+    assert user2["auth"]["email"] == data["email2"]
+    assert user2["auth"]["authType"] == data["auth_type2"]
 
 
 def test_get_all_admins(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
