@@ -10,10 +10,15 @@ interface Partner {
     name: string;
 }
 
+interface Coach {
+    name: string;
+}
+
 interface Project {
     name: string;
     numberOfStudents: number;
     partners: Partner[];
+    coaches: Coach[];
     editionName: string;
     projectId: string;
 }
@@ -49,13 +54,7 @@ function ProjectPage() {
                         name={project.name}
                         client={project.partners[0].name}
                         numberOfStudents={project.numberOfStudents}
-                        coaches={[
-                            "Langemietnaamdielangis",
-                            "Bart met een lange naam",
-                            "dfjdf",
-                            "kdjfdif",
-                            "kfjdif",
-                        ]}
+                        coaches={project.coaches}
                         edition={project.editionName}
                         id={project.projectId}
                         refreshEditions={() => setGotProjects(false)}

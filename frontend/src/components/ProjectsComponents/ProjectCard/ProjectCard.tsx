@@ -19,6 +19,10 @@ import { useState } from "react";
 import ConfirmDelete from "../ConfirmDelete";
 import { deleteProject } from "../../../utils/api/projects";
 
+interface Coach {
+    name: string;
+}
+
 export default function ProjectCard({
     name,
     client,
@@ -31,7 +35,7 @@ export default function ProjectCard({
     name: string;
     client: string;
     numberOfStudents: number;
-    coaches: string[];
+    coaches: Coach[];
     edition: string;
     id: string;
     refreshEditions: () => void;
@@ -73,7 +77,7 @@ export default function ProjectCard({
             <CoachesContainer>
                 {coaches.map((element, _index) => (
                     <CoachContainer key={_index}>
-                        <CoachText>{element}</CoachText>
+                        <CoachText>{element.name}</CoachText>
                     </CoachContainer>
                 ))}
             </CoachesContainer>
