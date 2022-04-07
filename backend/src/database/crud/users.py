@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from src.database.models import user_editions, User, Edition, CoachRequest
+from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
 
 
 def get_all_admins(db: Session) -> list[User]:
@@ -7,7 +7,12 @@ def get_all_admins(db: Session) -> list[User]:
     Get all admins
     """
 
-    return db.query(User).where(User.admin).all()
+    return db.query(User)\
+        .where(User.admin)\
+        .join(AuthEmail, isouter=True)\
+        .join(AuthGitHub, isouter=True)\
+        .join(AuthGoogle, isouter=True)\
+        .all()
 
 
 def get_all_users(db: Session) -> list[User]:
