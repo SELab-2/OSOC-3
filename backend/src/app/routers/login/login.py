@@ -19,7 +19,7 @@ login_router = APIRouter(prefix="/login", tags=[Tags.LOGIN])
 
 @login_router.post("/token", response_model=Token)
 async def login_for_access_token(db: Session = Depends(get_session),
-                                 form_data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
+                                 form_data: OAuth2PasswordRequestForm = Depends()):
     """Called when logging in, generates an access token to use in other functions"""
     try:
         user = authenticate_user(db, form_data.username, form_data.password)

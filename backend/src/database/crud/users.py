@@ -20,7 +20,16 @@ def get_all_users(db: Session) -> list[User]:
 
 def get_user_edition_names(user: User) -> list[str]:
     """Get all names of the editions this user is coach in"""
-    return list(map(lambda e: e.name, user.editions))
+    # Name is non-nullable in the database, so it can never be None,
+    # but MyPy doesn't seem to grasp that concept just yet so we have to check it
+    # Could be a oneliner/list comp but that's a bit less readable
+
+    editions = []
+    for edition in user.editions:
+        if edition.name is not None:
+            editions.append(edition.name)
+
+    return editions
 
 
 def get_users_from_edition(db: Session, edition_name: str) -> list[User]:
