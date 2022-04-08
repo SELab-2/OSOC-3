@@ -2,6 +2,7 @@ from fastapi import Query
 
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum
+from src.app.schemas.skills import SkillList
 
 
 class NewDecision(CamelCaseModel):
@@ -24,6 +25,8 @@ class Student(CamelCaseModel):
     decision: DecisionEnum
     wants_to_be_student_coach: bool
     edition_id: int
+
+    skills: SkillList
 
     class Config:
         orm_mode = True

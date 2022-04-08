@@ -222,6 +222,7 @@ def test_get_multiple_skill_students(database_with_data: Session, auth_client: A
     auth_client.coach(edition)
     response = auth_client.get(
         "/editions/ed2022/students/?skill_ids=4&skill_ids=5")
+    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
     assert response.json()["students"][0]["firstName"] == "Marta"
