@@ -15,3 +15,9 @@ export interface Project {
     editionName: string;
     projectId: number;
 }
+
+export interface StudentPlace {
+    available: boolean;
+    skill: string;
+    name: string | undefined;
+}

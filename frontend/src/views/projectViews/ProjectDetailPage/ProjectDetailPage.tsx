@@ -15,6 +15,14 @@ import {
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 
+import { StudentPlace } from "../../../data/interfaces/projects";
+import { StudentPlaceholder } from "../../../components/ProjectsComponents";
+import {
+    CoachContainer,
+    CoachesContainer,
+    CoachText,
+} from "../../../components/ProjectsComponents/ProjectCard/styles";
+
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
@@ -24,6 +32,8 @@ export default function ProjectDetailPage() {
 
     const navigate = useNavigate();
 
+    const [students, setStudents] = useState<Array<StudentPlace>>([]);
+
     useEffect(() => {
         async function callProjects() {
             if (projectId) {
@@ -31,6 +41,18 @@ export default function ProjectDetailPage() {
                 const response = await getProject("summerof2022", projectId);
                 if (response) {
                     setProject(response);
+
+                    // Generate student data
+                    const studentsTemplate: StudentPlace[] = [];
+                    for (let i = 0; i < response.numberOfStudents; i++) {
+                        const student: StudentPlace = {
+                            available: i % 2 === 0,
+                            name: i % 2 === 0 ? undefined : "Tom",
+                            skill: "Frontend",
+                        };
+                        studentsTemplate.push(student);
+                    }
+                    setStudents(studentsTemplate);
                 } else navigate("/404-not-found");
             }
         }
@@ -38,6 +60,7 @@ export default function ProjectDetailPage() {
             callProjects();
         }
     });
+
     if (project) {
         return (
             <div>
@@ -48,6 +71,7 @@ export default function ProjectDetailPage() {
                     </GoBack>
 
                     <Title>{project.name}</Title>
+
                     <ClientContainer>
                         {project.partners.map((element, _index) => (
                             <Client key={_index}>{element.name}</Client>
@@ -57,6 +81,20 @@ export default function ProjectDetailPage() {
                             <BsPersonFill />
                         </NumberOfStudents>
                     </ClientContainer>
+
+                    <CoachesContainer>
+                        {project.coaches.map((element, _index) => (
+                            <CoachContainer key={_index}>
+                                <CoachText>{element.name}</CoachText>
+                            </CoachContainer>
+                        ))}
+                    </CoachesContainer>
+
+                    <div>
+                        {students.map((element: StudentPlace, _index) => (
+                            <StudentPlaceholder studentPlace={element} key={_index} />
+                        ))}
+                    </div>
                 </ProjectContainer>
             </div>
         );
