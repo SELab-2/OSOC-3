@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from src.database.models import user_editions, User, Edition, CoachRequest
+from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
 
 
 def get_all_admins(db: Session) -> list[User]:
@@ -7,7 +7,12 @@ def get_all_admins(db: Session) -> list[User]:
     Get all admins
     """
 
-    return db.query(User).where(User.admin).all()
+    return db.query(User)\
+        .where(User.admin)\
+        .join(AuthEmail, isouter=True)\
+        .join(AuthGitHub, isouter=True)\
+        .join(AuthGoogle, isouter=True)\
+        .all()
 
 
 def get_all_users(db: Session) -> list[User]:
@@ -16,6 +21,20 @@ def get_all_users(db: Session) -> list[User]:
     """
 
     return db.query(User).all()
+
+
+def get_user_edition_names(user: User) -> list[str]:
+    """Get all names of the editions this user is coach in"""
+    # Name is non-nullable in the database, so it can never be None,
+    # but MyPy doesn't seem to grasp that concept just yet so we have to check it
+    # Could be a oneliner/list comp but that's a bit less readable
+
+    editions = []
+    for edition in user.editions:
+        if edition.name is not None:
+            editions.append(edition.name)
+
+    return editions
 
 
 def get_users_from_edition(db: Session, edition_name: str) -> list[User]:
@@ -31,7 +50,11 @@ def get_admins_from_edition(db: Session, edition_name: str) -> list[User]:
     Get all admins from the given edition
     """
     edition = db.query(Edition).where(Edition.name == edition_name).one()
-    return db.query(User).where(User.admin).join(user_editions).filter(user_editions.c.edition_id == edition.edition_id).all()
+    return db.query(User)\
+        .where(User.admin)\
+        .join(user_editions)\
+        .filter(user_editions.c.edition_id == edition.edition_id)\
+        .all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):
@@ -53,24 +76,29 @@ def add_coach(db: Session, user_id: int, edition_name: str):
     user = db.query(User).where(User.user_id == user_id).one()
     edition = db.query(Edition).where(Edition.name == edition_name).one()
     user.editions.append(edition)
+    db.commit()
 
 
 def remove_coach(db: Session, user_id: int, edition_name: str):
     """
     Remove user as coach for the given edition
     """
+
     edition = db.query(Edition).where(Edition.name == edition_name).one()
-    db.execute(user_editions.delete(), {"user_id": user_id, "edition_id": edition.edition_id})
+    db.query(user_editions)\
+        .where(user_editions.c.user_id == user_id)\
+        .where(user_editions.c.edition_id == edition.edition_id)\
+        .delete()
+    db.commit()
 
 
-def delete_user_as_coach(db: Session, edition_name: str, user_id: int):
+def remove_coach_all_editions(db: Session, user_id: int):
     """
-    Add user as admin for the given edition if not already coach
+    Remove user as coach from all editions
     """
 
-    user = db.query(User).where(User.user_id == user_id).one()
-    edition = db.query(Edition).where(Edition.name == edition_name).one()
-    user.editions.remove(edition)
+    db.query(user_editions).where(user_editions.c.user_id == user_id).delete()
+    db.commit()
 
 
 def get_all_requests(db: Session) -> list[CoachRequest]:

@@ -24,7 +24,7 @@ async def remove_student_from_project(student_id: int, db: Session = Depends(get
     logic_remove_student_project(db, project, student_id)
 
 
-@project_students_router.patch("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
+@project_students_router.patch("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response, dependencies=[Depends(require_coach)])
 async def change_project_role(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
                               project: Project = Depends(get_project), user: User = Depends(require_coach)):
     """
@@ -33,7 +33,7 @@ async def change_project_role(student_id: int, input_sr: InputStudentRole, db: S
     logic_change_project_role(db, project, student_id, input_sr.skill_id, user.user_id)
 
 
-@project_students_router.post("/{student_id}", status_code=status.HTTP_201_CREATED, response_class=Response)
+@project_students_router.post("/{student_id}", status_code=status.HTTP_201_CREATED, response_class=Response, dependencies=[Depends(require_coach)])
 async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
                                  project: Project = Depends(get_project), user: User = Depends(require_coach)):
     """

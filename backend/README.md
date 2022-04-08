@@ -1,8 +1,10 @@
 # Backend
 
-## Setting up a venv
+## Setting up a venv and installing dependencies
 
-```bash
+Create a venv, install Poetry, and then install the dependencies:
+
+```shell
 # Navigate to this directory
 cd backend
 
@@ -13,11 +15,15 @@ python3 -m venv venv
 # PyCharm does this automatically, so this is only required if you're using another IDE
 source venv/bin/activate
 
-# Install requirements
-pip3 install -r requirements.txt
+# Install Poetry
+pip3 install poetry
 
-# Install dev requirements
-pip3 install -r requirements-dev.txt
+# Install all dependencies and dev dependencies
+poetry install
+
+# Use the existing venv instead of creating a new one
+poetry config virtualenvs.create false
+poetry config virtualenvs.in-project true
 ```
 
 Note that, in case your IDE does not do this automatically, you have to run `source venv/bin/activate` every time you want to run the backend, as otherwise your interpreter won't be able to find the packages.
@@ -34,9 +40,15 @@ This directory contains a `.env.example` file which shows the general structure 
 
 ## Keeping requirements up to date
 
-Whenever you'd like to install a new package, make sure to **update the `requirements.txt` or `requirements-dev.txt` files** so that everyone has the same packages installed, and our tests can run easily.
+Whenever you'd like to install a new package, install it using `Poetry` so that the [`pyproject.toml`](pyproject.toml)-file is always up-to-date. This ensures we always have the same versions of every package.
 
-In case your package installs multiple other dependencies, it's not necessary to install those along with it. The main package you installed (along with the correct version) is satisfactory.
+```shell
+# Install a regular dependency
+poetry add package_name
+
+# Install a dev dependency
+poetry add --dev package_name
+```
 
 ## Type annotations
 

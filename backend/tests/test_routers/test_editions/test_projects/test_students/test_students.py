@@ -75,7 +75,7 @@ def test_add_student_project(database_with_data: Session, current_edition: Editi
 
     resp = auth_client.post(
         "/editions/ed2022/projects/1/students/3", json={"skill_id": 3})
-
+    
     assert resp.status_code == status.HTTP_201_CREATED
 
     response2 = auth_client.get('/editions/ed2022/projects')
@@ -86,7 +86,7 @@ def test_add_student_project(database_with_data: Session, current_edition: Editi
 
 
 def test_add_ghost_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """tests add a non existing student to a project"""
+    """Tests adding a non-existing student to a project"""
     auth_client.coach(current_edition)
 
     student10: list[Student] = database_with_data.query(
@@ -106,7 +106,7 @@ def test_add_ghost_student_project(database_with_data: Session, current_edition:
 
 
 def test_add_student_project_non_existing_skill(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """tests add a non existing student to a project"""
+    """Tests adding a non-existing student to a project"""
     auth_client.coach(current_edition)
 
     skill10: list[Skill] = database_with_data.query(
@@ -126,9 +126,8 @@ def test_add_student_project_non_existing_skill(database_with_data: Session, cur
 
 
 def test_add_student_to_ghost_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test add a student to a project that don't exist"""
+    """Tests adding a student to a project that doesn't exist"""
     auth_client.coach(current_edition)
-
     project10: list[Project] = database_with_data.query(
         Project).where(Project.project_id == 10).all()
     assert len(project10) == 0
@@ -139,7 +138,7 @@ def test_add_student_to_ghost_project(database_with_data: Session, current_editi
 
 
 def test_add_incomplete_data_student_project(database_session: Session, auth_client: AuthClient):
-    """test add a student with incomplete data"""
+    """Tests adding a student with incomplete data"""
 
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -161,7 +160,7 @@ def test_add_incomplete_data_student_project(database_session: Session, auth_cli
 
 
 def test_change_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test change a student project"""
+    """Tests changing a student's project"""
     auth_client.coach(current_edition)
 
     resp1 = auth_client.patch(
@@ -177,7 +176,7 @@ def test_change_student_project(database_with_data: Session, current_edition: Ed
 
 
 def test_change_incomplete_data_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test change student project with incomplete data"""
+    """Tests changing a student's project with incomplete data"""
     auth_client.coach(current_edition)
 
     resp1 = auth_client.patch(
@@ -191,9 +190,9 @@ def test_change_incomplete_data_student_project(database_with_data: Session, cur
     assert len(json['projects'][0]['projectRoles']) == 3
     assert json['projects'][0]['projectRoles'][0]['skillId'] == 1
 
-
+    
 def test_change_ghost_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """tests change a non existing student of a project"""
+    """Tests changing a non-existing student of a project"""
     auth_client.coach(current_edition)
 
     student10: list[Student] = database_with_data.query(
@@ -213,12 +212,13 @@ def test_change_ghost_student_project(database_with_data: Session, current_editi
 
 
 def test_change_student_project_non_existing_skill(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test change a skill of a projectRole to a non-existing one"""
+    """Tests deleting a student from a project that isn't assigned"""
     auth_client.coach(current_edition)
 
     skill10: list[Skill] = database_with_data.query(
         Skill).where(Skill.skill_id == 10).all()
     assert len(skill10) == 0
+
     response = auth_client.get('/editions/ed2022/projects/1')
     json = response.json()
     assert len(json['projectRoles']) == 3
@@ -233,9 +233,8 @@ def test_change_student_project_non_existing_skill(database_with_data: Session, 
 
 
 def test_change_student_project_ghost_drafter(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test change a drafter of a projectRole to a non-existing one"""
+    """Tests changing a drafter of a ProjectRole to a non-existing one"""
     auth_client.coach(current_edition)
-
     user10: list[User] = database_with_data.query(
         User).where(User.user_id == 10).all()
     assert len(user10) == 0
@@ -252,11 +251,10 @@ def test_change_student_project_ghost_drafter(database_with_data: Session, curre
     json = response.json()
     assert len(json['projectRoles']) == 3
 
-
+    
 def test_change_student_to_ghost_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test change a student of a project that don't exist"""
+    """Tests changing a student of a project that doesn't exist"""
     auth_client.coach(current_edition)
-
     project10: list[Project] = database_with_data.query(
         Project).where(Project.project_id == 10).all()
     assert len(project10) == 0
@@ -267,9 +265,8 @@ def test_change_student_to_ghost_project(database_with_data: Session, current_ed
 
 
 def test_delete_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test delete a student from a project"""
+    """Tests deleting a student from a project"""
     auth_client.coach(current_edition)
-
     resp = auth_client.delete("/editions/ed2022/projects/1/students/1")
 
     assert resp.status_code == status.HTTP_204_NO_CONTENT
@@ -281,7 +278,7 @@ def test_delete_student_project(database_with_data: Session, current_edition: Ed
 
 
 def test_delete_student_project_empty(database_session: Session, auth_client: AuthClient):
-    """delete a student from a project that isn't assigned"""
+    """Tests deleting a student from a project that isn't assigned"""
 
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -297,9 +294,8 @@ def test_delete_student_project_empty(database_session: Session, auth_client: Au
 
 
 def test_get_conflicts(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
-    """test get the conflicts"""
+    """Test getting the conflicts"""
     auth_client.coach(current_edition)
-
     response = auth_client.get("/editions/ed2022/projects/conflicts")
     json = response.json()
     assert len(json['conflictStudents']) == 1

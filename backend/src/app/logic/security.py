@@ -39,14 +39,14 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# TO DO remove this when the users crud has been implemented
+# TODO remove this when the users crud has been implemented
 def get_user_by_email(db: Session, email: str) -> models.User:
     """Find a user by their email address"""
     auth_email = db.query(models.AuthEmail).where(models.AuthEmail.email == email).one()
     return db.query(models.User).where(models.User.user_id == auth_email.user_id).one()
 
 
-# TO DO remove this when the users crud has been implemented
+# TODO remove this when the users crud has been implemented
 def get_user_by_id(db: Session, user_id: int) -> models.User:
     """Find a user by their id"""
     return db.query(models.User).where(models.User.user_id == user_id).one()
@@ -56,7 +56,7 @@ def authenticate_user(db: Session, email: str, password: str) -> models.User:
     """Match an email/password combination to a User model"""
     user = get_user_by_email(db, email)
 
-    if not verify_password(password, user.email_auth.pw_hash):
+    if user.email_auth.pw_hash is None or not verify_password(password, user.email_auth.pw_hash):
         raise InvalidCredentialsException()
 
     return user

@@ -12,7 +12,6 @@ def data(database_session: Session) -> dict[str, str]:
 
     # Create users
     user1 = models.User(name="user1", admin=True)
-
     database_session.add(user1)
     user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
@@ -23,6 +22,12 @@ def data(database_session: Session) -> dict[str, str]:
     edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition2)
 
+    database_session.commit()
+
+    email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    database_session.add(email_auth1)
+    database_session.add(github_auth1)
     database_session.commit()
 
     # Create coach roles
@@ -36,6 +41,7 @@ def data(database_session: Session) -> dict[str, str]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": "user1@mail.com"
             }
 
 
@@ -57,6 +63,39 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     users = users_crud.get_all_admins(database_session)
     assert len(users) == 1, "Wrong length"
     assert data["user1"] == users[0].user_id
+
+
+def test_get_user_edition_names_empty(database_session: Session):
+    """Test getting all editions from a user when there are none"""
+    user = models.User(name="test")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert len(editions) == 0
+
+
+def test_get_user_edition_names(database_session: Session):
+    """Test getting all editions from a user when they aren't empty"""
+    user = models.User(name="test")
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert len(editions) == 0
+
+    # Add user to a new edition
+    edition = models.Edition(year=2022, name="ed2022")
+    user.editions.append(edition)
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.commit()
+
+    # No editions yet
+    editions = users_crud.get_user_edition_names(user)
+    assert editions == [edition.name]
 
 
 def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
@@ -124,8 +163,10 @@ def test_remove_coach(database_session: Session):
     """Test removing a user as coach"""
 
     # Create user
-    user = models.User(name="user1", admin=False)
-    database_session.add(user)
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
 
     # Create edition
     edition = models.Edition(year=1, name="ed1")
@@ -135,16 +176,47 @@ def test_remove_coach(database_session: Session):
 
     # Create coach role
     database_session.execute(models.user_editions.insert(), [
-        {"user_id": user.user_id, "edition_id": edition.edition_id}
+        {"user_id": user1.user_id, "edition_id": edition.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition.edition_id}
     ])
 
-    users_crud.remove_coach(database_session, user.user_id, edition.name)
-    assert len(database_session.query(user_editions).all()) == 0
+    users_crud.remove_coach(database_session, user1.user_id, edition.name)
+    assert len(database_session.query(user_editions).all()) == 1
+
+
+def test_remove_coach_all_editions(database_session: Session):
+    """Test removing a user as coach from all editions"""
+
+    # Create user
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
+    edition3 = models.Edition(year=3, name="ed3")
+    database_session.add(edition1)
+    database_session.add(edition2)
+    database_session.add(edition3)
+
+    database_session.commit()
+
+    # Create coach role
+    database_session.execute(models.user_editions.insert(), [
+        {"user_id": user1.user_id, "edition_id": edition1.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition2.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition3.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition2.edition_id},
+    ])
+
+    users_crud.remove_coach_all_editions(database_session, user1.user_id)
+    assert len(database_session.query(user_editions).all()) == 1
 
 
 def test_get_all_requests(database_session: Session):
     """Test get request for all userrequests"""
-
     # Create user
     user1 = models.User(name="user1")
     user2 = models.User(name="user2")

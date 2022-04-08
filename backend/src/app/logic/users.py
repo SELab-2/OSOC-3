@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest, user_model_to_schema
 import src.database.crud.users as users_crud
+from src.database.models import User
 
 
 def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersListResponse:
@@ -21,7 +22,15 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None) -> UsersL
         else:
             users_orm = users_crud.get_users_from_edition(db, edition_name)
 
-    return UsersListResponse(users=users_orm)
+    users = []
+    for user in users_orm:
+        users.append(user_model_to_schema(user))
+    return UsersListResponse(users=users)
+
+
+def get_user_editions(user: User) -> list[str]:
+    """Get all names of the editions this user is coach in"""
+    return users_crud.get_user_edition_names(user)
 
 
 def edit_admin_status(db: Session, user_id: int, admin: AdminPatch):
@@ -46,6 +55,14 @@ def remove_coach(db: Session, user_id: int, edition_name: str):
     """
 
     users_crud.remove_coach(db, user_id, edition_name)
+
+
+def remove_coach_all_editions(db: Session, user_id: int):
+    """
+    Remove user as coach from all editions
+    """
+
+    users_crud.remove_coach_all_editions(db, user_id)
 
 
 def get_request_list(db: Session, edition_name: str | None) -> UserRequestsResponse:

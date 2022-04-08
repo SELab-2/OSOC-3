@@ -28,6 +28,12 @@ def data(database_session: Session) -> dict[str, str | int]:
 
     database_session.commit()
 
+    email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    database_session.add(email_auth1)
+    database_session.add(github_auth1)
+    database_session.commit()
+
     # Create coach roles
     database_session.execute(models.user_editions.insert(), [
         {"user_id": user1.user_id, "edition_id": edition1.edition_id},
@@ -39,6 +45,10 @@ def data(database_session: Session) -> dict[str, str | int]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": email_auth1.email,
+            "email2": github_auth1.email,
+            "auth_type1": "email",
+            "auth_type2": "github"
             }
 
 
@@ -53,6 +63,19 @@ def test_get_all_users(database_session: Session, auth_client: AuthClient, data:
     assert len(user_ids) == 2
     assert data["user1"] in user_ids
     assert data["user2"] in user_ids
+
+
+def test_get_users_response(database_session: Session, auth_client: AuthClient, data: dict[str, str]):
+    """Test the response model of a user"""
+    auth_client.admin()
+    response = auth_client.get("/users")
+    users = response.json()["users"]
+    user1 = [user for user in users if user["userId"] == data["user1"]][0]
+    assert user1["auth"]["email"] == data["email1"]
+    assert user1["auth"]["authType"] == data["auth_type1"]
+    user2 = [user for user in users if user["userId"] == data["user2"]][0]
+    assert user2["auth"]["email"] == data["email2"]
+    assert user2["auth"]["authType"] == data["auth_type2"]
 
 
 def test_get_all_admins(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
@@ -162,6 +185,41 @@ def test_remove_coach(database_session: Session, auth_client: AuthClient):
     assert response.status_code == status.HTTP_204_NO_CONTENT
     coach = database_session.query(user_editions).all()
     assert len(coach) == 0
+
+
+
+def test_remove_coach_all_editions(database_session: Session, auth_client: AuthClient):
+    """Test removing a user as coach from all editions"""
+    auth_client.admin()
+
+    # Create user
+    user1 = models.User(name="user1", admin=False)
+    database_session.add(user1)
+    user2 = models.User(name="user2", admin=False)
+    database_session.add(user2)
+
+    # Create edition
+    edition1 = models.Edition(year=1, name="ed1")
+    edition2 = models.Edition(year=2, name="ed2")
+    edition3 = models.Edition(year=3, name="ed3")
+    database_session.add(edition1)
+    database_session.add(edition2)
+    database_session.add(edition3)
+
+    database_session.commit()
+
+    # Create coach role
+    database_session.execute(models.user_editions.insert(), [
+        {"user_id": user1.user_id, "edition_id": edition1.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition2.edition_id},
+        {"user_id": user1.user_id, "edition_id": edition3.edition_id},
+        {"user_id": user2.user_id, "edition_id": edition2.edition_id},
+    ])
+
+    response = auth_client.delete(f"/users/{user1.user_id}/editions")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    coach = database_session.query(user_editions).all()
+    assert len(coach) == 1
 
 
 def test_get_all_requests(database_session: Session, auth_client: AuthClient):

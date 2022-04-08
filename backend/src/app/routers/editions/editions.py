@@ -42,7 +42,7 @@ async def get_editions(db: Session = Depends(get_session)):
     Returns:
         EditionList: an object with a list of all the editions.
     """
-    # TO DO only return editions the user can see
+    # TODO only return editions the user can see
     return logic_editions.get_editions(db)
 
 

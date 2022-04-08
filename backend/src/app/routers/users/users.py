@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Query, Depends
-from requests import Session
+from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse
-from src.app.utils.dependencies import require_admin
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, User as UserSchema
+from src.app.utils.dependencies import require_admin, get_current_active_user
 from src.database.database import get_session
+from src.database.models import User as UserDB
 
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
@@ -17,6 +18,12 @@ async def get_users(admin: bool = Query(False), edition: str | None = Query(None
     """
 
     return logic.get_users_list(db, admin, edition)
+
+
+@users_router.get("/current", response_model=UserSchema)
+async def get_current_user(user: UserDB = Depends(get_current_active_user)):
+    """Get a user based on their authorization credentials"""
+    return user
 
 
 @users_router.patch("/{user_id}", status_code=204, dependencies=[Depends(require_admin)])
@@ -44,6 +51,15 @@ async def remove_from_edition(user_id: int, edition_name: str, db: Session = Dep
     """
 
     logic.remove_coach(db, user_id, edition_name)
+
+
+@users_router.delete("/{user_id}/editions", status_code=204, dependencies=[Depends(require_admin)])
+async def remove_from_all_editions(user_id: int, db: Session = Depends(get_session)):
+    """
+    Remove user as coach from all editions
+    """
+
+    logic.remove_coach_all_editions(db, user_id)
 
 
 @users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
