@@ -20,11 +20,13 @@ export default function VerifyingTokenPage() {
                 authContext.setToken(null);
                 authContext.setIsLoggedIn(false);
                 authContext.setRole(null);
+                authContext.setEditions([]);
             } else {
                 // Token was valid, use it as the default request header
                 setBearerToken(authContext.token);
                 authContext.setIsLoggedIn(true);
                 authContext.setRole(response.admin ? Role.ADMIN : Role.COACH);
+                authContext.setEditions(response.editions);
             }
         };
 
