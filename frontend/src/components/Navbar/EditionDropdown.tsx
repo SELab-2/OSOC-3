@@ -1,5 +1,5 @@
-import NavDropdown from "react-bootstrap/NavDropdown";
-import React, { useEffect } from "react";
+import React from "react";
+import Dropdown from "react-bootstrap/esm/Dropdown";
 
 interface Props {
     editions: string[];
@@ -11,8 +11,8 @@ export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
 
     props.editions.forEach((edition: string) => {
-        navItems.push(<NavDropdown.Item href={"/"}>{edition}</NavDropdown.Item>);
+        navItems.push(<Dropdown.Item href={"/"}>{edition}</Dropdown.Item>);
     });
 
-    return <NavDropdown title={`Edition ${props.currentEdition}`}>{navItems}</NavDropdown>;
+    return <Dropdown title={`Edition ${props.currentEdition}`}>{navItems}</Dropdown>;
 }
