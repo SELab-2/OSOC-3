@@ -1,0 +1,116 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = "backend"
+authors = ["Team 3"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+# Alembic: Database migrations extension for SQLAlchemy
+alembic = "1.7.6"
+
+# Environs: simplified environment variable parsing
+environs = "9.5.0"
+
+# FastAPI: API framework
+fastapi = "0.74.1"
+
+# MariaDB: Python MariaDB connector
+mariadb = "1.0.10"
+
+# Hash passwords
+passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
+
+# Generate and verify JWT tokens
+python-jose = { "version" = "3.3.0", extras = ["cryptography"] }
+
+# Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
+pyhumps = "3.5.3"
+
+# OAuth2 form data
+python-multipart = "0.0.5"
+
+# Requests: HTTP library
+requests = "2.27.1"
+
+# SQLAlchemy: ORM and database toolkit
+SQLAlchemy = "1.4.31"
+
+# SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
+sqlalchemy-utils = "0.38.2"
+
+# Uvicorn: ASGI web server implementation
+uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
+
+[tool.poetry.dev-dependencies]
+# Coverage: generate code coverage reports
+coverage = { "version" = "6.3.1", extras = ["toml"] }
+
+# faker: Generate dummy data
+faker = "13.3.1"
+
+# Mypy: check type usage in code
+mypy = "0.940"
+
+# Pylint: Python linter
+pylint = "2.12.2"
+
+# Pylint-Pytest: A Pylint plugin to suppress pytest-related false positives.
+pylint-pytest = "1.1.2"
+
+# Pytest: Python testing framework
+# (more advanced than the built-in unittest module)
+pytest = "7.0.1"
+
+# Pytest-cov: coverage plugin for pytest
+pytest-cov = "3.0.0"
+
+# Pytest-env: env plugin for pytest
+pytest-env = "0.6.2"
+
+# Pytest-mock: mocking library for pytest
+pytest-mock = "3.7.0"
+
+# Sqlalchemy-stubs: type hints for sqlalchemy
+sqlalchemy2-stubs="0.0.2a20"
+
+# Types for the passlib library
+types-passlib="1.7.0"
+
+[tool.mypy]
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+
+[[tool.mypy.overrides]]
+module = "sqlalchemy_utils"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "jose.*"
+ignore_missing_imports = true
+
+[tool.pylint.master]
+load-plugins=["pylint_pytest"]
+argument-rgx = "[a-z_][a-z0-9_]{1,31}$"
+disable=[
+    "import-outside-toplevel",
+    "missing-module-docstring",
+    "too-few-public-methods",
+]
+extension-pkg-whitelist = "pydantic"
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:.*The distutils package is deprecated:DeprecationWarning",
+]
+env = [
+    "DB_USE_SQLITE = 1",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

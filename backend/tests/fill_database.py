@@ -11,15 +11,15 @@ from src.app.logic.security import get_password_hash
 def fill_database(db: Session):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed2022")
     db.add(edition)
     db.commit()
 
     # Users
-    admin: User = User(name="admin", email="admin@ngmail.com", admin=True)
-    coach1: User = User(name="coach1", email="coach1@noutlook.be")
-    coach2: User = User(name="coach2", email="coach2@noutlook.be")
-    request: User = User(name="request", email="request@ngmail.com")
+    admin: User = User(name="admin", admin=True)
+    coach1: User = User(name="coach1")
+    coach2: User = User(name="coach2")
+    request: User = User(name="request")
     db.add(admin)
     db.add(coach1)
     db.add(coach2)
@@ -28,10 +28,10 @@ def fill_database(db: Session):
 
     # AuthEmail
     pw_hash = get_password_hash("wachtwoord")
-    auth_email_admin: AuthEmail = AuthEmail(user=admin, pw_hash=pw_hash)
-    auth_email_coach1: AuthEmail = AuthEmail(user=coach1, pw_hash=pw_hash)
-    auth_email_coach2: AuthEmail = AuthEmail(user=coach2, pw_hash=pw_hash)
-    auth_email_request: AuthEmail = AuthEmail(user=request, pw_hash=pw_hash)
+    auth_email_admin: AuthEmail = AuthEmail(user=admin, email="admin@ngmail.com", pw_hash=pw_hash)
+    auth_email_coach1: AuthEmail = AuthEmail(user=coach1, email="coach1@noutlook.be", pw_hash=pw_hash)
+    auth_email_coach2: AuthEmail = AuthEmail(user=coach2, email="coach2@noutlook.be", pw_hash=pw_hash)
+    auth_email_request: AuthEmail = AuthEmail(user=request, email="request@ngmail.com", pw_hash=pw_hash)
     db.add(auth_email_admin)
     db.add(auth_email_coach1)
     db.add(auth_email_coach2)

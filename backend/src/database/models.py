@@ -28,6 +28,7 @@ class AuthEmail(Base):
 
     email_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
     pw_hash = Column(Text, nullable=False)
 
     user: User = relationship("User", back_populates="email_auth", uselist=False)
@@ -39,6 +40,7 @@ class AuthGitHub(Base):
 
     gh_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False)
 
@@ -49,6 +51,7 @@ class AuthGoogle(Base):
 
     google_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="google_auth", uselist=False)
 
@@ -85,6 +88,7 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
+    name = Column(Text, unique=True, nullable=False)
     year = Column(Integer, unique=True, nullable=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
@@ -293,7 +297,6 @@ class User(Base):
 
     user_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    email = Column(Text, unique=True, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
