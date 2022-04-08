@@ -13,8 +13,8 @@ export interface AuthContextState {
     setRole: (value: Role | null) => void;
     token: string | null;
     setToken: (value: string | null) => void;
-    editions: number[];
-    setEditions: (value: number[]) => void;
+    editions: string[];
+    setEditions: (value: string[]) => void;
 }
 
 /**
@@ -31,7 +31,7 @@ function authDefaultState(): AuthContextState {
         token: getToken(),
         setToken: (_: string | null) => {},
         editions: [],
-        setEditions: (_: number[]) => {},
+        setEditions: (_: string[]) => {},
     };
 }
 
@@ -54,7 +54,7 @@ export function useAuth(): AuthContextState {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     const [role, setRole] = useState<Role | null>(null);
-    const [editions, setEditions] = useState<number[]>([]);
+    const [editions, setEditions] = useState<string[]>([]);
     // Default value: check LocalStorage
     const [token, setToken] = useState<string | null>(getToken());
 
