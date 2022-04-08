@@ -8,6 +8,7 @@ interface LoginResponse {
     user: {
         admin: boolean;
         editions: string[];
+        userId: number;
     };
 }
 
@@ -29,6 +30,7 @@ export async function logIn(auth: AuthContextState, email: string, password: str
         auth.setToken(login.accessToken);
         auth.setIsLoggedIn(true);
         auth.setRole(login.user.admin ? Role.ADMIN : Role.COACH);
+        auth.setUserId(login.user.userId);
         auth.setEditions(login.user.editions);
 
         return true;
