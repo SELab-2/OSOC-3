@@ -6,6 +6,7 @@ from src.database.models import Edition
 
 
 def check_readonly_edition(db: Session, edition: Edition):
+    """Checks if the given edition is the latest one (others are read-only)"""
     latest = latest_edition(db)
     if edition != latest:
         raise ReadOnlyEditionException

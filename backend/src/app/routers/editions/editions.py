@@ -1,25 +1,22 @@
 from fastapi import APIRouter, Depends
-from starlette import status
 from sqlalchemy.orm import Session
+from starlette import status
 
+from src.app.logic import editions as logic_editions
 from src.app.routers.tags import Tags
 from src.app.schemas.editions import EditionBase, Edition, EditionList
-
 from src.database.database import get_session
-from src.app.logic import editions as logic_editions
 from src.database.models import User
-
 from .invites import invites_router
 from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-
-# Don't add the "Editions" tag here, because then it gets applied
-# to all child routes as well
 from ...exceptions.authentication import MissingPermissionsException
 from ...utils.dependencies import require_admin, require_auth, require_coach, get_current_active_user
 
+# Don't add the "Editions" tag here, because then it gets applied
+# to all child routes as well
 editions_router = APIRouter(prefix="/editions")
 
 # Register all child routers
@@ -35,8 +32,8 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_name}")
 
 
-@editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
-async def get_editions(db: Session = Depends(get_session), user: User = Depends(get_current_active_user)):
+@editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS])
+async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth)):
     """Get a list of all editions.
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
@@ -51,10 +48,9 @@ async def get_editions(db: Session = Depends(get_session), user: User = Depends(
         return EditionList(editions=user.editions)
 
 
-@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], 
-                     dependencies=[Depends(require_coach)])
+@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS])
 async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session),
-                              user: User = Depends(get_current_active_user)):
+                              user: User = Depends(require_coach)):
     """Get a specific edition.
 
     Args:
@@ -65,11 +61,7 @@ async def get_edition_by_name(edition_name: str, db: Session = Depends(get_sessi
     Returns:
         Edition: an edition.
     """
-    edition = logic_editions.get_edition_by_name(db, edition_name)
-    if not user.admin and edition not in user.editions:
-        raise MissingPermissionsException
-
-    return edition
+    return logic_editions.get_edition_by_name(db, edition_name)
 
 
 @editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],

@@ -96,7 +96,7 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(ReadOnlyEditionException)
-    def failed_to_add_new_user_exception(_request: Request, _exception: ReadOnlyEditionException):
+    def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
         return JSONResponse(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
             content={'message': 'This edition is Read-Only'}
