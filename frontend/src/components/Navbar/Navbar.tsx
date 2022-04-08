@@ -1,12 +1,12 @@
 import Container from "react-bootstrap/esm/Container";
 import { BSNavbar, StyledDropdownItem } from "./styles";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "../../contexts";
 import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
 import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import EditionDropdown from "./EditionDropdown";
-import "./NavBar.css";
+import "./Navbar.css";
 import LogoutButton from "./LogoutButton";
 
 export default function Navbar() {

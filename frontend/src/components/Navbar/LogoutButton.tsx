@@ -1,7 +1,10 @@
 import { LogOutText } from "./styles";
-import { useAuth } from "../../contexts/auth-context";
+import { logOut, useAuth } from "../../contexts";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Button in the [[Navbar]] to log the user out
+ */
 export default function LogoutButton() {
     const authContext = useAuth();
     const navigate = useNavigate();
@@ -11,10 +14,7 @@ export default function LogoutButton() {
      */
     function handleLogout() {
         // Unset auth state
-        authContext.setIsLoggedIn(false);
-        authContext.setEditions([]);
-        authContext.setRole(null);
-        authContext.setToken(null);
+        logOut(authContext);
 
         // Redirect to login page
         navigate("/login");

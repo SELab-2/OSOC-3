@@ -9,6 +9,9 @@ interface Props {
     setCurrentEdition: (edition: string) => void;
 }
 
+/**
+ * Dropdown in the [[Navbar]] to change the current edition to another one
+ */
 export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
     const navigate = useNavigate();

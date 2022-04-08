@@ -1,5 +1,8 @@
 import { BSBrand } from "./styles";
 
+/**
+ * React component that shows the OSOC logo & title in the [[Navbar]]
+ */
 export default function Brand() {
     return (
         <BSBrand>
