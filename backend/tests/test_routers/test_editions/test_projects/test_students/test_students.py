@@ -304,12 +304,13 @@ def test_get_conflicts(database_with_data: Session, current_edition: Edition, au
     assert json['editionName'] == "ed2022"
 
 
-def test_add_student_project_old_edition(database_with_data: Session, test_client: TestClient):
+def test_add_student_project_old_edition(database_with_data: Session, auth_client: AuthClient):
     """tests add a student to a project from an old edition"""
+    auth_client.admin()
     database_with_data.add(Edition(year=2023, name="ed2023"))
     database_with_data.commit()
 
-    resp = test_client.post(
+    resp = auth_client.post(
         "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 1})
 
     assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

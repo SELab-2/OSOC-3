@@ -48,9 +48,9 @@ async def get_editions(db: Session = Depends(get_session), user: User = Depends(
         return EditionList(editions=user.editions)
 
 
-@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS])
-async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session),
-                              user: User = Depends(require_coach)):
+@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
+                     dependencies=[Depends(require_coach)])
+async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
     """Get a specific edition.
 
     Args:
