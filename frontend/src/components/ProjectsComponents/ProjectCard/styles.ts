@@ -29,7 +29,8 @@ export const Title = styled.h2`
 `;
 
 export const OpenIcon = styled(BsArrowUpRightSquare)`
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-top: 2px;
     height: 20px;
 `
 

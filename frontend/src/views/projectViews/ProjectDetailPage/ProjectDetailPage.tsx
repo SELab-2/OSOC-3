@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../data/interfaces";
 
 import { getProject } from "../../../utils/api/projects";
+import { GoBack, ProjectContainer } from "./styles";
+
+import { BiArrowBack } from "react-icons/bi";
 
 export default function ProjectDetailPage() {
     const params = useParams();
@@ -28,6 +31,18 @@ export default function ProjectDetailPage() {
         }
     });
     if (project) {
-        return <div>{project.name}</div>;
+        return (
+            <div>
+                <ProjectContainer>
+                    <GoBack onClick={() => navigate("/editions/summerof2022/projects/")}>
+                        <BiArrowBack />
+                        Overview
+                    </GoBack>
+
+                    <h2>{project.name}</h2>
+                    {project.editionName}
+                </ProjectContainer>
+            </div>
+        );
     } else return <div></div>;
 }
