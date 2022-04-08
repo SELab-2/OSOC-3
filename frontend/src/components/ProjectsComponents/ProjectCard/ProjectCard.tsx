@@ -10,6 +10,7 @@ import {
     OpenIcon,
     ClientContainer,
     Client,
+    Clients,
 } from "./styles";
 
 import { BsPersonFill } from "react-icons/bs";
@@ -21,13 +22,11 @@ import ConfirmDelete from "../ConfirmDelete";
 import { deleteProject } from "../../../utils/api/projects";
 import { useNavigate } from "react-router-dom";
 
-interface Coach {
-    name: string;
-}
+import { Coach, Partner } from "../../../data/interfaces";
 
 export default function ProjectCard({
     name,
-    client,
+    partners,
     numberOfStudents,
     coaches,
     edition,
@@ -35,7 +34,7 @@ export default function ProjectCard({
     refreshEditions,
 }: {
     name: string;
-    client: string;
+    partners: Partner[];
     numberOfStudents: number;
     coaches: Coach[];
     edition: string;
@@ -58,7 +57,7 @@ export default function ProjectCard({
             <TitleContainer>
                 <Title onClick={() => navigate("/editions/summerof2022/projects/" + projectId)}>
                     {name}
-                    <OpenIcon/>
+                    <OpenIcon />
                 </Title>
 
                 <Delete onClick={handleShow}>
@@ -74,7 +73,11 @@ export default function ProjectCard({
             </TitleContainer>
 
             <ClientContainer>
-                <Client>{client}</Client>
+                <Clients>
+                    {partners.map((element, _index) => (
+                        <Client key={_index}>{element.name}</Client>
+                    ))}
+                </Clients>
                 <NumberOfStudents>
                     {numberOfStudents}
                     <BsPersonFill />

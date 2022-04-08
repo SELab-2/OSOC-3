@@ -2,7 +2,6 @@ import { Modal } from "react-bootstrap";
 import styled from "styled-components";
 import { BsArrowUpRightSquare } from "react-icons/bs";
 
-
 export const CardContainer = styled.div`
     border: 2px solid #1a1a36;
     border-radius: 20px;
@@ -32,7 +31,7 @@ export const OpenIcon = styled(BsArrowUpRightSquare)`
     margin-left: 5px;
     margin-top: 2px;
     height: 20px;
-`
+`;
 
 export const ClientContainer = styled.div`
     display: flex;
@@ -41,13 +40,17 @@ export const ClientContainer = styled.div`
     color: lightgray;
 `;
 
+export const Clients = styled.div`
+    display: flex;
+    overflow-x: scroll;
+`;
+
 export const Client = styled.h5`
-    text-overflow: ellipsis;
-    overflow: hidden;
+    margin-right: 10px;
 `;
 
 export const NumberOfStudents = styled.div`
-    margin-left: 2.5%;
+    margin-left: 10px;
     display: flex;
     align-items: center;
     margin-bottom: 4px;
@@ -73,7 +76,7 @@ export const CoachText = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-`
+`;
 
 export const Delete = styled.button`
     background-color: #f14a3b;
@@ -86,7 +89,4 @@ export const Delete = styled.button`
     align-items: center;
 `;
 
-export const PopUp = styled(Modal)`
-
-`
-
+export const PopUp = styled(Modal)``;

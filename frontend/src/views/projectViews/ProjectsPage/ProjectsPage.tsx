@@ -82,7 +82,7 @@ function ProjectPage() {
                 {projects.map((project, _index) => (
                     <ProjectCard
                         name={project.name}
-                        client={project.partners[0].name}
+                        partners={project.partners}
                         numberOfStudents={project.numberOfStudents}
                         coaches={project.coaches}
                         edition={project.editionName}
