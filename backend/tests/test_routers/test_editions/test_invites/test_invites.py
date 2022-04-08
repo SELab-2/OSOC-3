@@ -31,6 +31,7 @@ def test_get_invites(database_session: Session, auth_client: AuthClient):
 
     response = auth_client.get("/editions/ed2022/invites")
 
+    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
     assert len(json["inviteLinks"]) == 1

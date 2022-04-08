@@ -1,8 +1,9 @@
 from uuid import UUID
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 from src.app.exceptions.parsing import MalformedUUIDError
+from src.database.crud.util import paginate
 from src.database.models import Edition, InviteLink
 
 
@@ -22,9 +23,17 @@ def delete_invite_link(db: Session, invite_link: InviteLink, commit: bool = True
         db.commit()
 
 
-def get_all_pending_invites(db: Session, edition: Edition) -> list[InviteLink]:
+def _get_pending_invites_for_edition_query(db: Session, edition: Edition) -> Query:
     """Return a list of all invite links in a given edition"""
-    return db.query(InviteLink).where(InviteLink.edition == edition).all()
+    return db.query(InviteLink).where(InviteLink.edition == edition).order_by(InviteLink.invite_link_id)
+
+
+def get_pending_invites_for_edition(db: Session, edition: Edition) -> list[InviteLink]:
+    return _get_pending_invites_for_edition_query(db, edition).all()
+
+
+def get_pending_invites_for_edition_page(db: Session, edition: Edition, page: int) -> list[InviteLink]:
+    return paginate(_get_pending_invites_for_edition_query(db, edition), page).all()
 
 
 def get_invite_link_by_uuid(db: Session, invite_uuid: str | UUID) -> InviteLink:
