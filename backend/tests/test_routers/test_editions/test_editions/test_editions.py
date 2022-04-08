@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from starlette import status
 
+from settings import DB_PAGE_SIZE
 from src.database.models import Edition
 from tests.utils.authorization import AuthClient
 
@@ -26,6 +27,22 @@ def test_get_editions(database_session: Session, auth_client: AuthClient):
     assert response["editions"][0]["year"] == 2022
     assert response["editions"][0]["editionId"] == 1
     assert response["editions"][0]["name"] == "ed2022"
+
+
+def test_get_editions_paginated(database_session: Session, auth_client: AuthClient):
+    """Perform tests on getting paginated editions"""
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(Edition(name=f"Project {i}", year=i))
+    database_session.commit()
+
+    auth_client.admin()
+
+    response = auth_client.get("/editions?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['editions']) == DB_PAGE_SIZE
+    response = auth_client.get("/editions?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['editions']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 def test_get_edition_by_name_admin(database_session: Session, auth_client: AuthClient):

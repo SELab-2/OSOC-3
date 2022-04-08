@@ -78,7 +78,7 @@ def test_get_all_projects(database_with_data: Session, current_edition: Edition)
 
 
 def test_get_all_projects_pagination(database_session: Session):
-    """test get all projects"""
+    """test get all projects paginated"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
 
