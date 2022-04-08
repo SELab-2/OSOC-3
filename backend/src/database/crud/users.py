@@ -5,17 +5,26 @@ from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
 
 
-def get_admins(db: Session) -> list[User]:
-    """
-    Get all admins
-    """
-
+def _get_admins_query(db: Session) -> Query:
     return db.query(User) \
         .where(User.admin) \
         .join(AuthEmail, isouter=True) \
         .join(AuthGitHub, isouter=True) \
-        .join(AuthGoogle, isouter=True) \
-        .all()
+        .join(AuthGoogle, isouter=True)
+
+
+def get_admins(db: Session) -> list[User]:
+    """
+    Get all admins
+    """
+    return _get_admins_query(db).all()
+
+
+def get_admins_page(db: Session, page: int) -> list[User]:
+    """
+    Get all admins paginated
+    """
+    return paginate(_get_admins_query(db), page).all()
 
 
 def _get_users_query(db: Session) -> Query:
