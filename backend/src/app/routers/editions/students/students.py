@@ -15,15 +15,14 @@ students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
 
 
-@students_router.get("/", dependencies=[Depends(require_auth)])
+@students_router.get("/", dependencies=[Depends(require_auth)], response_model=ReturnStudentList)
 async def get_students(db: Session = Depends(get_session),
                        commons: CommonQueryParams = Depends(CommonQueryParams),
-                       edition: Edition = Depends(get_edition)) -> ReturnStudentList:
+                       edition: Edition = Depends(get_edition)):
     """
     Get a list of all students.
     """
     return get_students_search(db, edition, commons)
-
 
 
 @students_router.post("/emails")
@@ -34,15 +33,15 @@ async def send_emails(edition: Edition = Depends(get_edition)):
 
 
 @students_router.delete("/{student_id}", dependencies=[Depends(require_admin)], status_code=status.HTTP_204_NO_CONTENT)
-async def delete_student(student: Student = Depends(get_student), db: Session = Depends(get_session)) -> None:
+async def delete_student(student: Student = Depends(get_student), db: Session = Depends(get_session)):
     """
     Delete all information stored about a specific student.
     """
     remove_student(db, student)
 
 
-@students_router.get("/{student_id}", dependencies=[Depends(require_auth)])
-async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)) -> ReturnStudent:
+@students_router.get("/{student_id}", dependencies=[Depends(require_auth)], response_model=ReturnStudent)
+async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)):
     """
     Get information about a specific student.
     """
@@ -50,7 +49,7 @@ async def get_student_by_id(edition: Edition = Depends(get_edition), student: St
 
 
 @students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin)], status_code=status.HTTP_204_NO_CONTENT)
-async def make_decision(decision: NewDecision, student: Student = Depends(get_student), db: Session = Depends(get_session)) -> None:
+async def make_decision(decision: NewDecision, student: Student = Depends(get_student), db: Session = Depends(get_session)):
     """
     Make a finalized Yes/Maybe/No decision about a student.
 

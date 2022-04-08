@@ -17,28 +17,6 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(edition)
     database_session.commit()
 
-    # Users
-    admin: User = User(name="admin", admin=True, editions=[edition])
-    coach1: User = User(name="coach1", editions=[edition])
-    coach2: User = User(name="coach2", editions=[edition])
-    database_session.add(admin)
-    database_session.add(coach1)
-    database_session.add(coach2)
-    database_session.commit()
-
-    # AuthEmail
-    pw_hash = get_password_hash("wachtwoord")
-    auth_email_admin: AuthEmail = AuthEmail(
-        user=admin, email="admin@ngmail.com", pw_hash=pw_hash)
-    auth_email_coach1: AuthEmail = AuthEmail(
-        user=coach1, email="coach1@noutlook.be", pw_hash=pw_hash)
-    auth_email_coach2: AuthEmail = AuthEmail(
-        user=coach2, email="coach2@noutlook.be", pw_hash=pw_hash)
-    database_session.add(auth_email_admin)
-    database_session.add(auth_email_coach1)
-    database_session.add(auth_email_coach2)
-    database_session.commit()
-
     # Skill
     skill1: Skill = Skill(name="skill1", description="something about skill1")
     skill2: Skill = Skill(name="skill2", description="something about skill2")
@@ -68,52 +46,13 @@ def database_with_data(database_session: Session) -> Session:
     return database_session
 
 
-@pytest.fixture
-def auth_coach1(auth_client: AuthClient) -> str:
-    """A fixture for logging in coach1"""
-
-    form = {
-        "username": "coach1@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = auth_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    return auth
-
-
-@pytest.fixture
-def auth_coach2(auth_client: AuthClient) -> str:
-    """A fixture for logging in coach1"""
-
-    form = {
-        "username": "coach2@noutlook.be",
-        "password": "wachtwoord"
-    }
-    token = auth_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    return auth
-
-
-@pytest.fixture
-def auth_admin(auth_client: AuthClient) -> str:
-    """A fixture for logging in admin"""
-
-    form = {
-        "username": "admin@ngmail.com",
-        "password": "wachtwoord"
-    }
-    token = auth_client.post("/login/token", data=form).json()["accessToken"]
-    auth = "Bearer " + token
-    return auth
-
-
 def test_set_definitive_decision_no_authorization(database_with_data: Session, auth_client: AuthClient):
     """tests"""
     assert auth_client.put(
         "/editions/ed2022/students/2/decision").status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_set_definitive_decision_coach(database_with_data: Session, auth_client: AuthClient, auth_coach1):
+def test_set_definitive_decision_coach(database_with_data: Session, auth_client: AuthClient):
     """tests"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
@@ -171,7 +110,7 @@ def test_delete_student_no_authorization(database_with_data: Session, auth_clien
         "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_delete_student_coach(database_with_data: Session, auth_client: AuthClient, auth_coach1):
+def test_delete_student_coach(database_with_data: Session, auth_client: AuthClient):
     """tests"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
@@ -303,4 +242,17 @@ def test_get_ghost_skill_students(database_with_data: Session, auth_client: Auth
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?skill_ids=100")
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    print(response.json())
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 0
+
+
+def test_get_one_real_one_ghost_skill_students(database_with_data: Session, auth_client: AuthClient):
+    """tests"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    response = auth_client.get(
+        "/editions/ed2022/students/?skill_ids=4&skill_ids=100")
+    print(response.json())
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 0

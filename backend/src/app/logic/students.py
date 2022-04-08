@@ -23,8 +23,8 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
     if commons.skill_ids:
         skills: list[Skill] = db.query(Skill).where(
             Skill.skill_id.in_(commons.skill_ids)).all()
-        if not skills: #TODO: should this be a costum error with a message or not?
-            raise NoResultFound
+        if len(skills) != len(commons.skill_ids):
+            return ReturnStudentList(students=[])
     else:
         skills = []
     students = get_students(db, edition, first_name=commons.first_name,
