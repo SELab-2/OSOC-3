@@ -27,9 +27,7 @@ export const StyledDropdownItem = styled(NavDropdown.Item)`
     }
 `;
 
-export const LogOutText = styled(BSNavbar.Text).attrs(() => ({
-    className: "ms-2",
-}))`
+export const LogOutText = styled(BSNavbar.Text)`
     transition: 150ms ease-out;
 
     &:hover {
