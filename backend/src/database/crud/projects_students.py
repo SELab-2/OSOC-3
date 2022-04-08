@@ -38,3 +38,11 @@ def db_change_project_role(db: Session, project: Project, student_id: int, skill
     proj_role.drafter_id = drafter_id
     proj_role.skill_id = skill_id
     db.commit()
+
+
+def db_confirm_project_role(db: Session, project: Project, student_id: int):
+    proj_role = db.query(ProjectRole).where(ProjectRole.student_id == student_id) \
+        .where(ProjectRole.project == project).one()
+
+    proj_role.definitive = True
+    db.commit()
