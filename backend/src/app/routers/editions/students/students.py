@@ -25,6 +25,7 @@ async def get_students(db: Session = Depends(get_session),
     return get_students_search(db, edition, commons)
 
 
+
 @students_router.post("/emails")
 async def send_emails(edition: Edition = Depends(get_edition)):
     """

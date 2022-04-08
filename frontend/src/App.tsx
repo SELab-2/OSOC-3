@@ -1,16 +1,18 @@
 import React from "react";
-import logo from "./logo.svg";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import Router from "./Router";
+import { AuthProvider } from "./contexts";
 
-function App() {
+/**
+ * Main application component. Wraps the [[Router]] in an [[AuthProvider]] so that
+ * the [[AuthContextState]] is available throughout the entire application.
+ */
+export default function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <h1>Open Summer Of Code</h1>
-            </header>
-        </div>
+        // AuthContext should be available in the entire application
+        <AuthProvider>
+            <Router />
+        </AuthProvider>
     );
 }
-
-export default App;

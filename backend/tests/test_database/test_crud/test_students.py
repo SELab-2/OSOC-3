@@ -10,19 +10,17 @@ from src.database.crud.students import get_student_by_id, set_definitive_decisio
 def database_with_data(database_session: Session):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
-    edition: Edition = Edition(year=2022)
+    edition: Edition = Edition(year=2022, name="ed22")
     database_session.add(edition)
     database_session.commit()
 
     # Users
-    admin: User = User(name="admin", email="admin@ngmail.com", admin=True)
-    coach1: User = User(name="coach1", email="coach1@noutlook.be")
-    coach2: User = User(name="coach2", email="coach2@noutlook.be")
-    request: User = User(name="request", email="request@ngmail.com")
+    admin: User = User(name="admin", admin=True)
+    coach1: User = User(name="coach1")
+    coach2: User = User(name="coach2")
     database_session.add(admin)
     database_session.add(coach1)
     database_session.add(coach2)
-    database_session.add(request)
     database_session.commit()
 
     # Skill

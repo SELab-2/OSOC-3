@@ -1,0 +1,51 @@
+.pending-dot-1 {
+    animation: visible-switch-1 2s infinite linear;
+}
+.pending-dot-2 {
+    animation: visible-switch-2 2s infinite linear;
+}
+.pending-dot-3 {
+    animation: visible-switch-3 2s infinite linear;
+}
+@keyframes visible-switch-1 {
+    0% {
+        color: transparent;
+    }
+    24% {
+        color: transparent;
+    }
+    25% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}
+@keyframes visible-switch-2 {
+    0% {
+        color: transparent;
+    }
+    49% {
+        color: transparent;
+    }
+    50% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}
+@keyframes visible-switch-3 {
+    0% {
+        color: transparent;
+    }
+    74% {
+        color: transparent;
+    }
+    75% {
+        color: white;
+    }
+    100% {
+        color: white;
+    }
+}

@@ -5,7 +5,10 @@ from pydantic import ValidationError
 from starlette import status
 
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
+from .editions import DuplicateInsertException
 from .parsing import MalformedUUIDError
+from .projects import StudentInConflictException, FailedToAddProjectRoleException
+from .register import FailedToAddNewUserException
 from .webhooks import WebhookProcessException
 
 
@@ -26,7 +29,7 @@ def install_handlers(app: FastAPI):
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     @app.exception_handler(MalformedUUIDError)
     def malformed_uuid_error(_request: Request, _exception: MalformedUUIDError):
         return JSONResponse(
@@ -57,9 +60,37 @@ def install_handlers(app: FastAPI):
             content={'message': 'Not Found'}
         )
 
+    @app.exception_handler(DuplicateInsertException)
+    def duplicate_insert(_request: Request, _exception: DuplicateInsertException):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={'message': 'Already inserted'}
+        )
+
     @app.exception_handler(WebhookProcessException)
     def webhook_process_exception(_request: Request, exception: WebhookProcessException):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'message': exception.message}
+        )
+
+    @app.exception_handler(FailedToAddNewUserException)
+    def failed_to_add_new_user_exception(_request: Request, _exception: FailedToAddNewUserException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while creating a new user'}
+        )
+
+    @app.exception_handler(StudentInConflictException)
+    def student_in_conflict_exception(_request: Request, _exception: StudentInConflictException):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={'message': 'Resolve the conflict this student is in before confirming their role'}
+        )
+
+    @app.exception_handler(FailedToAddProjectRoleException)
+    def student_in_conflict_exception(_request: Request, _exception: FailedToAddProjectRoleException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while adding this student to the project'}
         )

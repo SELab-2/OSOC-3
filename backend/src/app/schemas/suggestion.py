@@ -1,22 +1,14 @@
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum
+from src.app.schemas.users import User, user_model_to_schema
+from src.database.models import Suggestion as Suggestion_model
+
 
 class NewSuggestion(CamelCaseModel):
     """The fields of a suggestion"""
     suggestion: DecisionEnum
     argumentation: str
 
-class User(CamelCaseModel): #TODO: delete this when user is on develop and use that one
-    """
-    Model to represent a Coach
-    Sent as a response to API /GET requests
-    """
-    user_id: int
-    name: str
-    email: str
-
-    class Config:
-        orm_mode = True
 
 class Suggestion(CamelCaseModel):
     """
@@ -25,12 +17,13 @@ class Suggestion(CamelCaseModel):
     """
 
     suggestion_id: int
-    coach : User
+    coach: User
     suggestion: DecisionEnum
     argumentation: str
 
     class Config:
         orm_mode = True
+
 
 class SuggestionListResponse(CamelCaseModel):
     """
@@ -38,8 +31,18 @@ class SuggestionListResponse(CamelCaseModel):
     """
     suggestions: list[Suggestion]
 
+
 class SuggestionResponse(CamelCaseModel):
     """
     the suggestion that is created
     """
     suggestion: Suggestion
+
+
+def suggestion_model_to_schema(suggestion_model: Suggestion_model) -> Suggestion:
+    """Create Suggestion Schema from Suggestion Model"""
+    coach: User = user_model_to_schema(suggestion_model.coach)
+    return Suggestion(suggestion_id=suggestion_model.suggestion_id,
+                      coach=coach,
+                      suggestion=suggestion_model.suggestion,
+                      argumentation=suggestion_model.argumentation)
