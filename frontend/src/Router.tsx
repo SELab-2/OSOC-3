@@ -2,7 +2,7 @@ import React from "react";
 import VerifyingTokenPage from "./views/VerifyingTokenPage";
 import LoginPage from "./views/LoginPage";
 import { Container, ContentWrapper } from "./app.styles";
-import NavBar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import RegisterPage from "./views/RegisterPage";
 import StudentsPage from "./views/StudentsPage/StudentsPage";
@@ -26,7 +26,7 @@ export default function Router() {
     return (
         <BrowserRouter>
             <Container>
-                {isLoggedIn && <NavBar />}
+                <Navbar />
                 <ContentWrapper>
                     {isLoggedIn === null ? (
                         // Busy verifying the access token

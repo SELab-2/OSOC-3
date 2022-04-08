@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/auth-context";
  * NavBar displayed at the top of the page.
  * Links are hidden if the user is not authorized to see them.
  */
-export default function NavBar() {
+export default function NavBarOld() {
     const { token, setToken } = useAuth();
     const hidden = token ? "nav-links" : "nav-hidden";
 
