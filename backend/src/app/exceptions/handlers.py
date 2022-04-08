@@ -89,7 +89,7 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(FailedToAddProjectRoleException)
-    def student_in_conflict_exception(_request: Request, _exception: FailedToAddProjectRoleException):
+    def failed_to_add_project_role_exception(_request: Request, _exception: FailedToAddProjectRoleException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while adding this student to the project'}

@@ -41,6 +41,7 @@ def db_change_project_role(db: Session, project: Project, student_id: int, skill
 
 
 def db_confirm_project_role(db: Session, project: Project, student_id: int):
+    """Confirm a project role"""
     proj_role = db.query(ProjectRole).where(ProjectRole.student_id == student_id) \
         .where(ProjectRole.project == project).one()
 
