@@ -46,13 +46,13 @@ def database_with_data(database_session: Session) -> Session:
 
 
 def test_set_definitive_decision_no_authorization(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that you have to be logged in"""
     assert auth_client.put(
         "/editions/ed2022/students/2/decision").status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_set_definitive_decision_coach(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that a coach can't set a definitive decision"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     assert auth_client.put(
@@ -60,21 +60,21 @@ def test_set_definitive_decision_coach(database_with_data: Session, auth_client:
 
 
 def test_set_definitive_decision_on_ghost(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that you get a 404 if a student don't exicist"""
     auth_client.admin()
     assert auth_client.put(
         "/editions/ed2022/students/100/decision").status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_set_definitive_decision_wrong_body(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests you got a 422 if you give a wrong body"""
     auth_client.admin()
     assert auth_client.put(
         "/editions/ed2022/students/1/decision").status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_set_definitive_decision_yes(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that an admin can set a yes"""
     auth_client.admin()
     assert auth_client.put("/editions/ed2022/students/1/decision",
                            json={"decision": 1}).status_code == status.HTTP_204_NO_CONTENT
@@ -84,7 +84,7 @@ def test_set_definitive_decision_yes(database_with_data: Session, auth_client: A
 
 
 def test_set_definitive_decision_no(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that an admin can set a no"""
     auth_client.admin()
     assert auth_client.put("/editions/ed2022/students/1/decision",
                            json={"decision": 3}).status_code == status.HTTP_204_NO_CONTENT
@@ -94,7 +94,7 @@ def test_set_definitive_decision_no(database_with_data: Session, auth_client: Au
 
 
 def test_set_definitive_decision_maybe(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that an admin can set a maybe"""
     auth_client.admin()
     assert auth_client.put("/editions/ed2022/students/1/decision",
                            json={"decision": 2}).status_code == status.HTTP_204_NO_CONTENT
@@ -104,13 +104,13 @@ def test_set_definitive_decision_maybe(database_with_data: Session, auth_client:
 
 
 def test_delete_student_no_authorization(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
-    assert auth_client.delete("/editions/ed2022/students/2", headers={
-        "Authorization": "auth"}).status_code == status.HTTP_401_UNAUTHORIZED
+    """tests that you have to be logged in"""
+    assert auth_client.delete(
+        "/editions/ed2022/students/2").status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_delete_student_coach(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that a coach can't delete a student"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     assert auth_client.delete(
@@ -121,7 +121,7 @@ def test_delete_student_coach(database_with_data: Session, auth_client: AuthClie
 
 
 def test_delete_ghost(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests that you can't delete a student that don't excist"""
     auth_client.admin()
     assert auth_client.delete(
         "/editions/ed2022/students/100").status_code == status.HTTP_404_NOT_FOUND
@@ -131,7 +131,7 @@ def test_delete_ghost(database_with_data: Session, auth_client: AuthClient):
 
 
 def test_delete(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests an admin can delete a student"""
     auth_client.admin()
     assert auth_client.delete(
         "/editions/ed2022/students/1").status_code == status.HTTP_204_NO_CONTENT
@@ -141,26 +141,27 @@ def test_delete(database_with_data: Session, auth_client: AuthClient):
 
 
 def test_get_student_by_id_no_autorization(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests you have to be logged in to get a student by id"""
     assert auth_client.get(
         "/editions/ed2022/students/1").status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_student_by_id(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
-    auth_client.admin()
+    """tests you can get a student by id"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
     assert auth_client.get(
         "/editions/ed2022/students/1").status_code == status.HTTP_200_OK
 
 
 def test_get_students_no_autorization(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests you have to be logged in to get all students"""
     assert auth_client.get(
         "/editions/ed2022/students/").status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_get_all_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get all students"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/")
@@ -169,7 +170,7 @@ def test_get_all_students(database_with_data: Session, auth_client: AuthClient):
 
 
 def test_get_first_name_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer first name"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?first_name=Jos")
@@ -178,7 +179,7 @@ def test_get_first_name_students(database_with_data: Session, auth_client: AuthC
 
 
 def test_get_last_name_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer last name"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get(
@@ -188,7 +189,7 @@ def test_get_last_name_students(database_with_data: Session, auth_client: AuthCl
 
 
 def test_get_alumni_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer alumni"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?alumni=true")
@@ -197,7 +198,7 @@ def test_get_alumni_students(database_with_data: Session, auth_client: AuthClien
 
 
 def test_get_student_coach_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer student coach"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?student_coach=true")
@@ -206,7 +207,7 @@ def test_get_student_coach_students(database_with_data: Session, auth_client: Au
 
 
 def test_get_one_skill_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer one skill"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?skill_ids=1")
@@ -216,7 +217,7 @@ def test_get_one_skill_students(database_with_data: Session, auth_client: AuthCl
 
 
 def test_get_multiple_skill_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer multiple skills"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get(
@@ -227,7 +228,7 @@ def test_get_multiple_skill_students(database_with_data: Session, auth_client: A
 
 
 def test_get_multiple_skill_students_no_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer multiple skills, but that student don't excist"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get(
@@ -237,7 +238,7 @@ def test_get_multiple_skill_students_no_students(database_with_data: Session, au
 
 
 def test_get_ghost_skill_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer one skill that don't excist"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?skill_ids=100")
@@ -247,7 +248,7 @@ def test_get_ghost_skill_students(database_with_data: Session, auth_client: Auth
 
 
 def test_get_one_real_one_ghost_skill_students(database_with_data: Session, auth_client: AuthClient):
-    """tests"""
+    """tests get students based on query paramer one skill that excist and one that don't excist"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get(

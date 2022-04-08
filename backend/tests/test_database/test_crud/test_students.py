@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill
 from src.database.enums import DecisionEnum
-from src.database.crud.students import get_student_by_id, set_definitive_decision_on_student, delete_student, get_students
+from src.database.crud.students import (get_student_by_id, set_definitive_decision_on_student,
+                                        delete_student, get_students)
 
 
 @pytest.fixture
@@ -101,51 +102,60 @@ def test_delete_student(database_with_data: Session):
 
 
 def test_get_all_students(database_with_data: Session):
-    """test"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    """test get all students"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition)
     assert len(students) == 2
 
 
 def test_search_students_on_first_name(database_with_data: Session):
     """test"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition, first_name="Jos")
     assert len(students) == 1
 
 
 def test_search_students_on_last_name(database_with_data: Session):
-    """tests"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    """tests search on last name"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition, last_name="Vermeulen")
     assert len(students) == 1
 
 
 def test_search_students_alumni(database_with_data: Session):
-    """tests"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    """tests search on alumni"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition, alumni=True)
     assert len(students) == 1
 
 
 def test_search_students_student_coach(database_with_data: Session):
-    """tests"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    """tests search on student coach"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition, student_coach=True)
     assert len(students) == 1
 
 
 def test_search_students_one_skill(database_with_data: Session):
-    """tests"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
-    skill: Skill = database_with_data.query(Skill).where(Skill.name == "skill1").one()
+    """tests search on one skill"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
+    skill: Skill = database_with_data.query(
+        Skill).where(Skill.name == "skill1").one()
     students = get_students(database_with_data, edition, skills=[skill])
     assert len(students) == 1
 
 
 def test_search_students_multiple_skills(database_with_data: Session):
-    """tests"""
-    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
-    skills: list[Skill] = database_with_data.query(Skill).where(Skill.description == "important").all()
+    """tests search on multiple skills"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
+    skills: list[Skill] = database_with_data.query(
+        Skill).where(Skill.description == "important").all()
     students = get_students(database_with_data, edition, skills=skills)
     assert len(students) == 1
