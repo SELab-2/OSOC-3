@@ -4,16 +4,10 @@ import src.database.crud.editions as crud_editions
 from src.app.schemas.editions import EditionBase, EditionList
 from src.database.models import Edition as EditionModel
 
-def get_editions(db: Session) -> EditionList:
-    """Get a list of all editions.
 
-    Args:
-        db (Session): connection with the database.
-
-    Returns:
-        EditionList: an object with a list of all the editions.
-    """
-    return EditionList(editions=crud_editions.get_editions(db))
+def get_editions(db: Session, page: int) -> EditionList:
+    """Get a paginated list of all editions."""
+    return EditionList(editions=crud_editions.get_editions_page(db, page))
 
 
 def get_edition_by_name(db: Session, edition_name: str) -> EditionModel:

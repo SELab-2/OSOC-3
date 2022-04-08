@@ -1,8 +1,11 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import exc
+from sqlalchemy.orm import Query
+from sqlalchemy.orm import Session
+
 from src.app.exceptions.editions import DuplicateInsertException
-from src.database.models import Edition
 from src.app.schemas.editions import EditionBase
+from src.database.models import Edition
+from .util import paginate
 
 
 def get_edition_by_name(db: Session, edition_name: str) -> Edition:
@@ -19,6 +22,10 @@ def get_edition_by_name(db: Session, edition_name: str) -> Edition:
     return db.query(Edition).where(Edition.name == edition_name).one()
 
 
+def _get_editions_query(db: Session) -> Query:
+    return db.query(Edition)
+
+
 def get_editions(db: Session) -> list[Edition]:
     """Get a list of all editions.
 
@@ -28,7 +35,11 @@ def get_editions(db: Session) -> list[Edition]:
     Returns:
         EditionList: an object with a list of all editions
     """
-    return db.query(Edition).all()
+    return _get_editions_query(db).all()
+
+
+def get_editions_page(db: Session, page: int) -> list[Edition]:
+    return paginate(_get_editions_query(db), page).all()
 
 
 def create_edition(db: Session, edition: EditionBase) -> Edition:

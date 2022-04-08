@@ -34,16 +34,17 @@ for router in child_routers:
 
 
 @editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
-async def get_editions(db: Session = Depends(get_session)):
-    """Get a list of all editions.
+async def get_editions(db: Session = Depends(get_session), page: int = 0):
+    """Get a paginated list of all editions.
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
+        page (int): the page to return.
 
     Returns:
         EditionList: an object with a list of all the editions.
     """
     # TODO only return editions the user can see
-    return logic_editions.get_editions(db)
+    return logic_editions.get_editions(db, page)
 
 
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], 
