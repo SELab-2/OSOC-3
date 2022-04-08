@@ -13,7 +13,7 @@ export default function Brand() {
                 alt={"OSOC logo (light)"}
                 className={"me-2"}
             />{" "}
-            Open Summer Of Code
+            Open Summer of Code
         </BSBrand>
     );
 }
