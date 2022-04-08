@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from starlette import status
 from src.app.routers.tags import Tags
-from src.app.utils.dependencies import get_student, get_edition, require_admin, require_authorization
+from src.app.utils.dependencies import get_student, get_edition, require_admin, require_auth
 from src.app.logic.students import definitive_decision_on_student, remove_student, get_student_return, get_students_search
 from src.app.schemas.students import NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList
 from src.database.database import get_session
@@ -15,7 +15,7 @@ students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
 
 
-@students_router.get("/", dependencies=[Depends(require_authorization)])
+@students_router.get("/", dependencies=[Depends(require_auth)])
 async def get_students(db: Session = Depends(get_session),
                        commons: CommonQueryParams = Depends(CommonQueryParams),
                        edition: Edition = Depends(get_edition)) -> ReturnStudentList:
@@ -41,7 +41,7 @@ async def delete_student(student: Student = Depends(get_student), db: Session = 
     remove_student(db, student)
 
 
-@students_router.get("/{student_id}", dependencies=[Depends(require_authorization)])
+@students_router.get("/{student_id}", dependencies=[Depends(require_auth)])
 async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)) -> ReturnStudent:
     """
     Get information about a specific student.
