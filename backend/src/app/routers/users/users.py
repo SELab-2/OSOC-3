@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 
 from src.app.routers.tags import Tags
 import src.app.logic.users as logic
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, User as UserSchema
+from src.app.schemas.login import UserData
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
 from src.app.utils.dependencies import require_admin, get_current_active_user
 from src.database.database import get_session
 from src.database.models import User as UserDB
@@ -20,9 +21,12 @@ async def get_users(admin: bool = Query(False), edition: str | None = Query(None
     return logic.get_users_list(db, admin, edition)
 
 
-@users_router.get("/current", response_model=UserSchema)
-async def get_current_user(user: UserDB = Depends(get_current_active_user)):
+@users_router.get("/current", response_model=UserData)
+async def get_current_user(db: Session = Depends(get_session), user: UserDB = Depends(get_current_active_user)):
     """Get a user based on their authorization credentials"""
+    user_data = user_model_to_schema(user).__dict__
+    user_data["editions"] = logic.get_user_editions(db, user)
+
     return user
 
 

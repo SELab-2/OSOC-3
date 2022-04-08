@@ -1,15 +1,10 @@
+from src.app.schemas.users import User
 from src.app.schemas.utils import CamelCaseModel
 
 
-class UserData(CamelCaseModel):
-    """User information that can be passed to frontend
-    Includes the names of the editions a user is coach in
-    """
-    admin: bool
+class UserData(User):
+    """User information that can be passed to frontend"""
     editions: list[str] = []
-
-    class Config:
-        orm_mode = True
 
 
 class Token(CamelCaseModel):
