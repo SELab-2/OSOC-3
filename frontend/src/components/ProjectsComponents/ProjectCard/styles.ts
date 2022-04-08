@@ -1,5 +1,7 @@
 import { Modal } from "react-bootstrap";
 import styled from "styled-components";
+import { BsArrowUpRightSquare } from "react-icons/bs";
+
 
 export const CardContainer = styled.div`
     border: 2px solid #1a1a36;
@@ -19,7 +21,17 @@ export const TitleContainer = styled.div`
 export const Title = styled.h2`
     text-overflow: ellipsis;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    :hover {
+        cursor: pointer;
+    }
 `;
+
+export const OpenIcon = styled(BsArrowUpRightSquare)`
+    margin-left: 10px;
+    height: 20px;
+`
 
 export const ClientContainer = styled.div`
     display: flex;

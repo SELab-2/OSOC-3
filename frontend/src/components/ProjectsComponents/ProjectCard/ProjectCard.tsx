@@ -7,6 +7,7 @@ import {
     Delete,
     TitleContainer,
     Title,
+    OpenIcon,
     ClientContainer,
     Client,
 } from "./styles";
@@ -18,6 +19,7 @@ import { useState } from "react";
 
 import ConfirmDelete from "../ConfirmDelete";
 import { deleteProject } from "../../../utils/api/projects";
+import { useNavigate } from "react-router-dom";
 
 interface Coach {
     name: string;
@@ -49,10 +51,15 @@ export default function ProjectCard({
     };
     const handleShow = () => setShow(true);
 
+    const navigate = useNavigate();
+
     return (
         <CardContainer>
             <TitleContainer>
-                <Title>{name}</Title>
+                <Title onClick={() => navigate("/editions/summerof2022/projects/" + projectId)}>
+                    {name}
+                    <OpenIcon/>
+                </Title>
 
                 <Delete onClick={handleShow}>
                     <TiDeleteOutline size={"20px"} />
