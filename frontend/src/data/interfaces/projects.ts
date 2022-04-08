@@ -13,5 +13,5 @@ export interface Project {
     partners: Partner[];
     coaches: Coach[];
     editionName: string;
-    projectId: string;
+    projectId: number;
 }

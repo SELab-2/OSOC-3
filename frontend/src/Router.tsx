@@ -7,7 +7,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import RegisterPage from "./views/RegisterPage";
 import StudentsPage from "./views/StudentsPage/StudentsPage";
 import UsersPage from "./views/UsersPage";
-import ProjectsPage from "./views/ProjectsPage/ProjectsPage";
+import { ProjectsPage, ProjectDetailPage } from "./views";
 import PendingPage from "./views/PendingPage";
 import Footer from "./components/Footer";
 import { useAuth } from "./contexts/auth-context";
@@ -63,7 +63,7 @@ export default function Router() {
                                             <Route path={""} element={<div />} />
                                         </Route>
                                         {/* TODO project page */}
-                                        <Route path={":id"} element={<div />} />
+                                        <Route path={":projectId"} element={<ProjectDetailPage />} />
                                     </Route>
 
                                     {/* Students routes */}

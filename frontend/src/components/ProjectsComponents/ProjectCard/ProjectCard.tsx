@@ -29,7 +29,7 @@ export default function ProjectCard({
     numberOfStudents,
     coaches,
     edition,
-    id,
+    projectId,
     refreshEditions,
 }: {
     name: string;
@@ -37,13 +37,13 @@ export default function ProjectCard({
     numberOfStudents: number;
     coaches: Coach[];
     edition: string;
-    id: string;
+    projectId: number;
     refreshEditions: () => void;
 }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleDelete = () => {
-        deleteProject(edition, id);
+        deleteProject(edition, projectId);
         setShow(false);
         refreshEditions();
     };

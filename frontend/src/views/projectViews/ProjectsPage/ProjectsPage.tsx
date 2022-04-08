@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../../utils/api/projects";
-import "./ProjectsPage.css";
-import { ProjectCard } from "../../components/ProjectsComponents";
+import { getProjects } from "../../../utils/api/projects";
+import { ProjectCard } from "../../../components/ProjectsComponents";
 import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
-import { useAuth } from "../../contexts/auth-context";
-import { Project } from "../../data/interfaces";
+import { useAuth } from "../../../contexts/auth-context";
+import { Project } from "../../../data/interfaces";
 
 function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
@@ -87,7 +86,7 @@ function ProjectPage() {
                         numberOfStudents={project.numberOfStudents}
                         coaches={project.coaches}
                         edition={project.editionName}
-                        id={project.projectId}
+                        projectId={project.projectId}
                         refreshEditions={() => setGotProjects(false)}
                         key={_index}
                     />
