@@ -44,7 +44,7 @@ async def get_editions(db: Session = Depends(get_session), page: int = 0):
         EditionList: an object with a list of all the editions.
     """
     # TODO only return editions the user can see
-    return logic_editions.get_editions(db, page)
+    return logic_editions.get_editions_page(db, page)
 
 
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], 

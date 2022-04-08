@@ -5,7 +5,7 @@ from src.app.schemas.editions import EditionBase, EditionList
 from src.database.models import Edition as EditionModel
 
 
-def get_editions(db: Session, page: int) -> EditionList:
+def get_editions_page(db: Session, page: int) -> EditionList:
     """Get a paginated list of all editions."""
     return EditionList(editions=crud_editions.get_editions_page(db, page))
 
