@@ -49,7 +49,7 @@ def test_get_all_users(database_session: Session, data: dict[str, int]):
     """Test get request for users"""
 
     # get all users
-    users = users_crud.get_all_users(database_session)
+    users = users_crud.get_users(database_session)
     assert len(users) == 2, "Wrong length"
     user_ids = [user.user_id for user in users]
     assert data["user1"] in user_ids
@@ -60,7 +60,7 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     """Test get request for admins"""
 
     # get all admins
-    users = users_crud.get_all_admins(database_session)
+    users = users_crud.get_admins(database_session)
     assert len(users) == 1, "Wrong length"
     assert data["user1"] == users[0].user_id
 
@@ -102,13 +102,13 @@ def test_get_all_users_from_edition(database_session: Session, data: dict[str, s
     """Test get request for users of a given edition"""
 
     # get all users from edition
-    users = users_crud.get_users_from_edition(database_session, data["edition1"])
+    users = users_crud.get_users_for_edition(database_session, data["edition1"])
     assert len(users) == 2, "Wrong length"
     user_ids = [user.user_id for user in users]
     assert data["user1"] in user_ids
     assert data["user2"] in user_ids
 
-    users = users_crud.get_users_from_edition(database_session, data["edition2"])
+    users = users_crud.get_users_for_edition(database_session, data["edition2"])
     assert len(users) == 1, "Wrong length"
     assert data["user2"] == users[0].user_id
 
@@ -117,11 +117,11 @@ def test_get_admins_from_edition(database_session: Session, data: dict[str, str]
     """Test get request for admins of a given edition"""
 
     # get all admins from edition
-    users = users_crud.get_admins_from_edition(database_session, data["edition1"])
+    users = users_crud.get_admins_for_edition(database_session, data["edition1"])
     assert len(users) == 1, "Wrong length"
     assert data["user1"] == users[0].user_id
 
-    users = users_crud.get_admins_from_edition(database_session, data["edition2"])
+    users = users_crud.get_admins_for_edition(database_session, data["edition2"])
     assert len(users) == 0, "Wrong length"
 
 
@@ -239,7 +239,7 @@ def test_get_all_requests(database_session: Session):
 
     database_session.commit()
 
-    requests = users_crud.get_all_requests(database_session)
+    requests = users_crud.get_requests(database_session)
     assert len(requests) == 2
     assert request1 in requests
     assert request2 in requests
@@ -273,11 +273,11 @@ def test_get_all_requests_from_edition(database_session: Session):
 
     database_session.commit()
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition1.name)
+    requests = users_crud.get_requests_for_edition(database_session, edition1.name)
     assert len(requests) == 1
     assert requests[0].user == user1
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition2.name)
+    requests = users_crud.get_requests_for_edition(database_session, edition2.name)
     assert len(requests) == 1
     assert requests[0].user == user2
 
