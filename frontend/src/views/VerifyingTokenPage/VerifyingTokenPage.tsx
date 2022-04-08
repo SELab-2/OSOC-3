@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { validateBearerToken } from "../../utils/api/auth";
-import { logIn, useAuth } from "../../contexts";
+import { logIn, logOut, useAuth } from "../../contexts";
 
 /**
  * Placeholder page shown while the bearer token found in LocalStorage is being verified.
@@ -14,10 +14,7 @@ export default function VerifyingTokenPage() {
             const response = await validateBearerToken(authContext.token);
 
             if (response === null) {
-                authContext.setToken(null);
-                authContext.setIsLoggedIn(false);
-                authContext.setRole(null);
-                authContext.setEditions([]);
+                logOut(authContext);
             } else {
                 // Token was valid, use it as the default request header
                 // and set all data in the AuthContext
