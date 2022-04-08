@@ -1,3 +1,3 @@
 import type { AuthContextState } from "./auth-context";
 export type { AuthContextState };
-export { AuthProvider } from "./auth-context";
+export { AuthProvider, logIn, logOut, useAuth } from "./auth-context";

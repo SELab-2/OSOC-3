@@ -1,7 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
-import { AuthContextState } from "../../contexts";
-import { Role } from "../../data/enums";
+import { AuthContextState, logIn as ctxLogIn } from "../../contexts";
 import { User } from "../../data/interfaces";
 
 interface LoginResponse {
@@ -24,11 +23,7 @@ export async function logIn(auth: AuthContextState, email: string, password: str
     try {
         const response = await axiosInstance.post("/login/token", payload);
         const login = response.data as LoginResponse;
-        auth.setToken(login.accessToken);
-        auth.setIsLoggedIn(true);
-        auth.setRole(login.user.admin ? Role.ADMIN : Role.COACH);
-        auth.setUserId(login.user.userId);
-        auth.setEditions(login.user.editions);
+        ctxLogIn(login.user, login.accessToken, auth);
 
         return true;
     } catch (error) {
