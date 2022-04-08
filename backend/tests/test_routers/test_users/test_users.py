@@ -106,6 +106,21 @@ def test_get_all_admins(database_session: Session, auth_client: AuthClient, data
     assert [data["user1"]] == user_ids
 
 
+def test_get_all_admins_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of paginated admins"""
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=True))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?admin=true&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == DB_PAGE_SIZE
+    response = auth_client.get("/users?admin=true&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1
+
+
 def test_get_users_from_edition(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
     """Test endpoint for getting a list of users from a given edition"""
     auth_client.admin()
@@ -136,17 +151,16 @@ def test_get_all_users_for_edition_paginated(database_session: Session, auth_cli
 
 
 def test_get_admins_from_edition(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
-    """Test endpoint for getting a list of admins from a given edition"""
+    """Test endpoint for getting a list of admins, edition should be ignored"""
     auth_client.admin()
     # All admins from edition
     response = auth_client.get(f"/users?admin=true&edition={data['edition1']}")
     assert response.status_code == status.HTTP_200_OK
-    user_ids = [user["userId"] for user in response.json()['users']]
-    assert [data["user1"]] == user_ids
+    assert len(response.json()['users']) == 2
 
     response = auth_client.get(f"/users?admin=true&edition={data['edition2']}")
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()['users']) == 0
+    assert len(response.json()['users']) == 2
 
 
 def test_get_users_invalid(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):

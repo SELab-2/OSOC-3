@@ -77,6 +77,17 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     assert data["user1"] == users[0].user_id
 
 
+def test_get_all_admins_paginated(database_session: Session):
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"Project {i}", admin=True))
+    database_session.commit()
+
+    assert len(users_crud.get_admins_page(database_session, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_admins_page(database_session, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
+
+
 def test_get_user_edition_names_empty(database_session: Session):
     """Test getting all editions from a user when there are none"""
     user = models.User(name="test")
@@ -152,18 +163,6 @@ def test_get_all_users_for_edition_paginated(database_session: Session):
     assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 1)) == round(
         DB_PAGE_SIZE * 1.5
     ) - DB_PAGE_SIZE
-
-
-def test_get_admins_from_edition(database_session: Session, data: dict[str, str]):
-    """Test get request for admins of a given edition"""
-
-    # get all admins from edition
-    users = users_crud.get_admins_for_edition(database_session, data["edition1"])
-    assert len(users) == 1, "Wrong length"
-    assert data["user1"] == users[0].user_id
-
-    users = users_crud.get_admins_for_edition(database_session, data["edition2"])
-    assert len(users) == 0, "Wrong length"
 
 
 def test_edit_admin_status(database_session: Session):

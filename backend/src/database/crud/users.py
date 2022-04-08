@@ -72,27 +72,6 @@ def get_users_for_edition_page(db: Session, edition_name: str, page: int) -> lis
     return paginate(_get_users_for_edition_query(db, get_edition_by_name(db, edition_name)), page).all()
 
 
-def _get_admins_for_edition_query(db: Session, edition: Edition) -> Query:
-    return db.query(User) \
-        .where(User.admin) \
-        .join(user_editions) \
-        .filter(user_editions.c.edition_id == edition.edition_id)
-
-
-def get_admins_for_edition(db: Session, edition_name: str) -> list[User]:
-    """
-    Get all admins from the given edition
-    """
-    return _get_admins_for_edition_query(db, get_edition_by_name(db, edition_name)).all()
-
-
-def get_admins_for_edition_page(db: Session, edition_name: str, page: int) -> list[User]:
-    """
-    Get all admins from the given edition
-    """
-    return paginate(_get_admins_for_edition_query(db, get_edition_by_name(db, edition_name)), page).all()
-
-
 def edit_admin_status(db: Session, user_id: int, admin: bool):
     """
     Edit the admin-status of a user

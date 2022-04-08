@@ -16,6 +16,9 @@ async def get_users(admin: bool = Query(False), edition: str | None = Query(None
                     db: Session = Depends(get_session)):
     """
     Get users
+
+    When the admin parameter is True, the edition parameter will have no effect.
+    Since admins have access to all editions.
     """
     return logic.get_users_list(db, admin, edition, page)
 

@@ -11,10 +11,7 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None, page: int
     and wrap the result in a pydantic model
     """
     if admin:
-        if edition_name is None:
-            users_orm = users_crud.get_admins_page(db, page)
-        else:
-            users_orm = users_crud.get_admins_for_edition_page(db, edition_name, page)
+        users_orm = users_crud.get_admins_page(db, page)
     else:
         if edition_name is None:
             users_orm = users_crud.get_users_page(db, page)
