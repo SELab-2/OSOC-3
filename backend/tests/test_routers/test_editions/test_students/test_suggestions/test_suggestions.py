@@ -112,7 +112,7 @@ def test_get_suggestions_of_ghost(database_with_data: Session, auth_client: Auth
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     res = auth_client.get(
-        "/editions/ed2022/students/9000/suggestions/", headers={"Authorization": auth_coach1})
+        "/editions/ed2022/students/9000/suggestions/")
     assert res.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -123,7 +123,7 @@ def test_get_suggestions_of_student(database_with_data: Session, auth_client: Au
     assert auth_client.post("/editions/ed2022/students/2/suggestions/", json={
                             "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_201_CREATED
     auth_client.admin()
-    assert auth_client.post("/editions/ed2022/students/2/suggestions/", headers={"Authorization": auth_admin}, json={
+    assert auth_client.post("/editions/ed2022/students/2/suggestions/", json={
                             "suggestion": 3, "argumentation": "Neen"}).status_code == status.HTTP_201_CREATED
     res = auth_client.get(
         "/editions/1/students/2/suggestions/")
@@ -175,7 +175,7 @@ def test_delete_suggestion_coach_their_review(database_with_data: Session, auth_
     assert len(suggestions) == 0
 
 
-def test_delete_suggestion_coach_other_review(database_with_data: Session, auth_client: AuthClient, auth_coach2: str):
+def test_delete_suggestion_coach_other_review(database_with_data: Session, auth_client: AuthClient):
     """Tests that a coach can't delete other coaches their suggestions"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
