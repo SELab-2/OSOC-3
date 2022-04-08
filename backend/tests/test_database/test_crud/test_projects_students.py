@@ -1,6 +1,6 @@
 import pytest
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import Session
 
 from src.database.crud.projects_students import (
     db_remove_student_project, db_add_student_project, db_change_project_role)
@@ -87,6 +87,7 @@ def test_change_project_role(database_with_data: Session):
     assert project_role.skill_id == 1
     db_change_project_role(database_with_data, project, 2, 2, 1)
     assert project_role.skill_id == 2
+
 
 def test_change_project_role_not_assigned_to(database_with_data: Session):
     """test change project role"""
