@@ -51,7 +51,7 @@ export default function Router() {
                                     {/* TODO create edition page */}
                                     <Route path={""} element={<div />} />
                                 </Route>
-                                <Route path={":edition_id"} element={<Outlet />}>
+                                <Route path={":editionId"} element={<Outlet />}>
                                     {/* TODO edition page? do we need? maybe just some nav/links? */}
                                     <Route path={""} element={<div />} />
 
