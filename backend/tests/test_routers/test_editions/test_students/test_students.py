@@ -2,8 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 from starlette import status
 from src.database.enums import DecisionEnum
-from src.database.models import Student, User, Edition, Skill, AuthEmail
-from src.app.logic.security import get_password_hash
+from src.database.models import Student, Edition, Skill
 
 from tests.utils.authorization import AuthClient
 

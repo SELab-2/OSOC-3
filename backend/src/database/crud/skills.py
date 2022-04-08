@@ -15,6 +15,11 @@ def get_skills(db: Session) -> list[Skill]:
     return db.query(Skill).all()
 
 
+def get_skills_by_ids(db: Session, skill_ids) -> list[Skill]:
+    """Get all skills from list of skill ids"""
+    return db.query(Skill).where(Skill.skill_id.in_(skill_ids)).all()
+
+
 def create_skill(db: Session, skill: SkillBase) -> Skill:
     """Add a new skill into the database.
 

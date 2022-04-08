@@ -11,7 +11,7 @@ class NewDecision(CamelCaseModel):
 
 class Student(CamelCaseModel):
     """
-    Model to represent a Coach
+    Model to represent a Student
     Sent as a response to API /GET requests
     """
     student_id: int
@@ -21,7 +21,6 @@ class Student(CamelCaseModel):
     email_address: str
     phone_number: str
     alumni: bool
-    # cv_url = Column(Text)
     decision: DecisionEnum
     wants_to_be_student_coach: bool
     edition_id: int
