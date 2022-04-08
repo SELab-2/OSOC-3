@@ -1,5 +1,5 @@
 import Container from "react-bootstrap/esm/Container";
-import { BSNavbar } from "./styles";
+import { BSNavbar, StyledDropdownItem } from "./styles";
 import { useAuth } from "../../contexts/auth-context";
 import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import EditionDropdown from "./EditionDropdown";
 import "./NavBar.css";
+import LogoutButton from "./LogoutButton";
 
 export default function Navbar() {
     const { isLoggedIn, editions } = useAuth();
@@ -38,11 +39,12 @@ export default function Navbar() {
                         <Nav.Link href={`/editions/${currentEdition}/projects`}>Projects</Nav.Link>
                         <Nav.Link href={`/editions/${currentEdition}/students`}>Students</Nav.Link>
                         <NavDropdown title={"Users"}>
-                            <NavDropdown.Item href={"/admins"}>Admins</NavDropdown.Item>
-                            <NavDropdown.Item href={`/editions/${currentEdition}/users`}>
+                            <StyledDropdownItem href={"/admins"}>Admins</StyledDropdownItem>
+                            <StyledDropdownItem href={`/editions/${currentEdition}/users`}>
                                 Coaches
-                            </NavDropdown.Item>
+                            </StyledDropdownItem>
                         </NavDropdown>
+                        <LogoutButton />
                     </Nav>
                 </BSNavbar.Collapse>
             </Container>

@@ -25,11 +25,16 @@ export const StyledDropdownItem = styled(NavDropdown.Item)`
         color: var(--osoc_green);
         transition: 200ms ease-in;
     }
+`;
 
-    &:active {
-        background-color: transparent;
-        color: var(--osoc_orange);
-        text-decoration: underline;
-        font-weight: bold;
+export const LogOutText = styled(BSNavbar.Text).attrs(() => ({
+    className: "ms-2",
+}))`
+    transition: 150ms ease-out;
+
+    &:hover {
+        cursor: pointer;
+        color: rgba(255, 255, 255, 75%);
+        transition: 150ms ease-in;
     }
 `;

@@ -14,7 +14,7 @@ export default function EditionDropdown(props: Props) {
     // Load dropdown items dynamically
     props.editions.forEach((edition: string) => {
         navItems.push(
-            <StyledDropdownItem href={"/"} key={edition}>
+            <StyledDropdownItem key={edition} active={props.currentEdition === edition}>
                 {edition}
             </StyledDropdownItem>
         );
