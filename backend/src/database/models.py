@@ -40,6 +40,7 @@ class AuthGitHub(Base):
 
     gh_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False)
 
@@ -50,6 +51,7 @@ class AuthGoogle(Base):
 
     google_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="google_auth", uselist=False)
 
@@ -290,7 +292,7 @@ class User(Base):
     """Users of the tool (only admins & coaches)"""
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id: int = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 

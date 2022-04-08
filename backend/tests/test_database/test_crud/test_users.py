@@ -12,7 +12,6 @@ def data(database_session: Session) -> dict[str, str]:
 
     # Create users
     user1 = models.User(name="user1", admin=True)
-
     database_session.add(user1)
     user2 = models.User(name="user2", admin=False)
     database_session.add(user2)
@@ -23,6 +22,12 @@ def data(database_session: Session) -> dict[str, str]:
     edition2 = models.Edition(year=2, name="ed2")
     database_session.add(edition2)
 
+    database_session.commit()
+
+    email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    database_session.add(email_auth1)
+    database_session.add(github_auth1)
     database_session.commit()
 
     # Create coach roles
@@ -36,6 +41,7 @@ def data(database_session: Session) -> dict[str, str]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": "user1@mail.com"
             }
 
 
@@ -66,29 +72,44 @@ def test_get_user_edition_names_empty(database_session: Session):
     database_session.commit()
 
     # No editions yet
-    editions = users_crud.get_user_edition_names(user)
+    editions = users_crud.get_user_edition_names(database_session, user)
     assert len(editions) == 0
 
 
-def test_get_user_edition_names(database_session: Session):
-    """Test getting all editions from a user when they aren't empty"""
+def test_get_user_edition_names_admin(database_session: Session):
+    """Test getting all editions for an admin"""
+    user = models.User(name="test", admin=True)
+    database_session.add(user)
+
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
+    # Not added to edition yet, but admin can see it anyway
+    editions = users_crud.get_user_edition_names(database_session, user)
+    assert len(editions) == 1
+
+
+def test_get_user_edition_names_coach(database_session: Session):
+    """Test getting all editions for a coach when they aren't empty"""
     user = models.User(name="test")
     database_session.add(user)
+
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
     database_session.commit()
 
     # No editions yet
-    editions = users_crud.get_user_edition_names(user)
+    editions = users_crud.get_user_edition_names(database_session, user)
     assert len(editions) == 0
 
     # Add user to a new edition
-    edition = models.Edition(year=2022, name="ed2022")
     user.editions.append(edition)
-    database_session.add(edition)
     database_session.add(user)
     database_session.commit()
 
     # No editions yet
-    editions = users_crud.get_user_edition_names(user)
+    editions = users_crud.get_user_edition_names(database_session, user)
     assert editions == [edition.name]
 
 

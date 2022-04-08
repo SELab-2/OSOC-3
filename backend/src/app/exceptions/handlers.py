@@ -7,6 +7,7 @@ from starlette import status
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
 from .editions import DuplicateInsertException
 from .parsing import MalformedUUIDError
+from .projects import StudentInConflictException, FailedToAddProjectRoleException
 from .register import FailedToAddNewUserException
 from .webhooks import WebhookProcessException
 
@@ -78,4 +79,18 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while creating a new user'}
+        )
+
+    @app.exception_handler(StudentInConflictException)
+    def student_in_conflict_exception(_request: Request, _exception: StudentInConflictException):
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={'message': 'Resolve the conflict this student is in before confirming their role'}
+        )
+
+    @app.exception_handler(FailedToAddProjectRoleException)
+    def failed_to_add_project_role_exception(_request: Request, _exception: FailedToAddProjectRoleException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while adding this student to the project'}
         )
