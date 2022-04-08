@@ -1,5 +1,6 @@
 import React from "react";
-import Dropdown from "react-bootstrap/esm/Dropdown";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { StyledDropdownItem } from "./styles";
 
 interface Props {
     editions: string[];
@@ -10,9 +11,14 @@ interface Props {
 export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
 
+    // Load dropdown items dynamically
     props.editions.forEach((edition: string) => {
-        navItems.push(<Dropdown.Item href={"/"}>{edition}</Dropdown.Item>);
+        navItems.push(
+            <StyledDropdownItem href={"/"} key={edition}>
+                {edition}
+            </StyledDropdownItem>
+        );
     });
 
-    return <Dropdown title={`Edition ${props.currentEdition}`}>{navItems}</Dropdown>;
+    return <NavDropdown title={`Edition ${props.currentEdition}`}>{navItems}</NavDropdown>;
 }

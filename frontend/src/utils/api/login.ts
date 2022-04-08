@@ -2,14 +2,11 @@ import axios from "axios";
 import { axiosInstance } from "./api";
 import { AuthContextState } from "../../contexts";
 import { Role } from "../../data/enums";
+import { User } from "../../data/interfaces";
 
 interface LoginResponse {
     accessToken: string;
-    user: {
-        admin: boolean;
-        editions: string[];
-        userId: number;
-    };
+    user: User;
 }
 
 /**

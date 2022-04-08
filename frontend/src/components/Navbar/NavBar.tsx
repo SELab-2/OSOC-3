@@ -3,14 +3,18 @@ import { BSNavbar } from "./styles";
 import { useAuth } from "../../contexts/auth-context";
 import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import EditionDropdown from "./EditionDropdown";
+import "./NavBar.css";
 
 export default function Navbar() {
     const { isLoggedIn, editions } = useAuth();
-    const [currentEdition, setCurrentEdition] = useState<string>("edition");
-    // const [currentEdition, setCurrentEdition] = useState<string>(editions[0]);
+    const [currentEdition, setCurrentEdition] = useState(editions[0]);
+
+    useEffect(() => {
+        setCurrentEdition(editions[0]);
+    }, [editions]);
 
     // Don't render Navbar if not logged in
     if (!isLoggedIn) {
@@ -19,7 +23,7 @@ export default function Navbar() {
 
     return (
         <BSNavbar>
-            <Container className={"mx-0"} fluid>
+            <Container>
                 <Brand />
                 {/* Make Navbar responsive (hamburger menu) */}
                 <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
