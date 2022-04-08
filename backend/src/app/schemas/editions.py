@@ -10,6 +10,7 @@ class EditionBase(CamelCaseModel):
     year: int
 
     @validator("name")
+    @classmethod
     def valid_format(cls, value):
         """Check that the email is of a valid format"""
         validate_edition(value)
