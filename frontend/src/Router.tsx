@@ -1,20 +1,18 @@
 import React from "react";
-import VerifyingTokenPage from "./views/VerifyingTokenPage";
-import LoginPage from "./views/LoginPage";
 import { Container, ContentWrapper } from "./app.styles";
-import Navbar from "./components/Navbar";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-import RegisterPage from "./views/RegisterPage";
-import StudentsPage from "./views/StudentsPage/StudentsPage";
-import UsersPage from "./views/UsersPage";
-import ProjectsPage from "./views/ProjectsPage/ProjectsPage";
-import PendingPage from "./views/PendingPage";
-import Footer from "./components/Footer";
+import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
 import { useAuth } from "./contexts/auth-context";
-import PrivateRoute from "./components/PrivateRoute";
-import AdminRoute from "./components/AdminRoute";
-import { NotFoundPage } from "./views/errors";
-import ForbiddenPage from "./views/errors/ForbiddenPage";
+import {
+    LoginPage,
+    PendingPage,
+    ProjectsPage,
+    RegisterPage,
+    StudentsPage,
+    UsersPage,
+    VerifyingTokenPage,
+} from "./views";
+import { ForbiddenPage, NotFoundPage } from "./views/errors";
 
 /**
  * Router component to render different pages depending on the current url. Renders
