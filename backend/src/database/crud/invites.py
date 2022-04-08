@@ -24,15 +24,17 @@ def delete_invite_link(db: Session, invite_link: InviteLink, commit: bool = True
 
 
 def _get_pending_invites_for_edition_query(db: Session, edition: Edition) -> Query:
-    """Return a list of all invite links in a given edition"""
+    """Return the query for all InviteLinks linked to a given edition"""
     return db.query(InviteLink).where(InviteLink.edition == edition).order_by(InviteLink.invite_link_id)
 
 
 def get_pending_invites_for_edition(db: Session, edition: Edition) -> list[InviteLink]:
+    """Returns a list with all InviteLinks linked to a given edition"""
     return _get_pending_invites_for_edition_query(db, edition).all()
 
 
 def get_pending_invites_for_edition_page(db: Session, edition: Edition, page: int) -> list[InviteLink]:
+    """Returns a paginated list with all InviteLinks linked to a given edition"""
     return paginate(_get_pending_invites_for_edition_query(db, edition), page).all()
 
 

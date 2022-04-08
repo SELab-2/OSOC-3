@@ -11,11 +11,12 @@ def _get_projects_for_edition_query(db: Session, edition: Edition) -> Query:
 
 
 def db_get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
-    """Query all projects from a certain edition from the database"""
+    """Returns a list of all projects from a certain edition from the database"""
     return _get_projects_for_edition_query(db, edition).all()
 
 
 def db_get_projects_for_edition_page(db: Session, edition: Edition, page: int) -> list[Project]:
+    """Returns a paginated list of all projects from a certain edition from the database"""
     return paginate(_get_projects_for_edition_query(db, edition), page).all()
 
 

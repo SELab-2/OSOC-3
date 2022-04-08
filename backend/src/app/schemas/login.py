@@ -9,6 +9,7 @@ class UserData(CamelCaseModel):
     editions: list[str] = []
 
     class Config:
+        """The Model config"""
         orm_mode = True
 
 

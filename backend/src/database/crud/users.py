@@ -23,13 +23,12 @@ def _get_users_query(db: Session) -> Query:
 
 
 def get_users(db: Session) -> list[User]:
-    """
-    Get all users (coaches + admins)
-    """
+    """Get all users (coaches + admins)"""
     return _get_users_query(db).all()
 
 
 def get_users_page(db: Session, page: int) -> list[User]:
+    """Get all users (coaches + admins) paginated"""
     return paginate(_get_users_query(db), page).all()
 
 

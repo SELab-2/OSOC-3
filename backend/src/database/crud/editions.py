@@ -27,18 +27,12 @@ def _get_editions_query(db: Session) -> Query:
 
 
 def get_editions(db: Session) -> list[Edition]:
-    """Get a list of all editions.
-
-    Args:
-        db (Session): connection with the database.
-
-    Returns:
-        EditionList: an object with a list of all editions
-    """
+    """Returns a list of all editions"""
     return _get_editions_query(db).all()
 
 
 def get_editions_page(db: Session, page: int) -> list[Edition]:
+    """Returns a paginated list of all editions"""
     return paginate(_get_editions_query(db), page).all()
 
 
