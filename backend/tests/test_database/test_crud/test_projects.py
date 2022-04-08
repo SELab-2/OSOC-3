@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
 
 from src.app.schemas.projects import ConflictStudent, InputProject
-from src.database.crud.projects import (db_get_all_projects, db_add_project,
+from src.database.crud.projects import (db_get_projects_for_edition, db_add_project,
                                         db_get_project, db_delete_project,
                                         db_patch_project, db_get_conflict_students)
 from src.database.models import Edition, Partner, Project, User, Skill, ProjectRole, Student
@@ -59,14 +59,14 @@ def test_get_all_projects_empty(database_session: Session):
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
-    projects: list[Project] = db_get_all_projects(
+    projects: list[Project] = db_get_projects_for_edition(
         database_session, edition)
     assert len(projects) == 0
 
 
 def test_get_all_projects(database_with_data: Session, current_edition: Edition):
     """test get all projects"""
-    projects: list[Project] = db_get_all_projects(
+    projects: list[Project] = db_get_projects_for_edition(
         database_with_data, current_edition)
     assert len(projects) == 3
 
@@ -137,10 +137,10 @@ def test_delete_project_no_project_roles(database_with_data: Session, current_ed
     """test delete a project that don't has project roles"""
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 3).all()) == 0
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 3
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 3
     db_delete_project(database_with_data, 3)
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 2
-    assert 3 not in [project.project_id for project in db_get_all_projects(
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 2
+    assert 3 not in [project.project_id for project in db_get_projects_for_edition(
         database_with_data, current_edition)]
 
 
@@ -148,10 +148,10 @@ def test_delete_project_with_project_roles(database_with_data: Session, current_
     """test delete a project that has project roles"""
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 1).all()) > 0
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 3
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 3
     db_delete_project(database_with_data, 1)
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 2
-    assert 1 not in [project.project_id for project in db_get_all_projects(
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 2
+    assert 1 not in [project.project_id for project in db_get_projects_for_edition(
         database_with_data, current_edition)]
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 1).all()) == 0
