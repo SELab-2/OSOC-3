@@ -1,4 +1,3 @@
-from setuptools import SetuptoolsDeprecationWarning
 from sqlalchemy.orm import Session
 
 from src.app.schemas.suggestion import NewSuggestion
