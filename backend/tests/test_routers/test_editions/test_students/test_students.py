@@ -243,7 +243,6 @@ def test_get_ghost_skill_students(database_with_data: Session, auth_client: Auth
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get("/editions/ed2022/students/?skill_ids=100")
-    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
 
