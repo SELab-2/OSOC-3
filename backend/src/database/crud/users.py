@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
+from src.database.crud.editions import get_editions
 
 
 def get_all_admins(db: Session) -> list[User]:
@@ -23,14 +24,16 @@ def get_all_users(db: Session) -> list[User]:
     return db.query(User).all()
 
 
-def get_user_edition_names(user: User) -> list[str]:
-    """Get all names of the editions this user is coach in"""
+def get_user_edition_names(db: Session, user: User) -> list[str]:
+    """Get all names of the editions this user can see"""
+    # For admins: return all editions - otherwise, all editions this user is verified coach in
+    source = user.editions if not user.admin else get_editions(db)
+
+    editions = []
     # Name is non-nullable in the database, so it can never be None,
     # but MyPy doesn't seem to grasp that concept just yet so we have to check it
     # Could be a oneliner/list comp but that's a bit less readable
-
-    editions = []
-    for edition in user.editions:
+    for edition in source:
         if edition.name is not None:
             editions.append(edition.name)
 

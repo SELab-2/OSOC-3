@@ -10,7 +10,6 @@ class Authentication(CamelCaseModel):
 
 class User(CamelCaseModel):
     """Model for a user"""
-
     user_id: int
     name: str
     admin: bool
