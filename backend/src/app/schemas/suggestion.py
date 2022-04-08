@@ -13,7 +13,6 @@ class User(CamelCaseModel): #TODO: delete this when user is on develop and use t
     """
     user_id: int
     name: str
-    email: str
 
     class Config:
         orm_mode = True
