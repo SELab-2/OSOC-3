@@ -23,7 +23,7 @@ def db_add_project(db: Session, edition: Edition, input_project: InputProject) -
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
-     """
+    """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
     coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
     partners_obj = []

@@ -2,8 +2,8 @@ from uuid import UUID
 
 from pydantic import Field, validator
 
-from src.app.schemas.validators import validate_email_format
 from src.app.schemas.utils import CamelCaseModel
+from src.app.schemas.validators import validate_email_format
 
 
 class EmailAddress(CamelCaseModel):

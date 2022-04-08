@@ -14,7 +14,6 @@ async def get_students(edition_id: int):
     """
 
 
-
 @students_router.post("/emails")
 async def send_emails(edition_id: int):
     """

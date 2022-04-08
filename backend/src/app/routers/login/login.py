@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 
 import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
-from src.app.logic.users import get_user_editions
 from src.app.logic.security import authenticate_user, create_access_token
+from src.app.logic.users import get_user_editions
 from src.app.routers.tags import Tags
 from src.app.schemas.login import Token, UserData
 from src.database.database import get_session

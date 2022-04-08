@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from src.app.schemas.utils import CamelCaseModel
-from src.database.enums import DecisionEnum
 
 
 class User(CamelCaseModel):

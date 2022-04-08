@@ -1,11 +1,10 @@
 from sqlalchemy.orm import Session
 
+import settings
+import src.database.crud.invites as crud
 from src.app.schemas.invites import InvitesLinkList, EmailAddress, NewInviteLink, InviteLink as InviteLinkModel
 from src.app.utils.mailto import generate_mailto_string
-import src.database.crud.invites as crud
 from src.database.models import Edition, InviteLink as InviteLinkDB
-
-import settings
 
 
 def delete_invite_link(db: Session, invite_link: InviteLinkDB):

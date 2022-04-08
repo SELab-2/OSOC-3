@@ -5,8 +5,8 @@ from src.database.models import Project, ProjectRole, Skill, User, Student
 
 def db_remove_student_project(db: Session, project: Project, student_id: int):
     """Remove a student from a project in the database"""
-    proj_role = db.query(ProjectRole).where(ProjectRole.student_id ==
-                                     student_id).where(ProjectRole.project == project).one()
+    proj_role = db.query(ProjectRole).where(
+        ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
     db.delete(proj_role)
     db.commit()
 

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest, user_model_to_schema
 import src.database.crud.users as users_crud
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest, user_model_to_schema
 from src.database.models import User
 
 
