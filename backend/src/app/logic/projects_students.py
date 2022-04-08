@@ -24,6 +24,9 @@ def logic_add_student_project(db: Session, project: Project, student_id: int, sk
     skill = db.query(Skill).where(Skill.skill_id == skill_id).one()
     if skill not in student.skills:
         raise FailedToAddProjectRoleException
+    # check that the student has not been confirmed in another project yet
+    if db.query(ProjectRole).where(ProjectRole.student == student).where(ProjectRole.definitive is True).count() > 0:
+        raise FailedToAddProjectRoleException
     # check that the project requires the skill
     project = db.query(Project).where(Project.project_id == project.project_id).one()
     if skill not in project.skills:
@@ -42,6 +45,10 @@ def logic_change_project_role(db: Session, project: Project, student_id: int, sk
     student = db.query(Student).where(Student.student_id == student_id).one()
     skill = db.query(Skill).where(Skill.skill_id == skill_id).one()
     if skill not in student.skills:
+        raise FailedToAddProjectRoleException
+    # check that the student has not been confirmed in another project yet
+    if db.query(ProjectRole).where(ProjectRole.student == student).where(
+            ProjectRole.definitive is True).count() > 0:
         raise FailedToAddProjectRoleException
     # check that the project requires the skill
     project = db.query(Project).where(Project.project_id == project.project_id).one()

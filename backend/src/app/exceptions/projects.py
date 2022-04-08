@@ -6,5 +6,5 @@ class StudentInConflictException(Exception):
 
 class FailedToAddProjectRoleException(Exception):
     """
-    Exception raised when a projct_role can't be added for some reason
+    Exception raised when a project_role can't be added for some reason
     """
