@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, Query
 from src.database.crud.editions import get_edition_by_name
 from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
+from src.database.crud.editions import get_editions
 
 
 def _get_admins_query(db: Session) -> Query:
@@ -41,13 +42,16 @@ def get_users_page(db: Session, page: int) -> list[User]:
     return paginate(_get_users_query(db), page).all()
 
 
-def get_user_edition_names(user: User) -> list[str]:
-    """Get all names of the editions this user is coach in"""
+def get_user_edition_names(db: Session, user: User) -> list[str]:
+    """Get all names of the editions this user can see"""
+    # For admins: return all editions - otherwise, all editions this user is verified coach in
+    source = user.editions if not user.admin else get_editions(db)
+
+    editions = []
     # Name is non-nullable in the database, so it can never be None,
     # but MyPy doesn't seem to grasp that concept just yet so we have to check it
     # Could be a oneliner/list comp but that's a bit less readable
-    editions = []
-    for edition in user.editions:
+    for edition in source:
         if edition.name is not None:
             editions.append(edition.name)
 

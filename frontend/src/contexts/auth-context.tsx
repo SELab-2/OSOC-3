@@ -11,10 +11,12 @@ export interface AuthContextState {
     setIsLoggedIn: (value: boolean | null) => void;
     role: Role | null;
     setRole: (value: Role | null) => void;
+    userId: number | null;
+    setUserId: (value: number | null) => void;
     token: string | null;
     setToken: (value: string | null) => void;
-    editions: number[];
-    setEditions: (value: number[]) => void;
+    editions: string[];
+    setEditions: (value: string[]) => void;
 }
 
 /**
@@ -28,10 +30,12 @@ function authDefaultState(): AuthContextState {
         setIsLoggedIn: (_: boolean | null) => {},
         role: null,
         setRole: (_: Role | null) => {},
+        userId: null,
+        setUserId: (value: number | null) => {},
         token: getToken(),
         setToken: (_: string | null) => {},
         editions: [],
-        setEditions: (_: number[]) => {},
+        setEditions: (_: string[]) => {},
     };
 }
 
@@ -54,7 +58,8 @@ export function useAuth(): AuthContextState {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     const [role, setRole] = useState<Role | null>(null);
-    const [editions, setEditions] = useState<number[]>([]);
+    const [editions, setEditions] = useState<string[]>([]);
+    const [userId, setUserId] = useState<number | null>(null);
     // Default value: check LocalStorage
     const [token, setToken] = useState<string | null>(getToken());
 
@@ -64,6 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoggedIn: setIsLoggedIn,
         role: role,
         setRole: setRole,
+        userId: userId,
+        setUserId: setUserId,
         token: token,
         setToken: (value: string | null) => {
             // Log the user out if token is null
