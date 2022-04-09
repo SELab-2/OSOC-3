@@ -7,7 +7,7 @@ from src.app.utils.dependencies import require_auth, get_student, get_suggestion
 from src.database.database import get_session
 from src.database.models import Student, User, Suggestion
 from src.app.logic.suggestions import (make_new_suggestion, all_suggestions_of_student,
-                                        remove_suggestion, change_suggestion)
+                                       remove_suggestion, change_suggestion)
 from src.app.schemas.suggestion import NewSuggestion, SuggestionListResponse, SuggestionResponse
 
 
@@ -35,14 +35,15 @@ async def delete_suggestion(db: Session = Depends(get_session), user: User = Dep
 
 @students_suggestions_router.put("/{suggestion_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_student)])
 async def edit_suggestion(new_suggestion: NewSuggestion, db: Session = Depends(get_session),
-                        user: User = Depends(require_auth), suggestion: Suggestion = Depends(get_suggestion)):
+                          user: User = Depends(require_auth), suggestion: Suggestion = Depends(get_suggestion)):
     """
     Edit a suggestion you made about a student.
     """
     change_suggestion(db, new_suggestion, suggestion, user)
 
 
-@students_suggestions_router.get("/", dependencies=[Depends(require_auth)], status_code=status.HTTP_200_OK, response_model=SuggestionListResponse)
+@students_suggestions_router.get("/", dependencies=[Depends(require_auth)],
+                                 status_code=status.HTTP_200_OK, response_model=SuggestionListResponse)
 async def get_suggestions(student: Student = Depends(get_student), db: Session = Depends(get_session)):
     """
     Get all suggestions of a student.

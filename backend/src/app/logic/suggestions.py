@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
 from src.app.schemas.suggestion import NewSuggestion
-from src.database.crud.suggestions import create_suggestion, get_suggestions_of_student, delete_suggestion, update_suggestion
+from src.database.crud.suggestions import (
+    create_suggestion, get_suggestions_of_student, delete_suggestion, update_suggestion)
 from src.database.models import Suggestion, User
 from src.app.schemas.suggestion import SuggestionListResponse, SuggestionResponse, suggestion_model_to_schema
 from src.app.exceptions.authentication import MissingPermissionsException
