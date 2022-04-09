@@ -36,5 +36,9 @@ export default function VerifyingTokenPage() {
     }, [authContext]);
 
     // This will be replaced later on
-    return <h1>Loading...</h1>;
+    return (
+        <div data-testid={"verifying-page"}>
+            <h1>Loading...</h1>
+        </div>
+    );
 }
