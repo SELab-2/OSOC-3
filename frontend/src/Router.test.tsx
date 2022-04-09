@@ -1,17 +1,11 @@
-import React from "react";
-import Router from "./Router";
-import { defaultAuthState, TestAuthProvider } from "./tests/utils/contexts";
-import { render, screen } from "@testing-library/react";
+import { defaultAuthState } from "./tests/utils/contexts";
+import { screen } from "@testing-library/react";
+import { contextRender } from "./tests/utils/renderer";
 
 test("isLoggedIn === null shows VerificationPage", () => {
     const state = defaultAuthState();
 
-    render(
-        <TestAuthProvider state={state}>
-            <Router />
-        </TestAuthProvider>
-    );
-
+    contextRender(state);
     expect(screen.getByTestId("verifying-page")).not.toBeNull();
 });
 
@@ -19,11 +13,6 @@ test("isLoggedIn === false shows LoginPage", () => {
     const state = defaultAuthState();
     state.isLoggedIn = false;
 
-    render(
-        <TestAuthProvider state={state}>
-            <Router />
-        </TestAuthProvider>
-    );
-
+    contextRender(state);
     expect(screen.getByTestId("login-page")).not.toBeNull();
 });
