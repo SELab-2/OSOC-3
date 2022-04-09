@@ -4,7 +4,7 @@ from src.database.models import Suggestion
 from src.database.enums import DecisionEnum
 
 
-def create_suggestion(db: Session, user_id: int, student_id: int,
+def create_suggestion(db: Session, user_id: int | None, student_id: int | None,
                       decision: DecisionEnum, argumentation: str) -> Suggestion:
     """
     Create a new suggestion in the database
@@ -16,7 +16,7 @@ def create_suggestion(db: Session, user_id: int, student_id: int,
     return suggestion
 
 
-def get_suggestions_of_student(db: Session, student_id: int) -> list[Suggestion]:
+def get_suggestions_of_student(db: Session, student_id: int | None) -> list[Suggestion]:
     """Give all suggestions of a student"""
     return db.query(Suggestion).where(Suggestion.student_id == student_id).all()
 
