@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import src.app.logic.users as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.login import UserData
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, User as UserSchema
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
 from src.app.utils.dependencies import require_admin, get_current_active_user
 from src.database.database import get_session
 from src.database.models import User as UserDB
