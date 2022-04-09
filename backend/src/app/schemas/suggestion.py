@@ -22,6 +22,7 @@ class Suggestion(CamelCaseModel):
     argumentation: str
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 

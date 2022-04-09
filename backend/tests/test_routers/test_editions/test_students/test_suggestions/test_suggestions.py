@@ -18,25 +18,8 @@ def database_with_data(database_session: Session) -> Session:
     database_session.commit()
 
     # Users
-    admin: User = User(name="admin", admin=True, editions=[edition])
     coach1: User = User(name="coach1", editions=[edition])
-    coach2: User = User(name="coach2", editions=[edition])
-    database_session.add(admin)
     database_session.add(coach1)
-    database_session.add(coach2)
-    database_session.commit()
-
-    # AuthEmail
-    pw_hash = get_password_hash("wachtwoord")
-    auth_email_admin: AuthEmail = AuthEmail(
-        user=admin, email="admin@ngmail.com", pw_hash=pw_hash)
-    auth_email_coach1: AuthEmail = AuthEmail(
-        user=coach1, email="coach1@noutlook.be", pw_hash=pw_hash)
-    auth_email_coach2: AuthEmail = AuthEmail(
-        user=coach2, email="coach2@noutlook.be", pw_hash=pw_hash)
-    database_session.add(auth_email_admin)
-    database_session.add(auth_email_coach1)
-    database_session.add(auth_email_coach2)
     database_session.commit()
 
     # Skill
