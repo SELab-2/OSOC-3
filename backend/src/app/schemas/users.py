@@ -1,3 +1,4 @@
+from src.app.schemas.editions import Edition
 from src.app.schemas.utils import CamelCaseModel
 from src.database.models import User as ModelUser
 
@@ -54,7 +55,7 @@ class UserRequest(CamelCaseModel):
     """Model for a userrequest"""
 
     request_id: int
-    edition_name: str
+    edition: Edition
     user: User
 
     class Config:

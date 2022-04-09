@@ -46,7 +46,4 @@ async def get_invite(invite_link: InviteLinkDB = Depends(get_invite_link)):
     Get a specific invitation link to see if it exists or not. Can be used to verify the validity
     of a link before granting a user access to the registration page.
     """
-    model_invite_link = InviteLinkModel(invite_link_id=invite_link.invite_link_id,
-                                        uuid=invite_link.uuid, target_email=invite_link.target_email,
-                                        edition_name=invite_link.edition.name)
-    return model_invite_link
+    return invite_link

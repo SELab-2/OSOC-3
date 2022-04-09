@@ -27,7 +27,6 @@ class InviteLink(CamelCaseModel):
     invite_link_id: int = Field(alias="id")
     uuid: UUID
     target_email: str = Field(alias="email")
-    edition_name: str
 
     class Config:
         """Set to ORM mode"""

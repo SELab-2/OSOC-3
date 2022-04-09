@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 import src.database.crud.users as users_crud
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, UserRequest, user_model_to_schema
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
 from src.database.models import User
 
 
@@ -18,10 +18,7 @@ def get_users_list(db: Session, admin: bool, edition_name: str | None, page: int
         else:
             users_orm = users_crud.get_users_for_edition_page(db, edition_name, page)
 
-    users = []
-    for user in users_orm:
-        users.append(user_model_to_schema(user))
-    return UsersListResponse(users=users)
+    return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
 
 def get_user_editions(db: Session, user: User) -> list[str]:
@@ -66,12 +63,7 @@ def get_request_list(db: Session, edition_name: str | None, page: int) -> UserRe
         requests = users_crud.get_requests_page(db, page)
     else:
         requests = users_crud.get_requests_for_edition_page(db, edition_name, page)
-
-    requests_model = []
-    for request in requests:
-        user_req = UserRequest(request_id=request.request_id, edition_name=request.edition.name, user=request.user)
-        requests_model.append(user_req)
-    return UserRequestsResponse(requests=requests_model)
+    return UserRequestsResponse(requests=requests)
 
 
 def accept_request(db: Session, request_id: int):

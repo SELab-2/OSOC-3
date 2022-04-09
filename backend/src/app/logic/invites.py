@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 import settings
 import src.database.crud.invites as crud
-from src.app.schemas.invites import InvitesLinkList, EmailAddress, NewInviteLink, InviteLink as InviteLinkModel
+from src.app.schemas.invites import InvitesLinkList, EmailAddress, NewInviteLink
 from src.app.utils.mailto import generate_mailto_string
 from src.database.models import Edition, InviteLink as InviteLinkDB
 
@@ -13,17 +13,8 @@ def delete_invite_link(db: Session, invite_link: InviteLinkDB):
 
 
 def get_pending_invites_page(db: Session, edition: Edition, page: int) -> InvitesLinkList:
-    """
-    Query the database for a list of invite links
-    and wrap the result in a pydantic model
-    """
-    invites_orm = crud.get_pending_invites_for_edition_page(db, edition, page)
-    invites = []
-    for invite in invites_orm:
-        new_invite = InviteLinkModel(invite_link_id=invite.invite_link_id,
-                                     uuid=invite.uuid, target_email=invite.target_email, edition_name=edition.name)
-        invites.append(new_invite)
-    return InvitesLinkList(invite_links=invites)
+    """Query the database for a list of invite links and wrap the result in a pydantic model"""
+    return InvitesLinkList(invite_links=crud.get_pending_invites_for_edition_page(db, edition, page))
 
 
 def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddress) -> NewInviteLink:

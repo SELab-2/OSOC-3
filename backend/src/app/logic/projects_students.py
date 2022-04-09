@@ -1,18 +1,18 @@
 from sqlalchemy.orm import Session
+
+import src.app.logic.projects as logic_projects
+import src.database.crud.projects_students as crud
 from src.app.exceptions.projects import StudentInConflictException, FailedToAddProjectRoleException
-from src.app.logic.projects import logic_get_conflicts
 from src.app.schemas.projects import ConflictStudentList
-from src.database.crud.projects_students import db_remove_student_project, db_add_student_project, \
-    db_change_project_role, db_confirm_project_role
 from src.database.models import Project, ProjectRole, Student, Skill
 
 
-def logic_remove_student_project(db: Session, project: Project, student_id: int):
+def remove_student_project(db: Session, project: Project, student_id: int):
     """Remove a student from a project"""
-    db_remove_student_project(db, project, student_id)
+    crud.remove_student_project(db, project, student_id)
 
 
-def logic_add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+def add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Add a student to a project"""
     # check this project-skill combination does not exist yet
     if db.query(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project) \
@@ -31,10 +31,10 @@ def logic_add_student_project(db: Session, project: Project, student_id: int, sk
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 
-    db_add_student_project(db, project, student_id, skill_id, drafter_id)
+    crud.add_student_project(db, project, student_id, skill_id, drafter_id)
 
 
-def logic_change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+def change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Change the role of the student in the project"""
     # check this project-skill combination does not exist yet
     if db.query(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project) \
@@ -54,15 +54,15 @@ def logic_change_project_role(db: Session, project: Project, student_id: int, sk
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 
-    db_change_project_role(db, project, student_id, skill_id, drafter_id)
+    crud.change_project_role(db, project, student_id, skill_id, drafter_id)
 
 
-def logic_confirm_project_role(db: Session, project: Project, student_id: int):
+def confirm_project_role(db: Session, project: Project, student_id: int):
     """Definitively bind this student to the project"""
     # check if there are any conflicts concerning this student
-    conflict_list: ConflictStudentList = logic_get_conflicts(db, project.edition)
+    conflict_list: ConflictStudentList = logic_projects.get_conflicts(db, project.edition)
     for conflict in conflict_list.conflict_students:
         if conflict.student.student_id == student_id:
             raise StudentInConflictException
 
-    db_confirm_project_role(db, project, student_id)
+    crud.confirm_project_role(db, project, student_id)

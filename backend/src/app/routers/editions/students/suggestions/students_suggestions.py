@@ -13,7 +13,7 @@ async def create_suggestion(edition_id: int, student_id: int):
     """
 
 
-@students_suggestions_router.get("/{suggestion_id}")
+@students_suggestions_router.delete("/{suggestion_id}")
 async def delete_suggestion(edition_id: int, student_id: int, suggestion_id: int):
     """
     Delete a suggestion you made about a student.

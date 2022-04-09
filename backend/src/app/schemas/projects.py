@@ -53,7 +53,6 @@ class Project(CamelCaseModel):
     project_id: int
     name: str
     number_of_students: int
-    edition_name: str
 
     coaches: list[User]
     skills: list[Skill]
@@ -71,11 +70,19 @@ class Student(CamelCaseModel):
     first_name: str
     last_name: str
 
+    class Config:
+        """Config Class"""
+        orm_mode = True
+
 
 class ConflictProject(CamelCaseModel):
     """A project to be used in ConflictStudent"""
     project_id: int
     name: str
+
+    class Config:
+        """Config Class"""
+        orm_mode = True
 
 
 class ProjectList(CamelCaseModel):
@@ -88,11 +95,14 @@ class ConflictStudent(CamelCaseModel):
     student: Student
     projects: list[ConflictProject]
 
+    class Config:
+        """Config Class"""
+        orm_mode = True
+
 
 class ConflictStudentList(CamelCaseModel):
     """A list of ConflictStudents"""
     conflict_students: list[ConflictStudent]
-    edition_name: str
 
 
 class InputProject(BaseModel):

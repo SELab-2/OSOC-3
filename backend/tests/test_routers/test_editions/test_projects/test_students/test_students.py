@@ -301,7 +301,6 @@ def test_get_conflicts(database_with_data: Session, current_edition: Edition, au
     assert len(json['conflictStudents']) == 1
     assert json['conflictStudents'][0]['student']['studentId'] == 1
     assert len(json['conflictStudents'][0]['projects']) == 2
-    assert json['editionName'] == "ed2022"
 
 
 def test_add_student_same_project_role(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
