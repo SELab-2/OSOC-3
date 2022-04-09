@@ -33,7 +33,8 @@ async def delete_suggestion(db: Session = Depends(get_session), user: User = Dep
     remove_suggestion(db, suggestion, user)
 
 
-@students_suggestions_router.put("/{suggestion_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_student)])
+@students_suggestions_router.put("/{suggestion_id}", status_code=status.HTTP_204_NO_CONTENT,
+                                 dependencies=[Depends(get_student)])
 async def edit_suggestion(new_suggestion: NewSuggestion, db: Session = Depends(get_session),
                           user: User = Depends(require_auth), suggestion: Suggestion = Depends(get_suggestion)):
     """

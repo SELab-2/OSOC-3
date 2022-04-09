@@ -8,7 +8,8 @@ from src.app.schemas.suggestion import SuggestionListResponse, SuggestionRespons
 from src.app.exceptions.authentication import MissingPermissionsException
 
 
-def make_new_suggestion(db: Session, new_suggestion: NewSuggestion, user: User, student_id: int | None) -> SuggestionResponse:
+def make_new_suggestion(db: Session, new_suggestion: NewSuggestion,
+                        user: User, student_id: int | None) -> SuggestionResponse:
     """"Make a new suggestion"""
     suggestion_orm = create_suggestion(
         db, user.user_id, student_id, new_suggestion.suggestion, new_suggestion.argumentation)
