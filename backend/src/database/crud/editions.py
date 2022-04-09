@@ -18,7 +18,6 @@ def get_edition_by_name(db: Session, edition_name: str) -> Edition:
     Returns:
         Edition: an edition if found else an exception is raised
     """
-    # TODO: check that name is valid
     return db.query(Edition).where(Edition.name == edition_name).one()
 
 

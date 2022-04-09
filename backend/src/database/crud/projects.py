@@ -50,8 +50,6 @@ def get_project(db: Session, project_id: int) -> Project:
 
 def delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
-    # TODO: Maybe make the relationship between project and project_role cascade on delete?
-    # so this code is handled by the database
     proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
     for proj_role in proj_roles:
         db.delete(proj_role)

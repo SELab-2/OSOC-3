@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session, Query
 
 from src.database.crud.editions import get_edition_by_name
+from src.database.crud.editions import get_editions
 from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
-from src.database.crud.editions import get_editions
 
 
 def _get_admins_query(db: Session) -> Query:
@@ -167,3 +167,14 @@ def reject_request(db: Session, request_id: int):
     Remove request
     """
     db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
+
+
+def get_user_by_email(db: Session, email: str) -> User:
+    """Find a user by their email address"""
+    auth_email = db.query(AuthEmail).where(AuthEmail.email == email).one()
+    return db.query(User).where(User.user_id == auth_email.user_id).one()
+
+
+def get_user_by_id(db: Session, user_id: int) -> User:
+    """Find a user by their id"""
+    return db.query(User).where(User.user_id == user_id).one()

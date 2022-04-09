@@ -5,12 +5,13 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
 
 import settings
+import src.database.crud.projects as crud_projects
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
     MissingPermissionsException
-from src.app.logic.security import ALGORITHM, get_user_by_id
+from src.app.logic.security import ALGORITHM
 from src.database.crud.editions import get_edition_by_name
 from src.database.crud.invites import get_invite_link_by_uuid
-import src.database.crud.projects as crud_projects
+from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
 from src.database.models import Edition, InviteLink, User, Project
 
