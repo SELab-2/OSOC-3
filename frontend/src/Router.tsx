@@ -11,6 +11,7 @@ import {
     StudentsPage,
     UsersPage,
     VerifyingTokenPage,
+    StudentMailHistoryPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
 
@@ -68,8 +69,11 @@ export default function Router() {
                                     <Route path={"students"} element={<StudentsPage />} />
                                     {/* TODO student page */}
                                     <Route path={"students/:id"} element={<div />} />
-                                    {/* TODO student emails page */}
-                                    <Route path={"students/:id/emails"} element={<div />} />
+                                    {/* student emails page */}
+                                    <Route
+                                        path={"students/:id/emails"}
+                                        element={<StudentMailHistoryPage />}
+                                    />
 
                                     {/* Users routes */}
                                     <Route path="users" element={<AdminRoute />}>

@@ -6,3 +6,4 @@ export { default as RegisterPage } from "./RegisterPage";
 export { default as StudentsPage } from "./StudentsPage";
 export { default as UsersPage } from "./UsersPage";
 export { default as VerifyingTokenPage } from "./VerifyingTokenPage";
+export { default as StudentMailHistoryPage } from "./StudentMailHistoryPage";
