@@ -1,8 +1,9 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from src.database import models
 import src.database.crud.users as users_crud
+from settings import DB_PAGE_SIZE
+from src.database import models
 from src.database.models import user_editions, CoachRequest
 
 
@@ -49,20 +50,42 @@ def test_get_all_users(database_session: Session, data: dict[str, int]):
     """Test get request for users"""
 
     # get all users
-    users = users_crud.get_all_users(database_session)
+    users = users_crud.get_users(database_session)
     assert len(users) == 2, "Wrong length"
     user_ids = [user.user_id for user in users]
     assert data["user1"] in user_ids
     assert data["user2"] in user_ids
 
 
+def test_get_all_users_paginated(database_session: Session):
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"Project {i}", admin=False))
+    database_session.commit()
+
+    assert len(users_crud.get_users_page(database_session, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_users_page(database_session, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
+
+
 def test_get_all_admins(database_session: Session, data: dict[str, str]):
     """Test get request for admins"""
 
     # get all admins
-    users = users_crud.get_all_admins(database_session)
+    users = users_crud.get_admins(database_session)
     assert len(users) == 1, "Wrong length"
     assert data["user1"] == users[0].user_id
+
+
+def test_get_all_admins_paginated(database_session: Session):
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"Project {i}", admin=True))
+    database_session.commit()
+
+    assert len(users_crud.get_admins_page(database_session, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_admins_page(database_session, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
 
 
 def test_get_user_edition_names_empty(database_session: Session):
@@ -117,27 +140,44 @@ def test_get_all_users_from_edition(database_session: Session, data: dict[str, s
     """Test get request for users of a given edition"""
 
     # get all users from edition
-    users = users_crud.get_users_from_edition(database_session, data["edition1"])
+    users = users_crud.get_users_for_edition(database_session, data["edition1"])
     assert len(users) == 2, "Wrong length"
     user_ids = [user.user_id for user in users]
     assert data["user1"] in user_ids
     assert data["user2"] in user_ids
 
-    users = users_crud.get_users_from_edition(database_session, data["edition2"])
+    users = users_crud.get_users_for_edition(database_session, data["edition2"])
     assert len(users) == 1, "Wrong length"
     assert data["user2"] == users[0].user_id
 
 
-def test_get_admins_from_edition(database_session: Session, data: dict[str, str]):
-    """Test get request for admins of a given edition"""
+def test_get_all_users_for_edition_paginated(database_session: Session):
+    edition_1 = models.Edition(year=2022, name="ed2022")
+    edition_2 = models.Edition(year=2023, name="ed2023")
+    database_session.add(edition_1)
+    database_session.add(edition_2)
+    database_session.commit()
 
-    # get all admins from edition
-    users = users_crud.get_admins_from_edition(database_session, data["edition1"])
-    assert len(users) == 1, "Wrong length"
-    assert data["user1"] == users[0].user_id
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user_1 = models.User(name=f"User {i} - a", admin=False)
+        user_2 = models.User(name=f"User {i} - b", admin=False)
+        database_session.add(user_1)
+        database_session.add(user_2)
+        database_session.commit()
+        database_session.execute(models.user_editions.insert(), [
+            {"user_id": user_1.user_id, "edition_id": edition_1.edition_id},
+            {"user_id": user_2.user_id, "edition_id": edition_2.edition_id},
+        ])
+    database_session.commit()
 
-    users = users_crud.get_admins_from_edition(database_session, data["edition2"])
-    assert len(users) == 0, "Wrong length"
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
 
 
 def test_edit_admin_status(database_session: Session):
@@ -254,13 +294,29 @@ def test_get_all_requests(database_session: Session):
 
     database_session.commit()
 
-    requests = users_crud.get_all_requests(database_session)
+    requests = users_crud.get_requests(database_session)
     assert len(requests) == 2
     assert request1 in requests
     assert request2 in requests
     users = [request.user for request in requests]
     assert user1 in users
     assert user2 in users
+
+
+def test_get_requests_paginated(database_session: Session):
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(CoachRequest(user=user, edition=edition))
+    database_session.commit()
+
+    assert len(users_crud.get_requests_page(database_session, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_requests_page(database_session, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
 
 
 def test_get_all_requests_from_edition(database_session: Session):
@@ -288,13 +344,29 @@ def test_get_all_requests_from_edition(database_session: Session):
 
     database_session.commit()
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition1.name)
+    requests = users_crud.get_requests_for_edition(database_session, edition1.name)
     assert len(requests) == 1
     assert requests[0].user == user1
 
-    requests = users_crud.get_all_requests_from_edition(database_session, edition2.name)
+    requests = users_crud.get_requests_for_edition(database_session, edition2.name)
     assert len(requests) == 1
     assert requests[0].user == user2
+
+
+def test_get_requests_for_edition_paginated(database_session: Session):
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(CoachRequest(user=user, edition=edition))
+    database_session.commit()
+
+    assert len(users_crud.get_requests_for_edition_page(database_session, edition.name, 0)) == DB_PAGE_SIZE
+    assert len(users_crud.get_requests_for_edition_page(database_session, edition.name, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
 
 
 def test_accept_request(database_session: Session):
