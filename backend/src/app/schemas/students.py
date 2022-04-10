@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import Query
 
 from src.app.schemas.webhooks import CamelCaseModel
@@ -29,6 +30,7 @@ class Student(CamelCaseModel):
     skills: list[Skill]
 
     class Config:
+        """Set to ORM mode"""
         orm_mode = True
 
 
@@ -57,3 +59,24 @@ class CommonQueryParams:
         self.alumni = alumni
         self.student_coach = student_coach
         self.skill_ids = skill_ids
+
+
+class DecisionEmail(CamelCaseModel):
+    """
+    Model to represent DecisionEmail
+    """
+    email_id: int
+    student_id: int
+    decision: DecisionEnum
+    date: datetime
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
+class ReturnStudentMailList(CamelCaseModel):
+    """
+    Model to return a list of mails of a student
+    """
+    emails: list[DecisionEmail]

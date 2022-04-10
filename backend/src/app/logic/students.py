@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from src.app.schemas.students import NewDecision
-from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students
+from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students, get_emails
 from src.database.crud.skills import get_skills_by_ids
-from src.database.models import Edition, Student, Skill
-from src.app.schemas.students import ReturnStudentList, ReturnStudent, CommonQueryParams
+from src.database.models import Edition, Student, Skill, DecisionEmail
+from src.app.schemas.students import ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList
 
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
@@ -31,6 +32,17 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
     return ReturnStudentList(students=students)
 
 
-def get_student_return(student: Student) -> ReturnStudent:
+def get_student_return(student: Student, edition: Edition) -> ReturnStudent:
     """return a student"""
-    return ReturnStudent(student=student)
+    if student.edition == edition:
+        return ReturnStudent(student=student)
+
+    raise NoResultFound
+
+
+def get_emails_of_student(db: Session, edition: Edition, student: Student) -> ReturnStudentMailList:
+    """returns all mails of a student"""
+    if student.edition != edition:
+        raise NoResultFound
+    emails: list[DecisionEmail] = get_emails(db, student)
+    return ReturnStudentMailList(emails=emails)

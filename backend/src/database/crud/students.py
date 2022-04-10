@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src.database.enums import DecisionEnum
-from src.database.models import Edition, Skill, Student
+from src.database.models import Edition, Skill, Student, DecisionEmail
 
 
 def get_student_by_id(db: Session, student_id: int) -> Student:
@@ -22,7 +22,8 @@ def delete_student(db: Session, student: Student) -> None:
     db.commit()
 
 
-def get_students(db: Session, edition: Edition, first_name: str = "", last_name: str = "", alumni: bool = False, student_coach: bool = False, skills: list[Skill] = None) -> list[Student]:
+def get_students(db: Session, edition: Edition, first_name: str = "", last_name: str = "", alumni: bool = False,
+                 student_coach: bool = False, skills: list[Skill] = None) -> list[Student]:
     """Get students"""
     query = db.query(Student)\
         .where(Student.edition == edition)\
@@ -42,3 +43,8 @@ def get_students(db: Session, edition: Edition, first_name: str = "", last_name:
         query = query.where(Student.skills.contains(skill))
 
     return query.all()
+
+
+def get_emails(db: Session, student: Student) -> list[DecisionEmail]:
+    """Get all emails send to a student"""
+    return db.query(DecisionEmail).where(DecisionEmail.student_id == student.student_id).all()

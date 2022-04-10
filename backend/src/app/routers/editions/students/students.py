@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from starlette import status
 from src.app.routers.tags import Tags
 from src.app.utils.dependencies import get_student, get_edition, require_admin, require_auth
-from src.app.logic.students import definitive_decision_on_student, remove_student, get_student_return, get_students_search
-from src.app.schemas.students import NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList
+from src.app.logic.students import (
+    definitive_decision_on_student, remove_student, get_student_return, get_students_search, get_emails_of_student)
+from src.app.schemas.students import NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList, ReturnStudentMailList
 from src.database.database import get_session
 from src.database.models import Student, Edition
 from .suggestions import students_suggestions_router
@@ -45,11 +46,13 @@ async def get_student_by_id(edition: Edition = Depends(get_edition), student: St
     """
     Get information about a specific student.
     """
-    return get_student_return(student)
+    return get_student_return(student, edition)
 
 
-@students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin)], status_code=status.HTTP_204_NO_CONTENT)
-async def make_decision(decision: NewDecision, student: Student = Depends(get_student), db: Session = Depends(get_session)):
+@students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin)],
+                     status_code=status.HTTP_204_NO_CONTENT)
+async def make_decision(decision: NewDecision, student: Student = Depends(get_student),
+                        db: Session = Depends(get_session)):
     """
     Make a finalized Yes/Maybe/No decision about a student.
 
@@ -58,9 +61,12 @@ async def make_decision(decision: NewDecision, student: Student = Depends(get_st
     definitive_decision_on_student(db, student, decision)
 
 
-@students_router.get("/{student_id}/emails")
-async def get_student_email_history(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)):
+@students_router.get("/{student_id}/emails", dependencies=[Depends(require_admin)],
+                     response_model=ReturnStudentMailList)
+async def get_student_email_history(edition: Edition = Depends(get_edition), student: Student = Depends(get_student),
+                                    db: Session = Depends(get_session)):
     """
     Get the history of all Yes/Maybe/No emails that have been sent to
     a specific student so far.
     """
+    return get_emails_of_student(db, edition, student)

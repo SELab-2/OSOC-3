@@ -1,10 +1,11 @@
+import datetime
 import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from src.database.models import Student, User, Edition, Skill
+from src.database.models import Student, User, Edition, Skill, DecisionEmail
 from src.database.enums import DecisionEnum
 from src.database.crud.students import (get_student_by_id, set_definitive_decision_on_student,
-                                        delete_student, get_students)
+                                        delete_student, get_students, get_emails)
 
 
 @pytest.fixture
@@ -49,6 +50,12 @@ def database_with_data(database_session: Session):
 
     database_session.add(student01)
     database_session.add(student30)
+    database_session.commit()
+
+    # DecisionEmail
+    decision_email: DecisionEmail = DecisionEmail(
+        student=student01, decision=DecisionEnum.YES, date=datetime.datetime.now())
+    database_session.add(decision_email)
     database_session.commit()
 
     return database_session
@@ -159,3 +166,13 @@ def test_search_students_multiple_skills(database_with_data: Session):
         Skill).where(Skill.description == "important").all()
     students = get_students(database_with_data, edition, skills=skills)
     assert len(students) == 1
+
+
+def test_get_emails(database_with_data: Session):
+    """tests to get emails"""
+    student: Student = get_student_by_id(database_with_data, 1)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    student = get_student_by_id(database_with_data, 2)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 0

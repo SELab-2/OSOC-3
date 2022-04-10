@@ -220,7 +220,7 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
+    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")

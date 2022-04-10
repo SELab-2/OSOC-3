@@ -1,8 +1,9 @@
+import datetime;
 import pytest
 from sqlalchemy.orm import Session
 from starlette import status
 from src.database.enums import DecisionEnum
-from src.database.models import Student, Edition, Skill
+from src.database.models import Student, Edition, Skill, DecisionEmail
 
 from tests.utils.authorization import AuthClient
 
@@ -41,6 +42,12 @@ def database_with_data(database_session: Session) -> Session:
 
     database_session.add(student01)
     database_session.add(student30)
+    database_session.commit()
+
+    # DecisionEmail
+    decision_email: DecisionEmail = DecisionEmail(
+        student=student01, decision=DecisionEnum.YES, date=datetime.datetime.now())
+    database_session.add(decision_email)
     database_session.commit()
     return database_session
 
@@ -154,6 +161,16 @@ def test_get_student_by_id(database_with_data: Session, auth_client: AuthClient)
         "/editions/ed2022/students/1").status_code == status.HTTP_200_OK
 
 
+def test_get_student_by_id_wrong_edition(database_with_data: Session, auth_client: AuthClient):
+    """tests you can get a student by id"""
+    edition: Edition = Edition(year=2023, name="ed2023")
+    database_with_data.add(edition)
+    database_with_data.commit()
+    auth_client.coach(edition)
+    assert auth_client.get(
+        "/editions/ed2023/students/1").status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_get_students_no_autorization(database_with_data: Session, auth_client: AuthClient):
     """tests you have to be logged in to get all students"""
     assert auth_client.get(
@@ -256,3 +273,28 @@ def test_get_one_real_one_ghost_skill_students(database_with_data: Session, auth
     print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
+
+
+def test_get_emails_student_no_authorization(database_with_data: Session, auth_client: AuthClient):
+    """tests that you can't get the mails of a student when you aren't logged in"""
+    response = auth_client.get("/editions/ed2022/students/1/emails")
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_get_emails_student_coach(database_with_data: Session, auth_client: AuthClient):
+    """tests that a coach can't get the mails of a student"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    response = auth_client.get("/editions/ed2022/students/1/emails")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_get_emails_student_admin(database_with_data: Session, auth_client: AuthClient):
+    """tests that an admin can get the mails of a student"""
+    auth_client.admin()
+    response = auth_client.get("/editions/ed2022/students/1/emails")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["emails"]) == 1
+    response = auth_client.get("/editions/ed2022/students/2/emails")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["emails"]) == 0
