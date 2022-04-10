@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 
 from src.app.schemas.invites import InvitesListResponse, EmailAddress, NewInviteLink, InviteLink as InviteLinkModel
-from src.app.utils.edition_readonly import check_readonly_edition
 from src.app.utils.mailto import generate_mailto_string
 from src.database.crud.invites import create_invite_link, delete_invite_link as delete_link_db, get_all_pending_invites
 from src.database.models import Edition, InviteLink as InviteLinkDB
@@ -30,8 +29,6 @@ def get_pending_invites_list(db: Session, edition: Edition) -> InvitesListRespon
 
 def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddress) -> NewInviteLink:
     """Add a new invite link into the database & return a mailto link for it"""
-    check_readonly_edition(db, edition)
-
     # Create db entry
     new_link_db = create_invite_link(db, edition, email_address.email)
 
