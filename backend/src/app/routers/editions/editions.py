@@ -1,19 +1,16 @@
 from fastapi import APIRouter, Depends
-from starlette import status
 from sqlalchemy.orm import Session
+from starlette import status
 
+from src.app.logic import editions as logic_editions
 from src.app.routers.tags import Tags
 from src.app.schemas.editions import EditionBase, Edition, EditionList
-
 from src.database.database import get_session
-from src.app.logic import editions as logic_editions
-
 from .invites import invites_router
 from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
 from ...utils.dependencies import require_admin, require_auth, require_coach
@@ -34,19 +31,20 @@ for router in child_routers:
 
 
 @editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS], dependencies=[Depends(require_auth)])
-async def get_editions(db: Session = Depends(get_session)):
-    """Get a list of all editions.
+async def get_editions(db: Session = Depends(get_session), page: int = 0):
+    """Get a paginated list of all editions.
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
+        page (int): the page to return.
 
     Returns:
         EditionList: an object with a list of all the editions.
     """
     # TODO only return editions the user can see
-    return logic_editions.get_editions(db)
+    return logic_editions.get_editions_page(db, page)
 
 
-@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], 
+@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
                      dependencies=[Depends(require_coach)])
 async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
     """Get a specific edition.
@@ -75,7 +73,7 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     return logic_editions.create_edition(db, edition)
 
 
-@editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS], 
+@editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
                         dependencies=[Depends(require_admin)])
 async def delete_edition(edition_name: str, db: Session = Depends(get_session)):
     """Delete an existing edition.

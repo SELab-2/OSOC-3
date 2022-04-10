@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from src.app.schemas.utils import CamelCaseModel
-from src.database.enums import DecisionEnum
 
 
 class User(CamelCaseModel):
@@ -105,8 +104,6 @@ class InputProject(BaseModel):
     coaches: list[int]
 
 
-# TODO: change drafter_id to current user with authentication
 class InputStudentRole(BaseModel):
-    """Used for creating/patching a student role (temporary until authentication is implemented)"""
+    """Used for creating/patching a student role"""
     skill_id: int
-    drafter_id: int

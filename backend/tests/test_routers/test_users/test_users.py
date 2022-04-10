@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from starlette import status
 
+from settings import DB_PAGE_SIZE
 from src.database import models
 from src.database.models import user_editions, CoachRequest
 from tests.utils.authorization import AuthClient
@@ -28,6 +29,12 @@ def data(database_session: Session) -> dict[str, str | int]:
 
     database_session.commit()
 
+    email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    database_session.add(email_auth1)
+    database_session.add(github_auth1)
+    database_session.commit()
+
     # Create coach roles
     database_session.execute(models.user_editions.insert(), [
         {"user_id": user1.user_id, "edition_id": edition1.edition_id},
@@ -39,6 +46,10 @@ def data(database_session: Session) -> dict[str, str | int]:
             "user2": user2.user_id,
             "edition1": edition1.name,
             "edition2": edition2.name,
+            "email1": email_auth1.email,
+            "email2": github_auth1.email,
+            "auth_type1": "email",
+            "auth_type2": "github"
             }
 
 
@@ -55,6 +66,53 @@ def test_get_all_users(database_session: Session, auth_client: AuthClient, data:
     assert data["user2"] in user_ids
 
 
+def test_get_all_users_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of users"""
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=False))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == DB_PAGE_SIZE
+    response = auth_client.get("/users?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1
+    # +1 because Authclient.admin() also creates one user.
+
+
+def test_get_all_users_paginated_filter_name(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of users with filter for name"""
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=False))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?page=0&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(DB_PAGE_SIZE, count)
+    response = auth_client.get("/users?page=1&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == max(count - round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
+
+
+def test_get_users_response(database_session: Session, auth_client: AuthClient, data: dict[str, str]):
+    """Test the response model of a user"""
+    auth_client.admin()
+    response = auth_client.get("/users")
+    users = response.json()["users"]
+    user1 = [user for user in users if user["userId"] == data["user1"]][0]
+    assert user1["auth"]["email"] == data["email1"]
+    assert user1["auth"]["authType"] == data["auth_type1"]
+    user2 = [user for user in users if user["userId"] == data["user2"]][0]
+    assert user2["auth"]["email"] == data["email2"]
+    assert user2["auth"]["authType"] == data["auth_type2"]
+
+
 def test_get_all_admins(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
     """Test endpoint for getting a list of admins"""
     auth_client.admin()
@@ -64,6 +122,40 @@ def test_get_all_admins(database_session: Session, auth_client: AuthClient, data
     user_ids = [user["userId"] for user in response.json()['users']]
     user_ids.remove(auth_client.user.user_id)
     assert [data["user1"]] == user_ids
+
+
+def test_get_all_admins_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of paginated admins"""
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 3)):
+        database_session.add(models.User(name=f"User {i}", admin=i % 2 == 0))
+        if i % 2 == 0:
+            count += 1
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?admin=true&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(count + 1, DB_PAGE_SIZE)
+    response = auth_client.get("/users?admin=true&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(count - DB_PAGE_SIZE + 1, DB_PAGE_SIZE + 1)
+    # +1 because Authclient.admin() also creates one user.
+
+
+def test_get_all_admins_paginated_filter_name(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of paginated admins with filter for name"""
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=True))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?admin=true&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == DB_PAGE_SIZE
+    response = auth_client.get("/users?admin=true&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1
 
 
 def test_get_users_from_edition(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
@@ -76,18 +168,56 @@ def test_get_users_from_edition(database_session: Session, auth_client: AuthClie
     assert [data["user2"]] == user_ids
 
 
+def test_get_all_users_for_edition_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of users"""
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=False, editions=[edition]))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?page=0&edition_name=ed2022")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == DB_PAGE_SIZE
+    response = auth_client.get("/users?page=1&edition_name=ed2022")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1
+    # +1 because Authclient.admin() also creates one user.
+
+
+def test_get_all_users_for_edition_paginated_filter_user(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of users and filter on name"""
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=False, editions=[edition]))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users?page=0&edition_name=ed2022&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(count , DB_PAGE_SIZE)
+    response = auth_client.get("/users?page=1&edition_name=ed2022&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == max(count - DB_PAGE_SIZE, 0)
+
 def test_get_admins_from_edition(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
-    """Test endpoint for getting a list of admins from a given edition"""
+    """Test endpoint for getting a list of admins, edition should be ignored"""
     auth_client.admin()
     # All admins from edition
     response = auth_client.get(f"/users?admin=true&edition={data['edition1']}")
     assert response.status_code == status.HTTP_200_OK
-    user_ids = [user["userId"] for user in response.json()['users']]
-    assert [data["user1"]] == user_ids
+    assert len(response.json()['users']) == 2
 
     response = auth_client.get(f"/users?admin=true&edition={data['edition2']}")
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()['users']) == 0
+    assert len(response.json()['users']) == 2
 
 
 def test_get_users_invalid(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):
@@ -164,7 +294,6 @@ def test_remove_coach(database_session: Session, auth_client: AuthClient):
     assert len(coach) == 0
 
 
-
 def test_remove_coach_all_editions(database_session: Session, auth_client: AuthClient):
     """Test removing a user as coach from all editions"""
     auth_client.admin()
@@ -233,6 +362,25 @@ def test_get_all_requests(database_session: Session, auth_client: AuthClient):
     assert user2.user_id in user_ids
 
 
+def test_get_all_requests_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a paginated list of requests"""
+    edition = models.Edition(year=2022, name="ed2022")
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(models.CoachRequest(user=user, edition=edition))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users/requests?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == DB_PAGE_SIZE
+    response = auth_client.get("/users/requests?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+
+
 def test_get_all_requests_from_edition(database_session: Session, auth_client: AuthClient):
     """Test endpoint for getting all userrequests of a given edition"""
     auth_client.admin()
@@ -270,6 +418,25 @@ def test_get_all_requests_from_edition(database_session: Session, auth_client: A
     requests = response.json()['requests']
     assert len(requests) == 1
     assert user2.user_id == requests[0]["user"]["userId"]
+
+
+def test_get_all_requests_for_edition_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a paginated list of requests"""
+    edition = models.Edition(year=2022, name="ed2022")
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(models.CoachRequest(user=user, edition=edition))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users/requests?page=0&edition_name=ed2022")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == DB_PAGE_SIZE
+    response = auth_client.get("/users/requests?page=1&edition_name=ed2022")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 def test_accept_request(database_session, auth_client: AuthClient):

@@ -9,8 +9,8 @@ from src.app.exceptions.authentication import ExpiredCredentialsException, Inval
     MissingPermissionsException
 from src.app.logic.security import ALGORITHM, get_user_by_id
 from src.database.crud.editions import get_edition_by_name
-from src.database.crud.projects import db_get_project
 from src.database.crud.invites import get_invite_link_by_uuid
+from src.database.crud.projects import db_get_project
 from src.database.database import get_session
 from src.database.models import Edition, InviteLink, User, Project
 
