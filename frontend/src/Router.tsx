@@ -10,6 +10,7 @@ import {
     RegisterPage,
     StudentsPage,
     UsersPage,
+    AdminsPage,
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
@@ -39,8 +40,7 @@ export default function Router() {
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
                             <Route path={"/admins"} element={<AdminRoute />}>
-                                {/* TODO admins page */}
-                                <Route path={""} element={<div />} />
+                                <Route path={""} element={<AdminsPage />} />
                             </Route>
                             <Route path={"/editions"} element={<PrivateRoute />}>
                                 {/* TODO editions page */}

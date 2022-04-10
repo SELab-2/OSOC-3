@@ -6,8 +6,11 @@ import { axiosInstance } from "../api";
 export interface User {
     userId: number;
     name: string;
-    email: string;
     admin: boolean;
+    auth: {
+        autType: string;
+        email: string;
+    };
 }
 
 export interface UsersList {

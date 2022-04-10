@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CoachesTitle, CoachesContainer } from "./styles";
 import { User } from "../../../utils/api/users/users";
 import { Error, SearchInput } from "../PendingRequests/styles";
@@ -11,6 +11,7 @@ import { CoachList, AddCoach } from "./CoachesComponents";
  * @param props.allCoaches The list of all coaches of the current edition.
  * @param props.users A list of all users who can be added as coach.
  * @param props.refresh A function which will be called when a coach is added/removed.
+ * @param props.getMoreCoaches A function to load more coaches.
  * @param props.gotData All data is received.
  * @param props.gettingData Data is not available yet.
  * @param props.error An error message.
@@ -20,22 +21,14 @@ export default function Coaches(props: {
     allCoaches: User[];
     users: User[];
     refresh: () => void;
+    getMoreCoaches: (page: number) => void;
     gotData: boolean;
     gettingData: boolean;
     error: string;
+    moreCoachesAvailable: boolean;
 }) {
-    const [coaches, setCoaches] = useState<User[]>([]); // All coaches after filter
+    // const [coaches, setCoaches] = useState<User[]>([]); // All coaches after filter
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
-
-    useEffect(() => {
-        const newCoaches: User[] = [];
-        for (const coach of props.allCoaches) {
-            if (coach.name.toUpperCase().includes(searchTerm.toUpperCase())) {
-                newCoaches.push(coach);
-            }
-        }
-        setCoaches(newCoaches);
-    }, [props.allCoaches, searchTerm]);
 
     /**
      * Apply a filter to the coach list.
@@ -50,7 +43,7 @@ export default function Coaches(props: {
                 newCoaches.push(coach);
             }
         }
-        setCoaches(newCoaches);
+        // setCoaches(newCoaches);
     };
 
     return (
@@ -59,11 +52,13 @@ export default function Coaches(props: {
             <SearchInput value={searchTerm} onChange={e => filter(e.target.value)} />
             <AddCoach users={props.users} edition={props.edition} refresh={props.refresh} />
             <CoachList
-                coaches={coaches}
+                coaches={props.allCoaches}
                 loading={props.gettingData}
                 edition={props.edition}
                 gotData={props.gotData}
                 refresh={props.refresh}
+                getMoreCoaches={props.getMoreCoaches}
+                moreCoachesAvailable={props.moreCoachesAvailable}
             />
             <Error> {props.error} </Error>
         </CoachesContainer>

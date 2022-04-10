@@ -58,7 +58,7 @@ export default function RemoveCoach(props: { coach: User; edition: string; refre
                     </Modal.Header>
                     <Modal.Body>
                         <h4>{props.coach.name}</h4>
-                        {props.coach.email}
+                        {props.coach.auth.email}
                     </Modal.Body>
                     <Modal.Footer>
                         <Button

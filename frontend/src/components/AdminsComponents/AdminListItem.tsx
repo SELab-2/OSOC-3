@@ -11,7 +11,7 @@ export default function AdminItem(props: { admin: User; refresh: () => void }) {
     return (
         <tr>
             <td>{props.admin.name}</td>
-            <td>{props.admin.email}</td>
+            <td>{props.admin.auth.email}</td>
             <td>
                 <RemoveAdmin admin={props.admin} refresh={props.refresh} />
             </td>

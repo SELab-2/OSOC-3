@@ -140,7 +140,12 @@ def get_requests_page(db: Session, page: int) -> list[CoachRequest]:
 
 
 def _get_requests_for_edition_query(db: Session, edition: Edition) -> Query:
-    return db.query(CoachRequest).where(CoachRequest.edition_id == edition.edition_id).join(User)
+    return db.query(CoachRequest)\
+        .where(CoachRequest.edition_id == edition.edition_id)\
+        .join(User)\
+        .join(AuthEmail, isouter=True) \
+        .join(AuthGitHub, isouter=True) \
+        .join(AuthGoogle, isouter=True)
 
 
 def get_requests_for_edition(db: Session, edition_name: str) -> list[CoachRequest]:

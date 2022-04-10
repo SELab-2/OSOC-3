@@ -16,7 +16,7 @@ export default function RequestListItem(props: {
     return (
         <tr>
             <td>{props.request.user.name}</td>
-            <td>{props.request.user.email}</td>
+            <td>{props.request.user.auth.email}</td>
             <AcceptRejectTd>
                 <AcceptReject requestId={props.request.requestId} refresh={props.refresh} />
             </AcceptRejectTd>

@@ -4,6 +4,7 @@ import { Table } from "react-bootstrap";
 export const CoachesContainer = styled.div`
     width: 50%;
     min-width: 600px;
+    height: 500px;
     margin: 10px auto auto;
 `;
 
@@ -29,4 +30,9 @@ export const RemoveTh = styled.th`
 export const RemoveTd = styled.td`
     text-align: center;
     vertical-align: middle;
+`;
+
+export const ListDiv = styled.div`
+    height: 500px;
+    overflow: auto;
 `;

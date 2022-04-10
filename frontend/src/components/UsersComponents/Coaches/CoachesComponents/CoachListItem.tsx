@@ -18,7 +18,7 @@ export default function CoachListItem(props: {
     return (
         <tr>
             <td>{props.coach.name}</td>
-            <td>{props.coach.email}</td>
+            <td>{props.coach.auth.email}</td>
             <RemoveTd>
                 <RemoveCoach coach={props.coach} edition={props.edition} refresh={props.refresh} />
             </RemoveTd>

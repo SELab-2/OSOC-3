@@ -52,7 +52,7 @@ export default function RemoveAdmin(props: { admin: User; refresh: () => void })
                     </Modal.Header>
                     <Modal.Body>
                         <h4>{props.admin.name}</h4>
-                        <p>{props.admin.email}</p>
+                        <p>{props.admin.auth.email}</p>
                         <p>
                             Remove admin: {props.admin.name} will stay coach for assigned editions
                         </p>

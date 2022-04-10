@@ -78,7 +78,8 @@ def get_request_list(db: Session, edition_name: str | None, page: int) -> UserRe
 
     requests_model = []
     for request in requests:
-        user_req = UserRequest(request_id=request.request_id, edition_name=request.edition.name, user=request.user)
+        user_req = UserRequest(request_id=request.request_id, edition_name=request.edition.name,
+                               user=user_model_to_schema(request.user))
         requests_model.append(user_req)
     return UserRequestsResponse(requests=requests_model)
 

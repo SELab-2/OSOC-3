@@ -3,10 +3,12 @@ import { axiosInstance } from "../api";
 
 /**
  * Get all coaches from the given edition
- * @param {string} edition The edition name
+ * @param edition The edition name
+ * @param page
  */
-export async function getCoaches(edition: string): Promise<UsersList> {
-    const response = await axiosInstance.get(`/users/?edition=${edition}`);
+export async function getCoaches(edition: string, page: number): Promise<UsersList> {
+    const response = await axiosInstance.get(`/users/?edition=${edition}&page=${page}`);
+    console.log(`got ${page}: ${response.data.users.length}`);
     return response.data as UsersList;
 }
 
