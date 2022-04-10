@@ -59,13 +59,26 @@ def test_get_all_users(database_session: Session, data: dict[str, int]):
 
 def test_get_all_users_paginated(database_session: Session):
     for i in range(round(DB_PAGE_SIZE * 1.5)):
-        database_session.add(models.User(name=f"Project {i}", admin=False))
+        database_session.add(models.User(name=f"User {i}", admin=False))
     database_session.commit()
 
     assert len(users_crud.get_users_page(database_session, 0)) == DB_PAGE_SIZE
     assert len(users_crud.get_users_page(database_session, 1)) == round(
         DB_PAGE_SIZE * 1.5
     ) - DB_PAGE_SIZE
+
+
+def test_get_all_users_paginated_filter_name(database_session: Session):
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=False))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    assert len(users_crud.get_users_page(database_session, 0, name="1")) == count
+    assert len(users_crud.get_users_page(database_session, 1, name="1")) == max(count - round(
+        DB_PAGE_SIZE * 1.5), 0)
 
 
 def test_get_all_admins(database_session: Session, data: dict[str, str]):
@@ -78,14 +91,28 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
 
 
 def test_get_all_admins_paginated(database_session: Session):
-    for i in range(round(DB_PAGE_SIZE * 1.5)):
-        database_session.add(models.User(name=f"Project {i}", admin=True))
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 3)):
+        database_session.add(models.User(name=f"User {i}", admin=i % 2 == 0))
+        if i % 2 == 0:
+            count += 1
     database_session.commit()
 
-    assert len(users_crud.get_admins_page(database_session, 0)) == DB_PAGE_SIZE
-    assert len(users_crud.get_admins_page(database_session, 1)) == round(
-        DB_PAGE_SIZE * 1.5
-    ) - DB_PAGE_SIZE
+    assert len(users_crud.get_admins_page(database_session, 0)) == min(count, DB_PAGE_SIZE)
+    assert len(users_crud.get_admins_page(database_session, 1)) == min(count - DB_PAGE_SIZE, DB_PAGE_SIZE)
+
+
+def test_get_all_admins_paginated_filter_name(database_session: Session):
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(models.User(name=f"User {i}", admin=i % 2 == 0))
+        if "1" in str(i) and i % 2 == 0:
+            count += 1
+    database_session.commit()
+
+    assert len(users_crud.get_admins_page(database_session, 0, name="1")) == count
+    assert len(users_crud.get_admins_page(database_session, 1, name="1")) == max(count - round(
+        DB_PAGE_SIZE * 1.5), 0)
 
 
 def test_get_user_edition_names_empty(database_session: Session):
@@ -178,6 +205,38 @@ def test_get_all_users_for_edition_paginated(database_session: Session):
     assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 1)) == round(
         DB_PAGE_SIZE * 1.5
     ) - DB_PAGE_SIZE
+
+
+def test_get_all_users_for_edition_paginated_filter_name(database_session: Session):
+    edition_1 = models.Edition(year=2022, name="ed2022")
+    edition_2 = models.Edition(year=2023, name="ed2023")
+    database_session.add(edition_1)
+    database_session.add(edition_2)
+    database_session.commit()
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user_1 = models.User(name=f"User {i} - a", admin=False)
+        user_2 = models.User(name=f"User {i} - b", admin=False)
+        database_session.add(user_1)
+        database_session.add(user_2)
+        database_session.commit()
+        database_session.execute(models.user_editions.insert(), [
+            {"user_id": user_1.user_id, "edition_id": edition_1.edition_id},
+            {"user_id": user_2.user_id, "edition_id": edition_2.edition_id},
+        ])
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 0, name="1")) == \
+           min(count, DB_PAGE_SIZE)
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 1, name="1")) == \
+           max(count - round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 0, name="1")) == \
+           min(count, DB_PAGE_SIZE)
+    assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 1, name="1")) == \
+           max(count - DB_PAGE_SIZE, 0)
 
 
 def test_edit_admin_status(database_session: Session):
