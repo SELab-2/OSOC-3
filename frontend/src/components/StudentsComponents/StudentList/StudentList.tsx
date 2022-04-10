@@ -1,5 +1,5 @@
 import React from "react";
-import { StudentCard } from "./index";
+import { StudentCard } from "../index";
 import { StudentCardsList } from "./styles";
 
 export default function StudentList() {

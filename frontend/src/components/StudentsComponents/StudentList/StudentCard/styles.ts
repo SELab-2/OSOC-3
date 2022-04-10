@@ -23,23 +23,23 @@ export const CardConfirmColorBlock = styled.div`
 
 export const CardSuggestionBar = styled.div`
     height: 2px;
-    width: 240px;
-    align-self: center;
+    width: 90%;
     background: var(--osoc_green);
+    margin-left: 5%;
     margin-bottom: 15px;
 `;
 
 export const CardStudentInfo = styled.div`
     display: flex;
-    width: 300px;
+    width: 100%;
     min-height: 75px;
     flex-direction: row;
 `;
 
 export const CardVerticalContainer = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
-    margin-left: 37px;
     margin-top: 11px;
 `;
 
@@ -50,11 +50,12 @@ export const CardHorizontalContainer = styled.div`
 `;
 
 export const CardStudentName = styled.p`
+    width: 80%;
     font-size: 20px;
-    width: 230px;
-    min-height: 30px;
+    margin-left: 5%;
 `;
 
 export const CardAmountSuggestions = styled.p`
     font-size: 20px;
+    margin-left: 5%;
 `;
