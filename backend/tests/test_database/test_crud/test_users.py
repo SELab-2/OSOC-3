@@ -232,11 +232,116 @@ def test_get_all_users_for_edition_paginated_filter_name(database_session: Sessi
     assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 0, name="1")) == \
            min(count, DB_PAGE_SIZE)
     assert len(users_crud.get_users_for_edition_page(database_session, edition_1.name, 1, name="1")) == \
-           max(count - round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
+           max(count - DB_PAGE_SIZE, 0)
     assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 0, name="1")) == \
            min(count, DB_PAGE_SIZE)
     assert len(users_crud.get_users_for_edition_page(database_session, edition_2.name, 1, name="1")) == \
            max(count - DB_PAGE_SIZE, 0)
+
+
+def test_get_all_users_excluded_edition_paginated(database_session: Session):
+    edition_a = models.Edition(year=2022, name="edA")
+    edition_b = models.Edition(year=2023, name="edB")
+    database_session.add(edition_a)
+    database_session.add(edition_b)
+    database_session.commit()
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user_1 = models.User(name=f"User {i} - a", admin=False)
+        user_2 = models.User(name=f"User {i} - b", admin=False)
+        database_session.add(user_1)
+        database_session.add(user_2)
+        database_session.commit()
+        database_session.execute(models.user_editions.insert(), [
+            {"user_id": user_1.user_id, "edition_id": edition_a.edition_id},
+            {"user_id": user_2.user_id, "edition_id": edition_b.edition_id},
+        ])
+    database_session.commit()
+
+    a_users = users_crud.get_users_exclude_edition_page(database_session, 0, exclude_edition="edB", name="")
+    assert len(a_users) == DB_PAGE_SIZE
+    for user in a_users:
+        assert "b" not in user.name
+    assert len(users_crud.get_users_exclude_edition_page(database_session, 1, exclude_edition="edB", name="")) == \
+           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+
+    b_users = users_crud.get_users_exclude_edition_page(database_session, 0, exclude_edition="edA", name="")
+    assert len(b_users) == DB_PAGE_SIZE
+    for user in b_users:
+        assert "a" not in user.name
+    assert len(users_crud.get_users_exclude_edition_page(database_session, 1, exclude_edition="edA", name="")) == \
+           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+
+
+def test_get_all_users_excluded_edition_paginated_filter_name(database_session: Session):
+    edition_a = models.Edition(year=2022, name="edA")
+    edition_b = models.Edition(year=2023, name="edB")
+    database_session.add(edition_a)
+    database_session.add(edition_b)
+    database_session.commit()
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user_1 = models.User(name=f"User {i} - a", admin=False)
+        user_2 = models.User(name=f"User {i} - b", admin=False)
+        database_session.add(user_1)
+        database_session.add(user_2)
+        database_session.commit()
+        database_session.execute(models.user_editions.insert(), [
+            {"user_id": user_1.user_id, "edition_id": edition_a.edition_id},
+            {"user_id": user_2.user_id, "edition_id": edition_b.edition_id},
+        ])
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    a_users = users_crud.get_users_exclude_edition_page(database_session, 0, exclude_edition="edB", name="1")
+    assert len(a_users) == min(count, DB_PAGE_SIZE)
+    for user in a_users:
+        assert "b" not in user.name
+    assert len(users_crud.get_users_exclude_edition_page(database_session, 1, exclude_edition="edB", name="1")) == \
+           max(count - DB_PAGE_SIZE, 0)
+
+    b_users = users_crud.get_users_exclude_edition_page(database_session, 0, exclude_edition="edA", name="1")
+    assert len(b_users) == min(count, DB_PAGE_SIZE)
+    for user in b_users:
+        assert "a" not in user.name
+    assert len(users_crud.get_users_exclude_edition_page(database_session, 1, exclude_edition="edA", name="1")) == \
+           max(count - DB_PAGE_SIZE, 0)
+
+
+def test_get_all_users_for_edition_excluded_edition_paginated(database_session: Session):
+    edition_a = models.Edition(year=2022, name="edA")
+    edition_b = models.Edition(year=2023, name="edB")
+    database_session.add(edition_a)
+    database_session.add(edition_b)
+    database_session.commit()
+
+    correct_users = []
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user_1 = models.User(name=f"User {i} - a", admin=False)
+        user_2 = models.User(name=f"User {i} - b", admin=False)
+        database_session.add(user_1)
+        database_session.add(user_2)
+        database_session.commit()
+        database_session.execute(models.user_editions.insert(), [
+            {"user_id": user_1.user_id, "edition_id": edition_a.edition_id},
+            {"user_id": user_2.user_id, "edition_id": edition_b.edition_id},
+        ])
+        if i % 2:
+            database_session.execute(models.user_editions.insert(), [
+                {"user_id": user_1.user_id, "edition_id": edition_b.edition_id},
+            ])
+        else:
+            correct_users.append(user_1)
+
+    database_session.commit()
+
+    users = users_crud.get_users_for_edition_exclude_edition_page(database_session, 0, exclude_edition_name="edB",
+                                                                  edition_name="edA", name="")
+    assert len(users) == len(correct_users)
+    for user in users:
+        assert user in correct_users
 
 
 def test_edit_admin_status(database_session: Session):
