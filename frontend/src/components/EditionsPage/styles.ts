@@ -28,4 +28,12 @@ export const RowContainer = styled.td.attrs(() => ({
 
 export const StyledNewEditionButton = styled(Button).attrs(() => ({
     className: "ms-auto my-3",
-}))``;
+}))`
+    background-color: var(--osoc_green);
+    border-color: var(--osoc_green);
+
+    &:hover {
+        background-color: var(--osoc_orange);
+        border-color: var(--osoc_orange);
+    }
+`;

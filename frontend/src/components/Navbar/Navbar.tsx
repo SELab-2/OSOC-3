@@ -36,7 +36,12 @@ export default function Navbar() {
     // a <Route/>
     const match = matchPath({ path: "/editions/:editionId/*" }, location.pathname);
     // This is a TypeScript shortcut for 3 if-statements
-    const editionId = match && match.params && match.params.editionId;
+    let editionId = match && match.params && match.params.editionId;
+
+    // Matched /editions/new path
+    if (editionId === "new") {
+        editionId = null;
+    }
 
     // If the current URL contains an edition, use that
     // if not (eg. /editions), check SessionStorage
