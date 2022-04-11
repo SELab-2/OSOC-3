@@ -8,6 +8,8 @@
 
 .modal-body {
     background-color: var(--background_color);
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-footer {

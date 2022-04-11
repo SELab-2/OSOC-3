@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import "./DeleteEditionModal.css";
 import Form from "react-bootstrap/Form";
 import InfoMessage from "./InfoMessage";
+import Spinner from "react-bootstrap/Spinner";
 
 interface Props {
     edition: Edition;
@@ -13,31 +14,43 @@ interface Props {
 }
 
 /**
- * Create a value for the slider to be on
- */
-function createSliderValue(): number {
-    return Math.floor(Math.random() * 100);
-}
-
-/**
  * Modal shown when trying to delete an edition
  */
 export default function DeleteEditionModal(props: Props) {
-    const [requiredSliderValue, setRequiredSliderValue] = useState(createSliderValue());
+    const [disableConfirm, setDisableConfirm] = useState(true);
     const [understandClicked, setUnderstandClicked] = useState(false);
-    const [sliderValue, setSliderValue] = useState(0);
-    const disableConfirm = true;
+    const [confirmed, setConfirmed] = useState(false);
 
     function handleClose() {
         props.setShow(false);
         setUnderstandClicked(false);
-
-        // Create a new slider value
-        setRequiredSliderValue(createSliderValue());
     }
 
     function handleConfirm() {
-        props.setShow(false);
+        setConfirmed(true);
+
+        // props.setShow(false);
+        // // Force-reload the page to re-request all data related to editions
+        // // (stored in various places such as auth, ...)
+        // window.location.reload();
+    }
+
+    /**
+     * Validate the data entered into the form
+     */
+    function checkFormValid(name: string) {
+        if (name !== props.edition.name) {
+            setDisableConfirm(true);
+        } else {
+            setDisableConfirm(false);
+        }
+    }
+
+    /**
+     * Function called when the input field for the name of the edition changes
+     */
+    function handleTextfieldChange(value: string) {
+        checkFormValid(value);
     }
 
     return (
@@ -52,7 +65,7 @@ export default function DeleteEditionModal(props: Props) {
                 {/* Show checkbox screen if not clicked, else move on */}
                 {!understandClicked ? (
                     <Modal.Body>
-                        <Form>
+                        <Form onSubmit={() => {}}>
                             <InfoMessage editionName={props.edition.name} />
                             <Form.Group>
                                 <Form.Check
@@ -64,32 +77,56 @@ export default function DeleteEditionModal(props: Props) {
                             </Form.Group>
                         </Form>
                     </Modal.Body>
-                ) : (
+                ) : !confirmed ? (
+                    // Checkbox screen was passed, show the other screen now
                     <Modal.Body>
-                        <Form>
-                            <Form.Text>
-                                You didn't think it would be <i>that</i> easy, did you?
-                            </Form.Text>
+                        <Form onSubmit={() => {}}>
                             <Form.Label>
-                                Set the value of the slider below to {requiredSliderValue}%
+                                You didn't think it would be <i>that</i> easy, did you?
                             </Form.Label>
+                            <br />
+                            <br />
                             <Form.Group>
-                                <Form.Range
-                                    onChange={e => setSliderValue(Number(e.target.value))}
+                                <Form.Label>
+                                    Type the name of the edition in the field below
+                                </Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder={"Edition name"}
+                                    required
+                                    onChange={e => handleTextfieldChange(e.target.value)}
                                 />
-                                <Form.Text>{sliderValue}%</Form.Text>
                             </Form.Group>
                         </Form>
                     </Modal.Body>
+                ) : (
+                    // Delete request is being sent
+                    <Modal.Body>
+                        <h4>Deleting {props.edition.name}...</h4>
+                        <p>
+                            The request has been sent, there's no turning back now!
+                            <br /> <br />
+                            If you've changed your mind, all you can do now is hope the request
+                            fails.
+                        </p>
+                        <Spinner animation={"border"} role={"status"} className={"mx-auto my-3"} />
+                    </Modal.Body>
                 )}
-                <Modal.Footer>
-                    <Button onClick={handleClose} variant={"secondary"}>
-                        Close
-                    </Button>
-                    <Button onClick={handleConfirm} variant={"danger"} disabled={disableConfirm}>
-                        Delete Edition
-                    </Button>
-                </Modal.Footer>
+                {/* Only show footer if not yet confirmed */}
+                {!confirmed && (
+                    <Modal.Footer>
+                        <Button onClick={handleClose} variant={"secondary"}>
+                            Close
+                        </Button>
+                        <Button
+                            onClick={handleConfirm}
+                            variant={"danger"}
+                            disabled={disableConfirm}
+                        >
+                            Delete Edition
+                        </Button>
+                    </Modal.Footer>
+                )}
             </Modal>
         </div>
     );
