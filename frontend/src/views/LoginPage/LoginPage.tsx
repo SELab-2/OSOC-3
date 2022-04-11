@@ -43,7 +43,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div>
+        <div data-testid={"login-page"}>
             <LoginPageContainer>
                 <WelcomeText />
                 <LoginContainer>

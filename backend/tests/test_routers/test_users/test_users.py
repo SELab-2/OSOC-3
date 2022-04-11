@@ -381,6 +381,28 @@ def test_get_all_requests_paginated(database_session: Session, auth_client: Auth
     assert len(response.json()['requests']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
+def test_get_all_requests_paginated_filter_name(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a paginated list of requests"""
+    edition = models.Edition(year=2022, name="ed2022")
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(models.CoachRequest(user=user, edition=edition))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users/requests?page=0&user=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == min(DB_PAGE_SIZE, count)
+    response = auth_client.get("/users/requests?page=1&user=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) ==  max(count-DB_PAGE_SIZE, 0)
+
+
 def test_get_all_requests_from_edition(database_session: Session, auth_client: AuthClient):
     """Test endpoint for getting all userrequests of a given edition"""
     auth_client.admin()
@@ -437,6 +459,28 @@ def test_get_all_requests_for_edition_paginated(database_session: Session, auth_
     response = auth_client.get("/users/requests?page=1&edition_name=ed2022")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()['requests']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+
+
+def test_get_all_requests_for_edition_paginated_filter_name(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a paginated list of requests"""
+    edition = models.Edition(year=2022, name="ed2022")
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(models.CoachRequest(user=user, edition=edition))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.get("/users/requests?page=0&edition_name=ed2022&user=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == min(DB_PAGE_SIZE, count)
+    response = auth_client.get("/users/requests?page=1&edition_name=ed2022&user=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['requests']) == max(count-DB_PAGE_SIZE, 0)
 
 
 def test_accept_request(database_session, auth_client: AuthClient):

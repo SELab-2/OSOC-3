@@ -121,8 +121,8 @@ def remove_coach_all_editions(db: Session, user_id: int):
     db.commit()
 
 
-def _get_requests_query(db: Session) -> Query:
-    return db.query(CoachRequest).join(User)
+def _get_requests_query(db: Session, user_name: str = "") -> Query:
+    return db.query(CoachRequest).join(User).where(User.name.contains(user_name))
 
 
 def get_requests(db: Session) -> list[CoachRequest]:
@@ -132,34 +132,40 @@ def get_requests(db: Session) -> list[CoachRequest]:
     return _get_requests_query(db).all()
 
 
-def get_requests_page(db: Session, page: int) -> list[CoachRequest]:
+def get_requests_page(db: Session, page: int, user_name: str = "") -> list[CoachRequest]:
     """
     Get all userrequests
     """
-    return paginate(_get_requests_query(db), page).all()
+    return paginate(_get_requests_query(db, user_name), page).all()
 
 
-def _get_requests_for_edition_query(db: Session, edition: Edition) -> Query:
+def _get_requests_for_edition_query(db: Session, edition: Edition, user_name: str = "") -> Query:
     return db.query(CoachRequest)\
         .where(CoachRequest.edition_id == edition.edition_id)\
         .join(User)\
-        .join(AuthEmail, isouter=True) \
-        .join(AuthGitHub, isouter=True) \
+        .where(User.name.contains(user_name))\
+        .join(AuthEmail, isouter=True)\
+        .join(AuthGitHub, isouter=True)\
         .join(AuthGoogle, isouter=True)
 
 
-def get_requests_for_edition(db: Session, edition_name: str) -> list[CoachRequest]:
+def get_requests_for_edition(db: Session, edition_name: str = "") -> list[CoachRequest]:
     """
     Get all userrequests from a given edition
     """
     return _get_requests_for_edition_query(db, get_edition_by_name(db, edition_name)).all()
 
 
-def get_requests_for_edition_page(db: Session, edition_name: str, page: int) -> list[CoachRequest]:
+def get_requests_for_edition_page(
+        db: Session,
+        edition_name: str,
+        page: int,
+        user_name: str = ""
+) -> list[CoachRequest]:
     """
     Get all userrequests from a given edition
     """
-    return paginate(_get_requests_for_edition_query(db, get_edition_by_name(db, edition_name)), page).all()
+    return paginate(_get_requests_for_edition_query(db, get_edition_by_name(db, edition_name), user_name), page).all()
 
 
 def accept_request(db: Session, request_id: int):

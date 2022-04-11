@@ -66,15 +66,19 @@ def remove_coach_all_editions(db: Session, user_id: int):
     users_crud.remove_coach_all_editions(db, user_id)
 
 
-def get_request_list(db: Session, edition_name: str | None, page: int) -> UserRequestsResponse:
+def get_request_list(db: Session, edition_name: str | None, user_name: str | None, page: int) -> UserRequestsResponse:
     """
     Query the database for a list of all user requests
     and wrap the result in a pydantic model
     """
+
+    if user_name is None:
+        user_name = ""
+
     if edition_name is None:
-        requests = users_crud.get_requests_page(db, page)
+        requests = users_crud.get_requests_page(db, page, user_name)
     else:
-        requests = users_crud.get_requests_for_edition_page(db, edition_name, page)
+        requests = users_crud.get_requests_for_edition_page(db, edition_name, page, user_name)
 
     requests_model = []
     for request in requests:
