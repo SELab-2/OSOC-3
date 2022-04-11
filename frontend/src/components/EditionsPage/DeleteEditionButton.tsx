@@ -6,7 +6,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useAuth } from "../../contexts";
 import { Role } from "../../data/enums";
 import React, { useState } from "react";
-import DeleteEditionModal from "./DeleteEditionModal";
+import DeleteEditionModal from "./DeleteEditionModal/DeleteEditionModal";
 
 interface Props {
     edition: Edition;

@@ -17,3 +17,7 @@
 .modal-content {
     background-color: var(--osoc_blue);
 }
+
+.form-text {
+    color: white;
+}
