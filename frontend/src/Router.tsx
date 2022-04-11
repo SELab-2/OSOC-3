@@ -14,6 +14,7 @@ import {
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
+import CreateEditionPage from "./views/CreateEditionPage";
 
 /**
  * Router component to render different pages depending on the current url. Renders
@@ -47,7 +48,7 @@ export default function Router() {
                                 <Route path={""} element={<EditionsPage />} />
                                 <Route path={"new"} element={<AdminRoute />}>
                                     {/* TODO create edition page */}
-                                    <Route path={""} element={<div />} />
+                                    <Route path={""} element={<CreateEditionPage />} />
                                 </Route>
                                 <Route path={":editionId"} element={<Outlet />}>
                                     {/* TODO edition page? do we need? maybe just some nav/links? */}

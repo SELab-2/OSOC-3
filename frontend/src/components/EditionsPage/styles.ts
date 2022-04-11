@@ -8,7 +8,7 @@ export const StyledTable = styled(Table).attrs(() => ({
     bordered: true,
     hover: true,
     variant: "dark",
-    className: "m-0",
+    className: "mx-0 mt-0 mb-5",
 }))``;
 
 export const LoadingSpinner = styled(Spinner).attrs(() => ({
@@ -24,4 +24,8 @@ export const DeleteButton = styled(Button).attrs(() => ({
 
 export const RowContainer = styled.td.attrs(() => ({
     className: "p-3 d-flex",
+}))``;
+
+export const StyledNewEditionButton = styled(Button).attrs(() => ({
+    className: "ms-auto my-3",
 }))``;
