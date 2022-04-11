@@ -4,11 +4,21 @@ import { axiosInstance } from "../api";
 /**
  * Get all coaches from the given edition
  * @param edition The edition name
+ * @param name The username to filter
  * @param page
  */
-export async function getCoaches(edition: string, page: number): Promise<UsersList> {
+export async function getCoaches(edition: string, name: string, page: number): Promise<UsersList> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
+    if (name) {
+        const response = await axiosInstance.get(
+            `/users/?edition=${edition}&page=${page}&name=${name}`
+        );
+        // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
+        return response.data as UsersList;
+    }
     const response = await axiosInstance.get(`/users/?edition=${edition}&page=${page}`);
-    console.log(`got ${page}: ${response.data.users.length}`);
+    // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
     return response.data as UsersList;
 }
 

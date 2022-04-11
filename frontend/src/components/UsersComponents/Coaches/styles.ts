@@ -33,6 +33,8 @@ export const RemoveTd = styled.td`
 `;
 
 export const ListDiv = styled.div`
-    height: 500px;
+    width: 100%;
+    height: 400px;
     overflow: auto;
+    margin-top: 10px;
 `;
