@@ -86,3 +86,7 @@ export const Error = styled.div`
     width: 100%;
     margin: auto;
 `;
+
+export const RequestListContainer = styled.div`
+    height: 400px;
+`;

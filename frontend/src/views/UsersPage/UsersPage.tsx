@@ -71,6 +71,12 @@ function UsersPage() {
         getCoachesData(0, searchTerm);
     }
 
+    function coachAdded(coach: User) {
+        if (coach.name.includes(searchTerm)) {
+            setCoaches([coach].concat(coaches));
+        }
+    }
+
     if (params.editionId === undefined) {
         return <div>Error</div>;
     } else {
@@ -83,10 +89,7 @@ function UsersPage() {
                     <AdminsButton onClick={() => navigate("/admins")}>Edit Admins</AdminsButton>
                 </div>
                 <InviteUser edition={params.editionId} />
-                <PendingRequests
-                    edition={params.editionId}
-                    refreshCoaches={() => getCoachesData(0)}
-                />
+                <PendingRequests edition={params.editionId} coachAdded={coachAdded} />
                 <Coaches
                     edition={params.editionId}
                     coaches={coaches}

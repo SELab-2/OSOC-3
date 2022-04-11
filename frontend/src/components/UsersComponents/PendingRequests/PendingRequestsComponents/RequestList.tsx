@@ -9,38 +9,21 @@ import { ListDiv } from "../../Coaches/styles";
 /**
  * A list of [[RequestListItem]]s.
  * @param props.requests A list of requests which need to be shown.
- * @param props.loading Waiting for data.
- * @param props.gotData Data is received.
- * @param props.refresh A function which will be called when a request is accepted/rejected.
+ * @param props.removeRequest A function which will be called when a request is accepted/rejected.
+ * @param props.moreRequestsAvailable Boolean to indicate whether more requests can be fetched
  */
 export default function RequestList(props: {
     requests: Request[];
-    loading: boolean;
-    gotData: boolean;
-    refresh: (coachAdded: boolean) => void;
-    moreRequestAvailable: boolean;
+    removeRequest: (coachAdded: boolean, request: Request) => void;
+    moreRequestsAvailable: boolean;
     getMoreRequests: (page: number) => void;
 }) {
-    if (props.loading) {
-        return (
-            <SpinnerContainer>
-                <Spinner animation="border" />
-            </SpinnerContainer>
-        );
-    } else if (props.requests.length === 0) {
-        if (props.gotData) {
-            return <div>No requests</div>;
-        } else {
-            return null;
-        }
-    }
-
     return (
         <ListDiv>
             <InfiniteScroll
                 pageStart={0}
                 loadMore={props.getMoreRequests}
-                hasMore={props.moreRequestAvailable}
+                hasMore={props.moreRequestsAvailable}
                 loader={
                     <SpinnerContainer key={"spinner"}>
                         <Spinner animation="border" />
@@ -62,7 +45,7 @@ export default function RequestList(props: {
                             <RequestListItem
                                 key={request.requestId}
                                 request={request}
-                                refresh={props.refresh}
+                                removeRequest={props.removeRequest}
                             />
                         ))}
                     </tbody>

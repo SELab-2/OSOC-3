@@ -17,24 +17,27 @@ export interface GetRequestsResponse {
 }
 
 /**
- * Get all pending requests of a given edition
- * @param {string} edition The edition's name
+ * Get all pending requests of a given edition.
+ * @param edition The edition's name.
+ * @param name String which every request's user's name needs to contain
+ * @param page The pagenumber to fetch.
  */
 export async function getRequests(
     edition: string,
     name: string,
     page: number
 ): Promise<GetRequestsResponse> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
     if (name) {
         const response = await axiosInstance.get(
-            `/users/requests?edition=${edition}&page=${page}&name=${name}`
+            `/users/requests?edition=${edition}&page=${page}&user=${name}`
         );
-        console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
-        console.log(response.data.requests);
+        // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
         return response.data as GetRequestsResponse;
     }
     const response = await axiosInstance.get(`/users/requests?edition=${edition}&page=${page}`);
-    console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
+    // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
     return response.data as GetRequestsResponse;
 }
 
@@ -42,7 +45,9 @@ export async function getRequests(
  * Accept a coach request
  * @param {number} requestId The id of the request
  */
-export async function acceptRequest(requestId: number): Promise<Boolean> {
+export async function acceptRequest(requestId: number): Promise<boolean> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
     const response = await axiosInstance.post(`/users/requests/${requestId}/accept`);
     return response.status === 204;
 }
@@ -51,7 +56,9 @@ export async function acceptRequest(requestId: number): Promise<Boolean> {
  * Reject a coach request
  * @param {number} requestId The id of the request
  */
-export async function rejectRequest(requestId: number) {
+export async function rejectRequest(requestId: number): Promise<boolean> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
     const response = await axiosInstance.post(`/users/requests/${requestId}/reject`);
     return response.status === 204;
 }
