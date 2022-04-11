@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Collapsible from "react-collapsible";
-import { PendingRequestsContainer, Error } from "./styles";
+import { PendingRequestsContainer, Error, SearchInput } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
-import { RequestFilter, RequestList, RequestsHeader } from "./PendingRequestsComponents";
+import { RequestList, RequestsHeader } from "./PendingRequestsComponents";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -10,26 +10,37 @@ import { RequestFilter, RequestList, RequestsHeader } from "./PendingRequestsCom
  * @param props.edition The edition.
  */
 export default function PendingRequests(props: { edition: string; refreshCoaches: () => void }) {
-    const [allRequests, setAllRequests] = useState<Request[]>([]); // All requests for the given edition
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
     const [gettingRequests, setGettingRequests] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
     const [gotData, setGotData] = useState(false); // Received data
     const [open, setOpen] = useState(false); // Collapsible is open
     const [error, setError] = useState(""); // Error message
+    const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true);
 
     function refresh(coachAdded: boolean) {
-        getData();
+        // TODO
+        getData(0);
         if (coachAdded) {
             props.refreshCoaches();
         }
     }
 
-    async function getData() {
+    async function getData(page: number, filter: string | undefined = undefined) {
+        if (filter === undefined) {
+            filter = searchTerm;
+        }
         try {
-            const response = await getRequests(props.edition);
-            setAllRequests(response.requests);
-            setRequests(response.requests);
+            const response = await getRequests(props.edition, filter, page);
+            if (response.requests.length !== 25) {
+                setMoreRequestsAvailable(false);
+            }
+            if (page === 0) {
+                setRequests(response.requests);
+            } else {
+                setRequests(requests.concat(response.requests));
+            }
+
             setGotData(true);
             setGettingRequests(false);
         } catch (exception) {
@@ -41,19 +52,17 @@ export default function PendingRequests(props: { edition: string; refreshCoaches
     useEffect(() => {
         if (!gotData && !gettingRequests && !error) {
             setGettingRequests(true);
-            getData();
+            getData(0);
         }
     }, [gotData, gettingRequests, error, getData]);
 
-    const filter = (word: string) => {
-        setSearchTerm(word);
-        const newRequests: Request[] = [];
-        for (const request of allRequests) {
-            if (request.user.name.toUpperCase().includes(word.toUpperCase())) {
-                newRequests.push(request);
-            }
-        }
-        setRequests(newRequests);
+    const searchRequests = (searchTerm: string) => {
+        setGettingRequests(true);
+        setGotData(false);
+        setSearchTerm(searchTerm);
+        setRequests([]);
+        setMoreRequestsAvailable(true);
+        getData(0, searchTerm);
     };
 
     return (
@@ -63,16 +72,14 @@ export default function PendingRequests(props: { edition: string; refreshCoaches
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                <RequestFilter
-                    searchTerm={searchTerm}
-                    filter={word => filter(word)}
-                    show={allRequests.length > 0}
-                />
+                <SearchInput value={searchTerm} onChange={e => searchRequests(e.target.value)} />
                 <RequestList
                     requests={requests}
                     loading={gettingRequests}
                     gotData={gotData}
                     refresh={refresh}
+                    moreRequestAvailable={moreRequestsAvailable}
+                    getMoreRequests={getData}
                 />
                 <Error> {error} </Error>
             </Collapsible>

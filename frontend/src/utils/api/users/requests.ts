@@ -20,8 +20,21 @@ export interface GetRequestsResponse {
  * Get all pending requests of a given edition
  * @param {string} edition The edition's name
  */
-export async function getRequests(edition: string): Promise<GetRequestsResponse> {
-    const response = await axiosInstance.get(`/users/requests?edition=${edition}`);
+export async function getRequests(
+    edition: string,
+    name: string,
+    page: number
+): Promise<GetRequestsResponse> {
+    if (name) {
+        const response = await axiosInstance.get(
+            `/users/requests?edition=${edition}&page=${page}&name=${name}`
+        );
+        console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
+        console.log(response.data.requests);
+        return response.data as GetRequestsResponse;
+    }
+    const response = await axiosInstance.get(`/users/requests?edition=${edition}&page=${page}`);
+    console.log(`|page: ${page}  Search:${name}  Found: ${response.data.requests.length}`);
     return response.data as GetRequestsResponse;
 }
 
