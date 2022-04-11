@@ -6,9 +6,10 @@ from src.database.models import user_editions, User, Edition, CoachRequest, Auth
 from src.database.crud.editions import get_editions
 
 
-def _get_admins_query(db: Session) -> Query:
+def _get_admins_query(db: Session, name: str = "") -> Query:
     return db.query(User) \
         .where(User.admin) \
+        .where(User.name.contains(name)) \
         .join(AuthEmail, isouter=True) \
         .join(AuthGitHub, isouter=True) \
         .join(AuthGoogle, isouter=True)
@@ -21,15 +22,15 @@ def get_admins(db: Session) -> list[User]:
     return _get_admins_query(db).all()
 
 
-def get_admins_page(db: Session, page: int) -> list[User]:
+def get_admins_page(db: Session,  page: int, name: str = "") -> list[User]:
     """
     Get all admins paginated
     """
-    return paginate(_get_admins_query(db), page).all()
+    return paginate(_get_admins_query(db, name), page).all()
 
 
-def _get_users_query(db: Session) -> Query:
-    return db.query(User)
+def _get_users_query(db: Session, name: str = "") -> Query:
+    return db.query(User).where(User.name.contains(name))
 
 
 def get_users(db: Session) -> list[User]:
@@ -37,9 +38,9 @@ def get_users(db: Session) -> list[User]:
     return _get_users_query(db).all()
 
 
-def get_users_page(db: Session, page: int) -> list[User]:
+def get_users_page(db: Session, page: int, name: str = "") -> list[User]:
     """Get all users (coaches + admins) paginated"""
-    return paginate(_get_users_query(db), page).all()
+    return paginate(_get_users_query(db, name), page).all()
 
 
 def get_user_edition_names(db: Session, user: User) -> list[str]:
@@ -58,8 +59,12 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def _get_users_for_edition_query(db: Session, edition: Edition) -> Query:
-    return db.query(User).join(user_editions).filter(user_editions.c.edition_id == edition.edition_id)
+def _get_users_for_edition_query(db: Session, edition: Edition, name = "") -> Query:
+    return db\
+        .query(User)\
+        .where(User.name.contains(name))\
+        .join(user_editions)\
+        .filter(user_editions.c.edition_id == edition.edition_id)
 
 
 def get_users_for_edition(db: Session, edition_name: str) -> list[User]:
@@ -69,11 +74,11 @@ def get_users_for_edition(db: Session, edition_name: str) -> list[User]:
     return _get_users_for_edition_query(db, get_edition_by_name(db, edition_name)).all()
 
 
-def get_users_for_edition_page(db: Session, edition_name: str, page: int) -> list[User]:
+def get_users_for_edition_page(db: Session, edition_name: str, page: int, name = "") -> list[User]:
     """
     Get all coaches from the given edition
     """
-    return paginate(_get_users_for_edition_query(db, get_edition_by_name(db, edition_name)), page).all()
+    return paginate(_get_users_for_edition_query(db, get_edition_by_name(db, edition_name), name), page).all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):
