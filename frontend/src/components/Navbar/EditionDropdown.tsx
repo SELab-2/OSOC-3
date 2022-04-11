@@ -2,11 +2,10 @@ import React from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem } from "./styles";
 import { useNavigate } from "react-router-dom";
+import { getCurrentEdition } from "../../utils/session-storage/current-edition";
 
 interface Props {
     editions: string[];
-    currentEdition: string;
-    setCurrentEdition: (edition: string) => void;
 }
 
 /**
@@ -15,6 +14,8 @@ interface Props {
 export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
     const navigate = useNavigate();
+
+    const currentEdition = getCurrentEdition();
 
     /**
      * Change the route based on the edition
@@ -32,7 +33,7 @@ export default function EditionDropdown(props: Props) {
         navItems.push(
             <StyledDropdownItem
                 key={edition}
-                active={props.currentEdition === edition}
+                active={currentEdition === edition}
                 onClick={() => handleSelect(edition)}
             >
                 {edition}
@@ -40,5 +41,5 @@ export default function EditionDropdown(props: Props) {
         );
     });
 
-    return <NavDropdown title={`Edition ${props.currentEdition}`}>{navItems}</NavDropdown>;
+    return <NavDropdown title={`Edition ${currentEdition}`}>{navItems}</NavDropdown>;
 }

@@ -3,19 +3,26 @@ import { BSNavbar, StyledDropdownItem } from "./styles";
 import { useAuth } from "../../contexts";
 import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
-import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import EditionDropdown from "./EditionDropdown";
 import "./Navbar.css";
 import LogoutButton from "./LogoutButton";
+import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage/current-edition";
+import { useParams } from "react-router-dom";
 
 export default function Navbar() {
     const { isLoggedIn, editions } = useAuth();
-    const [currentEdition, setCurrentEdition] = useState(editions[0]);
+    const params = useParams();
 
-    useEffect(() => {
-        setCurrentEdition(editions[0]);
-    }, [editions]);
+    // If the current URL contains an edition, use that
+    // if not (eg. /editions), check SessionStorage
+    // otherwise, use the most-recent edition from the auth response
+    const currentEdition = params.editionId ? params.editionId : getCurrentEdition() || editions[0];
+
+    // Set the value of the new edition in SessionStorage if useful
+    if (currentEdition) {
+        setCurrentEdition(currentEdition);
+    }
 
     // Don't render Navbar if not logged in
     if (!isLoggedIn) {
@@ -30,11 +37,7 @@ export default function Navbar() {
                 <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
                 <BSNavbar.Collapse id={"responsive-navbar-nav"}>
                     <Nav className={"ms-auto"}>
-                        <EditionDropdown
-                            editions={editions}
-                            currentEdition={currentEdition}
-                            setCurrentEdition={setCurrentEdition}
-                        />
+                        <EditionDropdown editions={editions} />
                         <Nav.Link href={"/editions"}>Editions</Nav.Link>
                         <Nav.Link href={`/editions/${currentEdition}/projects`}>Projects</Nav.Link>
                         <Nav.Link href={`/editions/${currentEdition}/students`}>Students</Nav.Link>
