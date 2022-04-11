@@ -4,6 +4,7 @@ import React, { useContext, ReactNode, useState } from "react";
 import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
 import { User } from "../data/interfaces";
 import { setBearerToken } from "../utils/api";
+import { setCurrentEdition } from "../utils/session-storage/current-edition";
 
 /**
  * Interface that holds the data stored in the AuthContext.
@@ -114,4 +115,7 @@ export function logOut(authContext: AuthContextState) {
     authContext.setRole(null);
     authContext.setEditions([]);
     authContext.setToken(null);
+
+    // Remove current edition from SessionStorage
+    setCurrentEdition(null);
 }
