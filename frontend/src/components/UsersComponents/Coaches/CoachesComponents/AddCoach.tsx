@@ -1,41 +1,98 @@
-import { User } from "../../../../utils/api/users/users";
+import { getUsers, User } from "../../../../utils/api/users/users";
 import React, { useState } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
-import { Button, Modal } from "react-bootstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { Button, Modal, Spinner } from "react-bootstrap";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { Error } from "../../PendingRequests/styles";
 import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/styles";
 
 /**
  * A button and popup to add a new coach to the given edition.
  * The popup consists of a field to search for a user.
- * @param props.users A list of all users which can be added as coach to the edition.
  * @param props.edition The edition to which users need to be added.
- * @param props.refresh A function which will be called when a user is added as coach.
+ * @param props.coachAdded A function which will be called when a user is added as coach.
  */
-export default function AddCoach(props: { users: User[]; edition: string; refresh: () => void }) {
+export default function AddCoach(props: { edition: string; coachAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [gettingData, setGettingData] = useState(false); // Waiting for data
+    const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
+    const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+
+    async function getData(page: number, filter: string | undefined = undefined) {
+        if (filter === undefined) {
+            filter = searchTerm;
+        }
+        setGettingData(true);
+        setError("");
+        try {
+            const response = await getUsers(props.edition, filter, page);
+            if (page === 0) {
+                setUsers(response.users);
+            } else {
+                setUsers(users.concat(response.users));
+            }
+
+            setGettingData(false);
+        } catch (exception) {
+            setError("Oops, something went wrong...");
+            setGettingData(false);
+        }
+    }
+
+    function filterData(searchTerm: string) {
+        setSearchTerm(searchTerm);
+        setUsers([]);
+        getData(0, searchTerm);
+    }
 
     const handleClose = () => {
         setSelected(undefined);
+        setError("");
         setShow(false);
     };
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        setShow(true);
+    };
 
-    async function addCoach(userId: number) {
+    async function addCoach(user: User) {
+        setLoading(true);
+        setError("");
+        let success = false;
         try {
-            const added = await addCoachToEdition(userId, props.edition);
-            if (added) {
-                props.refresh();
-                handleClose();
-            } else {
+            success = await addCoachToEdition(user.userId, props.edition);
+            if (!success) {
                 setError("Something went wrong. Failed to add coach");
             }
         } catch (error) {
             setError("Something went wrong. Failed to add coach");
         }
+        setLoading(false);
+        if (success) {
+            props.coachAdded(user);
+            handleClose();
+        }
+    }
+
+    let addButton;
+    if (loading) {
+        addButton = <Spinner animation="border" />;
+    } else {
+        addButton = (
+            <Button
+                variant="primary"
+                onClick={() => {
+                    if (selected !== undefined) {
+                        addCoach(selected);
+                    }
+                }}
+                disabled={selected === undefined}
+            >
+                Add {selected?.name} as coach
+            </Button>
+        );
     }
 
     return (
@@ -50,30 +107,23 @@ export default function AddCoach(props: { users: User[]; edition: string; refres
                         <Modal.Title>Add Coach</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Typeahead
+                        <AsyncTypeahead
+                            filterBy={["name"]}
+                            id="non-coach-users"
+                            isLoading={gettingData}
+                            labelKey="name"
+                            minLength={1}
+                            onSearch={filterData}
+                            options={users}
+                            placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
+                                setError("");
                             }}
-                            id="non-coach-users"
-                            options={props.users}
-                            labelKey="name"
-                            filterBy={["name"]}
-                            emptyLabel="No users found."
-                            placeholder={"user's name"}
                         />
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                if (selected !== undefined) {
-                                    addCoach(selected.userId);
-                                }
-                            }}
-                            disabled={selected === undefined}
-                        >
-                            Add {selected?.name} as coach
-                        </Button>
+                        {addButton}
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>

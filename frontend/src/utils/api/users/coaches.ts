@@ -47,6 +47,8 @@ export async function removeCoachFromAllEditions(userId: number): Promise<boolea
  * @param {string} edition The edition's name
  */
 export async function addCoachToEdition(userId: number, edition: string): Promise<boolean> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
     const response = await axiosInstance.post(`/users/${userId}/editions/${edition}`);
     return response.status === 204;
 }

@@ -4,7 +4,7 @@ import { UsersPageDiv, AdminsButton, UsersHeader } from "./styles";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/PendingRequests";
-import { getUsers, User } from "../../utils/api/users/users";
+import { User } from "../../utils/api/users/users";
 import { getCoaches } from "../../utils/api/users/coaches";
 
 /**
@@ -12,7 +12,6 @@ import { getCoaches } from "../../utils/api/users/coaches";
  */
 function UsersPage() {
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the edition
-    const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [gotData, setGotData] = useState(false); // Received data
     const [error, setError] = useState(""); // Error message
@@ -38,15 +37,6 @@ function UsersPage() {
             } else {
                 setCoaches(coaches.concat(coachResponse.users));
             }
-
-            const usersResponse = await getUsers();
-            const users: User[] = [];
-            for (const user of usersResponse.users) {
-                if (!coachResponse.users.some(e => e.userId === user.userId)) {
-                    users.push(user);
-                }
-            }
-            setUsers(users);
 
             setGotData(true);
             setGettingData(false);
@@ -93,7 +83,6 @@ function UsersPage() {
                 <Coaches
                     edition={params.editionId}
                     coaches={coaches}
-                    users={users}
                     refresh={() => getCoachesData(0)}
                     gotData={gotData}
                     gettingData={gettingData}
@@ -102,6 +91,7 @@ function UsersPage() {
                     searchCoaches={filterCoachesData}
                     moreCoachesAvailable={moreCoachesAvailable}
                     searchTerm={searchTerm}
+                    coachAdded={coachAdded}
                 />
             </UsersPageDiv>
         );

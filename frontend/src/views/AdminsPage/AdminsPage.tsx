@@ -22,7 +22,7 @@ export default function AdminsPage() {
             setAllAdmins(response.users);
             setAdmins(response.users);
 
-            const usersResponse = await getUsers();
+            const usersResponse = await getUsers("", "", 0);
             const users = [];
             for (const user of usersResponse.users) {
                 if (!response.users.some(e => e.userId === user.userId)) {

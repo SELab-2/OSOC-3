@@ -10,7 +10,6 @@ import { Spinner } from "react-bootstrap";
  * This includes a searchfield and the option to remove and add coaches.
  * @param props.edition The edition of which coaches need to be shown.
  * @param props.coaches The list of all coaches of the current edition.
- * @param props.users A list of all users who can be added as coach.
  * @param props.refresh A function which will be called when a coach is added/removed.
  * @param props.getMoreCoaches A function to load more coaches.
  * @param props.gotData All data is received.
@@ -22,7 +21,6 @@ import { Spinner } from "react-bootstrap";
 export default function Coaches(props: {
     edition: string;
     coaches: User[];
-    users: User[];
     refresh: () => void;
     getMoreCoaches: (page: number) => void;
     searchCoaches: (word: string) => void;
@@ -31,6 +29,7 @@ export default function Coaches(props: {
     error: string;
     moreCoachesAvailable: boolean;
     searchTerm: string;
+    coachAdded: (user: User) => void;
 }) {
     let table;
     if (props.coaches.length === 0) {
@@ -66,7 +65,7 @@ export default function Coaches(props: {
                 value={props.searchTerm}
                 onChange={e => props.searchCoaches(e.target.value)}
             />
-            <AddCoach users={props.users} edition={props.edition} refresh={props.refresh} />
+            <AddCoach edition={props.edition} coachAdded={props.coachAdded} />
             {table}
         </CoachesContainer>
     );
