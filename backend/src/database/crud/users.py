@@ -82,7 +82,7 @@ def get_users_for_edition_page(db: Session, edition_name: str, page: int, name="
 
 
 def get_users_for_edition_exclude_edition_page(db: Session, page: int, exclude_edition_name: str, edition_name: str,
-                                               name: str):
+                                               name: str) -> list[User]:
     """
     Get all coaches from the given edition except those who are coach in the excluded edition
     """
@@ -98,7 +98,7 @@ def get_users_for_edition_exclude_edition_page(db: Session, page: int, exclude_e
         , page).all()
 
 
-def get_users_exclude_edition_page(db: Session, page: int, exclude_edition: str, name: str):
+def get_users_exclude_edition_page(db: Session, page: int, exclude_edition: str, name: str) -> list[User]:
     """
     Get all users who are not coach in the given edition
     """
@@ -109,7 +109,6 @@ def get_users_exclude_edition_page(db: Session, page: int, exclude_edition: str,
         db
             .query(User)
             .where(User.name.contains(name))
-            .join(user_editions)
             .filter(
                 User.user_id.not_in(
                     db.query(user_editions.c.user_id).where(user_editions.c.edition_id == edition.edition_id)
