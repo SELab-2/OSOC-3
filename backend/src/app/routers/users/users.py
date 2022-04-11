@@ -16,16 +16,17 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 async def get_users(
         admin: bool = Query(False),
         edition: str | None = Query(None),
+        exclude_edition: str | None = Query(None),
         name: str | None = Query(None),
         page: int = 0,
         db: Session = Depends(get_session)):
     """
     Get users
 
-    When the admin parameter is True, the edition parameter will have no effect.
+    When the admin parameter is True, the edition and exclude_edition parameter will have no effect.
     Since admins have access to all editions.
     """
-    return logic.get_users_list(db, admin, edition, name, page)
+    return logic.get_users_list(db, admin, edition, exclude_edition, name, page)
 
 
 @users_router.get("/current", response_model=UserData)

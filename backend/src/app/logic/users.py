@@ -9,6 +9,7 @@ def get_users_list(
         db: Session,
         admin: bool,
         edition_name: str | None,
+        exclude_edition: str | None,
         name: str | None,
         page: int
 ) -> UsersListResponse:
@@ -22,10 +23,17 @@ def get_users_list(
     if admin:
         users_orm = users_crud.get_admins_page(db, page, name)
     else:
-        if edition_name is None:
-            users_orm = users_crud.get_users_page(db, page, name)
+        if exclude_edition is None:
+            if edition_name is None:
+                users_orm = users_crud.get_users_page(db, page, name)
+            else :
+                users_orm = users_crud.get_users_for_edition_page(db, edition_name, page, name)
         else:
-            users_orm = users_crud.get_users_for_edition_page(db, edition_name, page, name)
+            if edition_name is None:
+                users_orm = users_crud.get_users_exclude_edition_page(db, page, exclude_edition, name)
+            else:
+                users_orm = users_crud.get_users_for_edition_exclude_edition_page(db, page, exclude_edition,
+                                                                                  edition_name, name)
 
     users = []
     for user in users_orm:
