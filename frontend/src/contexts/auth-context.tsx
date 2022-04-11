@@ -31,7 +31,7 @@ function authDefaultState(): AuthContextState {
         role: null,
         setRole: (_: Role | null) => {},
         userId: null,
-        setUserId: (value: number | null) => {},
+        setUserId: (_: number | null) => {},
         token: getToken(),
         setToken: (_: string | null) => {},
         editions: [],
@@ -39,7 +39,7 @@ function authDefaultState(): AuthContextState {
     };
 }
 
-const AuthContext = React.createContext<AuthContextState>(authDefaultState());
+export const AuthContext = React.createContext<AuthContextState>(authDefaultState());
 
 /**
  * Custom React hook to use our authentication context.
