@@ -14,7 +14,11 @@ export default function AlumniFilter({
                 type="checkbox"
                 name="alumniFilter"
                 label="Only alumni"
-                onChange={e => setAlumniFilter(e.target.checked)}
+                checked={alumniFilter}
+                onChange={e => {
+                    setAlumniFilter(e.target.checked);
+                    e.target.checked = alumniFilter;
+                }}
             />
         </div>
     );

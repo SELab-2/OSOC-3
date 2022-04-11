@@ -24,7 +24,10 @@ export default function NameFilter({
                     type="text"
                     name="nameFilter"
                     placeholder="Search student..."
-                    onChange={e => setNameFilter(e.target.value)}
+                    value={nameFilter}
+                    onChange={e => {
+                        setNameFilter(e.target.value);
+                    }}
                 />
             </FilterStudentNameInputContainer>
         </FilterStudentName>

@@ -14,7 +14,11 @@ export default function StudentCoachVolunteerFilter({
                 type="checkbox"
                 name="studentCoachVolunteerFilter"
                 label="Only student coach volunteer"
-                onChange={e => setStudentCoachVolunteerFilter(e.target.checked)}
+                checked={studentCoachVolunteerFilter}
+                onChange={e => {
+                    setStudentCoachVolunteerFilter(e.target.checked);
+                    e.target.checked = studentCoachVolunteerFilter;
+                }}
             />
         </div>
     );

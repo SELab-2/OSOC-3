@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Props {
     name: string;
+    amountOfSuggestions: number;
 }
 
 export default function StudentCard(props: Props) {
@@ -25,7 +26,9 @@ export default function StudentCard(props: Props) {
                     <CardVerticalContainer>
                         <CardHorizontalContainer>
                             <CardStudentName>{props.name}</CardStudentName>
-                            <CardAmountSuggestions>6</CardAmountSuggestions>
+                            <CardAmountSuggestions>
+                                {props.amountOfSuggestions}
+                            </CardAmountSuggestions>
                         </CardHorizontalContainer>
                         <CardSuggestionBar />
                     </CardVerticalContainer>

@@ -17,7 +17,7 @@ export const StudentListTitle = styled.span`
 `;
 
 export const StudentListLinebreak = styled.div`
-    height: 5px;
+    height: 1px;
     background-color: white;
     width: 90%;
     align-self: center;
@@ -41,7 +41,7 @@ export const FilterStudentNameLabelContainer = styled.div`
 `;
 
 export const FilterStudentNameLabel = styled.span`
-    color: var(--osoc_blue);
+    color: white;
     width: 100%;
 `;
 
@@ -69,7 +69,7 @@ export const FilterRolesLabelContainer = styled.div`
 `;
 
 export const FilterRolesLabel = styled.span`
-    color: var(--osoc_blue);
+    color: white;
     width: 100%;
 `;
 
@@ -87,4 +87,23 @@ export const FilterResetButton = styled.button`
     border-radius: 10px;
     color: white;
     margin-bottom: 5px;
+`;
+
+export const FilterApplyButton = styled.button`
+    width: 50%;
+    align-self: center;
+    border: none;
+    height: 3vh;
+    background-color: var(--osoc_green);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 5px;
+    margin-right: 10px;
+`;
+
+export const FilterControls = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    width: 80%;
 `;

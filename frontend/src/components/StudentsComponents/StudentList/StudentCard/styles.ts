@@ -57,5 +57,6 @@ export const CardStudentName = styled.p`
 
 export const CardAmountSuggestions = styled.p`
     font-size: 20px;
-    margin-left: 5%;
+    margin-left: 7%;
+    margin-right: 5%;
 `;

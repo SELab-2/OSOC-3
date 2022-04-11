@@ -3,16 +3,28 @@ import StudentList from "../StudentList";
 import { Form } from "react-bootstrap";
 import {
     StudentListSideMenu,
-    FilterResetButton,
     StudentListTitle,
     StudentListLinebreak,
+    FilterControls,
 } from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
 import RolesFilter from "./RolesFilter/RolesFilter";
+import "./StudentListFilters.css";
+import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
+import ApplyFilterButton from "./ApplyFilterButton/ApplyFilterButton";
 
-export default function StudentListFilters() {
+interface Student {
+    name: string;
+    amountOfSuggestions: number;
+}
+
+interface Props {
+    students: Student[];
+}
+
+export default function StudentListFilters(props: Props) {
     const [nameFilter, setNameFilter] = useState("");
     const [rolesFilter, setRolesFilter] = useState<number[]>([]);
     const [alumniFilter, setAlumniFilter] = useState(false);
@@ -33,8 +45,15 @@ export default function StudentListFilters() {
                 />
                 <Form.Check type="checkbox" label="Only available students" />
             </Form.Group>
-            <FilterResetButton>Reset filters</FilterResetButton>
-            <StudentList />
+            <FilterControls>
+                <ApplyFilterButton />
+                <ResetFiltersButton
+                    setNameFilter={setNameFilter}
+                    setAlumniFilter={setAlumniFilter}
+                    setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                />
+            </FilterControls>
+            <StudentList students={props.students} />
         </StudentListSideMenu>
     );
 }

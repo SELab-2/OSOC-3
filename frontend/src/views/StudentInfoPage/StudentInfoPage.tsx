@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./StudentInfoPage.css";
-import StudentsPage from "../StudentsPage";
+import { StudentListFilters } from "../../components/StudentsComponents";
+import { getStudents } from "../../utils/api/students";
+
+interface Student {
+    name: string;
+    amountOfSuggestions: number;
+}
 
 function StudentInfoPage() {
+    const [students, setStudents] = useState<Student[]>([]);
+
+    async function callGetStudents() {
+        try {
+            const response = await getStudents();
+            setStudents(response);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        callGetStudents();
+    }, []);
+
     return (
         <div className="student-info-page">
-            <StudentsPage />
+            <StudentListFilters students={students} />
             <button className="remove-student">Remove Student</button>
             <div className="student-information">
                 <div className="fullname">
