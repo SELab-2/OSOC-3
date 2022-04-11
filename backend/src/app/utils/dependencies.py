@@ -21,8 +21,8 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
     return get_edition_by_name(database, edition_name)
 
 
-def check_latest_edition(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)) -> Edition:
-    """Checks if the given edition is the latest one (others are read-only)"""
+def get_latest_edition(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)) -> Edition:
+    """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
     latest = latest_edition(database)
     if edition != latest:
         raise ReadOnlyEditionException
