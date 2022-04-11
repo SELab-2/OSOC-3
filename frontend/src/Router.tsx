@@ -2,8 +2,9 @@ import React from "react";
 import { Container, ContentWrapper } from "./app.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
-import { useAuth } from "./contexts/auth-context";
+import { useAuth } from "./contexts";
 import {
+    EditionsPage,
     LoginPage,
     PendingPage,
     ProjectsPage,
@@ -43,8 +44,7 @@ export default function Router() {
                                 <Route path={""} element={<div />} />
                             </Route>
                             <Route path={"/editions"} element={<PrivateRoute />}>
-                                {/* TODO editions page */}
-                                <Route path={""} element={<div />} />
+                                <Route path={""} element={<EditionsPage />} />
                                 <Route path={"new"} element={<AdminRoute />}>
                                     {/* TODO create edition page */}
                                     <Route path={""} element={<div />} />

@@ -99,11 +99,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
  * Set the user's login data in the AuthContext
  */
 export function logIn(user: User, token: string | null, authContext: AuthContextState) {
-    authContext.setIsLoggedIn(true);
     authContext.setUserId(user.userId);
     authContext.setRole(user.admin ? Role.ADMIN : Role.COACH);
     authContext.setEditions(user.editions);
     authContext.setToken(token);
+    authContext.setIsLoggedIn(true);
 }
 
 /**
