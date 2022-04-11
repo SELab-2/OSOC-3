@@ -6,6 +6,11 @@ import "./DeleteEditionModal.css";
 import Form from "react-bootstrap/Form";
 import InfoMessage from "./InfoMessage";
 import Spinner from "react-bootstrap/Spinner";
+import { deleteEdition } from "../../../utils/api/editions";
+import {
+    getCurrentEdition,
+    setCurrentEdition,
+} from "../../../utils/session-storage/current-edition";
 
 interface Props {
     edition: Edition;
@@ -26,13 +31,29 @@ export default function DeleteEditionModal(props: Props) {
         setUnderstandClicked(false);
     }
 
-    function handleConfirm() {
+    /**
+     * Confirm the deletion of this edition
+     */
+    async function handleConfirm() {
+        // Show confirmation text while the request is being sent
         setConfirmed(true);
 
-        // props.setShow(false);
-        // // Force-reload the page to re-request all data related to editions
-        // // (stored in various places such as auth, ...)
-        // window.location.reload();
+        // Delete the request
+        const statusCode = await deleteEdition(props.edition.name);
+
+        // Hide the modal
+        props.setShow(false);
+
+        if (statusCode === 204) {
+            // Remove the edition as current
+            if (getCurrentEdition() === props.edition.name) {
+                setCurrentEdition(null);
+            }
+
+            // Force-reload the page to re-request all data related to editions
+            // (stored in various places such as auth, ...)
+            window.location.reload();
+        }
     }
 
     /**
@@ -47,7 +68,7 @@ export default function DeleteEditionModal(props: Props) {
     }
 
     /**
-     * Function called when the input field for the name of the edition changes
+     * Called when the input field for the name of the edition changes
      */
     function handleTextfieldChange(value: string) {
         checkFormValid(value);
@@ -60,12 +81,14 @@ export default function DeleteEditionModal(props: Props) {
         <div onClick={e => e.stopPropagation()}>
             <Modal show={props.show} backdrop={"static"} onHide={handleClose} variant={"dark"}>
                 <Modal.Header>
-                    <Modal.Title>Easy, partner!</Modal.Title>
+                    <Modal.Title>
+                        {confirmed ? `Deleting ${props.edition.name}...` : "Not so fast!"}
+                    </Modal.Title>
                 </Modal.Header>
-                {/* Show checkbox screen if not clicked, else move on */}
                 {!understandClicked ? (
+                    // Show checkbox screen/information text
                     <Modal.Body>
-                        <Form onSubmit={() => {}}>
+                        <Form>
                             <InfoMessage editionName={props.edition.name} />
                             <Form.Group>
                                 <Form.Check
@@ -80,7 +103,7 @@ export default function DeleteEditionModal(props: Props) {
                 ) : !confirmed ? (
                     // Checkbox screen was passed, show the other screen now
                     <Modal.Body>
-                        <Form onSubmit={() => {}}>
+                        <Form>
                             <Form.Label>
                                 You didn't think it would be <i>that</i> easy, did you?
                             </Form.Label>
@@ -102,12 +125,10 @@ export default function DeleteEditionModal(props: Props) {
                 ) : (
                     // Delete request is being sent
                     <Modal.Body>
-                        <h4>Deleting {props.edition.name}...</h4>
+                        <h4>There's no turning back now!</h4>
                         <p>
-                            The request has been sent, there's no turning back now!
-                            <br /> <br />
-                            If you've changed your mind, all you can do now is hope the request
-                            fails.
+                            The request has been sent. If you've changed your mind, all you can do
+                            now is hope the request fails.
                         </p>
                         <Spinner animation={"border"} role={"status"} className={"mx-auto my-3"} />
                     </Modal.Body>
