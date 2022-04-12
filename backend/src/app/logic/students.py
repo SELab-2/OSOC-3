@@ -1,11 +1,15 @@
+from ast import Return
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.app.schemas.students import NewDecision
-from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students, get_emails
 from src.database.crud.skills import get_skills_by_ids
+from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students, get_emails
+from src.database.crud.suggestions import get_suggestions_of_student_by_type
+from src.database.enums import DecisionEnum
 from src.database.models import Edition, Student, Skill, DecisionEmail
-from src.app.schemas.students import ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList
+from src.app.schemas.students import (
+    ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList, Student as StudentModel)
 
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
@@ -26,9 +30,22 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
             return ReturnStudentList(students=[])
     else:
         skills = []
-    students = get_students(db, edition, first_name=commons.first_name,
-                            last_name=commons.last_name, alumni=commons.alumni,
-                            student_coach=commons.student_coach, skills=skills)
+    students_orm = get_students(db, edition, first_name=commons.first_name,
+                                last_name=commons.last_name, alumni=commons.alumni,
+                                student_coach=commons.student_coach, skills=skills)
+
+    students: list[StudentModel] = []
+    for student in students_orm:
+        students.append(student)
+        nr_of_yes_suggestions = len(get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.YES))
+        nr_of_no_suggestions = len(get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.NO))
+        nr_of_maybe_suggestions = len(get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.MAYBE))
+        students[-1].nr_of_suggestions = {'yes': nr_of_yes_suggestions,
+                                         'no': nr_of_no_suggestions, 
+                                         'maybe': nr_of_maybe_suggestions}
     return ReturnStudentList(students=students)
 
 
