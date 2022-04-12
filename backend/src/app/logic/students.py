@@ -9,7 +9,8 @@ from src.database.crud.suggestions import get_suggestions_of_student_by_type
 from src.database.enums import DecisionEnum
 from src.database.models import Edition, Student, Skill, DecisionEmail
 from src.app.schemas.students import (
-    ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList, Student as StudentModel)
+    ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList,
+    Student as StudentModel, Suggestions as SuggestionsModel)
 
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
@@ -43,9 +44,8 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
             db, student.student_id, DecisionEnum.NO))
         nr_of_maybe_suggestions = len(get_suggestions_of_student_by_type(
             db, student.student_id, DecisionEnum.MAYBE))
-        students[-1].nr_of_suggestions = {'yes': nr_of_yes_suggestions,
-                                         'no': nr_of_no_suggestions, 
-                                         'maybe': nr_of_maybe_suggestions}
+        students[-1].nr_of_suggestions = SuggestionsModel(
+            yes=nr_of_yes_suggestions, no=nr_of_no_suggestions, maybe=nr_of_maybe_suggestions)
     return ReturnStudentList(students=students)
 
 
