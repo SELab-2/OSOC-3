@@ -15,7 +15,7 @@ project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tag
 
 
 @project_students_router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                                dependencies=[Depends(require_coach), Depends(get_latest_edition)])
+                                dependencies=[Depends(require_coach)])
 async def remove_student_from_project(student_id: int, db: Session = Depends(get_session),
                                       project: Project = Depends(get_project)):
     """

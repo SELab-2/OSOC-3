@@ -46,7 +46,7 @@ async def get_conflicts(db: Session = Depends(get_session), edition: Edition = D
 
 
 @projects_router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                        dependencies=[Depends(require_admin), Depends(get_latest_edition)])
+                        dependencies=[Depends(require_admin)])
 async def delete_project(project_id: int, db: Session = Depends(get_session)):
     """
     Delete a specific project.
