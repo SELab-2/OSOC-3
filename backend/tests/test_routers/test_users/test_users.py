@@ -246,14 +246,14 @@ def test_get_all_users_excluded_edition_paginated(database_session: Session, aut
     for user in a_users:
         assert "b" not in user["name"]
     assert len(auth_client.get(f"/users?page=1&exclude_edition=edB").json()["users"]) == \
-           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1  # auth_client is not a coach
 
     b_users = auth_client.get(f"/users?page=0&exclude_edition=edA").json()["users"]
     assert len(b_users) == DB_PAGE_SIZE
     for user in b_users:
         assert "a" not in user["name"]
     assert len(auth_client.get(f"/users?page=1&exclude_edition=edA").json()["users"]) == \
-           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+           round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1  # auth_client is not a coach
 
 
 def test_get_all_users_excluded_edition_paginated_filter_name(database_session: Session, auth_client: AuthClient):
