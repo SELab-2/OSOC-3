@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, ContentWrapper } from "./app.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { AdminRoute, Footer, NavBar, PrivateRoute } from "./components";
+import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
 import { useAuth } from "./contexts/auth-context";
 import {
     LoginPage,
@@ -24,7 +24,7 @@ export default function Router() {
     return (
         <BrowserRouter>
             <Container>
-                {isLoggedIn && <NavBar />}
+                <Navbar />
                 <ContentWrapper>
                     {isLoggedIn === null ? (
                         // Busy verifying the access token

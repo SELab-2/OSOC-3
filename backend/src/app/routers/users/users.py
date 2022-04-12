@@ -34,7 +34,7 @@ async def get_current_user(db: Session = Depends(get_session), user: UserDB = De
     user_data = user_model_to_schema(user).__dict__
     user_data["editions"] = logic.get_user_editions(db, user)
 
-    return user
+    return user_data
 
 
 @users_router.patch("/{user_id}", status_code=204, dependencies=[Depends(require_admin)])
