@@ -36,7 +36,11 @@ export async function getInviteLink(edition: string, email: string): Promise<Mai
 /**
  * Get all users who are not coach in edition
  */
-export async function getUsers(edition: string, name: string, page: number): Promise<UsersList> {
+export async function getUsersExcludeEdition(
+    edition: string,
+    name: string,
+    page: number
+): Promise<UsersList> {
     // eslint-disable-next-line promise/param-names
     // await new Promise(r => setTimeout(r, 2000));
     if (name) {
@@ -49,5 +53,21 @@ export async function getUsers(edition: string, name: string, page: number): Pro
     }
     const response = await axiosInstance.get(`/users/?exclude_edition=${edition}&page=${page}`);
     console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
+    return response.data as UsersList;
+}
+
+/**
+ * Get all users who are not admin
+ */
+export async function getUsersNonAdmin(name: string, page: number): Promise<UsersList> {
+    // eslint-disable-next-line promise/param-names
+    // await new Promise(r => setTimeout(r, 2000));
+    if (name) {
+        const response = await axiosInstance.get(`/users/?page=${page}&admin=false&name=${name}`);
+        console.log(`|page: ${page}  Found: ${response.data.users.length}`);
+        return response.data as UsersList;
+    }
+    const response = await axiosInstance.get(`/users/?admin=false&page=${page}`);
+    console.log(`|page: ${page}  Found: ${response.data.users.length}`);
     return response.data as UsersList;
 }

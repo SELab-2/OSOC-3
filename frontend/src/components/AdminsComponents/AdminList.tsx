@@ -18,6 +18,8 @@ export default function AdminList(props: {
     loading: boolean;
     gotData: boolean;
     refresh: () => void;
+    getMoreAdmins: (page: number) => void;
+    moreAdminsAvailable: boolean;
 }) {
     if (props.loading) {
         return (

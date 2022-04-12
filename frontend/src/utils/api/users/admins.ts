@@ -4,8 +4,14 @@ import { axiosInstance } from "../api";
 /**
  * Get all admins
  */
-export async function getAdmins(): Promise<UsersList> {
-    const response = await axiosInstance.get(`/users?admin=true`);
+export async function getAdmins(page: number, name: string): Promise<UsersList> {
+    if (name) {
+        const response = await axiosInstance.get(`/users?page=${page}&admin=true&name=${name}`);
+        // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
+        return response.data as UsersList;
+    }
+    const response = await axiosInstance.get(`/users?page=${page}&admin=true`);
+    // console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
     return response.data as UsersList;
 }
 

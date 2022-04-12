@@ -1,4 +1,4 @@
-import { getUsers, User } from "../../../../utils/api/users/users";
+import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users";
 import React, { useState } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
@@ -28,7 +28,7 @@ export default function AddCoach(props: { edition: string; coachAdded: (user: Us
         setGettingData(true);
         setError("");
         try {
-            const response = await getUsers(props.edition, filter, page);
+            const response = await getUsersExcludeEdition(props.edition, filter, page);
             if (page === 0) {
                 setUsers(response.users);
             } else {

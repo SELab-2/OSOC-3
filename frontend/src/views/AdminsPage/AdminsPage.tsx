@@ -1,35 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { AdminsContainer } from "./styles";
-import { getUsers, User } from "../../utils/api/users/users";
 import { getAdmins } from "../../utils/api/users/admins";
-import { Error, SearchInput } from "../../components/UsersComponents/PendingRequests/styles";
+import {
+    Error,
+    SearchInput,
+    SpinnerContainer,
+} from "../../components/UsersComponents/PendingRequests/styles";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
+import { Spinner } from "react-bootstrap";
+import { User } from "../../utils/api/users/users";
 
 export default function AdminsPage() {
-    const [allAdmins, setAllAdmins] = useState<User[]>([]);
     const [admins, setAdmins] = useState<User[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
     const [gettingData, setGettingData] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
     const [error, setError] = useState("");
+    const [moreAdminsAvailable, setMoreAdminsAvailable] = useState(true);
 
-    async function getData() {
+    async function getData(page: number, filter: string | undefined = undefined) {
+        if (filter === undefined) {
+            filter = searchTerm;
+        }
         setGettingData(true);
-        setGotData(false);
+        setError("");
         try {
-            const response = await getAdmins();
-            setAllAdmins(response.users);
-            setAdmins(response.users);
-
-            const usersResponse = await getUsers("", "", 0);
-            const users = [];
-            for (const user of usersResponse.users) {
-                if (!response.users.some(e => e.userId === user.userId)) {
-                    users.push(user);
-                }
+            const response = await getAdmins(page, filter);
+            if (response.users.length !== 25) {
+                setMoreAdminsAvailable(false);
             }
-            setUsers(users);
+            if (page === 0) {
+                setAdmins(response.users);
+            } else {
+                setAdmins(admins.concat(response.users));
+            }
 
             setGotData(true);
             setGettingData(false);
@@ -41,26 +45,55 @@ export default function AdminsPage() {
 
     useEffect(() => {
         if (!gotData && !gettingData && !error) {
-            getData();
+            getData(0);
         }
-    }, [gotData, gettingData, error, getData]);
+    });
 
-    const filter = (word: string) => {
+    function filter(word: string) {
+        setGotData(false);
         setSearchTerm(word);
-        const newCoaches: User[] = [];
-        for (const admin of allAdmins) {
-            if (admin.name.toUpperCase().includes(word.toUpperCase())) {
-                newCoaches.push(admin);
-            }
+        setAdmins([]);
+        setMoreAdminsAvailable(true);
+        getData(0, word);
+    }
+
+    function adminAdded(user: User) {
+        if (user.name.includes(searchTerm)) {
+            setAdmins([user].concat(admins));
         }
-        setAdmins(newCoaches);
-    };
+    }
+
+    let list;
+    if (admins.length === 0) {
+        if (gettingData) {
+            list = (
+                <SpinnerContainer>
+                    <Spinner animation="border" />
+                </SpinnerContainer>
+            );
+        } else if (gotData) {
+            list = <div>No admins found</div>;
+        } else {
+            list = <Error>{error}</Error>;
+        }
+    } else {
+        list = (
+            <AdminList
+                admins={admins}
+                loading={gettingData}
+                gotData={gotData}
+                refresh={() => getData(0)}
+                getMoreAdmins={getData}
+                moreAdminsAvailable={moreAdminsAvailable}
+            />
+        );
+    }
 
     return (
         <AdminsContainer>
             <SearchInput value={searchTerm} onChange={e => filter(e.target.value)} />
-            <AddAdmin users={users} refresh={getData} />
-            <AdminList admins={admins} loading={gettingData} gotData={gotData} refresh={getData} />
+            <AddAdmin adminAdded={adminAdded} />
+            {list}
             <Error> {error} </Error>
         </AdminsContainer>
     );

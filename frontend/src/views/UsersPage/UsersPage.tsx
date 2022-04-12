@@ -53,7 +53,6 @@ function UsersPage() {
     });
 
     function filterCoachesData(searchTerm: string) {
-        setGettingData(true);
         setGotData(false);
         setSearchTerm(searchTerm);
         setCoaches([]);
