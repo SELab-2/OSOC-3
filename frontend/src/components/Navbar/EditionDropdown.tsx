@@ -1,8 +1,9 @@
 import React from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem } from "./styles";
-import { useNavigate } from "react-router-dom";
-import { getCurrentEdition } from "../../utils/session-storage/current-edition";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
+import { getBestRedirect } from "../../utils/logic";
 
 interface Props {
     editions: string[];
@@ -13,6 +14,7 @@ interface Props {
  */
 export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
+    const location = useLocation();
     const navigate = useNavigate();
 
     // User can't access any editions yet, no point in rendering the dropdown either
@@ -33,9 +35,10 @@ export default function EditionDropdown(props: Props) {
      * only be used in React components
      */
     function handleSelect(edition: string) {
-        // TODO: Navigate to the most specific route possible for QOL?
-        //  eg. /editions/old_id/students/:id => /editions/new_id/students, etc
-        navigate(`/editions/${edition}`);
+        const destination = getBestRedirect(location, edition);
+        setCurrentEdition(edition);
+
+        navigate(destination);
     }
 
     // Load dropdown items dynamically

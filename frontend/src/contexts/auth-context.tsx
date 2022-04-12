@@ -4,7 +4,7 @@ import React, { useContext, ReactNode, useState } from "react";
 import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
 import { User } from "../data/interfaces";
 import { setBearerToken } from "../utils/api";
-import { setCurrentEdition } from "../utils/session-storage/current-edition";
+import { setCurrentEdition } from "../utils/session-storage";
 
 /**
  * Interface that holds the data stored in the AuthContext.
