@@ -41,7 +41,7 @@ def get_users_filtered(
     Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
 
-    query = db.query(User)\
+    query = db.query(User)
 
     if name is not None:
         query = query.where(User.name.contains(name))
