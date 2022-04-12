@@ -70,11 +70,15 @@ async def remove_from_all_editions(user_id: int, db: Session = Depends(get_sessi
 
 
 @users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
-async def get_requests(edition: str | None = Query(None), page: int = 0, db: Session = Depends(get_session)):
+async def get_requests(
+        edition: str | None = Query(None),
+        user: str | None = Query(None),
+        page: int = 0,
+        db: Session = Depends(get_session)):
     """
     Get pending userrequests
     """
-    return logic.get_request_list(db, edition, page)
+    return logic.get_request_list(db, edition, user, page)
 
 
 @users_router.post("/requests/{request_id}/accept", status_code=204, dependencies=[Depends(require_admin)])

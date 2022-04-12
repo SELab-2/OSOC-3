@@ -378,6 +378,25 @@ def test_get_requests_paginated(database_session: Session):
     ) - DB_PAGE_SIZE
 
 
+def test_get_requests_paginated_filter_user_name(database_session: Session):
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(CoachRequest(user=user, edition=edition))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    assert len(users_crud.get_requests_page(database_session, 0, "1")) == \
+           min(DB_PAGE_SIZE, count)
+    assert len(users_crud.get_requests_page(database_session, 1, "1")) == \
+           max(count-DB_PAGE_SIZE, 0)
+
+
 def test_get_all_requests_from_edition(database_session: Session):
     """Test get request for all userrequests of a given edition"""
 
@@ -426,6 +445,25 @@ def test_get_requests_for_edition_paginated(database_session: Session):
     assert len(users_crud.get_requests_for_edition_page(database_session, edition.name, 1)) == round(
         DB_PAGE_SIZE * 1.5
     ) - DB_PAGE_SIZE
+
+
+def test_get_requests_for_edition_paginated_filter_user_name(database_session: Session):
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    count = 0
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        user = models.User(name=f"User {i}", admin=False)
+        database_session.add(user)
+        database_session.add(CoachRequest(user=user, edition=edition))
+        if "1" in str(i):
+            count += 1
+    database_session.commit()
+
+    assert len(users_crud.get_requests_for_edition_page(database_session, edition.name, 0, "1")) == \
+           min(DB_PAGE_SIZE, count)
+    assert len(users_crud.get_requests_for_edition_page(database_session, edition.name, 1, "1")) == \
+           max(count-DB_PAGE_SIZE, 0)
 
 
 def test_accept_request(database_session: Session):
