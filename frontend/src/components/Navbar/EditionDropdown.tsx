@@ -35,7 +35,7 @@ export default function EditionDropdown(props: Props) {
      * only be used in React components
      */
     function handleSelect(edition: string) {
-        const destination = getBestRedirect(location, edition);
+        const destination = getBestRedirect(location.pathname, edition);
         setCurrentEdition(edition);
 
         navigate(destination);
