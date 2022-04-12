@@ -31,12 +31,12 @@ def get_users_filtered(
         page: int = 0
 ):
     """
-    Get users and filter by optional parameter:
-      - admin: only return admins / only return non-admins
-      - edition_name: only return users who are coach of the given edition
-      - exclude_edition_name: only return users who are not coach of the given edition
-      - name: a string which the user's name must contain
-      - page: the page to return
+    Get users and filter by optional parameters:
+    :param admin: only return admins / only return non-admins
+    :param edition_name: only return users who are coach of the given edition
+    :param exclude_edition_name: only return users who are not coach of the given edition
+    :param name: a string which the user's name must contain
+    :param page: the page to return
 
     Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
