@@ -2,8 +2,9 @@ import React from "react";
 import { Container, ContentWrapper } from "./app.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
-import { useAuth } from "./contexts/auth-context";
+import { useAuth } from "./contexts";
 import {
+    EditionsPage,
     LoginPage,
     PendingPage,
     ProjectsPage,
@@ -13,13 +14,15 @@ import {
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
+import CreateEditionPage from "./views/CreateEditionPage";
+import { Role } from "./data/enums";
 
 /**
  * Router component to render different pages depending on the current url. Renders
  * the [[VerifyingTokenPage]] if the bearer token is still being validated.
  */
 export default function Router() {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, role, editions } = useAuth();
 
     return (
         <BrowserRouter>
@@ -29,6 +32,10 @@ export default function Router() {
                     {isLoggedIn === null ? (
                         // Busy verifying the access token
                         <VerifyingTokenPage />
+                    ) : isLoggedIn && role !== Role.ADMIN && editions.length === 0 ? (
+                        // If you are a coach but aren't part of any editions at all, you can't do
+                        // anything in the application, so you shouldn't be able to access it either
+                        <PendingPage />
                     ) : (
                         // Access token was checked, if it is invalid
                         // then the <PrivateRoute /> will redirect to
@@ -43,11 +50,10 @@ export default function Router() {
                                 <Route path={""} element={<div />} />
                             </Route>
                             <Route path={"/editions"} element={<PrivateRoute />}>
-                                {/* TODO editions page */}
-                                <Route path={""} element={<div />} />
+                                <Route path={""} element={<EditionsPage />} />
                                 <Route path={"new"} element={<AdminRoute />}>
                                     {/* TODO create edition page */}
-                                    <Route path={""} element={<div />} />
+                                    <Route path={""} element={<CreateEditionPage />} />
                                 </Route>
                                 <Route path={":editionId"} element={<Outlet />}>
                                     {/* TODO edition page? do we need? maybe just some nav/links? */}

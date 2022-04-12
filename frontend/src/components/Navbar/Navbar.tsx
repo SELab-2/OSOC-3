@@ -1,14 +1,14 @@
 import Container from "react-bootstrap/Container";
-import { BSNavbar, StyledDropdownItem } from "./styles";
+import { BSNavbar } from "./styles";
 import { useAuth } from "../../contexts";
 import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import EditionDropdown from "./EditionDropdown";
 import "./Navbar.css";
 import LogoutButton from "./LogoutButton";
 import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage/current-edition";
 import { matchPath, useLocation } from "react-router-dom";
+import UsersDropdown from "./UsersDropdown";
 
 /**
  * Navbar component displayed at the top of the screen.
@@ -36,7 +36,12 @@ export default function Navbar() {
     // a <Route/>
     const match = matchPath({ path: "/editions/:editionId/*" }, location.pathname);
     // This is a TypeScript shortcut for 3 if-statements
-    const editionId = match && match.params && match.params.editionId;
+    let editionId = match && match.params && match.params.editionId;
+
+    // Matched /editions/new path
+    if (editionId === "new") {
+        editionId = null;
+    }
 
     // If the current URL contains an edition, use that
     // if not (eg. /editions), check SessionStorage
@@ -60,12 +65,7 @@ export default function Navbar() {
                         <Nav.Link href={"/editions"}>Editions</Nav.Link>
                         <Nav.Link href={`/editions/${currentEdition}/projects`}>Projects</Nav.Link>
                         <Nav.Link href={`/editions/${currentEdition}/students`}>Students</Nav.Link>
-                        <NavDropdown title={"Users"}>
-                            <StyledDropdownItem href={"/admins"}>Admins</StyledDropdownItem>
-                            <StyledDropdownItem href={`/editions/${currentEdition}/users`}>
-                                Coaches
-                            </StyledDropdownItem>
-                        </NavDropdown>
+                        <UsersDropdown currentEdition={currentEdition} />
                         <LogoutButton />
                     </Nav>
                 </BSNavbar.Collapse>
