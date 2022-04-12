@@ -15,7 +15,17 @@ export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
     const navigate = useNavigate();
 
-    const currentEdition = getCurrentEdition();
+    // User can't access any editions yet, no point in rendering the dropdown either
+    // as it would just show "UNDEFINED" at the top
+    if (props.editions.length === 0) {
+        return null;
+    }
+
+    // If anything went wrong loading the edition, default to the first one
+    // found in the list of editions
+    // This shouldn't happen, but just in case
+    // The list can never be empty because then we return null above ^
+    const currentEdition = getCurrentEdition() || props.editions[0];
 
     /**
      * Change the route based on the edition
