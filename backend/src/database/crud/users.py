@@ -47,10 +47,7 @@ def get_users_filtered(
         query = query.where(User.name.contains(name))
 
     if admin is not None:
-        if admin:
-            query = query.filter(User.admin)
-        else:
-            query = query.filter(~User.admin)
+        query = query.filter(User.admin.is_(admin))
         # If admin parameter is set, edition & exclude_edition is ignored
         return paginate(query, page).all()
 
