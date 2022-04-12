@@ -21,13 +21,14 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
     return get_edition_by_name(database, edition_name)
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
 async def get_current_active_user(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its token
     This function is used as a dependency for other functions
     """
+    # TODO: check type of token.
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int | None = payload.get("sub")
