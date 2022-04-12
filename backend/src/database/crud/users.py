@@ -2,45 +2,8 @@ from sqlalchemy.orm import Session, Query
 
 from src.database.crud.editions import get_edition_by_name
 from src.database.crud.util import paginate
-from src.database.models import user_editions, User, Edition, CoachRequest, AuthGoogle, AuthEmail, AuthGitHub
+from src.database.models import user_editions, User, Edition, CoachRequest
 from src.database.crud.editions import get_editions
-
-
-def _get_admins_query(db: Session, name: str = "") -> Query:
-    return db.query(User) \
-        .where(User.admin) \
-        .where(User.name.contains(name)) \
-        .join(AuthEmail, isouter=True) \
-        .join(AuthGitHub, isouter=True) \
-        .join(AuthGoogle, isouter=True)
-
-
-def get_admins(db: Session) -> list[User]:
-    """
-    Get all admins
-    """
-    return _get_admins_query(db).all()
-
-
-def get_admins_page(db: Session, page: int, name: str = "") -> list[User]:
-    """
-    Get all admins paginated
-    """
-    return paginate(_get_admins_query(db, name), page).all()
-
-
-def _get_users_query(db: Session, name: str = "") -> Query:
-    return db.query(User).where(User.name.contains(name))
-
-
-def get_users(db: Session) -> list[User]:
-    """Get all users (coaches + admins)"""
-    return _get_users_query(db).all()
-
-
-def get_users_page(db: Session, page: int, name: str = "") -> list[User]:
-    """Get all users (coaches + admins) paginated"""
-    return paginate(_get_users_query(db, name), page).all()
 
 
 def get_user_edition_names(db: Session, user: User) -> list[str]:
@@ -59,62 +22,55 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def _get_users_for_edition_query(db: Session, edition: Edition, name="") -> Query:
-    return db \
-        .query(User) \
-        .where(User.name.contains(name)) \
-        .join(user_editions) \
-        .filter(user_editions.c.edition_id == edition.edition_id)
-
-
-def get_users_for_edition(db: Session, edition_name: str) -> list[User]:
+def get_users_filtered(
+        db: Session,
+        admin: bool | None = None,
+        edition_name: str | None = None,
+        exclude_edition_name: str | None = None,
+        name: str | None = None,
+        page: int = 0
+):
     """
-    Get all coaches from the given edition
-    """
-    return _get_users_for_edition_query(db, get_edition_by_name(db, edition_name)).all()
+    Get users and filter by optional parameter:
+      - admin: only return admins / only return non-admins
+      - edition_name: only return users who are coach of the given edition
+      - exclude_edition_name: only return users who are not coach of the given edition
+      - name: a string which the user's name must contain
+      - page: the page to return
 
-
-def get_users_for_edition_page(db: Session, edition_name: str, page: int, name="") -> list[User]:
-    """
-    Get all coaches from the given edition
-    """
-    return paginate(_get_users_for_edition_query(db, get_edition_by_name(db, edition_name), name), page).all()
-
-
-def get_users_for_edition_exclude_edition_page(db: Session, page: int, exclude_edition_name: str, edition_name: str,
-                                               name: str) -> list[User]:
-    """
-    Get all coaches from the given edition except those who are coach in the excluded edition
+    Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
 
-    exclude_edition = get_edition_by_name(db, exclude_edition_name)
+    query = db.query(User)\
 
-    return paginate(
-                _get_users_for_edition_query(db, get_edition_by_name(db, edition_name), name)
-                .filter(User.user_id.not_in(
-                    db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
-                    )
-                )
-        , page).all()
+    if name is not None:
+        query = query.where(User.name.contains(name))
 
+    if admin is not None:
+        if admin:
+            query = query.filter(User.admin)
+        else:
+            query = query.filter(~User.admin)
+        # If admin parameter is set, edition & exclude_edition is ignored
+        return paginate(query, page).all()
 
-def get_users_exclude_edition_page(db: Session, page: int, exclude_edition: str, name: str) -> list[User]:
-    """
-    Get all users who are not coach in the given edition
-    """
+    if edition_name is not None:
+        edition = get_edition_by_name(db, edition_name)
 
-    edition = get_edition_by_name(db, exclude_edition)
+        query = query \
+            .join(user_editions) \
+            .filter(user_editions.c.edition_id == edition.edition_id)
 
-    return paginate(
-        db
-            .query(User)
-            .where(User.name.contains(name))
-            .filter(
+    if exclude_edition_name is not None:
+        exclude_edition = get_edition_by_name(db, exclude_edition_name)
+
+        query = query.filter(
                 User.user_id.not_in(
-                    db.query(user_editions.c.user_id).where(user_editions.c.edition_id == edition.edition_id)
+                    db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
                 )
             )
-        , page).all()
+
+    return paginate(query, page).all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):

@@ -143,6 +143,31 @@ def test_get_all_admins_paginated(database_session: Session, auth_client: AuthCl
     # +1 because Authclient.admin() also creates one user.
 
 
+def test_get_all_non_admins_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of paginated admins"""
+    non_admins = []
+    for i in range(round(DB_PAGE_SIZE * 3)):
+        user = models.User(name=f"User {i}", admin=i % 2 == 0)
+        database_session.add(user)
+        database_session.commit()
+        if i % 2 != 0:
+            non_admins.append(user.user_id)
+    database_session.commit()
+
+    auth_client.admin()
+
+    count = len(non_admins)
+    response = auth_client.get("/users?admin=false&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(count, DB_PAGE_SIZE)
+    for user in response.json()["users"]:
+        assert user["userId"] in non_admins
+
+    response = auth_client.get("/users?admin=false&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == max(count - DB_PAGE_SIZE, 0)
+
+
 def test_get_all_admins_paginated_filter_name(database_session: Session, auth_client: AuthClient):
     """Test endpoint for getting a list of paginated admins with filter for name"""
     for i in range(round(DB_PAGE_SIZE * 1.5)):
@@ -156,6 +181,31 @@ def test_get_all_admins_paginated_filter_name(database_session: Session, auth_cl
     response = auth_client.get("/users?admin=true&page=1")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()['users']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1
+
+
+def test_get_all_non_admins_paginated_filter_name(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting a list of paginated admins"""
+    non_admins = []
+    for i in range(round(DB_PAGE_SIZE * 3)):
+        user = models.User(name=f"User {i}", admin=i % 2 == 0)
+        database_session.add(user)
+        database_session.commit()
+        if i % 2 != 0 and "1" in str(i):
+            non_admins.append(user.user_id)
+    database_session.commit()
+
+    auth_client.admin()
+
+    count = len(non_admins)
+    response = auth_client.get("/users?admin=false&page=0&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == min(count, DB_PAGE_SIZE)
+    for user in response.json()["users"]:
+        assert user["userId"] in non_admins
+
+    response = auth_client.get("/users?admin=false&page=1&name=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['users']) == max(count - DB_PAGE_SIZE, 0)
 
 
 def test_get_users_from_edition(database_session: Session, auth_client: AuthClient, data: dict[str, str | int]):

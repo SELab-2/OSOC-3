@@ -14,7 +14,7 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 @users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
 async def get_users(
-        admin: bool = Query(False),
+        admin: bool = Query(None),
         edition: str | None = Query(None),
         exclude_edition: str | None = Query(None),
         name: str | None = Query(None),
