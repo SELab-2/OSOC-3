@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
 export const CoachesContainer = styled.div`
     min-width: 450px;
@@ -40,4 +40,8 @@ export const ListDiv = styled.div`
     height: 400px;
     overflow: auto;
     margin-top: 10px;
+`;
+
+export const DialogButton = styled(Button)`
+    margin-right: 4px;
 `;

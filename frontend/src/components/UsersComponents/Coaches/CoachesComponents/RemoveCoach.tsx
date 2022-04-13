@@ -5,7 +5,7 @@ import {
     removeCoachFromEdition,
 } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { ModalContent } from "../styles";
+import { DialogButton, ModalContent } from "../styles";
 import { Error } from "../../Requests/styles";
 
 /**
@@ -64,22 +64,22 @@ export default function RemoveCoach(props: {
     } else {
         buttons = (
             <div>
-                <Button
+                <DialogButton
                     variant="primary"
                     onClick={() => {
                         removeCoach(props.coach.userId, true);
                     }}
                 >
                     Remove from all editions
-                </Button>
-                <Button
+                </DialogButton>
+                <DialogButton
                     variant="primary"
                     onClick={() => {
                         removeCoach(props.coach.userId, false);
                     }}
                 >
                     Remove from {props.edition}
-                </Button>
+                </DialogButton>
                 <Button variant="secondary" onClick={handleClose}>
                     Cancel
                 </Button>
