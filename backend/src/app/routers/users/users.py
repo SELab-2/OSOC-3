@@ -14,7 +14,7 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 @users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
 async def get_users(
-        admin: bool = Query(False),
+        admin: bool = Query(None),
         edition: str | None = Query(None),
         exclude_edition: str | None = Query(None),
         name: str | None = Query(None),
@@ -35,7 +35,7 @@ async def get_current_user(db: Session = Depends(get_session), user: UserDB = De
     user_data = user_model_to_schema(user).__dict__
     user_data["editions"] = logic.get_user_editions(db, user)
 
-    return user
+    return user_data
 
 
 @users_router.patch("/{user_id}", status_code=204, dependencies=[Depends(require_admin)])
