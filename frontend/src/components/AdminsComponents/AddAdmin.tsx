@@ -7,6 +7,7 @@ import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import { Error } from "../UsersComponents/Requests/styles";
 import { StyledMenuItem } from "../GeneralComponents/styles";
 import UserMenuItem from "../GeneralComponents/MenuItem";
+import { EmailAndAuth } from "../GeneralComponents";
 
 /**
  * Warning that the user will get all persmissions.
@@ -162,7 +163,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 );
                             }}
                         />
-                        {selected?.auth.email}
+                        <EmailAndAuth user={selected} />
                         <AddWarning name={selected?.name} />
                     </Modal.Body>
                     <Modal.Footer>

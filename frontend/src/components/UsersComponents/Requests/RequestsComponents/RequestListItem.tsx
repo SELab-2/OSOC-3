@@ -2,6 +2,7 @@ import { Request } from "../../../../utils/api/users/requests";
 import React from "react";
 import AcceptReject from "./AcceptReject";
 import { AcceptRejectTd } from "../styles";
+import { EmailAndAuth } from "../../../GeneralComponents";
 
 /**
  * An item from [[RequestList]] which represents one request.
@@ -16,7 +17,9 @@ export default function RequestListItem(props: {
     return (
         <tr>
             <td>{props.request.user.name}</td>
-            <td>{props.request.user.auth.email}</td>
+            <td>
+                <EmailAndAuth user={props.request.user} />
+            </td>
             <AcceptRejectTd>
                 <AcceptReject request={props.request} removeRequest={props.removeRequest} />
             </AcceptRejectTd>

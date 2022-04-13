@@ -2,6 +2,7 @@ import { User } from "../../../../utils/api/users/users";
 import React from "react";
 import RemoveCoach from "./RemoveCoach";
 import { RemoveTd } from "../styles";
+import { EmailAndAuth } from "../../../GeneralComponents";
 
 /**
  * An item from [[CoachList]] which represents one coach.
@@ -18,7 +19,9 @@ export default function CoachListItem(props: {
     return (
         <tr>
             <td>{props.coach.name}</td>
-            <td>{props.coach.auth.email}</td>
+            <td>
+                <EmailAndAuth user={props.coach} />
+            </td>
             <RemoveTd>
                 <RemoveCoach
                     coach={props.coach}

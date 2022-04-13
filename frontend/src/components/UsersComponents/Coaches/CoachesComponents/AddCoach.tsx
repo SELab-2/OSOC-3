@@ -7,6 +7,7 @@ import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/s
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import UserMenuItem from "../../../GeneralComponents/MenuItem";
 import { StyledMenuItem } from "../../../GeneralComponents/styles";
+import { EmailAndAuth } from "../../../GeneralComponents";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -148,7 +149,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                                 );
                             }}
                         />
-                        {selected?.auth.email}
+                        <EmailAndAuth user={selected} />
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}

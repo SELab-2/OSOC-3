@@ -19,3 +19,12 @@ export const NameDiv = styled.div`
 export const EmailDiv = styled.div`
     float: right;
 `;
+
+export const AuthTypeDiv = styled.div`
+    float: right;
+    margin-left: 5px;
+`;
+
+export const EmailAndAuthDiv = styled.div`
+    width: fit-content;
+`;

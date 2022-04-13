@@ -8,7 +8,7 @@ export interface User {
     name: string;
     admin: boolean;
     auth: {
-        autType: string;
+        authType: string;
         email: string;
     };
 }
