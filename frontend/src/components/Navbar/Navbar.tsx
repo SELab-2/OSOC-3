@@ -1,7 +1,5 @@
-import Container from "react-bootstrap/Container";
 import { BSNavbar } from "./styles";
 import { useAuth } from "../../contexts";
-import Brand from "./Brand";
 import Nav from "react-bootstrap/Nav";
 import EditionDropdown from "./EditionDropdown";
 import "./Navbar.css";
@@ -9,6 +7,7 @@ import LogoutButton from "./LogoutButton";
 import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
 import { matchPath, useLocation } from "react-router-dom";
 import UsersDropdown from "./UsersDropdown";
+import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
 
 /**
@@ -25,9 +24,9 @@ export default function Navbar() {
      */
     const location = useLocation();
 
-    // Don't render Navbar if not logged in
+    // Only render base if not logged in
     if (!isLoggedIn) {
-        return null;
+        return <NavbarBase />;
     }
 
     // User is logged in: safe to try and parse the location now
@@ -55,9 +54,7 @@ export default function Navbar() {
     }
 
     return (
-        <BSNavbar>
-            <Container>
-                <Brand />
+        <NavbarBase>
                 {/* Make Navbar responsive (hamburger menu) */}
                 <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
                 <BSNavbar.Collapse id={"responsive-navbar-nav"}>
@@ -76,7 +73,6 @@ export default function Navbar() {
                         <LogoutButton />
                     </Nav>
                 </BSNavbar.Collapse>
-            </Container>
-        </BSNavbar>
+        </NavbarBase>
     );
 }
