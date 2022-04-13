@@ -5,12 +5,12 @@ import { Spinner } from "react-bootstrap";
 
 /**
  * Component consisting of two buttons to accept or reject a coach request.
- * @param props.requestId The id of the request.
- * @param props.refresh A function which will be called when a request is accepted/rejected.
+ * @param props.request The request which can be accepted/rejected.
+ * @param props.removeRequest A function which will be called when a request is accepted/rejected.
  */
 export default function AcceptReject(props: {
     request: Request;
-    refresh: (coachAdded: boolean, request: Request) => void;
+    removeRequest: (coachAdded: boolean, request: Request) => void;
 }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -28,7 +28,7 @@ export default function AcceptReject(props: {
         }
         setLoading(false);
         if (success) {
-            props.refresh(true, props.request);
+            props.removeRequest(true, props.request);
         }
     }
 
@@ -45,7 +45,7 @@ export default function AcceptReject(props: {
         }
         setLoading(false);
         if (success) {
-            props.refresh(false, props.request);
+            props.removeRequest(false, props.request);
         }
     }
 

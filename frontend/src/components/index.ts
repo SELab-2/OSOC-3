@@ -7,3 +7,4 @@ export { default as PrivateRoute } from "./PrivateRoute";
 export * as RegisterComponents from "./RegisterComponents";
 export * as UsersComponents from "./UsersComponents";
 export * as AdminsComponents from "./AdminsComponents";
+export * as GeneralComponents from "./GeneralComponents";

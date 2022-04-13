@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
 import { AddAdminButton, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { Error } from "../UsersComponents/PendingRequests/styles";
+import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
+import { Error } from "../UsersComponents/Requests/styles";
+import { StyledMenuItem } from "../GeneralComponents/styles";
+import UserMenuItem from "../GeneralComponents/MenuItem";
 
 /**
  * Warning that the user will get all persmissions.
@@ -134,7 +136,33 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderMenu={(results, menuProps) => {
+                                const {
+                                    newSelectionPrefix,
+                                    paginationText,
+                                    renderMenuItemChildren,
+                                    ...props
+                                } = menuProps;
+                                return (
+                                    <Menu {...props}>
+                                        {results.map((result, index) => {
+                                            const user = result as User;
+                                            return (
+                                                <StyledMenuItem
+                                                    option={result}
+                                                    position={index}
+                                                    key={user.userId}
+                                                >
+                                                    <UserMenuItem user={user} />
+                                                    <br />
+                                                </StyledMenuItem>
+                                            );
+                                        })}
+                                    </Menu>
+                                );
+                            }}
                         />
+                        {selected?.auth.email}
                         <AddWarning name={selected?.name} />
                     </Modal.Body>
                     <Modal.Footer>

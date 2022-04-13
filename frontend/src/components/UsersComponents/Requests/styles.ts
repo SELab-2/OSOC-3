@@ -27,21 +27,14 @@ export const ClosedArrow = styled(BiDownArrow)`
     offset: 0 30px;
 `;
 
-export const SearchInput = styled.input.attrs({
-    placeholder: "Search",
-})`
-    margin: 3px;
-    width: 150px;
-    font-size: 15px;
-    border-radius: 5px;
-    border-width: 0;
+export const RequestsTable = styled(Table)`
+    // TODO: make all tables in site uniform
 `;
 
-export const RequestsTable = styled(Table)``;
-
-export const PendingRequestsContainer = styled.div`
-    width: 50%;
-    min-width: 600px;
+export const RequestsContainer = styled.div`
+    min-width: 450px;
+    width: 80%;
+    max-width: 700px;
     margin: 10px auto auto;
 `;
 

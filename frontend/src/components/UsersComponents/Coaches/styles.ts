@@ -2,8 +2,9 @@ import styled from "styled-components";
 import { Table } from "react-bootstrap";
 
 export const CoachesContainer = styled.div`
-    width: 50%;
-    min-width: 600px;
+    min-width: 450px;
+    width: 80%;
+    max-width: 700px;
     height: 500px;
     margin: 10px auto auto;
 `;
@@ -15,7 +16,9 @@ export const CoachesTitle = styled.div`
     font-size: 25px;
 `;
 
-export const CoachesTable = styled(Table)``;
+export const CoachesTable = styled(Table)`
+    // TODO: make all tables in site uniform
+`;
 
 export const ModalContent = styled.div`
     border: 3px solid var(--osoc_red);

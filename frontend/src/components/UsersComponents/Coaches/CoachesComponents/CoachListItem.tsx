@@ -8,19 +8,23 @@ import { RemoveTd } from "../styles";
  * This includes a button te remove the coach.
  * @param props.coach The coach which is represented.
  * @param props.edition The edition whereof the user is coach.
- * @param props.refresh A function which will be called when the coach is removed.
+ * @param props.removeCoach A function which will be called when the coach is removed.
  */
 export default function CoachListItem(props: {
     coach: User;
     edition: string;
-    refresh: () => void;
+    removeCoach: (coach: User) => void;
 }) {
     return (
         <tr>
             <td>{props.coach.name}</td>
             <td>{props.coach.auth.email}</td>
             <RemoveTd>
-                <RemoveCoach coach={props.coach} edition={props.edition} refresh={props.refresh} />
+                <RemoveCoach
+                    coach={props.coach}
+                    edition={props.edition}
+                    removeCoach={() => props.removeCoach(props.coach)}
+                />
             </RemoveTd>
         </tr>
     );

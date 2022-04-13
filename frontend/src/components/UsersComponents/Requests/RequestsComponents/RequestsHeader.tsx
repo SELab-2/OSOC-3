@@ -14,7 +14,7 @@ function Arrow(props: { open: boolean }) {
 }
 
 /**
- * The header of [[PendingRequests]].
+ * The header of [[Requests]].
  * @param props.open Boolean to indicate if the collapsible is open.
  */
 export default function RequestsHeader(props: { open: boolean }) {

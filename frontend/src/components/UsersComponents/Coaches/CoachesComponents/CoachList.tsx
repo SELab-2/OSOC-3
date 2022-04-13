@@ -1,5 +1,5 @@
 import { User } from "../../../../utils/api/users/users";
-import { SpinnerContainer } from "../../PendingRequests/styles";
+import { SpinnerContainer } from "../../Requests/styles";
 import { Spinner } from "react-bootstrap";
 import { CoachesTable, ListDiv, RemoveTh } from "../styles";
 import React from "react";
@@ -12,16 +12,16 @@ import { CoachListItem } from "./index";
  * @param props.loading Data is not available yet.
  * @param props.edition The edition.
  * @param props.gotData All data is received.
- * @param props.refresh A function which will be called when a coach is removed.
+ * @param props.removeCoach A function which will be called when a coach is removed.
  * @param props.getMoreCoaches A function to load more coaches.
- * @param props.moreCoachesAvailable More unfetched coaches available
+ * @param props.moreCoachesAvailable More unfetched coaches available.
  */
 export default function CoachList(props: {
     coaches: User[];
     loading: boolean;
     edition: string;
     gotData: boolean;
-    refresh: () => void;
+    removeCoach: (coach: User) => void;
     getMoreCoaches: (page: number) => void;
     moreCoachesAvailable: boolean;
 }) {
@@ -37,7 +37,7 @@ export default function CoachList(props: {
                     </SpinnerContainer>
                 }
                 useWindow={false}
-                initialLoad={false}
+                initialLoad={true}
             >
                 <CoachesTable variant="dark">
                     <thead>
@@ -53,7 +53,7 @@ export default function CoachList(props: {
                                 key={coach.userId}
                                 coach={coach}
                                 edition={props.edition}
-                                refresh={props.refresh}
+                                removeCoach={props.removeCoach}
                             />
                         ))}
                     </tbody>

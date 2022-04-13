@@ -1,4 +1,5 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
+import { Dropdown } from "react-bootstrap";
 
 export const InviteContainer = styled.div`
     clear: both;
@@ -20,37 +21,27 @@ export const InviteInput = styled.input.attrs({
     float: left;
 `;
 
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-export const Loader = styled.div`
-    border: 8px solid var(--osoc_green);
-    border-top: 8px solid var(--osoc_blue);
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    animation: ${rotate} 2s linear infinite;
-    margin-left: 37px;
-    margin-top: 10px;
-    float: left;
+export const MessageDiv = styled.div`
+    margin-left: 10px;
+    margin-top: 5px;
+    height: 15px;
 `;
 
 export const Error = styled.div`
-    margin-left: 10px;
     color: var(--osoc_red);
-`;
-
-export const Message = styled.div`
-    margin-left: 10px;
 `;
 
 export const InviteButton = styled.div`
     padding-top: 10px;
+`;
+
+export const DropdownField = styled(Dropdown.Item)`
+    color: white;
+    transition: 200ms ease-out;
+
+    &:hover {
+        background-color: var(--osoc_blue);
+        color: var(--osoc_green);
+        transition: 200ms ease-in;
+    }
 `;

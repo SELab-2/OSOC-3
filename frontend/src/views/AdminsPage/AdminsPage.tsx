@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { AdminsContainer } from "./styles";
 import { getAdmins } from "../../utils/api/users/admins";
-import {
-    Error,
-    SearchInput,
-    SpinnerContainer,
-} from "../../components/UsersComponents/PendingRequests/styles";
+import { Error, SpinnerContainer } from "../../components/UsersComponents/Requests/styles";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
 import { Spinner } from "react-bootstrap";
 import { User } from "../../utils/api/users/users";
+import { SearchInput } from "../../components/styles";
 
 export default function AdminsPage() {
     const [admins, setAdmins] = useState<User[]>([]);

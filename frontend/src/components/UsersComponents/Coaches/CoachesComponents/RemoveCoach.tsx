@@ -4,30 +4,42 @@ import {
     removeCoachFromAllEditions,
     removeCoachFromEdition,
 } from "../../../../utils/api/users/coaches";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Spinner } from "react-bootstrap";
 import { ModalContent } from "../styles";
-import { Error } from "../../PendingRequests/styles";
+import { Error } from "../../Requests/styles";
 
 /**
- * A button and popup to remove a user as coach from the given edition or all editions.
+ * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.
  * The popup gives the choice between removing the user as coach from this edition or all editions.
  * @param props.coach The coach which can be removed.
  * @param props.edition The edition of which the coach can be removed.
- * @param props.refresh A function which will be called when a user is removed as coach.
+ * @param props.removeCoach A function which will be called when a user is removed as coach.
  */
-export default function RemoveCoach(props: { coach: User; edition: string; refresh: () => void }) {
+export default function RemoveCoach(props: {
+    coach: User;
+    edition: string;
+    removeCoach: () => void;
+}) {
     const [show, setShow] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleClose = () => setShow(false);
+
     const handleShow = () => {
         setShow(true);
         setError("");
     };
 
+    /**
+     * Remove a coach from the current edition or all editions.
+     * @param userId The id of the coach
+     * @param allEditions Boolean whether the coach should be removed from all editions he's coach from.
+     */
     async function removeCoach(userId: number, allEditions: boolean) {
+        setLoading(true);
+        let removed = false;
         try {
-            let removed;
             if (allEditions) {
                 removed = await removeCoachFromAllEditions(userId);
             } else {
@@ -35,14 +47,44 @@ export default function RemoveCoach(props: { coach: User; edition: string; refre
             }
 
             if (removed) {
-                props.refresh();
-                handleClose();
+                props.removeCoach();
             } else {
                 setError("Something went wrong. Failed to remove coach");
+                setLoading(false);
             }
         } catch (error) {
             setError("Something went wrong. Failed to remove coach");
+            setLoading(false);
         }
+    }
+
+    let buttons;
+    if (loading) {
+        buttons = <Spinner animation="border" />;
+    } else {
+        buttons = (
+            <div>
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        removeCoach(props.coach.userId, true);
+                    }}
+                >
+                    Remove from all editions
+                </Button>
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        removeCoach(props.coach.userId, false);
+                    }}
+                >
+                    Remove from {props.edition}
+                </Button>
+                <Button variant="secondary" onClick={handleClose}>
+                    Cancel
+                </Button>
+            </div>
+        );
     }
 
     return (
@@ -61,25 +103,7 @@ export default function RemoveCoach(props: { coach: User; edition: string; refre
                         {props.coach.auth.email}
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                removeCoach(props.coach.userId, true);
-                            }}
-                        >
-                            Remove from all editions
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                removeCoach(props.coach.userId, false);
-                            }}
-                        >
-                            Remove from {props.edition}
-                        </Button>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Cancel
-                        </Button>
+                        {buttons}
                         <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContent>

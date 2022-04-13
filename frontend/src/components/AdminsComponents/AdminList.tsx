@@ -1,5 +1,5 @@
 import { User } from "../../utils/api/users/users";
-import { SpinnerContainer } from "../UsersComponents/PendingRequests/styles";
+import { SpinnerContainer } from "../UsersComponents/Requests/styles";
 import { Spinner } from "react-bootstrap";
 import { AdminsTable } from "./styles";
 import React from "react";

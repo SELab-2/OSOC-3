@@ -1,18 +1,18 @@
-import { InviteButton, Loader } from "../styles";
+import { DropdownField, InviteButton } from "../styles";
 import React from "react";
-import { Button, ButtonGroup, Dropdown } from "react-bootstrap";
+import { Button, ButtonGroup, Dropdown, Spinner } from "react-bootstrap";
 
 /**
  * A component to choice between sending an invite or copying it to clipboard.
- * @param props.loading Invite is being created.
+ * @param props.loading Invite is being created. Used to show a spinner.
  * @param props.sendInvite A function to send/copy the link.
  */
-export default function ButtonsDiv(props: {
+export default function SendInviteButton(props: {
     loading: boolean;
     sendInvite: (copy: boolean) => void;
 }) {
     if (props.loading) {
-        return <Loader />;
+        return <Spinner animation="border" />;
     }
     return (
         <InviteButton>
@@ -24,9 +24,9 @@ export default function ButtonsDiv(props: {
                 <Dropdown.Toggle split variant="success" id="dropdown-split-basic" />
 
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => props.sendInvite(true)}>
+                    <DropdownField onClick={() => props.sendInvite(true)}>
                         Copy invite link
-                    </Dropdown.Item>
+                    </DropdownField>
                 </Dropdown.Menu>
             </Dropdown>
         </InviteButton>

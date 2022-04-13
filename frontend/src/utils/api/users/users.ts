@@ -1,7 +1,7 @@
 import { axiosInstance } from "../api";
 
 /**
- *  Interface for a user
+ *  Interface of a user.
  */
 export interface User {
     userId: number;
@@ -13,12 +13,15 @@ export interface User {
     };
 }
 
+/**
+ * Interface of a list of users.
+ */
 export interface UsersList {
     users: User[];
 }
 
 /**
- * Interface for a mailto link
+ * Interface of a mailto link.
  */
 export interface MailTo {
     mailTo: string;
@@ -26,7 +29,9 @@ export interface MailTo {
 }
 
 /**
- * Get invite link for given email and edition
+ * Get an invite link for the given edition and email address.
+ * @param edition The edition whereto the email address will be invited.
+ * @param email The email address whereto the invite will be sent.
  */
 export async function getInviteLink(edition: string, email: string): Promise<MailTo> {
     const response = await axiosInstance.post(`/editions/${edition}/invites/`, { email: email });
@@ -34,40 +39,36 @@ export async function getInviteLink(edition: string, email: string): Promise<Mai
 }
 
 /**
- * Get all users who are not coach in edition
+ * Get a page of all users who are not coach of the given edition.
+ * @param edition The edition which needs to be excluded.
+ * @param name The name which every user's name must contain (can be empty).
+ * @param page The requested page.
  */
 export async function getUsersExcludeEdition(
     edition: string,
     name: string,
     page: number
 ): Promise<UsersList> {
-    // eslint-disable-next-line promise/param-names
-    // await new Promise(r => setTimeout(r, 2000));
     if (name) {
-        console.log(`/users/?page=${page}&exclude_edition=${edition}&name=${name}`);
         const response = await axiosInstance.get(
             `/users/?page=${page}&exclude_edition=${edition}&name=${name}`
         );
-        console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
         return response.data as UsersList;
     }
     const response = await axiosInstance.get(`/users/?exclude_edition=${edition}&page=${page}`);
-    console.log(`|page: ${page}  Search:${name}  Found: ${response.data.users.length}`);
     return response.data as UsersList;
 }
 
 /**
- * Get all users who are not admin
+ * Get a page of all users who are not an admin.
+ * @param name The name which every user's name must contain (can be empty).
+ * @param page The requested page.
  */
 export async function getUsersNonAdmin(name: string, page: number): Promise<UsersList> {
-    // eslint-disable-next-line promise/param-names
-    // await new Promise(r => setTimeout(r, 2000));
     if (name) {
         const response = await axiosInstance.get(`/users/?page=${page}&admin=false&name=${name}`);
-        console.log(`|page: ${page}  Found: ${response.data.users.length}`);
         return response.data as UsersList;
     }
     const response = await axiosInstance.get(`/users/?admin=false&page=${page}`);
-    console.log(`|page: ${page}  Found: ${response.data.users.length}`);
     return response.data as UsersList;
 }

@@ -11,6 +11,7 @@ import { ListDiv } from "../../Coaches/styles";
  * @param props.requests A list of requests which need to be shown.
  * @param props.removeRequest A function which will be called when a request is accepted/rejected.
  * @param props.moreRequestsAvailable Boolean to indicate whether more requests can be fetched
+ * @param props.getMoreRequests A function which will be called when more requests need to be loaded.
  */
 export default function RequestList(props: {
     requests: Request[];
@@ -30,7 +31,7 @@ export default function RequestList(props: {
                     </SpinnerContainer>
                 }
                 useWindow={false}
-                initialLoad={false}
+                initialLoad={true}
             >
                 <RequestsTable variant="dark">
                     <thead>

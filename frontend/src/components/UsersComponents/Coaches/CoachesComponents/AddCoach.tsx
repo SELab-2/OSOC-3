@@ -2,9 +2,11 @@ import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users"
 import React, { useState } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { Error } from "../../PendingRequests/styles";
+import { Error } from "../../Requests/styles";
 import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/styles";
+import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
+import UserMenuItem from "../../../GeneralComponents/MenuItem";
+import { StyledMenuItem } from "../../../GeneralComponents/styles";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -12,7 +14,7 @@ import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/s
  * @param props.edition The edition to which users need to be added.
  * @param props.coachAdded A function which will be called when a user is added as coach.
  */
-export default function AddCoach(props: { edition: string; coachAdded: (user: User) => void }) {
+export default function AddCoach(props: { edition: string; refreshCoaches: () => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState(false);
@@ -71,7 +73,7 @@ export default function AddCoach(props: { edition: string; coachAdded: (user: Us
         }
         setLoading(false);
         if (success) {
-            props.coachAdded(user);
+            props.refreshCoaches();
             handleClose();
         }
     }
@@ -120,7 +122,33 @@ export default function AddCoach(props: { edition: string; coachAdded: (user: Us
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderMenu={(results, menuProps) => {
+                                const {
+                                    newSelectionPrefix,
+                                    paginationText,
+                                    renderMenuItemChildren,
+                                    ...props
+                                } = menuProps;
+                                return (
+                                    <Menu {...props}>
+                                        {results.map((result, index) => {
+                                            const user = result as User;
+                                            return (
+                                                <StyledMenuItem
+                                                    option={result}
+                                                    position={index}
+                                                    key={user.userId}
+                                                >
+                                                    <UserMenuItem user={user} />
+                                                    <br />
+                                                </StyledMenuItem>
+                                            );
+                                        })}
+                                    </Menu>
+                                );
+                            }}
                         />
+                        {selected?.auth.email}
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}
