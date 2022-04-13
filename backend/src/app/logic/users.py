@@ -7,8 +7,9 @@ from src.database.models import User
 
 def get_users_list(
         db: Session,
-        admin: bool,
+        admin: bool | None,
         edition_name: str | None,
+        exclude_edition: str | None,
         name: str | None,
         page: int
 ) -> UsersListResponse:
@@ -16,16 +17,8 @@ def get_users_list(
     Query the database for a list of users
     and wrap the result in a pydantic model
     """
-    if name is None:
-        name = ""
 
-    if admin:
-        users_orm = users_crud.get_admins_page(db, page, name)
-    else:
-        if edition_name is None:
-            users_orm = users_crud.get_users_page(db, page, name)
-        else:
-            users_orm = users_crud.get_users_for_edition_page(db, edition_name, page, name)
+    users_orm = users_crud.get_users_filtered(db, admin, edition_name, exclude_edition, name, page)
 
     users = []
     for user in users_orm:
