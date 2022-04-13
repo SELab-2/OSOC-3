@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session, Query
 
 from src.database.crud.editions import get_edition_by_name
 from src.database.crud.util import paginate
-from src.database.models import user_editions, User, Edition, CoachRequest
+from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
 from src.database.crud.editions import get_editions
 
 
