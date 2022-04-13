@@ -12,11 +12,11 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     source = user.editions if not user.admin else get_editions(db)
 
     editions = []
-    # Name is non-nullable in the database, so it can never be None,
+    # Name & year are non-nullable in the database, so it can never be None,
     # but MyPy doesn't seem to grasp that concept just yet so we have to check it
     # Could be a oneliner/list comp but that's a bit less readable
     # Return from newest to oldest
-    for edition in sorted(source, key=lambda e: e.year, reverse=True):
+    for edition in sorted(source, key=lambda e: e.year or -1, reverse=True):
         if edition.name is not None:
             editions.append(edition.name)
 
