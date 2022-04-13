@@ -10,7 +10,7 @@ from src.app.logic.users import get_user_editions
 from src.app.routers.tags import Tags
 from src.app.schemas.login import Token, UserData
 from src.app.schemas.users import user_model_to_schema
-from src.app.utils.dependencies import get_current_active_user
+from src.app.utils.dependencies import get_current_active_user, get_user_from_refresh_token
 from src.database.database import get_session
 from src.database.models import User
 
@@ -42,8 +42,10 @@ async def login_for_access_token(db: Session = Depends(get_session),
 
 
 @login_router.post("/refresh", response_model=Token)
-async def refresh_access_token(db: Session = Depends(get_session), user: User = Depends(get_current_active_user)):
-    """Return a new access & refresh token using on the old refresh token"""
+async def refresh_access_token(db: Session = Depends(get_session), user: User = Depends(get_user_from_refresh_token)):
+    """Return a new access & refresh token using on the old refresh token
+
+    Swagger note: This endpoint will not work on swagger because it uses the access token to try & refresh"""
     access_token, refresh_token = create_tokens(user)
 
     user_data: dict = user_model_to_schema(user).__dict__

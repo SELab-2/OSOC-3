@@ -22,3 +22,11 @@ class MissingPermissionsException(ValueError):
     when their application is still pending, and they haven't been
     accepted yet
     """
+
+
+class WrongTokenTypeException(ValueError):
+    """
+    Exception raised when a request to a private route is made with a
+    valid jwt token, but a wrong token type. eg: trying to authenticate
+    using a refresh token
+    """

@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 
 import settings
 import src.database.crud.projects as crud_projects
-from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
-    MissingPermissionsException
-from src.app.logic.security import ALGORITHM
+from src.app.exceptions.authentication import (
+    ExpiredCredentialsException, InvalidCredentialsException,
+    MissingPermissionsException, WrongTokenTypeException)
+from src.app.logic.security import ALGORITHM, TokenType
 from src.database.crud.editions import get_edition_by_name
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.crud.users import get_user_by_id
@@ -24,17 +25,18 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
-async def get_current_active_user(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
-    """Check which user is making a request by decoding its token
-    This function is used as a dependency for other functions
-    """
-    # TODO: check type of token.
+async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -> User:
+    """Check which user is making a request by decoding its token, and verifying the token type"""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int | None = payload.get("sub")
+        type_in_token: int | None = payload.get("type")
 
-        if user_id is None:
+        if user_id is None or type_in_token is None:
             raise InvalidCredentialsException()
+
+        if type_in_token != token_type.value:
+            raise WrongTokenTypeException()
 
         try:
             user = get_user_by_id(db, int(user_id))
@@ -46,6 +48,20 @@ async def get_current_active_user(db: Session = Depends(get_session), token: str
         raise ExpiredCredentialsException() from expired_signature
     except JWTError as jwt_err:
         raise InvalidCredentialsException() from jwt_err
+
+
+async def get_current_active_user(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+    """Check which user is making a request by decoding its access token
+    This function is used as a dependency for other functions
+    """
+    return await _get_user_from_token(TokenType.ACCESS, db, token)
+
+
+async def get_user_from_refresh_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+    """Check which user is making a request by decoding its refresh token
+    This function is used as a dependency for other functions
+    """
+    return await _get_user_from_token(TokenType.REFRESH, db, token)
 
 
 async def require_auth(user: User = Depends(get_current_active_user)) -> User:

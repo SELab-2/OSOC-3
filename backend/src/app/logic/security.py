@@ -1,3 +1,4 @@
+import enum
 from datetime import timedelta, datetime
 
 from jose import jwt
@@ -17,6 +18,12 @@ ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
+@enum.unique
+class TokenType(enum.Enum):
+    ACCESS = "access"
+    REFRESH = "refresh"
+
+
 def create_tokens(user: User) -> tuple[str, str]:
     """
     Create an access token and refresh token.
@@ -24,8 +31,8 @@ def create_tokens(user: User) -> tuple[str, str]:
     Returns: (access_token, refresh_token)
     """
     return (
-        _create_token({"type": "access", "sub": str(user.user_id)}, settings.ACCESS_TOKEN_EXPIRE_MINUTES),
-        _create_token({"type": "refresh", "sub": str(user.user_id)}, settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+        _create_token({"type": TokenType.ACCESS.value, "sub": str(user.user_id)}, settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        _create_token({"type": TokenType.REFRESH.value, "sub": str(user.user_id)}, settings.REFRESH_TOKEN_EXPIRE_MINUTES)
     )
 
 
