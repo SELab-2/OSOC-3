@@ -34,7 +34,7 @@ export default function StudentMailHistoryPage() {
                 </thead>
                 <tbody>
                     {table.emails.map(d => (
-                        <tr>
+                        <tr key={d.email_id}>
                             <td>{d.date}</td>
                             <td>{d.type}</td>
                         </tr>
