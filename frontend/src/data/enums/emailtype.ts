@@ -1,7 +1,7 @@
 /**
  * Enum for the different types of emails that can be sent
  */
-export const enum EmailType {
+export enum EmailType {
     UNDECIDED = "Undecided",
     YES = "Accepted",
     MAYBE = "Maybe",

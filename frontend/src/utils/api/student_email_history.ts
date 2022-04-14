@@ -1,6 +1,4 @@
 import { Email } from "../../data/interfaces";
-import { EmailType } from "../../data/enums";
-
 /**
  * A list of emails
  */
@@ -15,11 +13,12 @@ export async function getEmails(): Promise<EmailHistoryList> {
     // return response.data as EmailHistoryList;
 
     // placeholder while the real API call is not available
-    return {
+    const data = {
         emails: [
-            { email_id: 1, date: "Tuesday, 12-Apr-22 13:52:31", type: EmailType.YES },
-            { email_id: 2, date: "Monday, 11-Apr-22 12:52:31", type: EmailType.MAYBE },
-            { email_id: 3, date: "Sunday, 10-Apr-22 12:51:01", type: EmailType.NO },
+            { emailId: 1, date: "2022-04-14T12:36:28.641337", type: 0 },
+            { emailId: 2, date: "2022-04-14T12:36:28.641337", type: 1 },
+            { emailId: 3, date: "2022-04-14T12:36:28.641337", type: 2 },
         ],
     };
+    return data as EmailHistoryList;
 }

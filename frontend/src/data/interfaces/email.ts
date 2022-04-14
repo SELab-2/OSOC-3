@@ -1,9 +1,8 @@
-import { EmailType } from "../enums";
 /**
  * A sent email
  */
 export interface Email {
-    email_id: number;
+    emailId: number;
     date: String;
-    type: EmailType;
+    type: number;
 }
