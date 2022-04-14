@@ -43,7 +43,7 @@ async def get_editions(db: Session = Depends(get_session), user: User = Depends(
         EditionList: an object with a list of all the editions.
     """
     if user.admin:
-        return logic_editions.get_editions(db, page)
+        return logic_editions.get_editions_page(db, page)
     else:
         return EditionList(editions=user.editions)
 
