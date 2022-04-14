@@ -44,8 +44,8 @@ async def get_editions(db: Session = Depends(get_session), user: User = Depends(
     """
     if user.admin:
         return logic_editions.get_editions_page(db, page)
-    else:
-        return EditionList(editions=user.editions)
+
+    return EditionList(editions=user.editions)
 
 
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
