@@ -7,7 +7,7 @@ from src.app.logic.projects_students import logic_remove_student_project, logic_
     logic_change_project_role, logic_confirm_project_role
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import InputStudentRole
-from src.app.utils.dependencies import get_project, require_admin, require_coach
+from src.app.utils.dependencies import get_project, require_admin, require_coach, get_latest_edition
 from src.database.database import get_session
 from src.database.models import Project, User
 
@@ -25,7 +25,7 @@ async def remove_student_from_project(student_id: int, db: Session = Depends(get
 
 
 @project_students_router.patch("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                               dependencies=[Depends(require_coach)])
+                               dependencies=[Depends(get_latest_edition)])
 async def change_project_role(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
                               project: Project = Depends(get_project), user: User = Depends(require_coach)):
     """
@@ -35,7 +35,7 @@ async def change_project_role(student_id: int, input_sr: InputStudentRole, db: S
 
 
 @project_students_router.post("/{student_id}", status_code=status.HTTP_201_CREATED, response_class=Response,
-                              dependencies=[Depends(require_coach)])
+                              dependencies=[Depends(get_latest_edition)])
 async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
                                  project: Project = Depends(get_project), user: User = Depends(require_coach)):
     """
@@ -47,7 +47,7 @@ async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db
 
 
 @project_students_router.post("/{student_id}/confirm", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                              dependencies=[Depends(require_admin)])
+                              dependencies=[Depends(require_admin), Depends(get_latest_edition)])
 async def confirm_project_role(student_id: int, db: Session = Depends(get_session),
                                project: Project = Depends(get_project)):
     """

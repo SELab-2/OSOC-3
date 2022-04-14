@@ -169,3 +169,17 @@ def test_get_invite_present(database_session: Session, auth_client: AuthClient):
     assert response.status_code == status.HTTP_200_OK
     assert json["uuid"] == debug_uuid
     assert json["email"] == "test@ema.il"
+
+
+def test_create_invite_valid_old_edition(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for creating invites when data is valid, but the edition is read-only"""
+    auth_client.admin()
+    edition = Edition(year=2022, name="ed2022")
+    edition2 = Edition(year=2023, name="ed2023")
+    database_session.add(edition)
+    database_session.add(edition2)
+    database_session.commit()
+
+    # Create POST request
+    response = auth_client.post("/editions/ed2022/invites/", data=dumps({"email": "test@ema.il"}))
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

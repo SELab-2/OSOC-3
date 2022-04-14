@@ -112,3 +112,12 @@ def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL, 
         json=WEBHOOK_MISSING_QUESTION
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_new_webhook_old_edition(database_session: Session, auth_client: AuthClient, edition: Edition):
+    database_session.add(Edition(year=2023, name="ed2023"))
+    database_session.commit()
+
+    auth_client.admin()
+    response = auth_client.post(f"/editions/{edition.name}/webhooks/")
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

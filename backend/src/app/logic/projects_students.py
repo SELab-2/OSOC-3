@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from src.app.exceptions.projects import StudentInConflictException, FailedToAddProjectRoleException
 from src.app.logic.projects import logic_get_conflicts
 from src.app.schemas.projects import ConflictStudentList
+
 from src.database.crud.projects_students import db_remove_student_project, db_add_student_project, \
     db_change_project_role, db_confirm_project_role
 from src.database.models import Project, ProjectRole, Student, Skill
