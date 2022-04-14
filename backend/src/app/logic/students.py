@@ -30,9 +30,7 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
             return ReturnStudentList(students=[])
     else:
         skills = []
-    students_orm = get_students(db, edition, first_name=commons.first_name,
-                                last_name=commons.last_name, alumni=commons.alumni,
-                                student_coach=commons.student_coach, skills=skills)
+    students_orm = get_students(db, edition, commons, skills)
 
     students: list[StudentModel] = []
     for student in students_orm:

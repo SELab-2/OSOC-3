@@ -6,6 +6,7 @@ from src.database.models import Student, User, Edition, Skill, DecisionEmail
 from src.database.enums import DecisionEnum
 from src.database.crud.students import (get_student_by_id, set_definitive_decision_on_student,
                                         delete_student, get_students, get_emails)
+from src.app.schemas.students import CommonQueryParams
 
 
 @pytest.fixture
@@ -112,7 +113,7 @@ def test_get_all_students(database_with_data: Session):
     """test get all students"""
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition)
+    students = get_students(database_with_data, edition, CommonQueryParams())
     assert len(students) == 2
 
 
@@ -120,7 +121,8 @@ def test_search_students_on_first_name(database_with_data: Session):
     """test"""
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition, first_name="Jos")
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(first_name="Jos"))
     assert len(students) == 1
 
 
@@ -128,7 +130,8 @@ def test_search_students_on_last_name(database_with_data: Session):
     """tests search on last name"""
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition, last_name="Vermeulen")
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(last_name="Vermeulen"))
     assert len(students) == 1
 
 
@@ -136,7 +139,8 @@ def test_search_students_alumni(database_with_data: Session):
     """tests search on alumni"""
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition, alumni=True)
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(alumni=True))
     assert len(students) == 1
 
 
@@ -144,7 +148,8 @@ def test_search_students_student_coach(database_with_data: Session):
     """tests search on student coach"""
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition, student_coach=True)
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(student_coach=True))
     assert len(students) == 1
 
 
@@ -154,7 +159,8 @@ def test_search_students_one_skill(database_with_data: Session):
         Edition).where(Edition.edition_id == 1).one()
     skill: Skill = database_with_data.query(
         Skill).where(Skill.name == "skill1").one()
-    students = get_students(database_with_data, edition, skills=[skill])
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(), skills=[skill])
     assert len(students) == 1
 
 
@@ -164,7 +170,8 @@ def test_search_students_multiple_skills(database_with_data: Session):
         Edition).where(Edition.edition_id == 1).one()
     skills: list[Skill] = database_with_data.query(
         Skill).where(Skill.description == "important").all()
-    students = get_students(database_with_data, edition, skills=skills)
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(), skills=skills)
     assert len(students) == 1
 
 
