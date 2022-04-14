@@ -1,0 +1,25 @@
+.modal-dialog {
+    background-color: var(--osoc_blue);
+}
+
+.modal-header {
+    background-color: var(--osoc_blue);
+}
+
+.modal-body {
+    background-color: var(--background_color);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-footer {
+    background-color: var(--osoc_blue);
+}
+
+.modal-content {
+    background-color: var(--osoc_blue);
+}
+
+.form-text {
+    color: white;
+}

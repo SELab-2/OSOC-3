@@ -292,7 +292,7 @@ class User(Base):
     """Users of the tool (only admins & coaches)"""
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id: int = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 

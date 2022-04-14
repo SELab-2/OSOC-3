@@ -12,8 +12,7 @@ from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-from ...exceptions.authentication import MissingPermissionsException
-from ...utils.dependencies import require_admin, require_auth, require_coach, get_current_active_user
+from ...utils.dependencies import require_admin, require_auth, require_coach
 
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
@@ -33,17 +32,18 @@ for router in child_routers:
 
 
 @editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS])
-async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth)):
-    """Get a list of all editions.
+async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
+    """Get a paginated list of all editions.
     Args:
         db (Session, optional): connection with the database. Defaults to Depends(get_session).
-        user (User, optional): the current logged in user. Defaults to Depends(get_current_active_user).
+        user (User, optional): the current logged in user. Defaults to Depends(require_auth).
+        page (int): the page to return.
 
     Returns:
         EditionList: an object with a list of all the editions.
     """
     if user.admin:
-        return logic_editions.get_editions(db)
+        return logic_editions.get_editions(db, page)
     else:
         return EditionList(editions=user.editions)
 
@@ -78,7 +78,7 @@ async def post_edition(edition: EditionBase, db: Session = Depends(get_session))
     return logic_editions.create_edition(db, edition)
 
 
-@editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS], 
+@editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
                         dependencies=[Depends(require_admin)])
 async def delete_edition(edition_name: str, db: Session = Depends(get_session)):
     """Delete an existing edition.

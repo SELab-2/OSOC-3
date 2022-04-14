@@ -1,3 +1,4 @@
+# pylint: skip-file
 from fastapi import APIRouter
 
 from src.app.routers.tags import Tags
@@ -12,7 +13,6 @@ async def get_students(edition_id: int):
     """
     Get a list of all students.
     """
-
 
 
 @students_router.post("/emails")
