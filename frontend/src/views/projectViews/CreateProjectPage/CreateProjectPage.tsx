@@ -10,7 +10,8 @@ export default function CreateProjectPage() {
     const [numberOfStudents, setNumberOfStudents] = useState(0);
     const [skills, setSkills] = useState([]);
     const [partners, setPartners] = useState([]);
-    const [coaches, setCoaches] = useState([]);
+    const [coach, setCoach] = useState("");
+    const [coaches, setCoaches] = useState<string[]>([]);
 
     const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ export default function CreateProjectPage() {
                 onChange={e => setName(e.target.value)}
                 placeholder="Project name"
             />
+
             <div>
                 <Input
                     type="number"
@@ -35,19 +37,36 @@ export default function CreateProjectPage() {
                 />
             </div>
             <div>
-                <Input value={coaches} onChange={e => setCoaches([])} placeholder="Coach" />
-                <button>Add</button>
+                <Input
+                    value={coach}
+                    onChange={e => setCoach(e.target.value)}
+                    list="users"
+                    placeholder="Coach"
+                />
+                <datalist id="users">
+                    <option value="Coach1" />
+                    <option value="Coach2" />
+                    <option value="Admin1" />
+                    <option value="Admin2" />
+                </datalist>
+                <button
+                    onClick={() => {
+                        coaches.push(coach);
+                        setCoaches(coaches);
+                    }}
+                >
+                    Add coach
+                </button>
+            </div>
+            <div>
+                {coaches.map((element, _index )=> (<div key={_index}>{element}</div>))}
             </div>
             <div>
                 <Input value={skills} onChange={e => setSkills([])} placeholder="Skill" />
                 <button>Add</button>
             </div>
             <div>
-                <Input
-                    value={partners}
-                    onChange={e => setPartners([])}
-                    placeholder="Partner"
-                />
+                <Input value={partners} onChange={e => setPartners([])} placeholder="Partner" />
                 <button>Add</button>
             </div>
             <button

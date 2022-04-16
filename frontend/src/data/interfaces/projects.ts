@@ -70,7 +70,7 @@ export interface CreateProject {
     partners: Partner[];
 
     /** The users that will coach this project */
-    coaches: Coach[];
+    coaches: string[];
 }
 
 /**
