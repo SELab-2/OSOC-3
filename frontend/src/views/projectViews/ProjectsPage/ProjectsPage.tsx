@@ -10,11 +10,11 @@ import { Project } from "../../../data/interfaces";
  * You can filter on your own projects or filter on project name.
  */
 function ProjectPage() {
-    const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
+    const [projectsAPI, setProjectsAPI] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
 
     // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
-    const [projects, setProjects] = useState<Array<Project>>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -62,7 +62,7 @@ function ProjectPage() {
         if (!gotProjects) {
             callProjects();
         }
-    });
+    }, []);
 
     return (
         <div>
