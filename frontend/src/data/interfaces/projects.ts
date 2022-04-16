@@ -54,6 +54,26 @@ export interface Projects {
 }
 
 /**
+ * Used when creating a new project
+ */
+export interface CreateProject {
+    /** The name of the new project */
+    name: string;
+
+    /** Number of students the project needs */
+    number_of_students: number;
+
+    /** The required skills for the project */
+    skills: string[];
+
+    /** The partners that belong to this project */
+    partners: Partner[];
+
+    /** The users that will coach this project */
+    coaches: Coach[];
+}
+
+/**
  * Data about a place in a project
  */
 export interface StudentPlace {

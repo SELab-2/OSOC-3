@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Projects, Project } from "../../data/interfaces/projects";
+import { Projects, Project, CreateProject, Coach, Partner } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
 export async function getProjects(edition: string) {
@@ -20,6 +20,36 @@ export async function getProject(edition: string, projectId: number) {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
         const project = response.data as Project;
+        return project;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return null;
+        } else {
+            throw error;
+        }
+    }
+}
+
+export async function createProject(
+    edition: string,
+    name: string,
+    numberOfStudents: number,
+    skills: string[],
+    partners: Partner[],
+    coaches: Coach[]
+) {
+    const payload: CreateProject = {
+        name: name,
+        number_of_students: numberOfStudents,
+        skills: skills,
+        partners: partners,
+        coaches: coaches,
+    };
+
+    try {
+        const response = await axiosInstance.post("editions/" + edition + "/projects/", payload);
+        const project = response.data as Project;
+
         return project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
