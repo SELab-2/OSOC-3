@@ -15,7 +15,7 @@ export async function getProjects(edition: string) {
     }
 }
 
-export async function getProject(edition:string, projectId: number) {
+export async function getProject(edition: string, projectId: number) {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
         const project = response.data;
@@ -27,7 +27,6 @@ export async function getProject(edition:string, projectId: number) {
             throw error;
         }
     }
-    
 }
 
 export async function deleteProject(edition: string, projectId: number) {
