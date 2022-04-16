@@ -6,10 +6,8 @@ import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
 
 /**
- *
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
- *
  */
 function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
@@ -90,13 +88,8 @@ function ProjectPage() {
             <CardsGrid>
                 {projects.map((project, _index) => (
                     <ProjectCard
-                        name={project.name}
-                        partners={project.partners}
-                        numberOfStudents={project.numberOfStudents}
-                        coaches={project.coaches}
-                        edition={project.editionName}
-                        projectId={project.projectId}
-                        refreshEditions={() => setGotProjects(false)}
+                        project={project}
+                        refreshProjects={() => setGotProjects(false)}
                         key={_index}
                     />
                 ))}

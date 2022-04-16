@@ -23,6 +23,9 @@ import {
     CoachText,
 } from "../../../components/ProjectsComponents/ProjectCard/styles";
 
+/**
+ * @returns the detailed page of a project. Here you can add or remove students from the project.
+ */
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);

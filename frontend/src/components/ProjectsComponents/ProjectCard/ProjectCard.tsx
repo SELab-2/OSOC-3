@@ -22,41 +22,42 @@ import ConfirmDelete from "../ConfirmDelete";
 import { deleteProject } from "../../../utils/api/projects";
 import { useNavigate } from "react-router-dom";
 
-import { Coach, Partner } from "../../../data/interfaces";
+import { Project } from "../../../data/interfaces";
 
+/**
+ *
+ * @param project a Project object
+ * @param refreshProjects what to do when a project is deleted.
+ * @returns a project card which is a small overview of a project.
+ */
 export default function ProjectCard({
-    name,
-    partners,
-    numberOfStudents,
-    coaches,
-    edition,
-    projectId,
-    refreshEditions,
+    project,
+    refreshProjects,
 }: {
-    name: string;
-    partners: Partner[];
-    numberOfStudents: number;
-    coaches: Coach[];
-    edition: string;
-    projectId: number;
-    refreshEditions: () => void;
+    project: Project;
+    refreshProjects: () => void;
 }) {
+    // Used for the confirm screen.
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleDelete = () => {
-        deleteProject(edition, projectId);
-        setShow(false);
-        refreshEditions();
-    };
     const handleShow = () => setShow(true);
+
+    // What to do when deleting a project.
+    const handleDelete = () => {
+        deleteProject(project.editionName, project.projectId);
+        setShow(false);
+        refreshProjects();
+    };
 
     const navigate = useNavigate();
 
     return (
         <CardContainer>
             <TitleContainer>
-                <Title onClick={() => navigate("/editions/summerof2022/projects/" + projectId)}>
-                    {name}
+                <Title
+                    onClick={() => navigate("/editions/summerof2022/projects/" + project.projectId)}
+                >
+                    {project.name}
                     <OpenIcon />
                 </Title>
 
@@ -68,26 +69,26 @@ export default function ProjectCard({
                     visible={show}
                     handleConfirm={handleDelete}
                     handleClose={handleClose}
-                    name={name}
+                    name={project.name}
                 ></ConfirmDelete>
             </TitleContainer>
 
             <ClientContainer>
                 <Clients>
-                    {partners.map((element, _index) => (
-                        <Client key={_index}>{element.name}</Client>
+                    {project.partners.map((partner, _index) => (
+                        <Client key={_index}>{partner.name}</Client>
                     ))}
                 </Clients>
                 <NumberOfStudents>
-                    {numberOfStudents}
+                    {project.numberOfStudents}
                     <BsPersonFill />
                 </NumberOfStudents>
             </ClientContainer>
 
             <CoachesContainer>
-                {coaches.map((element, _index) => (
+                {project.coaches.map((coach, _index) => (
                     <CoachContainer key={_index}>
-                        <CoachText>{element.name}</CoachText>
+                        <CoachText>{coach.name}</CoachText>
                     </CoachContainer>
                 ))}
             </CoachesContainer>
