@@ -15,7 +15,7 @@ export const SearchField = styled.input`
     color: white;
     border: none;
     border-radius: 10px;
-`
+`;
 
 export const SearchButton = styled.button`
     padding: 5px 10px;
@@ -23,7 +23,7 @@ export const SearchButton = styled.button`
     color: white;
     border: none;
     border-radius: 10px;
-`
+`;
 
 export const CreateButton = styled.button`
     margin-left: 25px;
@@ -32,8 +32,8 @@ export const CreateButton = styled.button`
     color: white;
     border: none;
     border-radius: 10px;
-`
+`;
 export const OwnProject = styled(Form.Check)`
     margin-top: 10px;
     margin-left: 20px;
-`
+`;

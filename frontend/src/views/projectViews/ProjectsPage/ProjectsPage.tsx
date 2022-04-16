@@ -5,11 +5,20 @@ import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "
 import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
 
+/**
+ *
+ * @returns The projects overview page where you can see all the projects.
+ * You can filter on your own projects or filter on project name.
+ *
+ */
 function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
-    const [projects, setProjects] = useState<Array<Project>>([]);
     const [gotProjects, setGotProjects] = useState(false);
 
+    // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
+    const [projects, setProjects] = useState<Array<Project>>([]);
+
+    // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
 

@@ -63,7 +63,10 @@ export default function Router() {
                                             <Route path={""} element={<div />} />
                                         </Route>
                                         {/* TODO project page */}
-                                        <Route path={":projectId"} element={<ProjectDetailPage />} />
+                                        <Route
+                                            path={":projectId"}
+                                            element={<ProjectDetailPage />}
+                                        />
                                     </Route>
 
                                     {/* Students routes */}
