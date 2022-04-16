@@ -4,7 +4,8 @@ import { AuthContextState } from "../../contexts";
 import { Role } from "../../data/enums";
 
 interface LoginResponse {
-    accessToken: string;
+    access_token: string;
+    refresh_token: string;
     user: {
         admin: boolean;
         editions: string[];
@@ -27,7 +28,8 @@ export async function logIn(auth: AuthContextState, email: string, password: str
     try {
         const response = await axiosInstance.post("/login/token", payload);
         const login = response.data as LoginResponse;
-        auth.setToken(login.accessToken);
+        auth.setAccessToken(login.access_token);
+        auth.setRefreshToken(login.refresh_token);
         auth.setIsLoggedIn(true);
         auth.setRole(login.user.admin ? Role.ADMIN : Role.COACH);
         auth.setUserId(login.user.userId);

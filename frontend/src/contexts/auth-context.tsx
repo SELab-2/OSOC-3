@@ -1,7 +1,11 @@
 /** Context hook to maintain the authentication state of the user **/
 import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
-import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
+import {
+    getAccessToken, getRefreshToken,
+    setAccessToken as setAccessTokenInStorage,
+    setRefreshToken as setRefreshTokenInStorage
+} from "../utils/local-storage";
 
 /**
  * Interface that holds the data stored in the AuthContext.
@@ -13,8 +17,10 @@ export interface AuthContextState {
     setRole: (value: Role | null) => void;
     userId: number | null;
     setUserId: (value: number | null) => void;
-    token: string | null;
-    setToken: (value: string | null) => void;
+    accessToken: string | null;
+    setAccessToken: (value: string | null) => void;
+    refreshToken: string | null;
+    setRefreshToken: (value: string | null) => void;
     editions: string[];
     setEditions: (value: string[]) => void;
 }
@@ -32,8 +38,10 @@ function authDefaultState(): AuthContextState {
         setRole: (_: Role | null) => {},
         userId: null,
         setUserId: (value: number | null) => {},
-        token: getToken(),
-        setToken: (_: string | null) => {},
+        accessToken: getAccessToken(),
+        setAccessToken: (_: string | null) => {},
+        refreshToken: getRefreshToken(),
+        setRefreshToken: (_: string | null) => {},
         editions: [],
         setEditions: (_: string[]) => {},
     };
@@ -61,7 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [editions, setEditions] = useState<string[]>([]);
     const [userId, setUserId] = useState<number | null>(null);
     // Default value: check LocalStorage
-    const [token, setToken] = useState<string | null>(getToken());
+    const [accessToken, setAccessToken] = useState<string | null>(getAccessToken());
+    const [refreshToken, setRefreshToken] = useState<string | null>(getRefreshToken());
 
     // Create AuthContext value
     const authContextValue: AuthContextState = {
@@ -71,16 +80,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole: setRole,
         userId: userId,
         setUserId: setUserId,
-        token: token,
-        setToken: (value: string | null) => {
+        accessToken: accessToken,
+        setAccessToken: (value: string | null) => {
             // Log the user out if token is null
             if (value === null) {
                 setIsLoggedIn(false);
             }
 
             // Set the token in LocalStorage
-            setTokenInStorage(value);
-            setToken(value);
+            setAccessTokenInStorage(value);
+            setAccessToken(value);
+        },
+        refreshToken: refreshToken,
+        setRefreshToken: (value: string | null) => {
+            // Log the user out if token is null
+            if (value === null) {
+                setIsLoggedIn(false);
+            }
+
+            // Set the token in LocalStorage
+            setRefreshTokenInStorage(value);
+            setRefreshToken(value);
         },
         editions: editions,
         setEditions: setEditions,

@@ -8,8 +8,8 @@ import { useAuth } from "../../contexts/auth-context";
  * Links are hidden if the user is not authorized to see them.
  */
 export default function NavBar() {
-    const { token, setToken } = useAuth();
-    const hidden = token ? "nav-links" : "nav-hidden";
+    const { accessToken, setAccessToken } = useAuth();
+    const hidden = accessToken ? "nav-links" : "nav-hidden";
 
     return (
         <>
@@ -32,7 +32,7 @@ export default function NavBar() {
                         <NavLink
                             to="/"
                             onClick={() => {
-                                setToken(null);
+                                setAccessToken(null);
                             }}
                         >
                             Log out

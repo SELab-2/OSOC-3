@@ -4,6 +4,13 @@ import { BASE_URL } from "../../settings";
 export const axiosInstance = axios.create();
 axiosInstance.defaults.baseURL = BASE_URL;
 
+axiosInstance.interceptors.response.use(response => {
+    return response
+}, error => {
+    /* TODO: refresh token */
+    return axiosInstance(error.config)
+})
+
 /**
  * Function to set the default bearer token in the request headers.
  * Passing `null` as the value will remove the header instead.

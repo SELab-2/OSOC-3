@@ -19,6 +19,7 @@ export async function validateBearerToken(token: string | null): Promise<User | 
         };
 
         const response = await axiosInstance.get("/users/current", config);
+        console.log(response);
         return response.data as User;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -45,3 +46,9 @@ export async function validateRegistrationUrl(edition: string, uuid: string): Pr
         }
     }
 }
+
+/*
+* -> 404 page als niet ingelogd
+* -> swagger werkt weer
+* -> async dingen
+* */
