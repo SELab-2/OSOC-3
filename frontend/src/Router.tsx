@@ -7,7 +7,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom
 import RegisterPage from "./views/RegisterPage";
 import StudentsPage from "./views/StudentsPage/StudentsPage";
 import UsersPage from "./views/UsersPage";
-import { ProjectsPage, ProjectDetailPage, CreateProjectPage } from "./views";
+import { ProjectsPage, ProjectDetailPage } from "./views";
 import PendingPage from "./views/PendingPage";
 import Footer from "./components/Footer";
 import { useAuth } from "./contexts/auth-context";
@@ -60,7 +60,7 @@ export default function Router() {
                                         <Route path={""} element={<ProjectsPage />} />
                                         <Route path={"new"} element={<AdminRoute />}>
                                             {/* TODO create project page */}
-                                            <Route path={""} element={<CreateProjectPage />} />
+                                            <Route path={""} element={<div />} />
                                         </Route>
                                         {/* TODO project page */}
                                         <Route path={":projectId"} element={<ProjectDetailPage />} />

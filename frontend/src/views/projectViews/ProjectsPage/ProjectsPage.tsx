@@ -4,27 +4,16 @@ import { ProjectCard } from "../../../components/ProjectsComponents";
 import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
 import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
-import { useNavigate } from "react-router-dom";
 
-/**
- *
- * @returns The projects overview page where you can see all the projects.
- * You can filter on your own projects or filter on project name.
- *
- */
 function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
+    const [projects, setProjects] = useState<Array<Project>>([]);
     const [gotProjects, setGotProjects] = useState(false);
 
-    // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
-    const [projects, setProjects] = useState<Array<Project>>([]);
-
-    // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
 
-    const navigate = useNavigate();
-    const { userId, role } = useAuth();
+    const { userId } = useAuth();
 
     /**
      * Uses to filter the results based onto search string and own projects
@@ -77,11 +66,7 @@ function ProjectPage() {
                     placeholder="project name"
                 />
                 <SearchButton>Search</SearchButton>
-                {role === 0 ? (
-                    <CreateButton onClick={() => navigate("/editions/summerof2022/projects/new")}>
-                        Create Project
-                    </CreateButton>
-                ) : null}
+                <CreateButton>Create Project</CreateButton>
             </div>
             <OwnProject
                 type="switch"
