@@ -35,7 +35,7 @@ export default function ProjectDetailPage() {
 
     const navigate = useNavigate();
 
-    const [students, setStudents] = useState<Array<StudentPlace>>([]);
+    const [students, setStudents] = useState<StudentPlace[]>([]);
 
     useEffect(() => {
         async function callProjects() {
@@ -62,7 +62,7 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    });
+    }, []);
 
     if (project) {
         return (

@@ -8,7 +8,7 @@ export async function getProjects(edition: string) {
         return projects;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return null;
         } else {
             throw error;
         }
@@ -22,19 +22,20 @@ export async function getProject(edition: string, projectId: number) {
         return project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return null;
         } else {
             throw error;
         }
     }
 }
 
-export async function deleteProject(edition: string, projectId: number) {
+export async function deleteProject(edition: string, projectId: number): boolean {
     try {
-        const response = await axiosInstance.delete(
+        await axiosInstance.delete(
             "/editions/" + edition + "/projects/" + projectId
         );
-        console.log(response);
+        
+        return true;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return false;

@@ -1,5 +1,5 @@
 /**
- * This file contains al interfaces used in projects pages.
+ * This file contains all interfaces used in projects pages.
  */
 
 /**
@@ -52,7 +52,7 @@ export interface StudentPlace {
     /** Whether or not this position is filled in */
     available: boolean;
 
-    /** The skill needed to for this place */
+    /** The skill needed for this place */
     skill: string;
 
     /** The name of the student if this place is filled in */

@@ -2,7 +2,7 @@ import { StyledModal, ModalFooter, ModalHeader, Button, DeleteButton } from "./s
 
 /**
  *
- * @param visible wether to display the confirm screen.
+ * @param visible whether to display the confirm screen.
  * @param handleClose what to do when the user closes the confirm screen.
  * @param handleConfirm what to do when the user confirms the delete action.
  * @param name the name of the project that is going to be deleted.
