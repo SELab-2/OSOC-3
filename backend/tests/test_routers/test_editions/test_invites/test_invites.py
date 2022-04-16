@@ -4,6 +4,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from starlette import status
 
+from settings import DB_PAGE_SIZE
 from src.database.models import Edition, InviteLink
 from tests.utils.authorization import AuthClient
 
@@ -31,6 +32,7 @@ def test_get_invites(database_session: Session, auth_client: AuthClient):
 
     response = auth_client.get("/editions/ed2022/invites")
 
+    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
     assert len(json["inviteLinks"]) == 1
@@ -38,6 +40,24 @@ def test_get_invites(database_session: Session, auth_client: AuthClient):
     assert link["id"] == 1
     assert link["email"] == "test@ema.il"
     assert link["editionName"] == "ed2022"
+
+
+def test_get_invites_paginated(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for getting paginated invites when db is not empty"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(InviteLink(target_email=f"{i}@example.com", edition=edition))
+    database_session.commit()
+
+    auth_client.admin()
+
+    response = auth_client.get("/editions/ed2022/invites?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['inviteLinks']) == DB_PAGE_SIZE
+    response = auth_client.get("/editions/ed2022/invites?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['inviteLinks']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 def test_create_invite_valid(database_session: Session, auth_client: AuthClient):
@@ -149,3 +169,17 @@ def test_get_invite_present(database_session: Session, auth_client: AuthClient):
     assert response.status_code == status.HTTP_200_OK
     assert json["uuid"] == debug_uuid
     assert json["email"] == "test@ema.il"
+
+
+def test_create_invite_valid_old_edition(database_session: Session, auth_client: AuthClient):
+    """Test endpoint for creating invites when data is valid, but the edition is read-only"""
+    auth_client.admin()
+    edition = Edition(year=2022, name="ed2022")
+    edition2 = Edition(year=2023, name="ed2023")
+    database_session.add(edition)
+    database_session.add(edition2)
+    database_session.commit()
+
+    # Create POST request
+    response = auth_client.post("/editions/ed2022/invites/", data=dumps({"email": "test@ema.il"}))
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

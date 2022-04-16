@@ -1,5 +1,6 @@
 export * as Errors from "./errors";
 export { default as LoginPage } from "./LoginPage";
+export { default as EditionsPage } from "./EditionsPage";
 export { default as PendingPage } from "./PendingPage";
 export { ProjectsPage } from "./projectViews";
 export { ProjectDetailPage } from "./projectViews";

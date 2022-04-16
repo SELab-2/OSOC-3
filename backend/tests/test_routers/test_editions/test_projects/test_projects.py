@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 from starlette import status
 
+from settings import DB_PAGE_SIZE
 from src.database.models import Edition, Project, User, Skill, ProjectRole, Student, Partner
 from tests.utils.authorization import AuthClient
 
@@ -61,6 +62,25 @@ def test_get_projects(database_with_data: Session, auth_client: AuthClient):
     assert json['projects'][0]['name'] == "project1"
     assert json['projects'][1]['name'] == "project2"
     assert json['projects'][2]['name'] == "project3"
+
+
+def test_get_projects_paginated(database_session: Session, auth_client: AuthClient):
+    """test get all projects paginated"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(Project(name=f"Project {i}", edition=edition, number_of_students=5))
+    database_session.commit()
+
+    auth_client.admin()
+
+    response = auth_client.get("/editions/ed2022/projects?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['projects']) == DB_PAGE_SIZE
+    response = auth_client.get("/editions/ed2022/projects?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['projects']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 def test_get_project(database_with_data: Session, auth_client: AuthClient):
@@ -273,3 +293,18 @@ def test_patch_wrong_project(database_session: Session, auth_client: AuthClient)
 
     assert len(json['projects']) == 1
     assert json['projects'][0]['name'] == 'project'
+
+
+def test_create_project_old_edition(database_with_data: Session, auth_client: AuthClient):
+    """test create a project for a readonly edition"""
+    auth_client.admin()
+    database_with_data.add(Edition(year=2023, name="ed2023"))
+    database_with_data.commit()
+
+    response = \
+        auth_client.post("/editions/ed2022/projects/",
+                         json={"name": "test",
+                               "number_of_students": 5,
+                               "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
+
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

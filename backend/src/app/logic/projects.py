@@ -1,15 +1,16 @@
 from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ProjectList, Project, ConflictStudentList, InputProject, Student, \
-    ConflictStudent, ConflictProject
-from src.database.crud.projects import db_get_all_projects, db_add_project, db_delete_project, \
+from src.app.schemas.projects import (
+    ProjectList, Project, ConflictStudentList, InputProject, Student, ConflictStudent, ConflictProject
+)
+from src.database.crud.projects import db_get_projects_for_edition_page, db_add_project, db_delete_project, \
     db_patch_project, db_get_conflict_students
-from src.database.models import Edition, Project as ProjectModel
+from src.database.models import Edition
 
 
-def logic_get_project_list(db: Session, edition: Edition) -> ProjectList:
+def logic_get_project_list(db: Session, edition: Edition, page: int) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
-    db_all_projects = db_get_all_projects(db, edition)
+    db_all_projects = db_get_projects_for_edition_page(db, edition, page)
     projects_model = []
     for project in db_all_projects:
         project_model = Project(project_id=project.project_id, name=project.name,
