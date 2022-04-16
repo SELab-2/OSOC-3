@@ -1,10 +1,4 @@
-import { Email } from "../../data/interfaces";
-/**
- * A list of emails
- */
-export interface EmailHistoryList {
-    emails: Email[];
-}
+import { EmailHistoryList } from "../../data/interfaces";
 /**
  * Get the full email history for a student
  */

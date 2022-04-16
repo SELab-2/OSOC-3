@@ -1,2 +1,3 @@
 export type { User } from "./users";
-export type { Email } from "./email";
+export type { Email, EmailHistoryList } from "./email";
+export type { Student } from "./student";

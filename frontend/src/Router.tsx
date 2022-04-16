@@ -12,6 +12,7 @@ import {
     UsersPage,
     VerifyingTokenPage,
     StudentMailHistoryPage,
+    MailOverviewPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
 
@@ -53,6 +54,11 @@ export default function Router() {
                                 <Route path={":editionId"} element={<Outlet />}>
                                     {/* TODO edition page? do we need? maybe just some nav/links? */}
                                     <Route path={""} element={<div />} />
+
+                                    {/* Mail Overview */}
+                                    <Route path={"emails"} element={<AdminRoute />}>
+                                        <Route path={""} element={<MailOverviewPage />} />
+                                    </Route>
 
                                     {/* Projects routes */}
                                     <Route path="projects" element={<Outlet />}>

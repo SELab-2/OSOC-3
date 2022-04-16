@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { MailHistoryPage } from "./styles";
 import Table from "react-bootstrap/Table";
-import { getEmails, EmailHistoryList } from "../../utils/api/student_email_history";
+import { getEmails } from "../../utils/api/student_email_history";
+import { EmailHistoryList } from "../../data/interfaces";
 import { EmailType } from "../../data/enums";
 /**
  * Page that shows the email history of a student in a table

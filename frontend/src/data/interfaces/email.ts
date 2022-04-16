@@ -6,3 +6,9 @@ export interface Email {
     date: String;
     type: number;
 }
+/**
+ * A list of sent emails
+ */
+export interface EmailHistoryList {
+    emails: Email[];
+}
