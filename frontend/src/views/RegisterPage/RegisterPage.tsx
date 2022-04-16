@@ -15,22 +15,23 @@ import {
 } from "../../components/RegisterComponents";
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
+import { decodeRegistrationLink } from "../../utils/logic/registration";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
  * this renders the [[BadInviteLink]] component instead.
  */
 export default function RegisterPage() {
-    const [validUuid, setUuid] = useState(false);
+    const [validUuid, setValidUuid] = useState(false);
     const params = useParams();
-    const uuid = params.uuid;
+    const data = decodeRegistrationLink(params.uuid);
 
     useEffect(() => {
         async function validateUuid() {
-            if (uuid) {
-                const response = await validateRegistrationUrl("1", uuid);
+            if (data) {
+                const response = await validateRegistrationUrl(data.edition, data.uuid);
                 if (response) {
-                    setUuid(true);
+                    setValidUuid(true);
                 }
             }
         }
@@ -39,7 +40,7 @@ export default function RegisterPage() {
         }
     });
 
-    async function callRegister(uuid: string) {
+    async function callRegister(edition: string, uuid: string) {
         // Check if passwords are the same
         if (password !== confirmPassword) {
             alert("Passwords do not match");
@@ -51,8 +52,6 @@ export default function RegisterPage() {
             return;
         }
 
-        // TODO this has to change to get the edition the invite belongs to
-        const edition = "ed2022";
         try {
             const response = await register(edition, email, name, uuid, password);
             if (response) {
@@ -71,7 +70,7 @@ export default function RegisterPage() {
 
     const navigate = useNavigate();
 
-    if (validUuid && uuid) {
+    if (validUuid && data) {
         return (
             <div>
                 <RegisterFormContainer>
@@ -84,10 +83,12 @@ export default function RegisterPage() {
                     <ConfirmPassword
                         confirmPassword={confirmPassword}
                         setConfirmPassword={setConfirmPassword}
-                        callRegister={() => callRegister(uuid)}
+                        callRegister={() => callRegister(data.edition, data.uuid)}
                     />
                     <div>
-                        <RegisterButton onClick={() => callRegister(uuid)}>Register</RegisterButton>
+                        <RegisterButton onClick={() => callRegister(data.edition, data.uuid)}>
+                            Register
+                        </RegisterButton>
                     </div>
                 </RegisterFormContainer>
             </div>
