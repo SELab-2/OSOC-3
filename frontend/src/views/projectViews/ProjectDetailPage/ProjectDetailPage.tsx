@@ -45,6 +45,7 @@ export default function ProjectDetailPage() {
                 if (response) {
                     setProject(response);
 
+                    // TODO
                     // Generate student data
                     const studentsTemplate: StudentPlace[] = [];
                     for (let i = 0; i < response.numberOfStudents; i++) {
@@ -62,44 +63,44 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    }, []);
+    }, [gotProject, navigate, projectId]);
 
-    if (project) {
-        return (
-            <div>
-                <ProjectContainer>
-                    <GoBack onClick={() => navigate("/editions/2022/projects/")}>
-                        <BiArrowBack />
-                        Overview
-                    </GoBack>
+    if (!project) return null;
 
-                    <Title>{project.name}</Title>
+    return (
+        <div>
+            <ProjectContainer>
+                <GoBack onClick={() => navigate("/editions/2022/projects/")}>
+                    <BiArrowBack />
+                    Overview
+                </GoBack>
 
-                    <ClientContainer>
-                        {project.partners.map((element, _index) => (
-                            <Client key={_index}>{element.name}</Client>
-                        ))}
-                        <NumberOfStudents>
-                            {project.numberOfStudents}
-                            <BsPersonFill />
-                        </NumberOfStudents>
-                    </ClientContainer>
+                <Title>{project.name}</Title>
 
-                    <CoachesContainer>
-                        {project.coaches.map((element, _index) => (
-                            <CoachContainer key={_index}>
-                                <CoachText>{element.name}</CoachText>
-                            </CoachContainer>
-                        ))}
-                    </CoachesContainer>
+                <ClientContainer>
+                    {project.partners.map((element, _index) => (
+                        <Client key={_index}>{element.name}</Client>
+                    ))}
+                    <NumberOfStudents>
+                        {project.numberOfStudents}
+                        <BsPersonFill />
+                    </NumberOfStudents>
+                </ClientContainer>
 
-                    <div>
-                        {students.map((element: StudentPlace, _index) => (
-                            <StudentPlaceholder studentPlace={element} key={_index} />
-                        ))}
-                    </div>
-                </ProjectContainer>
-            </div>
-        );
-    } else return <div></div>;
+                <CoachesContainer>
+                    {project.coaches.map((element, _index) => (
+                        <CoachContainer key={_index}>
+                            <CoachText>{element.name}</CoachText>
+                        </CoachContainer>
+                    ))}
+                </CoachesContainer>
+
+                <div>
+                    {students.map((element: StudentPlace, _index) => (
+                        <StudentPlaceholder studentPlace={element} key={_index} />
+                    ))}
+                </div>
+            </ProjectContainer>
+        </div>
+    );
 }

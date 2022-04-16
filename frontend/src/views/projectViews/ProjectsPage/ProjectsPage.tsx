@@ -9,7 +9,7 @@ import { Project } from "../../../data/interfaces";
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
  */
-function ProjectPage() {
+export default function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
 
@@ -28,18 +28,16 @@ function ProjectPage() {
     useEffect(() => {
         const results: Project[] = [];
         projectsAPI.forEach(project => {
-            let ownsProject = true;
+            let filterOut = false;
             if (ownProjects) {
-                ownsProject = false;
-                project.coaches.forEach(coach => {
-                    if (coach.userId === userId) {
-                        ownsProject = true;
-                    }
+                // If the user doesn't coach this project it will be filtered out.
+                filterOut = !project.coaches.some(coach => {
+                    return coach.userId === userId;
                 });
             }
             if (
                 project.name.toLocaleLowerCase().includes(searchString.toLocaleLowerCase()) &&
-                ownsProject
+                !filterOut
             ) {
                 results.push(project);
             }
@@ -62,7 +60,7 @@ function ProjectPage() {
         if (!gotProjects) {
             callProjects();
         }
-    }, []);
+    }, [gotProjects]);
 
     return (
         <div>
@@ -97,5 +95,3 @@ function ProjectPage() {
         </div>
     );
 }
-
-export default ProjectPage;

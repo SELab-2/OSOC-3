@@ -46,6 +46,14 @@ export interface Project {
 }
 
 /**
+ * Used as an response object for multiple projects
+ */
+export interface Projects {
+    /** A list of projects */
+    projects: Project[];
+}
+
+/**
  * Data about a place in a project
  */
 export interface StudentPlace {
