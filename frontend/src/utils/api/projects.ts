@@ -1,41 +1,39 @@
 import axios from "axios";
+import { Projects, Project } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
 export async function getProjects(edition: string) {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/");
-        const projects = response.data;
+        const projects = response.data as Projects;
         return projects;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return null;
         } else {
             throw error;
         }
     }
 }
 
-export async function getProject(edition:string, projectId: number) {
+export async function getProject(edition: string, projectId: number) {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
-        const project = response.data;
+        const project = response.data as Project;
         return project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return null;
         } else {
             throw error;
         }
     }
-    
 }
 
 export async function deleteProject(edition: string, projectId: number) {
     try {
-        const response = await axiosInstance.delete(
-            "/editions/" + edition + "/projects/" + projectId
-        );
-        console.log(response);
+        await axiosInstance.delete("/editions/" + edition + "/projects/" + projectId);
+        return true;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return false;

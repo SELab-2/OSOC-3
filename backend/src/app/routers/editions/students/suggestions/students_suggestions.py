@@ -1,3 +1,4 @@
+# pylint: skip-file
 from fastapi import APIRouter
 
 from src.app.routers.tags import Tags

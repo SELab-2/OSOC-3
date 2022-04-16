@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from src.database.models import Skill
+
 from src.app.schemas.skills import SkillBase
+from src.database.models import Skill
 
 
 def get_skills(db: Session) -> list[Skill]:

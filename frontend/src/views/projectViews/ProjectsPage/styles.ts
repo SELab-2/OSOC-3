@@ -14,16 +14,16 @@ export const SearchField = styled.input`
     background-color: #131329;
     color: white;
     border: none;
-    border-radius: 10px;
-`
+    border-radius: 5px;
+`;
 
 export const SearchButton = styled.button`
     padding: 5px 10px;
     background-color: #00bfff;
     color: white;
     border: none;
-    border-radius: 10px;
-`
+    border-radius: 5px;
+`;
 
 export const CreateButton = styled.button`
     margin-left: 25px;
@@ -31,9 +31,9 @@ export const CreateButton = styled.button`
     background-color: #44dba4;
     color: white;
     border: none;
-    border-radius: 10px;
-`
+    border-radius: 5px;
+`;
 export const OwnProject = styled(Form.Check)`
     margin-top: 10px;
     margin-left: 20px;
-`
+`;

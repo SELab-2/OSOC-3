@@ -23,6 +23,9 @@ import {
     CoachText,
 } from "../../../components/ProjectsComponents/ProjectCard/styles";
 
+/**
+ * @returns the detailed page of a project. Here you can add or remove students from the project.
+ */
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
@@ -32,16 +35,17 @@ export default function ProjectDetailPage() {
 
     const navigate = useNavigate();
 
-    const [students, setStudents] = useState<Array<StudentPlace>>([]);
+    const [students, setStudents] = useState<StudentPlace[]>([]);
 
     useEffect(() => {
         async function callProjects() {
             if (projectId) {
                 setGotProject(true);
-                const response = await getProject("summerof2022", projectId);
+                const response = await getProject("2022", projectId);
                 if (response) {
                     setProject(response);
 
+                    // TODO
                     // Generate student data
                     const studentsTemplate: StudentPlace[] = [];
                     for (let i = 0; i < response.numberOfStudents; i++) {
@@ -59,44 +63,44 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    });
+    }, [gotProject, navigate, projectId]);
 
-    if (project) {
-        return (
-            <div>
-                <ProjectContainer>
-                    <GoBack onClick={() => navigate("/editions/summerof2022/projects/")}>
-                        <BiArrowBack />
-                        Overview
-                    </GoBack>
+    if (!project) return null;
 
-                    <Title>{project.name}</Title>
+    return (
+        <div>
+            <ProjectContainer>
+                <GoBack onClick={() => navigate("/editions/2022/projects/")}>
+                    <BiArrowBack />
+                    Overview
+                </GoBack>
 
-                    <ClientContainer>
-                        {project.partners.map((element, _index) => (
-                            <Client key={_index}>{element.name}</Client>
-                        ))}
-                        <NumberOfStudents>
-                            {project.numberOfStudents}
-                            <BsPersonFill />
-                        </NumberOfStudents>
-                    </ClientContainer>
+                <Title>{project.name}</Title>
 
-                    <CoachesContainer>
-                        {project.coaches.map((element, _index) => (
-                            <CoachContainer key={_index}>
-                                <CoachText>{element.name}</CoachText>
-                            </CoachContainer>
-                        ))}
-                    </CoachesContainer>
+                <ClientContainer>
+                    {project.partners.map((element, _index) => (
+                        <Client key={_index}>{element.name}</Client>
+                    ))}
+                    <NumberOfStudents>
+                        {project.numberOfStudents}
+                        <BsPersonFill />
+                    </NumberOfStudents>
+                </ClientContainer>
 
-                    <div>
-                        {students.map((element: StudentPlace, _index) => (
-                            <StudentPlaceholder studentPlace={element} key={_index} />
-                        ))}
-                    </div>
-                </ProjectContainer>
-            </div>
-        );
-    } else return <div></div>;
+                <CoachesContainer>
+                    {project.coaches.map((element, _index) => (
+                        <CoachContainer key={_index}>
+                            <CoachText>{element.name}</CoachText>
+                        </CoachContainer>
+                    ))}
+                </CoachesContainer>
+
+                <div>
+                    {students.map((element: StudentPlace, _index) => (
+                        <StudentPlaceholder studentPlace={element} key={_index} />
+                    ))}
+                </div>
+            </ProjectContainer>
+        </div>
+    );
 }

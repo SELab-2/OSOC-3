@@ -1,5 +1,13 @@
 import { StyledModal, ModalFooter, ModalHeader, Button, DeleteButton } from "./styles";
 
+/**
+ *
+ * @param visible whether to display the confirm screen.
+ * @param handleClose what to do when the user closes the confirm screen.
+ * @param handleConfirm what to do when the user confirms the delete action.
+ * @param name the name of the project that is going to be deleted.
+ * @returns the modal the confirm the deletion of a project.
+ */
 export default function ConfirmDelete({
     visible,
     handleClose,
@@ -7,8 +15,8 @@ export default function ConfirmDelete({
     name,
 }: {
     visible: boolean;
-    handleConfirm: () => void;
     handleClose: () => void;
+    handleConfirm: () => void;
     name: string;
 }) {
     return (

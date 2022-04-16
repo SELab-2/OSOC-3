@@ -7,7 +7,7 @@ export const StyledModal = styled(Modal)`
     margin-top: 5%;
     .modal-content {
         background-color: #272741;
-        border-radius: 10px;
+        border-radius: 5px;
         border-color: #f14a3b;
     }
 `;

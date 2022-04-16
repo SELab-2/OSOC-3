@@ -1,20 +1,30 @@
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
-from src.app.schemas.projects import ConflictStudent, InputProject
+from src.app.schemas.projects import InputProject
+from src.database.crud.util import paginate
 from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
 
 
-def db_get_all_projects(db: Session, edition: Edition) -> list[Project]:
-    """Query all projects from a certain edition from the database"""
-    return db.query(Project).where(Project.edition == edition).all()
+def _get_projects_for_edition_query(db: Session, edition: Edition) -> Query:
+    return db.query(Project).where(Project.edition == edition).order_by(Project.project_id)
+
+
+def db_get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
+    """Returns a list of all projects from a certain edition from the database"""
+    return _get_projects_for_edition_query(db, edition).all()
+
+
+def db_get_projects_for_edition_page(db: Session, edition: Edition, page: int) -> list[Project]:
+    """Returns a paginated list of all projects from a certain edition from the database"""
+    return paginate(_get_projects_for_edition_query(db, edition), page).all()
 
 
 def db_add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
-     """
+    """
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
     coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
     partners_obj = []
@@ -57,7 +67,7 @@ def db_patch_project(db: Session, project_id: int, input_project: InputProject):
     If there are partner names that are not already in the database, add them
     """
     project = db.query(Project).where(Project.project_id == project_id).one()
-    
+
     skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
     coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
     partners_obj = []

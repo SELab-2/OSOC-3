@@ -7,17 +7,15 @@ import { Project } from "../../../data/interfaces";
 import { useNavigate } from "react-router-dom";
 
 /**
- *
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
- *
  */
-function ProjectPage() {
-    const [projectsAPI, setProjectsAPI] = useState<Array<Project>>([]);
+export default function ProjectPage() {
+    const [projectsAPI, setProjectsAPI] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
 
     // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
-    const [projects, setProjects] = useState<Array<Project>>([]);
+    const [projects, setProjects] = useState<Project[]>([]);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -32,18 +30,16 @@ function ProjectPage() {
     useEffect(() => {
         const results: Project[] = [];
         projectsAPI.forEach(project => {
-            let ownsProject = true;
+            let filterOut = false;
             if (ownProjects) {
-                ownsProject = false;
-                project.coaches.forEach(coach => {
-                    if (coach.userId === userId) {
-                        ownsProject = true;
-                    }
+                // If the user doesn't coach this project it will be filtered out.
+                filterOut = !project.coaches.some(coach => {
+                    return coach.userId === userId;
                 });
             }
             if (
                 project.name.toLocaleLowerCase().includes(searchString.toLocaleLowerCase()) &&
-                ownsProject
+                !filterOut
             ) {
                 results.push(project);
             }
@@ -57,7 +53,7 @@ function ProjectPage() {
     useEffect(() => {
         async function callProjects() {
             setGotProjects(true);
-            const response = await getProjects("summerof2022");
+            const response = await getProjects("2022");
             if (response) {
                 setProjectsAPI(response.projects);
                 setProjects(response.projects);
@@ -66,7 +62,7 @@ function ProjectPage() {
         if (!gotProjects) {
             callProjects();
         }
-    });
+    }, [gotProjects]);
 
     return (
         <div>
@@ -96,13 +92,8 @@ function ProjectPage() {
             <CardsGrid>
                 {projects.map((project, _index) => (
                     <ProjectCard
-                        name={project.name}
-                        partners={project.partners}
-                        numberOfStudents={project.numberOfStudents}
-                        coaches={project.coaches}
-                        edition={project.editionName}
-                        projectId={project.projectId}
-                        refreshEditions={() => setGotProjects(false)}
+                        project={project}
+                        refreshProjects={() => setGotProjects(false)}
                         key={_index}
                     />
                 ))}
@@ -110,5 +101,3 @@ function ProjectPage() {
         </div>
     );
 }
-
-export default ProjectPage;

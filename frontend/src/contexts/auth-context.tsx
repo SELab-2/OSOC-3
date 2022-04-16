@@ -2,6 +2,9 @@
 import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
 import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
+import { User } from "../data/interfaces";
+import { setBearerToken } from "../utils/api";
+import { setCurrentEdition } from "../utils/session-storage/current-edition";
 
 /**
  * Interface that holds the data stored in the AuthContext.
@@ -31,7 +34,7 @@ function authDefaultState(): AuthContextState {
         role: null,
         setRole: (_: Role | null) => {},
         userId: null,
-        setUserId: (value: number | null) => {},
+        setUserId: (_: number | null) => {},
         token: getToken(),
         setToken: (_: string | null) => {},
         editions: [],
@@ -39,7 +42,7 @@ function authDefaultState(): AuthContextState {
     };
 }
 
-const AuthContext = React.createContext<AuthContextState>(authDefaultState());
+export const AuthContext = React.createContext<AuthContextState>(authDefaultState());
 
 /**
  * Custom React hook to use our authentication context.
@@ -81,10 +84,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Set the token in LocalStorage
             setTokenInStorage(value);
             setToken(value);
+
+            // Set token in request headers
+            setBearerToken(value);
         },
         editions: editions,
         setEditions: setEditions,
     };
 
     return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
+}
+
+/**
+ * Set the user's login data in the AuthContext
+ */
+export function logIn(user: User, token: string | null, authContext: AuthContextState) {
+    authContext.setUserId(user.userId);
+    authContext.setRole(user.admin ? Role.ADMIN : Role.COACH);
+    authContext.setEditions(user.editions);
+    authContext.setToken(token);
+    authContext.setIsLoggedIn(true);
+}
+
+/**
+ * Remove a user's login data from the AuthContext
+ */
+export function logOut(authContext: AuthContextState) {
+    authContext.setIsLoggedIn(false);
+    authContext.setUserId(null);
+    authContext.setRole(null);
+    authContext.setEditions([]);
+    authContext.setToken(null);
+
+    // Remove current edition from SessionStorage
+    setCurrentEdition(null);
 }
