@@ -55,7 +55,7 @@ export default function ProjectCard({
         <CardContainer>
             <TitleContainer>
                 <Title
-                    onClick={() => navigate("/editions/summerof2022/projects/" + project.projectId)}
+                    onClick={() => navigate("/editions/2022/projects/" + project.projectId)}
                 >
                     {project.name}
                     <OpenIcon />

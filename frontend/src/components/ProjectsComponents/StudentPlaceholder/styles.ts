@@ -6,7 +6,7 @@ export const StudentPlaceContainer = styled.div`
     margin-top: 30px;
     padding: 20px;
     background-color: #323252;
-    border-radius: 20px;
+    border-radius: 5px;
     max-width: 50%;
     display: flex;
     align-items: center;

@@ -41,7 +41,7 @@ export default function ProjectDetailPage() {
         async function callProjects() {
             if (projectId) {
                 setGotProject(true);
-                const response = await getProject("summerof2022", projectId);
+                const response = await getProject("2022", projectId);
                 if (response) {
                     setProject(response);
 
@@ -68,7 +68,7 @@ export default function ProjectDetailPage() {
         return (
             <div>
                 <ProjectContainer>
-                    <GoBack onClick={() => navigate("/editions/summerof2022/projects/")}>
+                    <GoBack onClick={() => navigate("/editions/2022/projects/")}>
                         <BiArrowBack />
                         Overview
                     </GoBack>

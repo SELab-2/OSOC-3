@@ -9,7 +9,7 @@ import {
     LoginPage,
     PendingPage,
     ProjectsPage,
-    ProjectDetailPage
+    ProjectDetailPage,
     RegisterPage,
     StudentsPage,
     UsersPage,

@@ -53,7 +53,7 @@ function ProjectPage() {
     useEffect(() => {
         async function callProjects() {
             setGotProjects(true);
-            const response = await getProjects("summerof2022");
+            const response = await getProjects("2022");
             if (response) {
                 setProjectsAPI(response.projects);
                 setProjects(response.projects);
