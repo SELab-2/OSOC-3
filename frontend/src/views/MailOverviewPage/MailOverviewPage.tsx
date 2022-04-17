@@ -9,10 +9,11 @@ import {
 import BootstrapTable from "react-bootstrap-table-next";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import { TableDiv, DropDownButtonDiv } from "./styles";
+import InputGroup from "react-bootstrap/InputGroup";
+import FormControl from "react-bootstrap/FormControl";
+import { TableDiv, DropDownButtonDiv, SearchDiv, FilterDiv, SearchAndFilterDiv } from "./styles";
 import { EmailType } from "../../data/enums";
-// TODO: add comments to created functions and interfaces
-// TODO: add search and filter fields
+
 /**
  * Page that shows the email status of all students, with the possibility to change the status
  */
@@ -76,19 +77,41 @@ export default function MailOverviewPage() {
                     <Dropdown.Item eventKey="5">Rejected</Dropdown.Item>
                 </DropdownButton>
             </DropDownButtonDiv>
+            <SearchAndFilterDiv>
+                <SearchDiv>
+                    <InputGroup className="mb-3">
+                        <FormControl placeholder="Search a student" aria-label="Username" />
+                    </InputGroup>
+                </SearchDiv>
+                <FilterDiv>
+                    <DropdownButton
+                        id="dropdown-filterstate-button"
+                        title="Filter on Email State"
+                        menuVariant="dark"
+                        autoClose="outside"
+                    >
+                        <Dropdown.Item eventKey="0">Applied</Dropdown.Item>
+                        <Dropdown.Item eventKey="1">Awaiting project</Dropdown.Item>
+                        <Dropdown.Item eventKey="2">Approved</Dropdown.Item>
+                        <Dropdown.Item eventKey="3">Contract confirmed</Dropdown.Item>
+                        <Dropdown.Item eventKey="4">Contract declined</Dropdown.Item>
+                        <Dropdown.Item eventKey="5">Rejected</Dropdown.Item>
+                    </DropdownButton>
+                </FilterDiv>
+            </SearchAndFilterDiv>
             <TableDiv>
                 <BootstrapTable
                     keyField="student.studentId"
                     data={table.studentEmails}
                     columns={columns}
+                    striped
+                    hover
+                    bordered
                     selectRow={{
                         mode: "checkbox",
                         onSelect: handleSelect,
                         onSelectAll: handleSelectAll,
                     }}
-                    striped
-                    hover
-                    bordered
                 />
             </TableDiv>
         </>
