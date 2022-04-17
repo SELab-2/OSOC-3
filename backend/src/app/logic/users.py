@@ -18,7 +18,7 @@ def get_users_list(
     and wrap the result in a pydantic model
     """
 
-    users_orm = users_crud.get_users_filtered(db, admin, edition_name, exclude_edition, name, page)
+    users_orm = users_crud.get_users_filtered_page(db, admin, edition_name, exclude_edition, name, page)
 
     return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
@@ -70,11 +70,7 @@ def get_request_list(db: Session, edition_name: str | None, user_name: str | Non
     else:
         requests = users_crud.get_requests_for_edition_page(db, edition_name, page, user_name)
 
-    requests_model = []
-    for request in requests:
-        user_req = UserRequest(request_id=request.request_id, edition_name=request.edition.name, user=request.user)
-        requests_model.append(user_req)
-    return UserRequestsResponse(requests=requests_model)
+    return UserRequestsResponse(requests=requests)
 
 
 def accept_request(db: Session, request_id: int):

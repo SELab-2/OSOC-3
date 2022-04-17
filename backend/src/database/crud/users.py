@@ -23,7 +23,7 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def get_users_filtered(
+def get_users_filtered_page(
         db: Session,
         admin: bool | None = None,
         edition_name: str | None = None,
