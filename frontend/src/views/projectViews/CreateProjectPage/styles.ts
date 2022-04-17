@@ -50,8 +50,3 @@ export const AddedCoach = styled.div`
     border-radius: 5px;
     display: flex;
 `;
-
-export const WarningContainer = styled.div`
-    max-width: fit-content;
-    margin-top: 10px;
-`;
