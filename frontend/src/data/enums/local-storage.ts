@@ -7,4 +7,5 @@ export const enum StorageKey {
      */
     ACCESS_TOKEN = "accessToken",
     REFRESH_TOKEN = "refreshToken",
+    REFRESH_TOKEN_LOCK = "refreshTokenLock",
 }

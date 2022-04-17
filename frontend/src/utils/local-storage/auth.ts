@@ -1,4 +1,4 @@
-import {StorageKey} from "../../data/enums";
+import { StorageKey } from "../../data/enums";
 
 /**
  * Function to set a new value for the access token in LocalStorage.
@@ -14,6 +14,13 @@ export function setRefreshToken(value: string | null) {
     setToken(StorageKey.REFRESH_TOKEN, value);
 }
 
+/**
+ * Function to set a new value for the refresh token lock in LocalStorage.
+ */
+export function setRefreshTokenLock(value: boolean | null) {
+    setToken(StorageKey.REFRESH_TOKEN_LOCK, value ? "TRUE" : "FALSE");
+}
+
 function setToken(key: StorageKey, value: string | null) {
     if (value === null) {
         localStorage.removeItem(key);
@@ -23,19 +30,27 @@ function setToken(key: StorageKey, value: string | null) {
 }
 
 /**
- * Function to pull the user's token out of LocalStorage.
+ * Function to pull the user's access token out of LocalStorage.
  * Returns `null` if there is no token in LocalStorage yet.
  */
 export function getAccessToken(): string | null {
-    return getToken(StorageKey.ACCESS_TOKEN)
+    return getToken(StorageKey.ACCESS_TOKEN);
 }
 
 /**
- * Function to pull the user's token out of LocalStorage.
+ * Function to pull the user's refresh token out of LocalStorage.
  * Returns `null` if there is no token in LocalStorage yet.
  */
 export function getRefreshToken(): string | null {
-    return getToken(StorageKey.REFRESH_TOKEN)
+    return getToken(StorageKey.REFRESH_TOKEN);
+}
+
+/**
+ * Function to check the refresh token lock in LocalStorage.
+ * Returns `null` if there is no value in LocalStorage yet.
+ */
+export function getRefreshTokenLock(): boolean {
+    return getToken(StorageKey.REFRESH_TOKEN_LOCK) === "TRUE";
 }
 
 function getToken(key: StorageKey) {

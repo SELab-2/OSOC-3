@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
-import { setBearerToken } from "../../utils/api";
 import { validateBearerToken } from "../../utils/api/auth";
 import { Role } from "../../data/enums";
-import { useAuth } from "../../contexts/auth-context";
+import { AuthContextState, useAuth } from "../../contexts/auth-context";
+import { getAccessToken, getRefreshToken } from "../../utils/local-storage";
 
 /**
  * Placeholder page shown while the bearer token found in LocalStorage is being verified.
@@ -14,17 +14,19 @@ export default function VerifyingTokenPage() {
 
     useEffect(() => {
         const verifyToken = async () => {
-            const response = await validateBearerToken(authContext.accessToken);
+            const accessToken = getAccessToken();
+            const refreshToken = getRefreshToken();
+
+            if (accessToken === null || refreshToken === null) {
+                failedVerification(authContext);
+                return;
+            }
+
+            const response = await validateBearerToken(accessToken);
 
             if (response === null) {
-                authContext.setAccessToken(null);
-                authContext.setRefreshToken(null);
-                authContext.setIsLoggedIn(false);
-                authContext.setRole(null);
-                authContext.setEditions([]);
+                failedVerification(authContext);
             } else {
-                // Token was valid, use it as the default request header
-                setBearerToken(authContext.accessToken);
                 authContext.setIsLoggedIn(true);
                 authContext.setRole(response.admin ? Role.ADMIN : Role.COACH);
                 authContext.setUserId(response.userId);
@@ -38,4 +40,11 @@ export default function VerifyingTokenPage() {
 
     // This will be replaced later on
     return <h1>Loading...</h1>;
+}
+
+function failedVerification(authContext: AuthContextState) {
+    authContext.setIsLoggedIn(false);
+    authContext.setRole(null);
+    authContext.setEditions([]);
+    authContext.setUserId(null);
 }

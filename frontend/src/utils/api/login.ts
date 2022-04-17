@@ -2,6 +2,7 @@ import axios from "axios";
 import { axiosInstance } from "./api";
 import { AuthContextState } from "../../contexts";
 import { Role } from "../../data/enums";
+import { setAccessToken, setRefreshToken } from "../local-storage";
 
 interface LoginResponse {
     access_token: string;
@@ -20,7 +21,11 @@ interface LoginResponse {
  * @param email email entered
  * @param password password entered
  */
-export async function logIn(auth: AuthContextState, email: string, password: string) {
+export async function logIn(
+    auth: AuthContextState,
+    email: string,
+    password: string
+): Promise<boolean> {
     const payload = new FormData();
     payload.append("username", email);
     payload.append("password", password);
@@ -28,8 +33,9 @@ export async function logIn(auth: AuthContextState, email: string, password: str
     try {
         const response = await axiosInstance.post("/login/token", payload);
         const login = response.data as LoginResponse;
-        auth.setAccessToken(login.access_token);
-        auth.setRefreshToken(login.refresh_token);
+        setAccessToken(login.access_token);
+        setRefreshToken(login.refresh_token);
+
         auth.setIsLoggedIn(true);
         auth.setRole(login.user.admin ? Role.ADMIN : Role.COACH);
         auth.setUserId(login.user.userId);

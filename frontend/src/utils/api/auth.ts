@@ -1,6 +1,7 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
 import { User } from "../../data/interfaces";
+import { getRefreshToken } from "../local-storage";
 
 /**
  * Check if a bearer token is valid.
@@ -19,7 +20,6 @@ export async function validateBearerToken(token: string | null): Promise<User | 
         };
 
         const response = await axiosInstance.get("/users/current", config);
-        console.log(response);
         return response.data as User;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -47,8 +47,21 @@ export async function validateRegistrationUrl(edition: string, uuid: string): Pr
     }
 }
 
-/*
-* -> 404 page als niet ingelogd
-* -> swagger werkt weer
-* -> async dingen
-* */
+export interface Tokens {
+    access_token: string;
+    refresh_token: string;
+}
+
+/**
+ *
+ */
+export async function refreshTokens(): Promise<Tokens> {
+    // Don't use axiosInstance to pass interceptors.
+    const response = await axios.post("/login/refresh", null, {
+        baseURL: axiosInstance.defaults.baseURL,
+        headers: {
+            Authorization: `Bearer ${getRefreshToken()}`,
+        },
+    });
+    return response.data as Tokens;
+}
