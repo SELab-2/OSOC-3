@@ -1,24 +1,21 @@
 from sqlalchemy.orm import Session
 
 import src.database.crud.users as users_crud
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
+    FilterParameters
 from src.database.models import User
 
 
 def get_users_list(
         db: Session,
-        admin: bool | None,
-        edition_name: str | None,
-        exclude_edition: str | None,
-        name: str | None,
-        page: int
+        params: FilterParameters
 ) -> UsersListResponse:
     """
     Query the database for a list of users
     and wrap the result in a pydantic model
     """
 
-    users_orm = users_crud.get_users_filtered_page(db, admin, edition_name, exclude_edition, name, page)
+    users_orm = users_crud.get_users_filtered_page(db, params)
 
     return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
