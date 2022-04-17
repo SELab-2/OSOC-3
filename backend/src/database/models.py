@@ -76,7 +76,7 @@ class DecisionEmail(Base):
     __tablename__ = "decision_emails"
 
     email_id = Column(Integer, primary_key=True)
-    student_id = Column(Integer, ForeignKey("students.student_id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
     decision = Column(Enum(DecisionEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
@@ -220,7 +220,7 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", passive_deletes=True)
+    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
