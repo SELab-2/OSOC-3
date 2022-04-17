@@ -12,3 +12,46 @@ export const Input = styled.input`
     border: none;
     border-radius: 5px;
 `;
+
+export const AddButton = styled.button`
+    padding: 5px 10px;
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    margin-left: 5px;
+    border-radius: 5px;
+`;
+
+export const RemoveButton = styled.button`
+    padding: 0px 2.5px;
+    background-color: #f14a3b;
+    color: white;
+    border: none;
+    margin-left: 10px;
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+`;
+
+export const CreateButton = styled.button`
+    padding: 5px 10px;
+    background-color: #44dba4;
+    color: white;
+    border: none;
+    margin-top: 10px;
+    border-radius: 5px;
+`;
+
+export const AddedCoach = styled.div`
+    margin: 5px;
+    padding: 5px;
+    background-color: #1a1a36;
+    max-width: fit-content;
+    border-radius: 5px;
+    display: flex;
+`;
+
+export const WarningContainer = styled.div`
+    max-width: fit-content;
+    margin-top: 10px;
+`;

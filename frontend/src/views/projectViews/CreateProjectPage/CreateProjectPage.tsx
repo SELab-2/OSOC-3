@@ -1,14 +1,23 @@
-import { CreateProjectContainer, Input } from "./styles";
+import {
+    CreateProjectContainer,
+    Input,
+    AddButton,
+    RemoveButton,
+    CreateButton,
+    AddedCoach,
+    WarningContainer,
+} from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
 import { GoBack } from "../ProjectDetailPage/styles";
 import { BiArrowBack } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import Alert from "react-bootstrap/Alert";
+import { TiDeleteOutline } from "react-icons/ti";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
-    const [numberOfStudents, setNumberOfStudents] = useState(0);
+    const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
     const [skills, setSkills] = useState([]);
     const [partners, setPartners] = useState([]);
 
@@ -38,7 +47,9 @@ export default function CreateProjectPage() {
                     type="number"
                     min="0"
                     value={numberOfStudents}
-                    onChange={e => setNumberOfStudents(e.target.valueAsNumber)}
+                    onChange={e => {
+                        setNumberOfStudents(e.target.valueAsNumber);
+                    }}
                     placeholder="Number of students"
                 />
             </div>
@@ -55,7 +66,7 @@ export default function CreateProjectPage() {
                     })}
                 </datalist>
 
-                <button
+                <AddButton
                     onClick={() => {
                         if (availableCoaches.some(availableCoach => availableCoach === coach)) {
                             const newCoaches = [...coaches];
@@ -66,54 +77,47 @@ export default function CreateProjectPage() {
                     }}
                 >
                     Add coach
-                </button>
-                <AlertDismissibleExample
-                    show={showAlert}
-                    setShow={setShowAlert}
-                ></AlertDismissibleExample>
+                </AddButton>
+                <WarningContainer>
+                    <BadCoachAlert show={showAlert} setShow={setShowAlert}></BadCoachAlert>
+                </WarningContainer>
             </div>
             <div>
                 {coaches.map((element, _index) => (
-                    <div key={_index}>
+                    <AddedCoach key={_index}>
                         {element}
-                        <button
+                        <RemoveButton
                             onClick={() => {
                                 const newCoaches = [...coaches];
                                 newCoaches.splice(_index, 1);
                                 setCoaches(newCoaches);
                             }}
                         >
-                            X
-                        </button>
-                    </div>
+                            <TiDeleteOutline size={"20px"} />
+                        </RemoveButton>
+                    </AddedCoach>
                 ))}
             </div>
             <div>
                 <Input value={skills} onChange={e => setSkills([])} placeholder="Skill" />
-                <button>Add</button>
+                <AddButton>Add skill</AddButton>
             </div>
             <div>
                 <Input value={partners} onChange={e => setPartners([])} placeholder="Partner" />
-                <button>Add</button>
+                <AddButton>Add partner</AddButton>
             </div>
-            <button
+            <CreateButton
                 onClick={() =>
-                    createProject("2022", name, numberOfStudents, skills, partners, coaches)
+                    createProject("2022", name, numberOfStudents!, skills, partners, coaches)
                 }
             >
                 Create Project
-            </button>
+            </CreateButton>
         </CreateProjectContainer>
     );
 }
 
-function AlertDismissibleExample({
-    show,
-    setShow,
-}: {
-    show: boolean;
-    setShow: (state: boolean) => void;
-}) {
+function BadCoachAlert({ show, setShow }: { show: boolean; setShow: (state: boolean) => void }) {
     if (show) {
         return (
             <Alert variant="warning" onClose={() => setShow(false)} dismissible>
