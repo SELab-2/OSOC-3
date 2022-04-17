@@ -27,7 +27,41 @@ export async function getMailOverview(): Promise<StudentEmails> {
                     { emailId: 3, date: "2022-04-15T13:38:38.641337", type: 2 },
                 ],
             },
+            {
+                student: { studentId: 2, firstName: "Test", lastName: "Person" },
+                emails: [
+                    { emailId: 1, date: "2022-04-13T08:25:46.641337", type: 4 },
+                    { emailId: 2, date: "2022-04-14T12:36:28.641337", type: 1 },
+                    { emailId: 3, date: "2022-04-15T13:38:38.641337", type: 2 },
+                ],
+            },
         ],
     };
     return data as StudentEmails;
+}
+
+const selectedRows: number[] = [];
+
+export function handleSelect(row: StudentEmail, isSelect: boolean) {
+    if (isSelect) {
+        selectedRows.push(row.student.studentId);
+    } else {
+        selectedRows.splice(
+            selectedRows.findIndex(item => item === row.student.studentId),
+            1
+        );
+    }
+}
+export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
+    for (const row of rows) {
+        handleSelect(row, isSelect);
+    }
+}
+
+export function handleSetState(eventKey: string | null) {
+    console.log(eventKey);
+    console.log(selectedRows);
+    // TODO do post request with selected data
+
+    // update table contents ?
 }

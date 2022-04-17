@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { getMailOverview, StudentEmails } from "../../utils/api/mail_overview";
-import Table from "react-bootstrap/Table";
-// import BootstrapTable from "react-bootstrap-table-next";
+import {
+    getMailOverview,
+    StudentEmails,
+    handleSelect,
+    handleSelectAll,
+    handleSetState,
+} from "../../utils/api/mail_overview";
+import BootstrapTable from "react-bootstrap-table-next";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
+import { TableDiv, DropDownButtonDiv } from "./styles";
 import { EmailType } from "../../data/enums";
-import { MailOverviewPageDiv } from "./styles";
-// TODO: convert to react-bootstrap-table-next
 // TODO: add comments to created functions and interfaces
+// TODO: add search and filter fields
 /**
  * Page that shows the email status of all students, with the possibility to change the status
  */
@@ -26,28 +33,64 @@ export default function MailOverviewPage() {
         };
         updateMailOverview();
     }, []);
+
+    const columns = [
+        {
+            dataField: "student.firstName",
+            text: "First Name",
+        },
+        {
+            dataField: "student.lastName",
+            text: "Last Name",
+        },
+        {
+            dataField: "emails[0].type",
+            text: "Current Email State",
+            formatter: (cellContent: number) => {
+                return Object.values(EmailType)[cellContent];
+            },
+        },
+        {
+            dataField: "emails[0].date",
+            text: "Date Of Last Email",
+            formatter: (cellContent: number) => {
+                return new Date(String(cellContent)).toLocaleString("nl-be");
+            },
+        },
+    ];
+
     return (
-        <MailOverviewPageDiv>
-            <Table bordered striped hover>
-                <thead>
-                    <tr>
-                        <th>Fist name</th>
-                        <th>Last name</th>
-                        <th>Email ID</th>
-                        <th>Last Email Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {table.studentEmails.map(d => (
-                        <tr key={d.student.studentId}>
-                            <td>{d.student.firstName}</td>
-                            <td>{d.student.lastName}</td>
-                            <td>{d.emails[0].emailId}</td>
-                            <td>{Object.values(EmailType)[d.emails[0].type]}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-        </MailOverviewPageDiv>
+        <>
+            <DropDownButtonDiv>
+                <DropdownButton
+                    id="dropdown-setstate-button"
+                    title="Set state of selected students"
+                    menuVariant="dark"
+                    onSelect={handleSetState}
+                >
+                    <Dropdown.Item eventKey="0">Applied</Dropdown.Item>
+                    <Dropdown.Item eventKey="1">Awaiting project</Dropdown.Item>
+                    <Dropdown.Item eventKey="2">Approved</Dropdown.Item>
+                    <Dropdown.Item eventKey="3">Contract confirmed</Dropdown.Item>
+                    <Dropdown.Item eventKey="4">Contract declined</Dropdown.Item>
+                    <Dropdown.Item eventKey="5">Rejected</Dropdown.Item>
+                </DropdownButton>
+            </DropDownButtonDiv>
+            <TableDiv>
+                <BootstrapTable
+                    keyField="student.studentId"
+                    data={table.studentEmails}
+                    columns={columns}
+                    selectRow={{
+                        mode: "checkbox",
+                        onSelect: handleSelect,
+                        onSelectAll: handleSelectAll,
+                    }}
+                    striped
+                    hover
+                    bordered
+                />
+            </TableDiv>
+        </>
     );
 }
