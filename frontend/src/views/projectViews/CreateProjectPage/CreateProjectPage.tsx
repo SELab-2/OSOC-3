@@ -4,14 +4,19 @@ import { useState } from "react";
 import { GoBack } from "../ProjectDetailPage/styles";
 import { BiArrowBack } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import Alert from "react-bootstrap/Alert";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
     const [numberOfStudents, setNumberOfStudents] = useState(0);
     const [skills, setSkills] = useState([]);
     const [partners, setPartners] = useState([]);
+
     const [coach, setCoach] = useState("");
     const [coaches, setCoaches] = useState<string[]>([]);
+    const availableCoaches = ["coach1", "coach2", "admin1", "admin2"]; // TODO get users from API call
+
+    const [showAlert, setShowAlert] = useState(false);
 
     const navigate = useNavigate();
 
@@ -45,20 +50,27 @@ export default function CreateProjectPage() {
                     placeholder="Coach"
                 />
                 <datalist id="users">
-                    <option value="Coach1" onClick={() => console.log("hello")} />
-                    <option value="Coach2" />
-                    <option value="Admin1" />
-                    <option value="Admin2" />
+                    {availableCoaches.map((availableCoach, _index) => {
+                        return <option key={_index} value={availableCoach} />;
+                    })}
                 </datalist>
+
                 <button
                     onClick={() => {
-                        const newCoaches = [...coaches];
-                        newCoaches.push(coach);
-                        setCoaches(newCoaches);
+                        if (availableCoaches.some(availableCoach => availableCoach === coach)) {
+                            const newCoaches = [...coaches];
+                            newCoaches.push(coach);
+                            setCoaches(newCoaches);
+                            setShowAlert(false);
+                        } else setShowAlert(true);
                     }}
                 >
                     Add coach
                 </button>
+                <AlertDismissibleExample
+                    show={showAlert}
+                    setShow={setShowAlert}
+                ></AlertDismissibleExample>
             </div>
             <div>
                 {coaches.map((element, _index) => (
@@ -93,4 +105,21 @@ export default function CreateProjectPage() {
             </button>
         </CreateProjectContainer>
     );
+}
+
+function AlertDismissibleExample({
+    show,
+    setShow,
+}: {
+    show: boolean;
+    setShow: (state: boolean) => void;
+}) {
+    if (show) {
+        return (
+            <Alert variant="warning" onClose={() => setShow(false)} dismissible>
+                Please choose an option from the list
+            </Alert>
+        );
+    }
+    return null;
 }
