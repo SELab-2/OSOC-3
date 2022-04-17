@@ -31,6 +31,7 @@ export default function CreateProjectPage() {
             <div>
                 <Input
                     type="number"
+                    min="0"
                     value={numberOfStudents}
                     onChange={e => setNumberOfStudents(e.target.valueAsNumber)}
                     placeholder="Number of students"
@@ -44,22 +45,36 @@ export default function CreateProjectPage() {
                     placeholder="Coach"
                 />
                 <datalist id="users">
-                    <option value="Coach1" />
+                    <option value="Coach1" onClick={() => console.log("hello")} />
                     <option value="Coach2" />
                     <option value="Admin1" />
                     <option value="Admin2" />
                 </datalist>
                 <button
                     onClick={() => {
-                        coaches.push(coach);
-                        setCoaches(coaches);
+                        const newCoaches = [...coaches];
+                        newCoaches.push(coach);
+                        setCoaches(newCoaches);
                     }}
                 >
                     Add coach
                 </button>
             </div>
             <div>
-                {coaches.map((element, _index )=> (<div key={_index}>{element}</div>))}
+                {coaches.map((element, _index) => (
+                    <div key={_index}>
+                        {element}
+                        <button
+                            onClick={() => {
+                                const newCoaches = [...coaches];
+                                newCoaches.splice(_index, 1);
+                                setCoaches(newCoaches);
+                            }}
+                        >
+                            X
+                        </button>
+                    </div>
+                ))}
             </div>
             <div>
                 <Input value={skills} onChange={e => setSkills([])} placeholder="Skill" />
