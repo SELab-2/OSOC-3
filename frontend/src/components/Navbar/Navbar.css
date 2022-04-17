@@ -1,0 +1,10 @@
+.dropdown-menu {
+    background-color: var(--osoc_blue);
+    max-height: 200px;
+    overflow: auto;
+}
+
+.dropdown-item.active {
+    background-color: transparent;
+    text-decoration: underline;
+}

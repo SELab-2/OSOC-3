@@ -1,3 +1,4 @@
+# pylint: skip-file
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -17,7 +18,6 @@ async def get_students(db: Session = Depends(get_session), edition: Edition = De
     """
     Get a list of all students.
     """
-
 
 
 @students_router.post("/emails")

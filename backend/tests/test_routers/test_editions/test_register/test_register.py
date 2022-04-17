@@ -89,3 +89,19 @@ def test_duplicate_user(database_session: Session, test_client: TestClient):
                                 "name": "Joske vermeulen", "email": "jw@gmail.com", "pw": "test1",
                                 "uuid": str(invite_link2.uuid)})
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_old_edition(database_session: Session, test_client: TestClient):
+    """Tests trying to make a registration for a read-only edition"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    edition3: Edition = Edition(year=2023, name="ed2023")
+    invite_link: InviteLink = InviteLink(
+        edition=edition, target_email="jw@gmail.com")
+    database_session.add(edition)
+    database_session.add(edition3)
+    database_session.add(invite_link)
+    database_session.commit()
+    response = test_client.post("/editions/ed2022/register/email", json={
+                                "name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
+                                "uuid": str(invite_link.uuid)})
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

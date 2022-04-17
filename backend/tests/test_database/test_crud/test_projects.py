@@ -1,11 +1,18 @@
 import pytest
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import Session
 
-from src.app.schemas.projects import ConflictStudent, InputProject
-from src.database.crud.projects import (db_get_all_projects, db_add_project,
-                                        db_get_project, db_delete_project,
-                                        db_patch_project, db_get_conflict_students)
+from settings import DB_PAGE_SIZE
+from src.app.schemas.projects import InputProject
+from src.database.crud.projects import (
+    db_get_projects_for_edition,
+    db_get_projects_for_edition_page,
+    db_add_project,
+    db_get_project,
+    db_delete_project,
+    db_patch_project,
+    db_get_conflict_students
+)
 from src.database.models import Edition, Partner, Project, User, Skill, ProjectRole, Student
 
 
@@ -59,16 +66,30 @@ def test_get_all_projects_empty(database_session: Session):
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
-    projects: list[Project] = db_get_all_projects(
+    projects: list[Project] = db_get_projects_for_edition(
         database_session, edition)
     assert len(projects) == 0
 
 
 def test_get_all_projects(database_with_data: Session, current_edition: Edition):
     """test get all projects"""
-    projects: list[Project] = db_get_all_projects(
-        database_with_data, current_edition)
+    projects: list[Project] = db_get_projects_for_edition(database_with_data, current_edition)
     assert len(projects) == 3
+
+
+def test_get_all_projects_pagination(database_session: Session):
+    """test get all projects paginated"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        database_session.add(Project(name=f"Project {i}", edition=edition, number_of_students=5))
+    database_session.commit()
+
+    assert len(db_get_projects_for_edition_page(database_session, edition, 0)) == DB_PAGE_SIZE
+    assert len(db_get_projects_for_edition_page(database_session, edition, 1)) == round(
+        DB_PAGE_SIZE * 1.5
+    ) - DB_PAGE_SIZE
 
 
 def test_add_project_partner_do_not_exist_yet(database_with_data: Session, current_edition: Edition):
@@ -98,7 +119,7 @@ def test_add_project_partner_do_not_exist_yet(database_with_data: Session, curre
 def test_add_project_partner_do_exist(database_with_data: Session, current_edition: Edition):
     """tests add a project when the project exist already """
     existing_proj: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
-                                                   partners=["ugent"], coaches=[1])
+                                               partners=["ugent"], coaches=[1])
     database_with_data.add(Partner(name="ugent"))
     assert len(database_with_data.query(Partner).where(
         Partner.name == "ugent").all()) == 1
@@ -137,10 +158,10 @@ def test_delete_project_no_project_roles(database_with_data: Session, current_ed
     """test delete a project that don't has project roles"""
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 3).all()) == 0
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 3
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 3
     db_delete_project(database_with_data, 3)
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 2
-    assert 3 not in [project.project_id for project in db_get_all_projects(
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 2
+    assert 3 not in [project.project_id for project in db_get_projects_for_edition(
         database_with_data, current_edition)]
 
 
@@ -148,10 +169,10 @@ def test_delete_project_with_project_roles(database_with_data: Session, current_
     """test delete a project that has project roles"""
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 1).all()) > 0
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 3
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 3
     db_delete_project(database_with_data, 1)
-    assert len(db_get_all_projects(database_with_data, current_edition)) == 2
-    assert 1 not in [project.project_id for project in db_get_all_projects(
+    assert len(db_get_projects_for_edition(database_with_data, current_edition)) == 2
+    assert 1 not in [project.project_id for project in db_get_projects_for_edition(
         database_with_data, current_edition)]
     assert len(database_with_data.query(ProjectRole).where(
         ProjectRole.project_id == 1).all()) == 0
@@ -160,9 +181,9 @@ def test_delete_project_with_project_roles(database_with_data: Session, current_
 def test_patch_project(database_with_data: Session, current_edition: Edition):
     """tests patch a project"""
     proj: InputProject = InputProject(name="projec1", number_of_students=2, skills=[1, 3],
-                                                   partners=["ugent"], coaches=[1])
-    proj_patched: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
                                       partners=["ugent"], coaches=[1])
+    proj_patched: InputProject = InputProject(name="project1", number_of_students=2, skills=[1, 3],
+                                              partners=["ugent"], coaches=[1])
 
     assert len(database_with_data.query(Partner).where(
         Partner.name == "ugent").all()) == 0
