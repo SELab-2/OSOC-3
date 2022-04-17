@@ -13,15 +13,20 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 
 @users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
-async def get_users(admin: bool = Query(False), edition: str | None = Query(None), page: int = 0,
-                    db: Session = Depends(get_session)):
+async def get_users(
+        admin: bool = Query(None),
+        edition: str | None = Query(None),
+        exclude_edition: str | None = Query(None),
+        name: str | None = Query(None),
+        page: int = 0,
+        db: Session = Depends(get_session)):
     """
     Get users
 
-    When the admin parameter is True, the edition parameter will have no effect.
+    When the admin parameter is True, the edition and exclude_edition parameter will have no effect.
     Since admins have access to all editions.
     """
-    return logic.get_users_list(db, admin, edition, page)
+    return logic.get_users_list(db, admin, edition, exclude_edition, name, page)
 
 
 @users_router.get("/current", response_model=UserData)
@@ -30,7 +35,7 @@ async def get_current_user(db: Session = Depends(get_session), user: UserDB = De
     user_data = user_model_to_schema(user).__dict__
     user_data["editions"] = logic.get_user_editions(db, user)
 
-    return user
+    return user_data
 
 
 @users_router.patch("/{user_id}", status_code=204, dependencies=[Depends(require_admin)])
@@ -66,11 +71,15 @@ async def remove_from_all_editions(user_id: int, db: Session = Depends(get_sessi
 
 
 @users_router.get("/requests", response_model=UserRequestsResponse, dependencies=[Depends(require_admin)])
-async def get_requests(edition: str | None = Query(None), page: int = 0, db: Session = Depends(get_session)):
+async def get_requests(
+        edition: str | None = Query(None),
+        user: str | None = Query(None),
+        page: int = 0,
+        db: Session = Depends(get_session)):
     """
     Get pending userrequests
     """
-    return logic.get_request_list(db, edition, page)
+    return logic.get_request_list(db, edition, user, page)
 
 
 @users_router.post("/requests/{request_id}/accept", status_code=204, dependencies=[Depends(require_admin)])

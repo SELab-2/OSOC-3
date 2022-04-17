@@ -5,18 +5,20 @@ from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsRes
 from src.database.models import User
 
 
-def get_users_list(db: Session, admin: bool, edition_name: str | None, page: int) -> UsersListResponse:
+def get_users_list(
+        db: Session,
+        admin: bool | None,
+        edition_name: str | None,
+        exclude_edition: str | None,
+        name: str | None,
+        page: int
+) -> UsersListResponse:
     """
     Query the database for a list of users
     and wrap the result in a pydantic model
     """
-    if admin:
-        users_orm = users_crud.get_admins_page(db, page)
-    else:
-        if edition_name is None:
-            users_orm = users_crud.get_users_page(db, page)
-        else:
-            users_orm = users_crud.get_users_for_edition_page(db, edition_name, page)
+
+    users_orm = users_crud.get_users_filtered(db, admin, edition_name, exclude_edition, name, page)
 
     return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
@@ -54,16 +56,25 @@ def remove_coach_all_editions(db: Session, user_id: int):
     users_crud.remove_coach_all_editions(db, user_id)
 
 
-def get_request_list(db: Session, edition_name: str | None, page: int) -> UserRequestsResponse:
+def get_request_list(db: Session, edition_name: str | None, user_name: str | None, page: int) -> UserRequestsResponse:
     """
     Query the database for a list of all user requests
     and wrap the result in a pydantic model
     """
+
+    if user_name is None:
+        user_name = ""
+
     if edition_name is None:
-        requests = users_crud.get_requests_page(db, page)
+        requests = users_crud.get_requests_page(db, page, user_name)
     else:
-        requests = users_crud.get_requests_for_edition_page(db, edition_name, page)
-    return UserRequestsResponse(requests=requests)
+        requests = users_crud.get_requests_for_edition_page(db, edition_name, page, user_name)
+
+    requests_model = []
+    for request in requests:
+        user_req = UserRequest(request_id=request.request_id, edition_name=request.edition.name, user=request.user)
+        requests_model.append(user_req)
+    return UserRequestsResponse(requests=requests_model)
 
 
 def accept_request(db: Session, request_id: int):

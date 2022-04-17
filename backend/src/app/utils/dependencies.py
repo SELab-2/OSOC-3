@@ -8,8 +8,9 @@ import settings
 import src.database.crud.projects as crud_projects
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
     MissingPermissionsException
+from src.app.exceptions.editions import ReadOnlyEditionException
 from src.app.logic.security import ALGORITHM
-from src.database.crud.editions import get_edition_by_name
+from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
@@ -19,6 +20,14 @@ from src.database.models import Edition, InviteLink, User, Project
 def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the name in the path"""
     return get_edition_by_name(database, edition_name)
+
+
+def get_latest_edition(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)) -> Edition:
+    """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
+    latest = latest_edition(database)
+    if edition != latest:
+        raise ReadOnlyEditionException
+    return latest
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login/token")
