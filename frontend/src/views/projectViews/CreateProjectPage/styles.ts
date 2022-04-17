@@ -42,11 +42,4 @@ export const CreateButton = styled.button`
     border-radius: 5px;
 `;
 
-export const AddedCoach = styled.div`
-    margin: 5px;
-    padding: 5px;
-    background-color: #1a1a36;
-    max-width: fit-content;
-    border-radius: 5px;
-    display: flex;
-`;
+

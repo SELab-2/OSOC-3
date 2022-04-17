@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
-import { AddButton, Input, WarningContainer } from "../styles";
+import { AddButton, Input, WarningContainer } from "../../styles";
 
 export default function Coach({
     coach,

@@ -1,4 +1,4 @@
-import { Input } from "../styles";
+import { Input } from "../../styles";
 
 export default function NumberOfStudents({
     numberOfStudents,

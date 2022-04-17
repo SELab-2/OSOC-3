@@ -1,4 +1,4 @@
-import { Input } from "../styles"
+import { Input } from "../../styles"
 
 export default function Name({ name, setName }: { name: string; setName: (name: string) => void }) {
     return (
