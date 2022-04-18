@@ -86,10 +86,13 @@ export default function Router() {
                                         </Route>
                                     </Route>
                                 </Route>
+                                <Route path={"403-forbidden"} element={<ForbiddenPage />} />
+                                <Route path={"404-not-found"} element={<NotFoundPage />} />
+                                <Route
+                                    path="*"
+                                    element={<Navigate to={"/404-not-found"} replace />}
+                                />
                             </Route>
-                            <Route path={"403-forbidden"} element={<ForbiddenPage />} />
-                            <Route path={"404-not-found"} element={<NotFoundPage />} />
-                            <Route path="*" element={<Navigate to={"/404-not-found"} replace />} />
                         </Routes>
                     )}
                 </ContentWrapper>
