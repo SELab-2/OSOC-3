@@ -21,12 +21,11 @@ def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddres
     """Add a new invite link into the database & return a mailto link for it"""
     # Create db entry, drop existing.
     invite = crud.get_optional_invite_link_by_edition_and_email(db, edition, email_address.email)
-    if invite is not None:
-        crud.delete_invite_link(db, invite)
-    new_link_db = crud.create_invite_link(db, edition, email_address.email)
+    if invite is None:
+        invite = crud.create_invite_link(db, edition, email_address.email)
 
     # Create endpoint for the user to click on
-    link = f"{settings.FRONTEND_URL}/register/{new_link_db.uuid}"
+    link = f"{settings.FRONTEND_URL}/register/{invite.uuid}"
 
     return NewInviteLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",
