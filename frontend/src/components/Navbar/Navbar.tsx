@@ -55,24 +55,24 @@ export default function Navbar() {
 
     return (
         <NavbarBase>
-                {/* Make Navbar responsive (hamburger menu) */}
-                <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
-                <BSNavbar.Collapse id={"responsive-navbar-nav"}>
-                    <Nav className={"ms-auto"}>
-                        <EditionDropdown editions={editions} />
-                        <LinkContainer to={"/editions"} className={"link"}>
-                            <Nav.Link>Editions</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to={`/editions/${currentEdition}/projects`}>
-                            <Nav.Link>Projects</Nav.Link>
-                        </LinkContainer>
-                        <LinkContainer to={`/editions/${currentEdition}/students`}>
-                            <Nav.Link>Students</Nav.Link>
-                        </LinkContainer>
-                        <UsersDropdown currentEdition={currentEdition} />
-                        <LogoutButton />
-                    </Nav>
-                </BSNavbar.Collapse>
+            {/* Make Navbar responsive (hamburger menu) */}
+            <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
+            <BSNavbar.Collapse id={"responsive-navbar-nav"}>
+                <Nav className={"ms-auto"}>
+                    <EditionDropdown editions={editions} />
+                    <LinkContainer to={"/editions"} className={"link"}>
+                        <Nav.Link>Editions</Nav.Link>
+                    </LinkContainer>
+                    <LinkContainer to={`/editions/${currentEdition}/projects`}>
+                        <Nav.Link>Projects</Nav.Link>
+                    </LinkContainer>
+                    <LinkContainer to={`/editions/${currentEdition}/students`}>
+                        <Nav.Link>Students</Nav.Link>
+                    </LinkContainer>
+                    <UsersDropdown currentEdition={currentEdition} />
+                    <LogoutButton />
+                </Nav>
+            </BSNavbar.Collapse>
         </NavbarBase>
     );
 }
