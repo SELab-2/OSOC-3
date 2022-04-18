@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { register } from "../../utils/api/register";
 import { validateRegistrationUrl } from "../../utils/api";
@@ -16,6 +16,7 @@ import {
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
 import { decodeRegistrationLink } from "../../utils/logic/registration";
+import PendingPage from "../PendingPage";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
@@ -23,8 +24,15 @@ import { decodeRegistrationLink } from "../../utils/logic/registration";
  */
 export default function RegisterPage() {
     const [validUuid, setValidUuid] = useState(false);
+    const [pending, setPending] = useState(false);
     const params = useParams();
     const data = decodeRegistrationLink(params.uuid);
+
+    // Form fields
+    const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         async function validateUuid() {
@@ -55,7 +63,7 @@ export default function RegisterPage() {
         try {
             const response = await register(edition, email, name, uuid, password);
             if (response) {
-                navigate("/pending");
+                setPending(true);
             }
         } catch (error) {
             console.log(error);
@@ -63,35 +71,35 @@ export default function RegisterPage() {
         }
     }
 
-    const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    if (pending) {
+        return <PendingPage />;
+    }
 
-    const navigate = useNavigate();
+    // Invalid link
+    if (!(validUuid && data)) {
+        return <BadInviteLink />;
+    }
 
-    if (validUuid && data) {
-        return (
-            <div>
-                <RegisterFormContainer>
-                    <InfoText />
-                    <SocialButtons />
-                    <Or>or</Or>
-                    <Email email={email} setEmail={setEmail} />
-                    <Name name={name} setName={setName} />
-                    <Password password={password} setPassword={setPassword} />
-                    <ConfirmPassword
-                        confirmPassword={confirmPassword}
-                        setConfirmPassword={setConfirmPassword}
-                        callRegister={() => callRegister(data.edition, data.uuid)}
-                    />
-                    <div>
-                        <RegisterButton onClick={() => callRegister(data.edition, data.uuid)}>
-                            Register
-                        </RegisterButton>
-                    </div>
-                </RegisterFormContainer>
-            </div>
-        );
-    } else return <BadInviteLink />;
+    return (
+        <div>
+            <RegisterFormContainer>
+                <InfoText />
+                <SocialButtons />
+                <Or>or</Or>
+                <Email email={email} setEmail={setEmail} />
+                <Name name={name} setName={setName} />
+                <Password password={password} setPassword={setPassword} />
+                <ConfirmPassword
+                    confirmPassword={confirmPassword}
+                    setConfirmPassword={setConfirmPassword}
+                    callRegister={() => callRegister(data.edition, data.uuid)}
+                />
+                <div>
+                    <RegisterButton onClick={() => callRegister(data.edition, data.uuid)}>
+                        Register
+                    </RegisterButton>
+                </div>
+            </RegisterFormContainer>
+        </div>
+    );
 }
