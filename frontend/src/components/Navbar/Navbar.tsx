@@ -9,6 +9,7 @@ import { matchPath, useLocation } from "react-router-dom";
 import UsersDropdown from "./UsersDropdown";
 import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
+import EditionNavLink from "./EditionNavLink";
 
 /**
  * Navbar component displayed at the top of the screen.
@@ -63,12 +64,14 @@ export default function Navbar() {
                     <LinkContainer to={"/editions"} className={"link"}>
                         <Nav.Link>Editions</Nav.Link>
                     </LinkContainer>
-                    <LinkContainer to={`/editions/${currentEdition}/projects`}>
-                        <Nav.Link>Projects</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to={`/editions/${currentEdition}/students`}>
-                        <Nav.Link>Students</Nav.Link>
-                    </LinkContainer>
+                    <EditionNavLink currentEdition={currentEdition}>
+                        <LinkContainer to={`/editions/${currentEdition}/projects`}>
+                            <Nav.Link>Projects</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to={`/editions/${currentEdition}/students`}>
+                            <Nav.Link>Students</Nav.Link>
+                        </LinkContainer>
+                    </EditionNavLink>
                     <UsersDropdown currentEdition={currentEdition} />
                     <LogoutButton />
                 </Nav>
