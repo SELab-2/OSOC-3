@@ -39,6 +39,7 @@ def get_pending_invites_for_edition_page(db: Session, edition: Edition, page: in
 
 
 def get_optional_invite_link_by_edition_and_email(db: Session, edition: Edition, email: str) -> InviteLink | None:
+    """Return an optional invite link by edition and target_email"""
     return db.query(InviteLink).where(InviteLink.edition == edition and InviteLink.target_email == email).one_or_none()
 
 
