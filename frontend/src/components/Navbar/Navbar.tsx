@@ -6,7 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import EditionDropdown from "./EditionDropdown";
 import "./Navbar.css";
 import LogoutButton from "./LogoutButton";
-import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage/current-edition";
+import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
 import { matchPath, useLocation } from "react-router-dom";
 import UsersDropdown from "./UsersDropdown";
 import { LinkContainer } from "react-router-bootstrap";
