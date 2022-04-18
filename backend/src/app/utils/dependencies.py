@@ -5,13 +5,14 @@ from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.orm import Session
 
 import settings
+import src.database.crud.projects as crud_projects
 from src.app.exceptions.authentication import ExpiredCredentialsException, InvalidCredentialsException, \
     MissingPermissionsException
 from src.app.exceptions.editions import ReadOnlyEditionException
-from src.app.logic.security import ALGORITHM, get_user_by_id
+from src.app.logic.security import ALGORITHM
 from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.invites import get_invite_link_by_uuid
-from src.database.crud.projects import db_get_project
+from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
 from src.database.models import Edition, InviteLink, User, Project
 
@@ -104,4 +105,4 @@ def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> Inv
 
 def get_project(project_id: int, db: Session = Depends(get_session)) -> Project:
     """Get a project from het database, given the id in the path"""
-    return db_get_project(db, project_id)
+    return crud_projects.get_project(db, project_id)
