@@ -90,7 +90,7 @@ export function handleSetState(eventKey: string | null) {
 
 let selectedFilters: string[] = [];
 /**
- * Filters the table
+ * Keeps track of the selected filters
  * @param selectedList
  */
 export function handleFilterSelect(selectedList: string[]) {
@@ -98,10 +98,18 @@ export function handleFilterSelect(selectedList: string[]) {
 }
 
 let searchTerm: string = "";
+
+/**
+ * Keeps track of the search value
+ * @param event
+ */
 export function handleSetSearch(event: ChangeEvent<{ value: string }>) {
     searchTerm = event.target.value;
 }
 
+/**
+ * Sends the get request with the filters and the searchterm
+ */
 export function handleDoSearch() {
     console.log(selectedFilters);
     console.log(searchTerm);
