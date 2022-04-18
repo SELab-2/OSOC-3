@@ -44,9 +44,14 @@ def test_duplicate_user(database_session: Session):
                   pw="wachtwoord1", uuid=invite_link1.uuid)
     nu2 = NewUser(name="user2", email="email@email.com",
                   pw="wachtwoord2", uuid=invite_link2.uuid)
-    create_request(database_session, nu1, edition)
 
-    with pytest.raises(FailedToAddNewUserException):
+    # These two have to be nested transactions because they share the same database_session,
+    # and otherwise the second one rolls the first one back
+    # Making them nested transactions creates a savepoint so only that part is rolled back
+    with database_session.begin_nested():
+        create_request(database_session, nu1, edition)
+
+    with pytest.raises(FailedToAddNewUserException), database_session.begin_nested():
         create_request(database_session, nu2, edition)
 
     # Verify that second user wasn't added

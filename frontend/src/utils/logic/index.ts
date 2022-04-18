@@ -1,0 +1,1 @@
+export { getBestRedirect } from "./routes";
