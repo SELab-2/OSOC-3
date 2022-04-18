@@ -1,3 +1,5 @@
+import base64
+
 from sqlalchemy.orm import Session
 
 import settings
@@ -31,8 +33,12 @@ def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddres
     # Create db entry
     new_link_db = crud.create_invite_link(db, edition, email_address.email)
 
+    # Add edition name & encode with base64
+    encoded_uuid = f"{new_link_db.edition.name}/{new_link_db.uuid}".encode("utf-8")
+    encoded_link = base64.b64encode(encoded_uuid).decode("utf-8")
+
     # Create endpoint for the user to click on
-    link = f"{settings.FRONTEND_URL}/register/{new_link_db.uuid}"
+    link = f"{settings.FRONTEND_URL}/register/{encoded_link}"
 
     return NewInviteLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",
