@@ -19,7 +19,9 @@ def get_pending_invites_page(db: Session, edition: Edition, page: int) -> Invite
 
 def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddress) -> NewInviteLink:
     """Add a new invite link into the database & return a mailto link for it"""
-    # Create db entry
+    # Create db entry, drop existing.
+    if invite := crud.get_optional_invite_link_by_edition_and_email(db, edition, email_address.email) is not None:
+        crud.delete_invite_link(db, invite)
     new_link_db = crud.create_invite_link(db, edition, email_address.email)
 
     # Create endpoint for the user to click on
