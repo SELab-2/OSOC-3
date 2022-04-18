@@ -43,6 +43,7 @@ def add_coach(db: Session, user_id: int, edition_name: str):
     Add user as coach for the given edition
     """
     users_crud.add_coach(db, user_id, edition_name)
+    users_crud.remove_request_if_exists(db, user_id, edition_name)
 
 
 def remove_coach(db: Session, user_id: int, edition_name: str):

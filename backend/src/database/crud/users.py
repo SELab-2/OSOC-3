@@ -63,10 +63,10 @@ def get_users_filtered(
         exclude_edition = get_edition_by_name(db, exclude_edition_name)
 
         query = query.filter(
-                User.user_id.not_in(
-                    db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
-                )
+            User.user_id.not_in(
+                db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
             )
+        )
 
     return paginate(query, page).all()
 
@@ -130,12 +130,12 @@ def get_requests_page(db: Session, page: int, user_name: str = "") -> list[Coach
 
 
 def _get_requests_for_edition_query(db: Session, edition: Edition, user_name: str = "") -> Query:
-    return db.query(CoachRequest)\
-        .where(CoachRequest.edition_id == edition.edition_id)\
-        .join(User)\
-        .where(User.name.contains(user_name))\
-        .join(AuthEmail, isouter=True)\
-        .join(AuthGitHub, isouter=True)\
+    return db.query(CoachRequest) \
+        .where(CoachRequest.edition_id == edition.edition_id) \
+        .join(User) \
+        .where(User.name.contains(user_name)) \
+        .join(AuthEmail, isouter=True) \
+        .join(AuthGitHub, isouter=True) \
         .join(AuthGoogle, isouter=True)
 
 
@@ -175,3 +175,10 @@ def reject_request(db: Session, request_id: int):
     """
     db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
     db.commit()
+
+
+def remove_request_if_exists(db: Session, user_id: int, edition_name: str):
+    """Remove a pending request for a user if there is one, otherwise do nothing"""
+    edition = db.query(Edition).where(Edition.name == edition_name).one()
+    db.query(CoachRequest).where(CoachRequest.user_id == user_id)\
+        .where(CoachRequest.edition_id == edition.edition_id).delete()
