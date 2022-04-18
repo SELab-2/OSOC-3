@@ -67,7 +67,7 @@ export interface CreateProject {
     skills: string[];
 
     /** The partners that belong to this project */
-    partners: Partner[];
+    partners: string[];
 
     /** The users that will coach this project */
     coaches: string[];

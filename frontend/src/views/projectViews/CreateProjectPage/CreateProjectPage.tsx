@@ -1,4 +1,4 @@
-import { CreateProjectContainer, Input, AddButton, CreateButton } from "./styles";
+import { CreateProjectContainer, CreateButton } from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,14 +8,16 @@ import {
     NameInput,
     NumberOfStudentsInput,
     CoachInput,
+    SkillInput,
+    PartnerInput,
     AddedCoaches,
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
     const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
-    const [skills, setSkills] = useState([]);
-    const [partners, setPartners] = useState([]);
+    const [skills, setSkills] = useState<string[]>([]);
+    const [partners, setPartners] = useState<string[]>([]);
 
     // States for coaches
     const [coach, setCoach] = useState("");
@@ -46,18 +48,22 @@ export default function CreateProjectPage() {
             />
             <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
 
-            <div>
-                <Input value={skills} onChange={e => setSkills([])} placeholder="Skill" />
-                <AddButton>Add skill</AddButton>
-            </div>
-            <div>
-                <Input value={partners} onChange={e => setPartners([])} placeholder="Partner" />
-                <AddButton>Add partner</AddButton>
-            </div>
+            <SkillInput skills={skills} setSkills={setSkills} />
+            <PartnerInput partners={partners} setPartners={setPartners} />
             <CreateButton
-                onClick={() =>
-                    createProject("2022", name, numberOfStudents!, skills, partners, coaches)
-                }
+                onClick={async () => {
+                    const response = await createProject(
+                        "2022",
+                        name,
+                        numberOfStudents!,
+                        skills,
+                        partners,
+                        coaches
+                    );
+                    if (response) {
+                        navigate("/editions/2022/projects/");
+                    } else alert("Something went wrong :(");
+                }}
             >
                 Create Project
             </CreateButton>

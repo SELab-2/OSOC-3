@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Projects, Project, CreateProject, Partner } from "../../data/interfaces/projects";
+import { Projects, Project, CreateProject } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
 export async function getProjects(edition: string) {
@@ -35,7 +35,7 @@ export async function createProject(
     name: string,
     numberOfStudents: number,
     skills: string[],
-    partners: Partner[],
+    partners: string[],
     coaches: string[]
 ) {
     const payload: CreateProject = {
