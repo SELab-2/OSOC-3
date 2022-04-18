@@ -5,13 +5,25 @@ import {
     handleSelect,
     handleSelectAll,
     handleSetState,
+    handleFilterSelect,
+    handleSetSearch,
+    handleDoSearch,
 } from "../../utils/api/mail_overview";
 import BootstrapTable from "react-bootstrap-table-next";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
-import { TableDiv, DropDownButtonDiv, SearchDiv, FilterDiv, SearchAndFilterDiv } from "./styles";
+import { Multiselect } from "multiselect-react-dropdown";
+import {
+    TableDiv,
+    DropDownButtonDiv,
+    SearchDiv,
+    FilterDiv,
+    SearchAndFilterDiv,
+    ButtonDiv,
+} from "./styles";
 import { EmailType } from "../../data/enums";
 
 /**
@@ -22,7 +34,6 @@ export default function MailOverviewPage() {
         studentEmails: [],
     };
     const [table, setTable] = useState(init);
-
     useEffect(() => {
         const updateMailOverview = async () => {
             try {
@@ -69,35 +80,44 @@ export default function MailOverviewPage() {
                     menuVariant="dark"
                     onSelect={handleSetState}
                 >
-                    <Dropdown.Item eventKey="0">Applied</Dropdown.Item>
-                    <Dropdown.Item eventKey="1">Awaiting project</Dropdown.Item>
-                    <Dropdown.Item eventKey="2">Approved</Dropdown.Item>
-                    <Dropdown.Item eventKey="3">Contract confirmed</Dropdown.Item>
-                    <Dropdown.Item eventKey="4">Contract declined</Dropdown.Item>
-                    <Dropdown.Item eventKey="5">Rejected</Dropdown.Item>
+                    {Object.values(EmailType).map((type, index) => (
+                        <Dropdown.Item eventKey={index.toString()} key={type}>
+                            {type}
+                        </Dropdown.Item>
+                    ))}
                 </DropdownButton>
             </DropDownButtonDiv>
             <SearchAndFilterDiv>
                 <SearchDiv>
                     <InputGroup className="mb-3">
-                        <FormControl placeholder="Search a student" aria-label="Username" />
+                        <FormControl
+                            placeholder="Search a student"
+                            aria-label="Username"
+                            onChange={handleSetSearch}
+                            onSubmit={handleDoSearch}
+                        />
                     </InputGroup>
                 </SearchDiv>
                 <FilterDiv>
-                    <DropdownButton
-                        id="dropdown-filterstate-button"
-                        title="Filter on Email State"
-                        menuVariant="dark"
-                        autoClose="outside"
-                    >
-                        <Dropdown.Item eventKey="0">Applied</Dropdown.Item>
-                        <Dropdown.Item eventKey="1">Awaiting project</Dropdown.Item>
-                        <Dropdown.Item eventKey="2">Approved</Dropdown.Item>
-                        <Dropdown.Item eventKey="3">Contract confirmed</Dropdown.Item>
-                        <Dropdown.Item eventKey="4">Contract declined</Dropdown.Item>
-                        <Dropdown.Item eventKey="5">Rejected</Dropdown.Item>
-                    </DropdownButton>
+                    <Multiselect
+                        placeholder="Filter on Email State"
+                        showArrow={true}
+                        isObject={false}
+                        onRemove={handleFilterSelect}
+                        onSelect={handleFilterSelect}
+                        options={[
+                            "Applied",
+                            "Awaiting project",
+                            "Approved",
+                            "Contract confirmed",
+                            "Contract declined",
+                            "Rejected",
+                        ]}
+                    />
                 </FilterDiv>
+                <ButtonDiv>
+                    <Button onClick={handleDoSearch}>Search</Button>
+                </ButtonDiv>
             </SearchAndFilterDiv>
             <TableDiv>
                 <BootstrapTable

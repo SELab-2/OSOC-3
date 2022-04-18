@@ -22,9 +22,21 @@ export const SearchDiv = styled.div`
 `;
 
 export const FilterDiv = styled.div`
+    background-color: white;
+    color: black;
+    border-radius: 5px;
     margin: auto;
     margin-top: 50px;
+    margin-left: 5px;
     width: fit-content;
+    max-width: 350px;
+    display: inline-block;
+`;
+
+export const ButtonDiv = styled.div`
+    margin: auto;
+    width: fit-content;
+    margin-left: 5px;
     display: inline-block;
 `;
 

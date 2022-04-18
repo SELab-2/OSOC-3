@@ -1,5 +1,5 @@
 import { Email, Student } from "../../data/interfaces";
-
+import { ChangeEvent } from "react";
 /**
  * A student together with its email history
  */
@@ -86,4 +86,24 @@ export function handleSetState(eventKey: string | null) {
     // TODO do post request with selected data
 
     // update table contents ?
+}
+
+let selectedFilters: string[] = [];
+/**
+ * Filters the table
+ * @param selectedList
+ */
+export function handleFilterSelect(selectedList: string[]) {
+    selectedFilters = selectedList;
+}
+
+let searchTerm: string = "";
+export function handleSetSearch(event: ChangeEvent<{ value: string }>) {
+    searchTerm = event.target.value;
+}
+
+export function handleDoSearch() {
+    console.log(selectedFilters);
+    console.log(searchTerm);
+    // TODO: make get request with filters and searchterm
 }
