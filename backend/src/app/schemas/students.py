@@ -1,3 +1,4 @@
+# pylint: disable=too-many-arguments
 from datetime import datetime
 from fastapi import Query
 from pydantic import Field
