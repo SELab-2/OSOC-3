@@ -29,6 +29,7 @@ def get_suggestion_by_id(db: Session, suggestion_id: int) -> Suggestion:
 def delete_suggestion(db: Session, suggestion: Suggestion) -> None:
     """Delete a suggestion from the database"""
     db.delete(suggestion)
+    db.commit()
 
 
 def update_suggestion(db: Session, suggestion: Suggestion, decision: DecisionEnum, argumentation: str) -> None:

@@ -5,10 +5,12 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.database.models import Suggestion, Student, User, Edition, Skill
 
+
 from src.database.crud.suggestions import (create_suggestion, get_suggestions_of_student,
                                            get_suggestion_by_id, delete_suggestion, update_suggestion,
                                            get_suggestions_of_student_by_type)
 from src.database.enums import DecisionEnum
+
 
 
 @pytest.fixture
@@ -279,3 +281,4 @@ def test_get_suggestions_of_student_by_type(database_with_data: Session):
     assert len(suggestions_student_yes) == 1
     assert len(suggestions_student_no) == 1
     assert len(suggestions_student_maybe) == 1
+    

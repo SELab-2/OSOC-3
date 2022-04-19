@@ -26,15 +26,12 @@ def all_suggestions_of_student(db: Session, student_id: int | None) -> Suggestio
     return SuggestionListResponse(suggestions=all_suggestions)
 
 
-
 def remove_suggestion(db: Session, suggestion: Suggestion, user: User) -> None:
     """
     Delete a suggestion
     Admins can delete all suggestions, coaches only their own suggestions
     """
-    if user.admin:
-        delete_suggestion(db, suggestion)
-    elif suggestion.coach == user:
+    if user.admin or suggestion.coach == user:
         delete_suggestion(db, suggestion)
     else:
         raise MissingPermissionsException
@@ -45,10 +42,7 @@ def change_suggestion(db: Session, new_suggestion: NewSuggestion, suggestion: Su
     Update a suggestion
     Admins can update all suggestions, coaches only their own suggestions
     """
-    if user.admin:
-        update_suggestion(
-            db, suggestion, new_suggestion.suggestion, new_suggestion.argumentation)
-    elif suggestion.coach == user:
+    if user.admin or suggestion.coach == user:
         update_suggestion(
             db, suggestion, new_suggestion.suggestion, new_suggestion.argumentation)
     else:
