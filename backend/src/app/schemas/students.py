@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from fastapi import Query
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum, EmailStatusEnum
