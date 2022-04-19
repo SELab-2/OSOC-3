@@ -5,9 +5,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.database.models import Suggestion, Student, User, Edition, Skill
 
-from src.database.crud.suggestions import ( create_suggestion, get_suggestions_of_student,
-                                            get_suggestion_by_id, delete_suggestion, update_suggestion )
+
+from src.database.crud.suggestions import (create_suggestion, get_suggestions_of_student,
+                                           get_suggestion_by_id, delete_suggestion, update_suggestion,
+                                           get_suggestions_of_student_by_type)
 from src.database.enums import DecisionEnum
+
+
 
 @pytest.fixture
 def database_with_data(database_session: Session):
@@ -249,3 +253,32 @@ def test_update_suggestion(database_with_data: Session):
         Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
     assert new_suggestion.suggestion == DecisionEnum.NO
     assert new_suggestion.argumentation == "Not that good student"
+
+
+def test_get_suggestions_of_student_by_type(database_with_data: Session):
+    """Tests get suggestion of a student by type of suggestion"""
+    user1: User = database_with_data.query(
+        User).where(User.name == "coach1").first()
+    user2: User = database_with_data.query(
+        User).where(User.name == "coach2").first()
+    user3: User = database_with_data.query(
+        User).where(User.name == "admin").first()
+    student: Student = database_with_data.query(Student).where(
+        Student.email_address == "marta.marquez@example.com").first()
+
+    create_suggestion(database_with_data, user1.user_id, student.student_id,
+                      DecisionEnum.MAYBE, "Idk if it's good student")
+    create_suggestion(database_with_data, user2.user_id,
+                      student.student_id, DecisionEnum.YES, "This is a good student")
+    create_suggestion(database_with_data, user3.user_id,
+                      student.student_id, DecisionEnum.NO, "This is not a good student")
+    suggestions_student_yes = get_suggestions_of_student_by_type(
+        database_with_data, student.student_id, DecisionEnum.YES)
+    suggestions_student_no = get_suggestions_of_student_by_type(
+        database_with_data, student.student_id, DecisionEnum.NO)
+    suggestions_student_maybe = get_suggestions_of_student_by_type(
+        database_with_data, student.student_id, DecisionEnum.MAYBE)
+    assert len(suggestions_student_yes) == 1
+    assert len(suggestions_student_no) == 1
+    assert len(suggestions_student_maybe) == 1
+    

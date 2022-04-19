@@ -7,10 +7,7 @@ import Form from "react-bootstrap/Form";
 import InfoMessage from "./InfoMessage";
 import Spinner from "react-bootstrap/Spinner";
 import { deleteEdition } from "../../../utils/api/editions";
-import {
-    getCurrentEdition,
-    setCurrentEdition,
-} from "../../../utils/session-storage/current-edition";
+import { getCurrentEdition, setCurrentEdition } from "../../../utils/session-storage";
 
 interface Props {
     edition: Edition;

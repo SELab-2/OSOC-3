@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.database.models import (User, AuthEmail, Skill, Student,
                                 Edition, CoachRequest, DecisionEmail, InviteLink, Partner,
                                 Project, ProjectRole, Suggestion)
-from src.database.enums import DecisionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.app.logic.security import get_password_hash
 
 
@@ -188,19 +188,19 @@ def fill_database(db: Session):
 
     # DecisionEmail
     decision_email1: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.NO, student=student29, date=date.today())
+        decision=EmailStatusEnum.REJECTED, student=student29, date=date.today())
     decision_email2: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.YES, student=student09, date=date.today())
+        decision=EmailStatusEnum.APPROVED, student=student09, date=date.today())
     decision_email3: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.YES, student=student10, date=date.today())
+        decision=EmailStatusEnum.APPROVED, student=student10, date=date.today())
     decision_email4: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.YES, student=student11, date=date.today())
+        decision=EmailStatusEnum.APPROVED, student=student11, date=date.today())
     decision_email5: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.YES, student=student12, date=date.today())
+        decision=EmailStatusEnum.APPROVED, student=student12, date=date.today())
     decision_email6: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.MAYBE, student=student06, date=date.today())
+        decision=EmailStatusEnum.AWAITING_PROJECT, student=student06, date=date.today())
     decision_email7: DecisionEmail = DecisionEmail(
-        decision=DecisionEnum.MAYBE, student=student26, date=date.today())
+        decision=EmailStatusEnum.AWAITING_PROJECT, student=student26, date=date.today())
     db.add(decision_email1)
     db.add(decision_email2)
     db.add(decision_email3)

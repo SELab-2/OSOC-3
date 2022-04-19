@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 import src.app.logic.users as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.login import UserData
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
+    FilterParameters
 from src.app.utils.dependencies import require_admin, get_current_active_user
 from src.database.database import get_session
 from src.database.models import User as UserDB
@@ -14,11 +15,7 @@ users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 @users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
 async def get_users(
-        admin: bool = Query(None),
-        edition: str | None = Query(None),
-        exclude_edition: str | None = Query(None),
-        name: str | None = Query(None),
-        page: int = 0,
+        params: FilterParameters = Depends(),
         db: Session = Depends(get_session)):
     """
     Get users
@@ -26,7 +23,7 @@ async def get_users(
     When the admin parameter is True, the edition and exclude_edition parameter will have no effect.
     Since admins have access to all editions.
     """
-    return logic.get_users_list(db, admin, edition, exclude_edition, name, page)
+    return logic.get_users_list(db, params)
 
 
 @users_router.get("/current", response_model=UserData)
