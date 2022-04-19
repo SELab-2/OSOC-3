@@ -1,7 +1,7 @@
-# pylint: disable=too-many-arguments
+from dataclasses import dataclass
 from datetime import datetime
 from fastapi import Query
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.app.schemas.webhooks import CamelCaseModel
 from src.database.enums import DecisionEnum, EmailStatusEnum
@@ -40,7 +40,7 @@ class Student(CamelCaseModel):
     edition_id: int
 
     skills: list[Skill]
-    nr_of_suggestions: Suggestions = None
+    nr_of_suggestions: Suggestions | None = None
 
     class Config:
         """Set to ORM mode"""
@@ -60,18 +60,14 @@ class ReturnStudentList(CamelCaseModel):
     """
     students: list[Student]
 
-
+@dataclass
 class CommonQueryParams:
     """search query paramaters"""
-
-    def __init__(self, first_name: str = "", last_name: str = "", alumni: bool = False,
-                 student_coach: bool = False, skill_ids: list[int] = Query([])) -> None:
-        """init"""
-        self.first_name = first_name
-        self.last_name = last_name
-        self.alumni = alumni
-        self.student_coach = student_coach
-        self.skill_ids = skill_ids
+    first_name: str = ""
+    last_name: str = ""
+    alumni: bool = False
+    student_coach: bool = False
+    skill_ids: list[int] = Query([])
 
 
 class DecisionEmail(CamelCaseModel):

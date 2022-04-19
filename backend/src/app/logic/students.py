@@ -34,7 +34,18 @@ def get_students_search(db: Session, edition: Edition, commons: CommonQueryParam
 
     students: list[StudentModel] = []
     for student in students_orm:
-        students.append(student)
+        students.append(StudentModel(
+            student_id=student.student_id,
+            first_name=student.first_name,
+            last_name=student.last_name,
+            preferred_name=student.preferred_name,
+            email_address=student.email_address,
+            phone_number=student.phone_number,
+            alumni=student.alumni,
+            finalDecision=student.decision,
+            wants_to_be_student_coach=student.wants_to_be_student_coach,
+            edition_id=student.edition_id,
+            skills=student.skills))
         nr_of_yes_suggestions = len(get_suggestions_of_student_by_type(
             db, student.student_id, DecisionEnum.YES))
         nr_of_no_suggestions = len(get_suggestions_of_student_by_type(
