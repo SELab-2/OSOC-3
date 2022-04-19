@@ -5,7 +5,7 @@ from pydantic import ValidationError
 from starlette import status
 
 from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
-from .editions import DuplicateInsertException
+from .editions import DuplicateInsertException, ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
 from .register import FailedToAddNewUserException
@@ -89,8 +89,15 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(FailedToAddProjectRoleException)
-    def student_in_conflict_exception(_request: Request, _exception: FailedToAddProjectRoleException):
+    def failed_to_add_project_role_exception(_request: Request, _exception: FailedToAddProjectRoleException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while adding this student to the project'}
+        )
+
+    @app.exception_handler(ReadOnlyEditionException)
+    def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
+        return JSONResponse(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            content={'message': 'This edition is Read-Only'}
         )

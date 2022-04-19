@@ -1,9 +1,6 @@
 import { useEffect } from "react";
-
-import { setBearerToken } from "../../utils/api";
 import { validateBearerToken } from "../../utils/api/auth";
-import { Role } from "../../data/enums";
-import { useAuth } from "../../contexts/auth-context";
+import { logIn, logOut, useAuth } from "../../contexts";
 
 /**
  * Placeholder page shown while the bearer token found in LocalStorage is being verified.
@@ -17,14 +14,11 @@ export default function VerifyingTokenPage() {
             const response = await validateBearerToken(authContext.token);
 
             if (response === null) {
-                authContext.setToken(null);
-                authContext.setIsLoggedIn(false);
-                authContext.setRole(null);
+                logOut(authContext);
             } else {
                 // Token was valid, use it as the default request header
-                setBearerToken(authContext.token);
-                authContext.setIsLoggedIn(true);
-                authContext.setRole(response.admin ? Role.ADMIN : Role.COACH);
+                // and set all data in the AuthContext
+                logIn(response, authContext.token, authContext);
             }
         };
 
@@ -33,5 +27,9 @@ export default function VerifyingTokenPage() {
     }, [authContext]);
 
     // This will be replaced later on
-    return <h1>Loading...</h1>;
+    return (
+        <div data-testid={"verifying-page"}>
+            <h1>Loading...</h1>
+        </div>
+    );
 }

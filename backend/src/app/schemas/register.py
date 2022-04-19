@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from src.app.schemas.invites import EmailAddress
 
 

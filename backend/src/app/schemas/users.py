@@ -1,4 +1,5 @@
-from src.app.schemas.utils import CamelCaseModel
+from src.app.schemas.editions import Edition
+from src.app.schemas.utils import CamelCaseModel, BaseModel
 from src.database.models import User as ModelUser
 
 
@@ -10,7 +11,6 @@ class Authentication(CamelCaseModel):
 
 class User(CamelCaseModel):
     """Model for a user"""
-
     user_id: int
     name: str
     admin: bool
@@ -55,7 +55,7 @@ class UserRequest(CamelCaseModel):
     """Model for a userrequest"""
 
     request_id: int
-    edition_name: str
+    edition: Edition
     user: User
 
     class Config:
@@ -67,3 +67,12 @@ class UserRequestsResponse(CamelCaseModel):
     """Model for a list of userrequests"""
 
     requests: list[UserRequest]
+
+
+class FilterParameters(BaseModel):
+    """Schema for query parameters"""
+    edition: str | None
+    exclude_edition: str | None
+    name: str | None
+    admin: bool | None
+    page: int = 0

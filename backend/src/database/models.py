@@ -17,7 +17,7 @@ from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTim
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
-from src.database.enums import DecisionEnum, QuestionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum, QuestionEnum
 
 Base = declarative_base()
 
@@ -77,7 +77,7 @@ class DecisionEmail(Base):
 
     email_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
-    decision = Column(Enum(DecisionEnum), nullable=False)
+    decision = Column(Enum(EmailStatusEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
     student: Student = relationship("Student", back_populates="emails", uselist=False)
@@ -295,7 +295,7 @@ class User(Base):
     """Users of the tool (only admins & coaches)"""
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id: int = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 

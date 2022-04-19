@@ -26,19 +26,16 @@ export default function LoginPage() {
 
     useEffect(() => {
         // If the user is already logged in, redirect them to
-        // the "students" page instead of showing the login page
+        // the "editions" page instead of showing the login page
         if (authCtx.isLoggedIn) {
-            // TODO find other homepage to go to
-            //  perhaps editions?
-            //  (the rest requires an edition)
-            navigate("/students");
+            navigate("/editions");
         }
     }, [authCtx.isLoggedIn, navigate]);
 
     async function callLogIn() {
         try {
             const response = await logIn(authCtx, email, password);
-            if (response) navigate("/students");
+            if (response) navigate("/editions");
             else alert("Something went wrong when login in");
         } catch (error) {
             console.log(error);
@@ -46,7 +43,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div>
+        <div data-testid={"login-page"}>
             <LoginPageContainer>
                 <WelcomeText />
                 <LoginContainer>
