@@ -3,7 +3,7 @@ from fastapi import Query
 from pydantic import Field
 
 from src.app.schemas.webhooks import CamelCaseModel
-from src.database.enums import DecisionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.app.schemas.skills import Skill
 
 
@@ -79,7 +79,7 @@ class DecisionEmail(CamelCaseModel):
     """
     email_id: int
     student_id: int
-    decision: DecisionEnum
+    decision: EmailStatusEnum
     date: datetime
 
     class Config:

@@ -3,7 +3,7 @@ import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill, DecisionEmail
-from src.database.enums import DecisionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.crud.students import (get_student_by_id, set_definitive_decision_on_student,
                                         delete_student, get_students, get_emails)
 from src.app.schemas.students import CommonQueryParams
@@ -55,7 +55,7 @@ def database_with_data(database_session: Session):
 
     # DecisionEmail
     decision_email: DecisionEmail = DecisionEmail(
-        student=student01, decision=DecisionEnum.YES, date=datetime.datetime.now())
+        student=student01, decision=EmailStatusEnum.APPROVED, date=datetime.datetime.now())
     database_session.add(decision_email)
     database_session.commit()
 

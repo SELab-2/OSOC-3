@@ -2,7 +2,7 @@ import datetime
 import pytest
 from sqlalchemy.orm import Session
 from starlette import status
-from src.database.enums import DecisionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Student, Edition, Skill, DecisionEmail
 
 from tests.utils.authorization import AuthClient
@@ -46,7 +46,7 @@ def database_with_data(database_session: Session) -> Session:
 
     # DecisionEmail
     decision_email: DecisionEmail = DecisionEmail(
-        student=student01, decision=DecisionEnum.YES, date=datetime.datetime.now())
+        student=student01, decision=EmailStatusEnum.APPROVED, date=datetime.datetime.now())
     database_session.add(decision_email)
     database_session.commit()
     return database_session
@@ -293,6 +293,7 @@ def test_get_emails_student_admin(database_with_data: Session, auth_client: Auth
     """tests that an admin can get the mails of a student"""
     auth_client.admin()
     response = auth_client.get("/editions/ed2022/students/1/emails")
+    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["emails"]) == 1
     response = auth_client.get("/editions/ed2022/students/2/emails")
