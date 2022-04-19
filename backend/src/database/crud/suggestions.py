@@ -39,6 +39,9 @@ def update_suggestion(db: Session, suggestion: Suggestion, decision: DecisionEnu
     db.commit()
 
 
-def get_suggestions_of_student_by_type(db: Session, student_id: int | None, type: DecisionEnum) -> list[Suggestion]:
+def get_suggestions_of_student_by_type(db: Session, student_id: int | None,
+                                       type_suggestion: DecisionEnum) -> list[Suggestion]:
     """Give all suggestions of a student by type"""
-    return db.query(Suggestion).where(Suggestion.student_id == student_id).where(Suggestion.suggestion == type).all()
+    return db.query(Suggestion)\
+             .where(Suggestion.student_id == student_id)\
+             .where(Suggestion.suggestion == type_suggestion).all()

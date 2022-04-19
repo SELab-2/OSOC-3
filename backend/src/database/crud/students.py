@@ -23,7 +23,8 @@ def delete_student(db: Session, student: Student) -> None:
     db.commit()
 
 
-def get_students(db: Session, edition: Edition, commons: CommonQueryParams, skills: list[Skill] = None) -> list[Student]:
+def get_students(db: Session, edition: Edition,
+                 commons: CommonQueryParams, skills: list[Skill] = None) -> list[Student]:
     """Get students"""
     query = db.query(Student)\
         .where(Student.edition == edition)\
