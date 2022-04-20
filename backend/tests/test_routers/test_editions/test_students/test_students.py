@@ -2,6 +2,7 @@ import datetime
 import pytest
 from sqlalchemy.orm import Session
 from starlette import status
+from settings import DB_PAGE_SIZE
 from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Student, Edition, Skill, DecisionEmail
 
@@ -186,6 +187,25 @@ def test_get_all_students(database_with_data: Session, auth_client: AuthClient):
     assert len(response.json()["students"]) == 2
 
 
+def test_get_all_students_pagination(database_with_data: Session, auth_client: AuthClient):
+    """tests get all students with pagination"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        student: Student = Student(first_name=f"Student {i}", last_name="Vermeulen", preferred_name=f"{i}",
+                                   email_address=f"student{i}@mail.com", phone_number=f"0487/0{i}.24.45", alumni=True,
+                                   wants_to_be_student_coach=True, edition=edition, skills=[])
+        database_with_data.add(student)
+    database_with_data.commit()
+    response = auth_client.get("/editions/ed2022/students/?page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == DB_PAGE_SIZE
+    response = auth_client.get("/editions/ed2022/students/?page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == max(
+        round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 2, 0)  # +2 because there were already 2 students in the database
+
+
 def test_get_first_name_students(database_with_data: Session, auth_client: AuthClient):
     """tests get students based on query paramer first name"""
     edition: Edition = database_with_data.query(Edition).all()[0]
@@ -193,6 +213,27 @@ def test_get_first_name_students(database_with_data: Session, auth_client: AuthC
     response = auth_client.get("/editions/ed2022/students/?first_name=Jos")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
+
+
+def test_get_first_name_student_pagination(database_with_data: Session, auth_client: AuthClient):
+    """tests get students based on query paramer first name with pagination"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        student: Student = Student(first_name=f"Student {i}", last_name="Vermeulen", preferred_name=f"{i}",
+                                   email_address=f"student{i}@mail.com", phone_number=f"0487/0{i}.24.45", alumni=True,
+                                   wants_to_be_student_coach=True, edition=edition, skills=[])
+        database_with_data.add(student)
+    database_with_data.commit()
+    response = auth_client.get(
+        "/editions/ed2022/students/?first_name=Student&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == DB_PAGE_SIZE
+    response = auth_client.get(
+        "/editions/ed2022/students/?first_name=Student&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == max(
+        round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
 
 
 def test_get_last_name_students(database_with_data: Session, auth_client: AuthClient):
@@ -205,6 +246,27 @@ def test_get_last_name_students(database_with_data: Session, auth_client: AuthCl
     assert len(response.json()["students"]) == 1
 
 
+def test_get_last_name_students_pagination(database_with_data: Session, auth_client: AuthClient):
+    """tests get students based on query paramer last name with pagination"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        student: Student = Student(first_name="Jos", last_name=f"Student {i}", preferred_name=f"{i}",
+                                   email_address=f"student{i}@mail.com", phone_number=f"0487/0{i}.24.45", alumni=True,
+                                   wants_to_be_student_coach=True, edition=edition, skills=[])
+        database_with_data.add(student)
+    database_with_data.commit()
+    response = auth_client.get(
+        "/editions/ed2022/students/?last_name=Student&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == DB_PAGE_SIZE
+    response = auth_client.get(
+        "/editions/ed2022/students/?last_name=Student&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == max(
+        round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
+
+
 def test_get_alumni_students(database_with_data: Session, auth_client: AuthClient):
     """tests get students based on query paramer alumni"""
     edition: Edition = database_with_data.query(Edition).all()[0]
@@ -214,6 +276,27 @@ def test_get_alumni_students(database_with_data: Session, auth_client: AuthClien
     assert len(response.json()["students"]) == 1
 
 
+def test_get_alumni_students_pagination(database_with_data: Session, auth_client: AuthClient):
+    """tests get students based on query paramer alumni with pagination"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        student: Student = Student(first_name="Jos", last_name=f"Student {i}", preferred_name=f"{i}",
+                                   email_address=f"student{i}@mail.com", phone_number=f"0487/0{i}.24.45", alumni=True,
+                                   wants_to_be_student_coach=True, edition=edition, skills=[])
+        database_with_data.add(student)
+    database_with_data.commit()
+    response = auth_client.get(
+        "/editions/ed2022/students/?alumni=true&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == DB_PAGE_SIZE
+    response = auth_client.get(
+        "/editions/ed2022/students/?alumni=true&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == max(
+        round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1, 0) # +1 because there is already is one
+
+
 def test_get_student_coach_students(database_with_data: Session, auth_client: AuthClient):
     """tests get students based on query paramer student coach"""
     edition: Edition = database_with_data.query(Edition).all()[0]
@@ -221,6 +304,27 @@ def test_get_student_coach_students(database_with_data: Session, auth_client: Au
     response = auth_client.get("/editions/ed2022/students/?student_coach=true")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
+
+
+def test_get_student_coach_students_pagination(database_with_data: Session, auth_client: AuthClient):
+    """tests get students based on query paramer student coach with pagination"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    for i in range(round(DB_PAGE_SIZE * 1.5)):
+        student: Student = Student(first_name="Jos", last_name=f"Student {i}", preferred_name=f"{i}",
+                                   email_address=f"student{i}@mail.com", phone_number=f"0487/0{i}.24.45", alumni=True,
+                                   wants_to_be_student_coach=True, edition=edition, skills=[])
+        database_with_data.add(student)
+    database_with_data.commit()
+    response = auth_client.get(
+        "/editions/ed2022/students/?student_coach=true&page=0")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == DB_PAGE_SIZE
+    response = auth_client.get(
+        "/editions/ed2022/students/?student_coach=true&page=1")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()['students']) == max(
+        round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1, 0) # +1 because there is already is one
 
 
 def test_get_one_skill_students(database_with_data: Session, auth_client: AuthClient):
@@ -239,7 +343,6 @@ def test_get_multiple_skill_students(database_with_data: Session, auth_client: A
     auth_client.coach(edition)
     response = auth_client.get(
         "/editions/ed2022/students/?skill_ids=4&skill_ids=5")
-    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
     assert response.json()["students"][0]["firstName"] == "Marta"
@@ -270,7 +373,6 @@ def test_get_one_real_one_ghost_skill_students(database_with_data: Session, auth
     auth_client.coach(edition)
     response = auth_client.get(
         "/editions/ed2022/students/?skill_ids=4&skill_ids=100")
-    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
 
@@ -293,7 +395,6 @@ def test_get_emails_student_admin(database_with_data: Session, auth_client: Auth
     """tests that an admin can get the mails of a student"""
     auth_client.admin()
     response = auth_client.get("/editions/ed2022/students/1/emails")
-    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["emails"]) == 1
     response = auth_client.get("/editions/ed2022/students/2/emails")

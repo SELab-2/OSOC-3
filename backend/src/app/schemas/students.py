@@ -68,6 +68,7 @@ class CommonQueryParams:
     alumni: bool = False
     student_coach: bool = False
     skill_ids: list[int] = Query([])
+    page: int = 0
 
 
 class DecisionEmail(CamelCaseModel):

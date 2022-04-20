@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from src.database.crud.util import paginate
 from src.database.enums import DecisionEnum
 from src.database.models import Edition, Skill, Student, DecisionEmail
 from src.app.schemas.students import CommonQueryParams
@@ -43,7 +44,7 @@ def get_students(db: Session, edition: Edition,
     for skill in skills:
         query = query.where(Student.skills.contains(skill))
 
-    return query.all()
+    return paginate(query, commons.page).all()
 
 
 def get_emails(db: Session, student: Student) -> list[DecisionEmail]:
