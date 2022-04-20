@@ -55,7 +55,7 @@ export default function ProjectPage() {
             if (response) {
                 setProjectsAPI(response.projects);
                 setProjects(response.projects);
-            } else setGotProjects(false);
+            }
         }
         if (!gotProjects) {
             callProjects();
