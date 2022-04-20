@@ -45,6 +45,5 @@ def delete_skill(db: Session, skill_id: int):
         db (Session): connection with the database.
         skill_id (int): the id of the skill
     """
-    skill_to_delete = db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.delete(skill_to_delete)
+    db.delete(db.query(Skill).where(Skill.skill_id == skill_id).one())
     db.commit()

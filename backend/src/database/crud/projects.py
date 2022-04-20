@@ -60,13 +60,7 @@ def get_project(db: Session, project_id: int) -> Project:
 
 def delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
-    proj_roles = db.query(ProjectRole).where(
-        ProjectRole.project_id == project_id).all()
-    for proj_role in proj_roles:
-        db.delete(proj_role)
-
-    project = get_project(db, project_id)
-    db.delete(project)
+    db.delete(get_project(db, project_id))
     db.commit()
 
 

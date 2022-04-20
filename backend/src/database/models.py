@@ -91,12 +91,13 @@ class Edition(Base):
     name = Column(Text, unique=True, nullable=False)
     year = Column(Integer, unique=True, nullable=False)
 
-    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
-    projects: list[Project] = relationship("Project", back_populates="edition")
+    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition", cascade="all, delete-orphan")
+    projects: list[Project] = relationship("Project", back_populates="edition", cascade="all, delete-orphan")
     coaches: list[User] = relationship("User", secondary="user_editions", back_populates="editions")
-    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition")
-    students: list[Student] = relationship("Student", back_populates="edition")
-    webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition")
+    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition",
+                                                      cascade="all, delete-orphan")
+    students: list[Student] = relationship("Student", back_populates="edition", cascade="all, delete-orphan")
+    webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition", cascade="all, delete-orphan")
 
 
 class InviteLink(Base):
@@ -134,7 +135,8 @@ class Project(Base):
     coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects")
     skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
     partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project",
+                                                    cascade="all, delete-orphan")
 
 
 project_coaches = Table(
@@ -221,10 +223,11 @@ class Student(Base):
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student",
+                                                    cascade="all, delete-orphan")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
-    questions: list[Question] = relationship("Question", back_populates="student")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", cascade="all, delete-orphan")
+    questions: list[Question] = relationship("Question", back_populates="student", cascade="all, delete-orphan")
     edition: Edition = relationship("Edition", back_populates="students", uselist=False)
 
 
@@ -237,8 +240,10 @@ class Question(Base):
     question = Column(Text, nullable=False)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
 
-    answers: list[QuestionAnswer] = relationship("QuestionAnswer", back_populates="question")
-    files: list[QuestionFileAnswer] = relationship("QuestionFileAnswer", back_populates="question")
+    answers: list[QuestionAnswer] = relationship("QuestionAnswer", back_populates="question",
+                                                 cascade="all, delete-orphan")
+    files: list[QuestionFileAnswer] = relationship("QuestionFileAnswer", back_populates="question",
+                                                   cascade="all, delete-orphan")
     student: Student = relationship("Student", back_populates="questions", uselist=False)
 
 
@@ -299,16 +304,21 @@ class User(Base):
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
-    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
-    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
+    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False,
+                                               cascade="all, delete-orphan")
+    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter",
+                                                    cascade="all, delete-orphan")
     editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
     projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan")
 
     # Authentication methods
-    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False)
-    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False)
-    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False)
+    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False,
+                                         cascade="all, delete-orphan")
+    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False,
+                                           cascade="all, delete-orphan")
+    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False,
+                                           cascade="all, delete-orphan")
 
 
 user_editions = Table(
