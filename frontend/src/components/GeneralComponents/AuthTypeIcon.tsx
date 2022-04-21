@@ -6,7 +6,6 @@ import { AiFillGithub, AiFillGoogleCircle, AiOutlineQuestionCircle } from "react
  * @param props.type email/github/google
  */
 export default function AuthTypeIcon(props: { type: string }) {
-    console.log(props.type);
     if (props.type === "email") {
         return <HiOutlineMail />;
     } else if (props.type === "github") {

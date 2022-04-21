@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { UsersPageDiv, AdminsButton, UsersHeader } from "./styles";
+import { useParams } from "react-router-dom";
+import { UsersPageDiv, UsersHeader } from "./styles";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/Requests";
@@ -20,7 +20,6 @@ function UsersPage() {
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
 
     const params = useParams();
-    const navigate = useNavigate();
 
     /**
      * Request a page from the list of coaches.
@@ -106,7 +105,6 @@ function UsersPage() {
                     <UsersHeader>
                         <h1>Manage coaches from {params.editionId}</h1>
                     </UsersHeader>
-                    <AdminsButton onClick={() => navigate("/admins")}>Edit Admins</AdminsButton>
                 </div>
                 <InviteUser edition={params.editionId} />
                 <PendingRequests edition={params.editionId} refreshCoaches={refreshCoaches} />
