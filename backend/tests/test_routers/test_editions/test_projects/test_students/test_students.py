@@ -75,7 +75,7 @@ def test_add_student_project(database_with_data: Session, current_edition: Editi
 
     resp = auth_client.post(
         "/editions/ed2022/projects/1/students/3", json={"skill_id": 3})
-    
+
     assert resp.status_code == status.HTTP_201_CREATED
 
     response2 = auth_client.get('/editions/ed2022/projects')
@@ -190,7 +190,7 @@ def test_change_incomplete_data_student_project(database_with_data: Session, cur
     assert len(json['projects'][0]['projectRoles']) == 3
     assert json['projects'][0]['projectRoles'][0]['skillId'] == 1
 
-    
+
 def test_change_ghost_student_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
     """Tests changing a non-existing student of a project"""
     auth_client.coach(current_edition)
@@ -251,7 +251,7 @@ def test_change_student_project_ghost_drafter(database_with_data: Session, curre
     json = response.json()
     assert len(json['projectRoles']) == 3
 
-    
+
 def test_change_student_to_ghost_project(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):
     """Tests changing a student of a project that doesn't exist"""
     auth_client.coach(current_edition)
@@ -301,7 +301,18 @@ def test_get_conflicts(database_with_data: Session, current_edition: Edition, au
     assert len(json['conflictStudents']) == 1
     assert json['conflictStudents'][0]['student']['studentId'] == 1
     assert len(json['conflictStudents'][0]['projects']) == 2
-    assert json['editionName'] == "ed2022"
+
+
+def test_add_student_project_old_edition(database_with_data: Session, auth_client: AuthClient):
+    """tests add a student to a project from an old edition"""
+    auth_client.admin()
+    database_with_data.add(Edition(year=2023, name="ed2023"))
+    database_with_data.commit()
+
+    resp = auth_client.post(
+        "/editions/ed2022/projects/1/students/3", json={"skill_id": 1, "drafter_id": 1})
+
+    assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 def test_add_student_same_project_role(database_with_data: Session, current_edition: Edition, auth_client: AuthClient):

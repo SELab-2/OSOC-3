@@ -9,6 +9,7 @@
         "@types/react-infinite-scroller": "^1.2.3",
         "axios": "^0.26.1",
         "bootstrap": "5.1.3",
+        "buffer": "^6.0.3",
         "react": "^17.0.2",
         "react-bootstrap": "^2.2.1",
         "react-bootstrap-typeahead": "^6.0.0-alpha.11",

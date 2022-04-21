@@ -10,17 +10,17 @@ def _get_projects_for_edition_query(db: Session, edition: Edition) -> Query:
     return db.query(Project).where(Project.edition == edition).order_by(Project.project_id)
 
 
-def db_get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
+def get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
     return _get_projects_for_edition_query(db, edition).all()
 
 
-def db_get_projects_for_edition_page(db: Session, edition: Edition, page: int) -> list[Project]:
+def get_projects_for_edition_page(db: Session, edition: Edition, page: int) -> list[Project]:
     """Returns a paginated list of all projects from a certain edition from the database"""
     return paginate(_get_projects_for_edition_query(db, edition), page).all()
 
 
-def db_add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
+def add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
@@ -43,25 +43,23 @@ def db_add_project(db: Session, edition: Edition, input_project: InputProject) -
     return project
 
 
-def db_get_project(db: Session, project_id: int) -> Project:
+def get_project(db: Session, project_id: int) -> Project:
     """Query a specific project from the database through its ID"""
     return db.query(Project).where(Project.project_id == project_id).one()
 
 
-def db_delete_project(db: Session, project_id: int):
+def delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
-    # TODO: Maybe make the relationship between project and project_role cascade on delete?
-    # so this code is handled by the database
     proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
     for proj_role in proj_roles:
         db.delete(proj_role)
 
-    project = db_get_project(db, project_id)
+    project = get_project(db, project_id)
     db.delete(project)
     db.commit()
 
 
-def db_patch_project(db: Session, project_id: int, input_project: InputProject):
+def patch_project(db: Session, project_id: int, input_project: InputProject):
     """
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
@@ -87,7 +85,7 @@ def db_patch_project(db: Session, project_id: int, input_project: InputProject):
     db.commit()
 
 
-def db_get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, list[Project]]]:
+def get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, list[Project]]]:
     """
     Query all students that are causing conflicts for a certain edition
     Return a ConflictStudent for each student that causes a conflict
