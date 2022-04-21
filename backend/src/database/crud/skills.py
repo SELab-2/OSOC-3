@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from src.database.models import Skill
+
 from src.app.schemas.skills import SkillBase
+from src.database.models import Skill
 
 
 def get_skills(db: Session) -> list[Skill]:
@@ -13,6 +14,11 @@ def get_skills(db: Session) -> list[Skill]:
         SkillList: an object with a list of all the skills.
     """
     return db.query(Skill).all()
+
+
+def get_skills_by_ids(db: Session, skill_ids) -> list[Skill]:
+    """Get all skills from list of skill ids"""
+    return db.query(Skill).where(Skill.skill_id.in_(skill_ids)).all()
 
 
 def create_skill(db: Session, skill: SkillBase) -> Skill:

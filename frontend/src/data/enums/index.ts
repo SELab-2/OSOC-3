@@ -1,3 +1,4 @@
-export { StorageKey } from "./local-storage";
+export { LocalStorageKey } from "./local-storage";
+export { SessionStorageKey } from "./session-storage";
 export { Role } from "./role";
 export { EmailType } from "./emailtype";

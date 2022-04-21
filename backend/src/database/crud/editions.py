@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import exc
+from sqlalchemy import exc, func
+from sqlalchemy.orm import Query, Session
 from src.app.exceptions.editions import DuplicateInsertException
-from src.database.models import Edition
 from src.app.schemas.editions import EditionBase
+from src.database.models import Edition
+from .util import paginate
 
 
 def get_edition_by_name(db: Session, edition_name: str) -> Edition:
@@ -15,20 +16,21 @@ def get_edition_by_name(db: Session, edition_name: str) -> Edition:
     Returns:
         Edition: an edition if found else an exception is raised
     """
-    # TODO: check that name is valid
     return db.query(Edition).where(Edition.name == edition_name).one()
 
 
+def _get_editions_query(db: Session) -> Query:
+    return db.query(Edition)
+
+
 def get_editions(db: Session) -> list[Edition]:
-    """Get a list of all editions.
+    """Returns a list of all editions"""
+    return _get_editions_query(db).all()
 
-    Args:
-        db (Session): connection with the database.
 
-    Returns:
-        EditionList: an object with a list of all editions
-    """
-    return db.query(Edition).all()
+def get_editions_page(db: Session, page: int) -> list[Edition]:
+    """Returns a paginated list of all editions"""
+    return paginate(_get_editions_query(db), page).all()
 
 
 def create_edition(db: Session, edition: EditionBase) -> Edition:
@@ -61,3 +63,9 @@ def delete_edition(db: Session, edition_name: str):
     edition_to_delete = get_edition_by_name(db, edition_name)
     db.delete(edition_to_delete)
     db.commit()
+
+
+def latest_edition(db: Session) -> Edition:
+    """Returns the latest edition from the database"""
+    max_edition_id = db.query(func.max(Edition.edition_id)).scalar()
+    return db.query(Edition).where(Edition.edition_id == max_edition_id).one()
