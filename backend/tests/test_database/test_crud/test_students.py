@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill, DecisionEmail
 from src.database.enums import DecisionEnum, EmailStatusEnum
-from src.database.crud.students import (get_student_by_id, set_definitive_decision_on_student,
+from src.database.crud.students import (create_email, get_last_emails_of_students, get_student_by_id,
+                                        set_definitive_decision_on_student,
                                         delete_student, get_students, get_emails)
-from src.app.schemas.students import CommonQueryParams
+from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
 
 @pytest.fixture
@@ -183,3 +184,237 @@ def test_get_emails(database_with_data: Session):
     student = get_student_by_id(database_with_data, 2)
     emails: list[DecisionEmail] = get_emails(database_with_data, student)
     assert len(emails) == 0
+
+
+def test_create_email_applied(database_with_data: Session):
+    """test create email applied"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student, EmailStatusEnum.APPLIED)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.APPLIED
+
+
+def test_create_email_awaiting_project(database_with_data: Session):
+    """test create email awaiting project"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student, EmailStatusEnum.AWAITING_PROJECT)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.AWAITING_PROJECT
+
+
+def test_create_email_approved(database_with_data: Session):
+    """test create email approved"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student, EmailStatusEnum.APPROVED)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.APPROVED
+
+
+def test_create_email_contract_confirmed(database_with_data: Session):
+    """test create email contract confirmed"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+
+
+def test_create_email_contract_declined(database_with_data: Session):
+    """test create email contract declined"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student,
+                 EmailStatusEnum.CONTRACT_DECLINED)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_DECLINED
+
+
+def test_create_email_rejected(database_with_data: Session):
+    """test create email rejected"""
+    student: Student = get_student_by_id(database_with_data, 2)
+    create_email(database_with_data, student, EmailStatusEnum.REJECTED)
+    emails: list[DecisionEmail] = get_emails(database_with_data, student)
+    assert len(emails) == 1
+    assert emails[0].decision == EmailStatusEnum.REJECTED
+
+
+def test_get_last_emails_of_students(database_with_data: Session):
+    """tests get last email of all students that got an email"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.REJECTED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    edition2: Edition = Edition(year=2023, name="ed2023")
+    database_with_data.add(edition)
+    student: Student = Student(first_name="Mehmet", last_name="Dizdar", preferred_name="Mehmet",
+                               email_address="mehmet.dizdar@example.com", phone_number="(787)-938-6216", alumni=True,
+                               wants_to_be_student_coach=False, edition=edition2, skills=[])
+    database_with_data.add(student)
+    database_with_data.commit()
+    create_email(database_with_data, student,
+                 EmailStatusEnum.REJECTED)
+
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams())
+    assert len(emails) == 2
+    assert emails[0].student_id == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+    assert emails[1].student_id == 2
+    assert emails[1].decision == EmailStatusEnum.REJECTED
+
+
+def test_get_last_emails_of_students_filter_applied(database_with_data: Session):
+    """tests get all emails where last emails is applied"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.APPLIED))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.APPLIED
+
+
+def test_get_last_emails_of_students_filter_awaiting_project(database_with_data: Session):
+    """tests get all emails where last emails is awaiting project"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.AWAITING_PROJECT)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.AWAITING_PROJECT))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.AWAITING_PROJECT
+
+
+def test_get_last_emails_of_students_filter_approved(database_with_data: Session):
+    """tests get all emails where last emails is approved"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.APPROVED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.APPROVED))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.APPROVED
+
+
+def test_get_last_emails_of_students_filter_contract_confirmed(database_with_data: Session):
+    """tests get all emails where last emails is contract confirmed"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.CONTRACT_CONFIRMED))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+
+
+def test_get_last_emails_of_students_filter_contract_declined(database_with_data: Session):
+    """tests get all emails where last emails is contract declined"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.CONTRACT_DECLINED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.CONTRACT_DECLINED))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_DECLINED
+
+
+def test_get_last_emails_of_students_filter_rejected(database_with_data: Session):
+    """tests get all emails where last emails is rejected"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.REJECTED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.REJECTED))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 2
+    assert emails[0].decision == EmailStatusEnum.REJECTED
+
+
+def test_get_last_emails_of_students_first_name(database_with_data: Session):
+    """tests get all emails where last emails is first name"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.REJECTED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(first_name="Jos"))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+
+
+def test_get_last_emails_of_students_last_name(database_with_data: Session):
+    """tests get all emails where last emails is last name"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.REJECTED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(last_name="Vermeulen"))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED

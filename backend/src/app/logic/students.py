@@ -1,15 +1,20 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
+from src.app.exceptions.students_email import FailedToAddNewEmailException
 from src.app.schemas.students import NewDecision
 from src.database.crud.skills import get_skills_by_ids
-from src.database.crud.students import set_definitive_decision_on_student, delete_student, get_students, get_emails
+from src.database.crud.students import (get_last_emails_of_students, get_student_by_id,
+                                        set_definitive_decision_on_student,
+                                        delete_student, get_students, get_emails,
+                                        create_email)
 from src.database.crud.suggestions import get_suggestions_of_student_by_type
 from src.database.enums import DecisionEnum
 from src.database.models import Edition, Student, Skill, DecisionEmail
 from src.app.schemas.students import (
     ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList,
-    Student as StudentModel, Suggestions as SuggestionsModel)
+    Student as StudentModel, Suggestions as SuggestionsModel,
+    NewEmail, DecisionEmail as DecionEmailModel, EmailsSearchQueryParams)
 
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
@@ -70,4 +75,19 @@ def get_emails_of_student(db: Session, edition: Edition, student: Student) -> Re
     if student.edition != edition:
         raise NoResultFound
     emails: list[DecisionEmail] = get_emails(db, student)
+    return ReturnStudentMailList(emails=emails)
+
+
+def make_new_email(db: Session, edition: Edition, new_email: NewEmail) -> DecionEmailModel:
+    """make a new email"""
+    student = get_student_by_id(db, new_email.student_id)
+    if student.edition != edition:
+        raise FailedToAddNewEmailException
+    email: DecisionEmail = create_email(db, student, new_email.email_status)
+    return email
+
+
+def last_emails_of_students(db: Session, edition: Edition, commons: EmailsSearchQueryParams) -> ReturnStudentMailList:
+    """get last emails of students with search params"""
+    emails: list[DecisionEmail] = get_last_emails_of_students(db, edition, commons)
     return ReturnStudentMailList(emails=emails)

@@ -1,8 +1,10 @@
+from datetime import datetime
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func
 from src.database.crud.util import paginate
-from src.database.enums import DecisionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Edition, Skill, Student, DecisionEmail
-from src.app.schemas.students import CommonQueryParams
+from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
 
 def get_student_by_id(db: Session, student_id: int) -> Student:
@@ -50,3 +52,31 @@ def get_students(db: Session, edition: Edition,
 def get_emails(db: Session, student: Student) -> list[DecisionEmail]:
     """Get all emails send to a student"""
     return db.query(DecisionEmail).where(DecisionEmail.student_id == student.student_id).all()
+
+
+def create_email(db: Session, student: Student, email_status: EmailStatusEnum) -> DecisionEmail:
+    """Create a new email in the database"""
+    email: DecisionEmail = DecisionEmail(
+        student=student, decision=email_status, date=datetime.now())
+    db.add(email)
+    db.commit()
+    return email
+
+
+def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSearchQueryParams) -> list[DecisionEmail]:
+    """get last email of all students that got an email"""
+    last_emails = db.query(DecisionEmail.email_id, func.max(DecisionEmail.date))\
+                    .join(Student)\
+                    .where(Student.edition == edition)\
+                    .where(Student.first_name.contains(commons.first_name))\
+                    .where(Student.last_name.contains(commons.last_name))\
+                    .group_by(DecisionEmail.student_id).subquery()
+
+    emails = db.query(DecisionEmail).join(
+                last_emails, DecisionEmail.email_id == last_emails.c.email_id
+             )
+    if commons.email_status:
+        emails = emails.where(DecisionEmail.decision == commons.email_status)
+
+    emails = emails.order_by(DecisionEmail.student_id)
+    return paginate(emails, commons.page).all()
