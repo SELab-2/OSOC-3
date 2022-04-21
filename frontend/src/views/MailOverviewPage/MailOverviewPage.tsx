@@ -56,7 +56,7 @@ export default function MailOverviewPage() {
             text: "Last Name",
         },
         {
-            dataField: "emails[0].type",
+            dataField: "emails[0].decision",
             text: "Current Email State",
             formatter: (cellContent: number) => {
                 return Object.values(EmailType)[cellContent];

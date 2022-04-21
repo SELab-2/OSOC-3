@@ -28,17 +28,17 @@ export async function getMailOverview(): Promise<StudentEmails> {
             {
                 student: { studentId: 1, firstName: "Bert", lastName: "Guillemyn" },
                 emails: [
-                    { emailId: 1, date: "2022-04-13T11:46:28.641337", type: 0 },
-                    { emailId: 2, date: "2022-04-14T12:36:28.641337", type: 1 },
-                    { emailId: 3, date: "2022-04-15T13:38:38.641337", type: 2 },
+                    { emailId: 1, studentId: 1, date: "2022-04-13T11:46:28.641337", decision: 0 },
+                    { emailId: 2, studentId: 1, date: "2022-04-14T12:36:28.641337", decision: 1 },
+                    { emailId: 3, studentId: 1, date: "2022-04-15T13:38:38.641337", decision: 2 },
                 ],
             },
             {
                 student: { studentId: 2, firstName: "Test", lastName: "Person" },
                 emails: [
-                    { emailId: 1, date: "2022-04-13T08:25:46.641337", type: 4 },
-                    { emailId: 2, date: "2022-04-14T12:36:28.641337", type: 1 },
-                    { emailId: 3, date: "2022-04-15T13:38:38.641337", type: 2 },
+                    { emailId: 1, studentId: 2, date: "2022-04-13T08:25:46.641337", decision: 4 },
+                    { emailId: 2, studentId: 2, date: "2022-04-14T12:36:28.641337", decision: 1 },
+                    { emailId: 3, studentId: 2, date: "2022-04-15T13:38:38.641337", decision: 2 },
                 ],
             },
         ],

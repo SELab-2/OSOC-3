@@ -3,8 +3,9 @@
  */
 export interface Email {
     emailId: number;
+    studentId: number;
+    decision: number;
     date: String;
-    type: number;
 }
 /**
  * A list of sent emails
