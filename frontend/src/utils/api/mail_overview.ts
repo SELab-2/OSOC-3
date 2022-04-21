@@ -18,11 +18,18 @@ export interface StudentEmails {
 /**
  * Get the sent emails of all students
  */
-export async function getMailOverview(): Promise<StudentEmails> {
+export async function getMailOverview(
+    edition: string | undefined,
+    page: number
+): Promise<StudentEmails> {
     // const response = await axiosInstance.get("/editions/1/emails/");
     // return response.data as StudentEmails;
-
+    console.log(finalFilters);
+    console.log(finalSearch);
     // placeholder while the real API call is not available
+    if (page > 0) {
+        return { studentEmails: [] } as StudentEmails;
+    }
     const data = {
         studentEmails: [
             {
@@ -107,11 +114,13 @@ export function handleSetSearch(event: ChangeEvent<{ value: string }>) {
     searchTerm = event.target.value;
 }
 
+let finalFilters: string[] = [];
+let finalSearch: string = "";
+
 /**
- * Sends the get request with the filters and the searchterm
+ * Sets the definitive searchterm and filters to be sent
  */
-export function handleDoSearch() {
-    console.log(selectedFilters);
-    console.log(searchTerm);
-    // TODO: make get request with filters and searchterm
+export function setFinalFilters() {
+    finalFilters = selectedFilters;
+    finalSearch = searchTerm;
 }
