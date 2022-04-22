@@ -29,6 +29,7 @@ import {
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
+    const editionId = params.editionId!;
 
     const [project, setProject] = useState<Project>();
     const [gotProject, setGotProject] = useState(false);
@@ -41,7 +42,7 @@ export default function ProjectDetailPage() {
         async function callProjects() {
             if (projectId) {
                 setGotProject(true);
-                const response = await getProject("2022", projectId);
+                const response = await getProject(editionId, projectId);
                 if (response) {
                     setProject(response);
 
@@ -63,14 +64,14 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    }, [gotProject, navigate, projectId]);
+    }, [editionId, gotProject, navigate, projectId]);
 
     if (!project) return null;
 
     return (
         <div>
             <ProjectContainer>
-                <GoBack onClick={() => navigate("/editions/2022/projects/")}>
+                <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
                     <BiArrowBack />
                     Overview
                 </GoBack>

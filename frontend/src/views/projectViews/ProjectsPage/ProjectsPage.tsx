@@ -4,6 +4,7 @@ import { ProjectCard } from "../../../components/ProjectsComponents";
 import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
 import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
+import { useParams } from "react-router-dom";
 
 /**
  * @returns The projects overview page where you can see all the projects.
@@ -21,6 +22,9 @@ export default function ProjectPage() {
     const [ownProjects, setOwnProjects] = useState(false);
 
     const { userId } = useAuth();
+
+    const params = useParams();
+    const editionId = params.editionId!;
 
     /**
      * Uses to filter the results based onto search string and own projects
@@ -51,7 +55,7 @@ export default function ProjectPage() {
     useEffect(() => {
         async function callProjects() {
             setGotProjects(true);
-            const response = await getProjects("2022");
+            const response = await getProjects(editionId);
             if (response) {
                 setProjectsAPI(response.projects);
                 setProjects(response.projects);
@@ -60,7 +64,7 @@ export default function ProjectPage() {
         if (!gotProjects) {
             callProjects();
         }
-    }, [gotProjects]);
+    }, [editionId, gotProjects]);
 
     return (
         <div>

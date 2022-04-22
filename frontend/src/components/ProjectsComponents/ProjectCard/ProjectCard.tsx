@@ -20,7 +20,7 @@ import { useState } from "react";
 
 import ConfirmDelete from "../ConfirmDelete";
 import { deleteProject } from "../../../utils/api/projects";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Project } from "../../../data/interfaces";
 
@@ -50,11 +50,17 @@ export default function ProjectCard({
     };
 
     const navigate = useNavigate();
+    const params = useParams();
+    const editionId = params.editionId!;
 
     return (
         <CardContainer>
             <TitleContainer>
-                <Title onClick={() => navigate("/editions/2022/projects/" + project.projectId)}>
+                <Title
+                    onClick={() =>
+                        navigate("/editions/" + editionId + "/projects/" + project.projectId)
+                    }
+                >
                     {project.name}
                     <OpenIcon />
                 </Title>
