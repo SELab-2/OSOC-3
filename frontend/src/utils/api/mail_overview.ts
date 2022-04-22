@@ -1,5 +1,6 @@
 import { Email, Student } from "../../data/interfaces";
 import { ChangeEvent } from "react";
+import { EmailType } from "../../data/enums";
 /**
  * A student together with its email history
  */
@@ -22,7 +23,12 @@ export async function getMailOverview(
     edition: string | undefined,
     page: number
 ): Promise<StudentEmails> {
-    // const response = await axiosInstance.get("/editions/1/emails/");
+    // const FormatFilters: number[] = finalFilters.map(filter => {
+    //     return Object.values(EmailType).indexOf(filter);
+    // });
+    // const response = await axiosInstance.get(
+    //    `/editions/${edition}/emails/?page=${page}&first_name=${finalSearch}&email_status=${FormatFilters}`
+    // );
     // return response.data as StudentEmails;
     console.log(finalFilters);
     console.log(finalSearch);
@@ -86,21 +92,22 @@ export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
  * Updates the Email state of the currently selected students in the table to the selected state
  * from the dropdown menu
  * @param eventKey
+ * @param edition
  */
-export function handleSetState(eventKey: string | null) {
+export function setStateRequest(eventKey: string | null, edition: string | undefined) {
     console.log(eventKey);
     console.log(selectedRows);
     // TODO do post request with selected data
-
-    // update table contents ?
+    // const response = await axiosInstance.post(`/editions/${edition}/emails/`,
+    // {student_ids: selectedRows, email_status: eventKey});
 }
 
-let selectedFilters: string[] = [];
+let selectedFilters: EmailType[] = [];
 /**
  * Keeps track of the selected filters
  * @param selectedList
  */
-export function handleFilterSelect(selectedList: string[]) {
+export function handleFilterSelect(selectedList: EmailType[]) {
     selectedFilters = selectedList;
 }
 
@@ -118,7 +125,7 @@ let finalFilters: string[] = [];
 let finalSearch: string = "";
 
 /**
- * Sets the definitive searchterm and filters to be sent
+ * Sets the definitive search term and filters to be sent
  */
 export function setFinalFilters() {
     finalFilters = selectedFilters;

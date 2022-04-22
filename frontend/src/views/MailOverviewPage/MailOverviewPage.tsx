@@ -4,7 +4,7 @@ import {
     StudentEmails,
     handleSelect,
     handleSelectAll,
-    handleSetState,
+    setStateRequest,
     handleFilterSelect,
     handleSetSearch,
     setFinalFilters,
@@ -65,8 +65,22 @@ export default function MailOverviewPage() {
         }
     });
 
+    /**
+     * update the table with the search term and filters
+     */
     function handleDoSearch() {
         setFinalFilters();
+        setGotData(false);
+        setMoreEmailsAvailable(true);
+        updateMailOverview(0);
+    }
+
+    /**
+     * handle selecting a new email state
+     * @param eventKey
+     */
+    function handleSetState(eventKey: string | null) {
+        setStateRequest(eventKey, editionId);
         setGotData(false);
         setMoreEmailsAvailable(true);
         updateMailOverview(0);
@@ -131,14 +145,7 @@ export default function MailOverviewPage() {
                         isObject={false}
                         onRemove={handleFilterSelect}
                         onSelect={handleFilterSelect}
-                        options={[
-                            "Applied",
-                            "Awaiting project",
-                            "Approved",
-                            "Contract confirmed",
-                            "Contract declined",
-                            "Rejected",
-                        ]}
+                        options={Object.values(EmailType)}
                     />
                 </FilterDiv>
                 <ButtonDiv>
