@@ -40,6 +40,10 @@ export default function MailOverviewPage() {
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emails available
     const { editionId } = useParams();
 
+    /**
+     * update the table with new values
+     * @param page
+     */
     async function updateMailOverview(page: number) {
         try {
             const studentEmails = await getMailOverview(editionId, page);
