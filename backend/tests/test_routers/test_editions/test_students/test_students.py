@@ -422,67 +422,68 @@ def test_post_email_applied(database_with_data: Session, auth_client: AuthClient
     """test create email applied"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 0})
+                                json={"students_id": [2], "email_status": 0})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.APPLIED
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.APPLIED
 
 
 def test_post_email_awaiting_project(database_with_data: Session, auth_client: AuthClient):
     """test create email awaiting project"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 1})
+                                json={"students_id": [2], "email_status": 1})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.AWAITING_PROJECT
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.AWAITING_PROJECT
 
 
 def test_post_email_approved(database_with_data: Session, auth_client: AuthClient):
     """test create email applied"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 2})
+                                json={"students_id": [2], "email_status": 2})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.APPROVED
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.APPROVED
 
 
 def test_post_email_contract_confirmed(database_with_data: Session, auth_client: AuthClient):
     """test create email contract confirmed"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 3})
+                                json={"students_id": [2], "email_status": 3})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.CONTRACT_CONFIRMED
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.CONTRACT_CONFIRMED
 
 
 def test_post_email_contract_declined(database_with_data: Session, auth_client: AuthClient):
     """test create email contract declined"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 4})
+                                json={"students_id": [2], "email_status": 4})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.CONTRACT_DECLINED
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.CONTRACT_DECLINED
 
 
 def test_post_email_rejected(database_with_data: Session, auth_client: AuthClient):
     """test create email rejected"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 2, "email_status": 5})
+                                json={"students_id": [2], "email_status": 5})
     assert response.status_code == status.HTTP_201_CREATED
+    print(response.json())
     assert EmailStatusEnum(
-        response.json()["decision"]) == EmailStatusEnum.REJECTED
+        response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.REJECTED
 
 
 def test_creat_email_for_ghost(database_with_data: Session, auth_client: AuthClient):
     """test create email for student that don't exist"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 100, "email_status": 5})
+                                json={"students_id": [100], "email_status": 5})
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -497,8 +498,10 @@ def test_creat_email_student_in_other_edition(database_with_data: Session, auth_
     database_with_data.commit()
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                                json={"student_id": 3, "email_status": 5})
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+                                json={"students_id": [3], "email_status": 5})
+    print(response.json())
+    assert response.status_code == status.HTTP_201_CREATED
+    assert len(response.json()["studentEmails"]) == 0
 
 
 def test_get_emails_no_authorization(database_with_data: Session, auth_client: AuthClient):
@@ -518,12 +521,11 @@ def test_get_emails_coach(database_with_data: Session, auth_client: AuthClient):
 def test_get_emails(database_with_data: Session, auth_client: AuthClient):
     """test get emails"""
     auth_client.admin()
+    response = auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 3})
     auth_client.post("/editions/ed2022/students/emails",
-                     json={"student_id": 1, "email_status": 3})
-    auth_client.post("/editions/ed2022/students/emails",
-                     json={"student_id": 2, "email_status": 5})
+                     json={"students_id": [2], "email_status": 5})
     response = auth_client.get("/editions/ed2022/students/emails")
-    print(response.json())
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["studentEmails"]) == 2
     assert response.json()["studentEmails"][0]["student"]["studentId"] == 1

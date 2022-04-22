@@ -1,3 +1,4 @@
+from re import S
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -79,13 +80,17 @@ def get_emails_of_student(db: Session, edition: Edition, student: Student) -> Re
     return ReturnStudentMailList(emails=emails, student=student)
 
 
-def make_new_email(db: Session, edition: Edition, new_email: NewEmail) -> DecionEmailModel:
+def make_new_email(db: Session, edition: Edition, new_email: NewEmail) -> ListReturnStudentMailList:
     """make a new email"""
-    student = get_student_by_id(db, new_email.student_id)
-    if student.edition != edition:
-        raise FailedToAddNewEmailException
-    email: DecisionEmail = create_email(db, student, new_email.email_status)
-    return email
+    student_emails: list[ReturnStudentMailList] = []
+    for student_id in new_email.students_id:
+        student: Student = get_student_by_id(db, student_id)
+        if student.edition == edition:
+            email: DecisionEmail = create_email(db, student, new_email.email_status)
+            student_emails.append(
+                ReturnStudentMailList(student=student, emails=[email])
+            )
+    return ListReturnStudentMailList(student_emails=student_emails)
 
 
 def last_emails_of_students(db: Session, edition: Edition,
@@ -97,7 +102,5 @@ def last_emails_of_students(db: Session, edition: Edition,
     for email in emails:
         student=get_student_by_id(db, email.student_id)
         student_emails.append(ReturnStudentMailList(student=student,
-                                                    emails=[DecisionEmail(email_id=email.email_id,
-                                                                          decision=email.decision,
-                                                                          date=email.date)]))
+                                                    emails=[email]))
     return ListReturnStudentMailList(student_emails=student_emails)

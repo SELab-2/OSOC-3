@@ -109,5 +109,5 @@ class ListReturnStudentMailList(CamelCaseModel):
 
 class NewEmail(CamelCaseModel):
     """The fields of a DecisionEmail"""
-    student_id: int
+    students_id: list[int]
     email_status: EmailStatusEnum

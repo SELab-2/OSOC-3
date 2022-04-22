@@ -31,7 +31,7 @@ async def get_students(db: Session = Depends(get_session),
 
 
 @students_router.post("/emails", dependencies=[Depends(require_admin)],
-                      status_code=status.HTTP_201_CREATED, response_model=DecisionEmail)
+                      status_code=status.HTTP_201_CREATED, response_model=ListReturnStudentMailList)
 async def send_emails(new_email: NewEmail, db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Send a email to a list of students.
