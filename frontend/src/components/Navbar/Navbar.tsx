@@ -6,9 +6,10 @@ import Nav from "react-bootstrap/Nav";
 import EditionDropdown from "./EditionDropdown";
 import "./Navbar.css";
 import LogoutButton from "./LogoutButton";
-import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage/current-edition";
+import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
 import { matchPath, useLocation } from "react-router-dom";
 import UsersDropdown from "./UsersDropdown";
+import { LinkContainer } from "react-router-bootstrap";
 
 /**
  * Navbar component displayed at the top of the screen.
@@ -62,9 +63,15 @@ export default function Navbar() {
                 <BSNavbar.Collapse id={"responsive-navbar-nav"}>
                     <Nav className={"ms-auto"}>
                         <EditionDropdown editions={editions} />
-                        <Nav.Link href={"/editions"}>Editions</Nav.Link>
-                        <Nav.Link href={`/editions/${currentEdition}/projects`}>Projects</Nav.Link>
-                        <Nav.Link href={`/editions/${currentEdition}/students`}>Students</Nav.Link>
+                        <LinkContainer to={"/editions"} className={"link"}>
+                            <Nav.Link>Editions</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to={`/editions/${currentEdition}/projects`}>
+                            <Nav.Link>Projects</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to={`/editions/${currentEdition}/students`}>
+                            <Nav.Link>Students</Nav.Link>
+                        </LinkContainer>
                         <UsersDropdown currentEdition={currentEdition} />
                         <LogoutButton />
                     </Nav>

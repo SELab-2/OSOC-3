@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import Response
 
-from src.app.logic.projects_students import logic_remove_student_project, logic_add_student_project, \
-    logic_change_project_role, logic_confirm_project_role
+import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import InputStudentRole
 from src.app.utils.dependencies import get_project, require_admin, require_coach, get_latest_edition
@@ -21,7 +20,7 @@ async def remove_student_from_project(student_id: int, db: Session = Depends(get
     """
     Remove a student from a project.
     """
-    logic_remove_student_project(db, project, student_id)
+    logic.remove_student_project(db, project, student_id)
 
 
 @project_students_router.patch("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
@@ -31,7 +30,7 @@ async def change_project_role(student_id: int, input_sr: InputStudentRole, db: S
     """
     Change the role a student is drafted for in a project.
     """
-    logic_change_project_role(db, project, student_id, input_sr.skill_id, user.user_id)
+    logic.change_project_role(db, project, student_id, input_sr.skill_id, user.user_id)
 
 
 @project_students_router.post("/{student_id}", status_code=status.HTTP_201_CREATED, response_class=Response,
@@ -43,7 +42,7 @@ async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db
 
     This is not a definitive decision, but represents a coach drafting the student.
     """
-    logic_add_student_project(db, project, student_id, input_sr.skill_id, user.user_id)
+    logic.add_student_project(db, project, student_id, input_sr.skill_id, user.user_id)
 
 
 @project_students_router.post("/{student_id}/confirm", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
@@ -54,4 +53,4 @@ async def confirm_project_role(student_id: int, db: Session = Depends(get_sessio
     Definitively add a student to a project (confirm its role).
     This can only be performed by an admin.
     """
-    logic_confirm_project_role(db, project, student_id)
+    logic.confirm_project_role(db, project, student_id)

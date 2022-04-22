@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
 from src.database import models
+from src.database.crud.users import get_user_by_email
 
 # Configuration
 ALGORITHM = "HS256"
@@ -37,19 +38,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     """Hash a password"""
     return pwd_context.hash(password)
-
-
-# TODO remove this when the users crud has been implemented
-def get_user_by_email(db: Session, email: str) -> models.User:
-    """Find a user by their email address"""
-    auth_email = db.query(models.AuthEmail).where(models.AuthEmail.email == email).one()
-    return db.query(models.User).where(models.User.user_id == auth_email.user_id).one()
-
-
-# TODO remove this when the users crud has been implemented
-def get_user_by_id(db: Session, user_id: int) -> models.User:
-    """Find a user by their id"""
-    return db.query(models.User).where(models.User.user_id == user_id).one()
 
 
 def authenticate_user(db: Session, email: str, password: str) -> models.User:

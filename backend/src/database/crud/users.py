@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session, Query
 
+from src.app.schemas.users import FilterParameters
 from src.database.crud.editions import get_edition_by_name
+from src.database.crud.editions import get_editions
 from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
-from src.database.crud.editions import get_editions
 
 
 def get_user_edition_names(db: Session, user: User) -> list[str]:
@@ -23,14 +24,7 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def get_users_filtered(
-        db: Session,
-        admin: bool | None = None,
-        edition_name: str | None = None,
-        exclude_edition_name: str | None = None,
-        name: str | None = None,
-        page: int = 0
-):
+def get_users_filtered_page(db: Session, params: FilterParameters):
     """
     Get users and filter by optional parameters:
     :param admin: only return admins / only return non-admins
@@ -44,31 +38,31 @@ def get_users_filtered(
 
     query = db.query(User)
 
-    if name is not None:
-        query = query.where(User.name.contains(name))
+    if params.name is not None:
+        query = query.where(User.name.contains(params.name))
 
-    if admin is not None:
-        query = query.filter(User.admin.is_(admin))
+    if params.admin is not None:
+        query = query.filter(User.admin.is_(params.admin))
         # If admin parameter is set, edition & exclude_edition is ignored
-        return paginate(query, page).all()
+        return paginate(query, params.page).all()
 
-    if edition_name is not None:
-        edition = get_edition_by_name(db, edition_name)
+    if params.edition is not None:
+        edition = get_edition_by_name(db, params.edition)
 
         query = query \
             .join(user_editions) \
             .filter(user_editions.c.edition_id == edition.edition_id)
 
-    if exclude_edition_name is not None:
-        exclude_edition = get_edition_by_name(db, exclude_edition_name)
+    if params.exclude_edition is not None:
+        exclude_edition = get_edition_by_name(db, params.exclude_edition)
 
         query = query.filter(
-                User.user_id.not_in(
-                    db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
-                )
+            User.user_id.not_in(
+                db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
             )
+        )
 
-    return paginate(query, page).all()
+    return paginate(query, params.page).all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):
@@ -130,12 +124,12 @@ def get_requests_page(db: Session, page: int, user_name: str = "") -> list[Coach
 
 
 def _get_requests_for_edition_query(db: Session, edition: Edition, user_name: str = "") -> Query:
-    return db.query(CoachRequest)\
-        .where(CoachRequest.edition_id == edition.edition_id)\
-        .join(User)\
-        .where(User.name.contains(user_name))\
-        .join(AuthEmail, isouter=True)\
-        .join(AuthGitHub, isouter=True)\
+    return db.query(CoachRequest) \
+        .where(CoachRequest.edition_id == edition.edition_id) \
+        .join(User) \
+        .where(User.name.contains(user_name)) \
+        .join(AuthEmail, isouter=True) \
+        .join(AuthGitHub, isouter=True) \
         .join(AuthGoogle, isouter=True)
 
 
@@ -175,3 +169,14 @@ def reject_request(db: Session, request_id: int):
     """
     db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
     db.commit()
+
+
+def get_user_by_email(db: Session, email: str) -> User:
+    """Find a user by their email address"""
+    auth_email = db.query(AuthEmail).where(AuthEmail.email == email).one()
+    return db.query(User).where(User.user_id == auth_email.user_id).one()
+
+
+def get_user_by_id(db: Session, user_id: int) -> User:
+    """Find a user by their id"""
+    return db.query(User).where(User.user_id == user_id).one()
