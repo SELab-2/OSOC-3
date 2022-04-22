@@ -2,6 +2,7 @@ import { useAuth } from "../../contexts";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem } from "./styles";
 import { Role } from "../../data/enums";
+import { LinkContainer } from "react-router-bootstrap";
 
 interface Props {
     currentEdition: string;
@@ -22,10 +23,12 @@ export default function UsersDropdown({ currentEdition }: Props) {
 
     return (
         <NavDropdown title={"Users"}>
-            <StyledDropdownItem href={"/admins"}>Admins</StyledDropdownItem>
-            <StyledDropdownItem href={`/editions/${currentEdition}/users`}>
-                Coaches
-            </StyledDropdownItem>
+            <LinkContainer to={"/admins"}>
+                <StyledDropdownItem>Admins</StyledDropdownItem>
+            </LinkContainer>
+            <LinkContainer to={`/editions/${currentEdition}/users`}>
+                <StyledDropdownItem>Coaches</StyledDropdownItem>
+            </LinkContainer>
         </NavDropdown>
     );
 }
