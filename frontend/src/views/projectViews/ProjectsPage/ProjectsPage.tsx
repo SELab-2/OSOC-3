@@ -5,6 +5,7 @@ import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "
 import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
 import { useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 /**
  * @returns The projects overview page where you can see all the projects.
@@ -20,6 +21,8 @@ export default function ProjectPage() {
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
+
+    const [page, setPage] = useState(0)
 
     const { userId } = useAuth();
 
@@ -55,16 +58,15 @@ export default function ProjectPage() {
     useEffect(() => {
         async function callProjects() {
             setGotProjects(true);
-            const response = await getProjects(editionId);
+            const response = await getProjects(editionId, page);
             if (response) {
                 setProjectsAPI(response.projects);
                 setProjects(response.projects);
             }
         }
-        if (!gotProjects) {
-            callProjects();
-        }
-    }, [editionId, gotProjects]);
+        callProjects();
+        
+    }, [editionId, gotProjects, page]);
 
     return (
         <div>
@@ -96,6 +98,8 @@ export default function ProjectPage() {
                     />
                 ))}
             </CardsGrid>
+
+            <Button onClick={() => setPage(page + 1)}>More projects</Button>
         </div>
     );
 }
