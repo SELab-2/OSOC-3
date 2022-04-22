@@ -9,7 +9,8 @@ from src.app.logic.students import (
     get_students_search, get_emails_of_student, make_new_email,
     last_emails_of_students)
 from src.app.schemas.students import (NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList,
-                                      ReturnStudentMailList, DecisionEmail, NewEmail, EmailsSearchQueryParams)
+                                      ReturnStudentMailList, DecisionEmail, NewEmail, EmailsSearchQueryParams,
+                                      ListReturnStudentMailList)
 from src.database.database import get_session
 from src.database.models import Student, Edition
 from .suggestions import students_suggestions_router
@@ -39,7 +40,7 @@ async def send_emails(new_email: NewEmail, db: Session = Depends(get_session), e
 
 
 @students_router.get("/emails", dependencies=[Depends(require_admin)],
-                     response_model=ReturnStudentMailList)
+                     response_model=ListReturnStudentMailList)
 async def get_emails(db: Session = Depends(get_session), edition: Edition = Depends(get_edition),
                      commons: EmailsSearchQueryParams = Depends(EmailsSearchQueryParams)):
     """

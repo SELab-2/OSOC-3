@@ -86,7 +86,6 @@ class DecisionEmail(CamelCaseModel):
     Model to represent DecisionEmail
     """
     email_id: int
-    student: Student
     decision: EmailStatusEnum
     date: datetime
 
@@ -99,7 +98,13 @@ class ReturnStudentMailList(CamelCaseModel):
     """
     Model to return a list of mails of a student
     """
+    student: Student
     emails: list[DecisionEmail]
+
+
+class ListReturnStudentMailList(CamelCaseModel):
+    """Model to give a list of ReturnStudentMailList"""
+    student_emails: list[ReturnStudentMailList]
 
 
 class NewEmail(CamelCaseModel):

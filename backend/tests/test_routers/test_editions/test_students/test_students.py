@@ -397,9 +397,11 @@ def test_get_emails_student_admin(database_with_data: Session, auth_client: Auth
     response = auth_client.get("/editions/ed2022/students/1/emails")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["emails"]) == 1
+    assert response.json()["student"]["studentId"] == 1
     response = auth_client.get("/editions/ed2022/students/2/emails")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["emails"]) == 0
+    assert response.json()["student"]["studentId"] == 2
 
 
 def test_post_email_no_authorization(database_with_data: Session, auth_client: AuthClient):
@@ -521,5 +523,10 @@ def test_get_emails(database_with_data: Session, auth_client: AuthClient):
     auth_client.post("/editions/ed2022/students/emails",
                      json={"student_id": 2, "email_status": 5})
     response = auth_client.get("/editions/ed2022/students/emails")
+    print(response.json())
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()["emails"]) == 2
+    assert len(response.json()["studentEmails"]) == 2
+    assert response.json()["studentEmails"][0]["student"]["studentId"] == 1
+    assert response.json()["studentEmails"][0]["emails"][0]["decision"] == 3
+    assert response.json()["studentEmails"][1]["student"]["studentId"] == 2
+    assert response.json()["studentEmails"][1]["emails"][0]["decision"] == 5

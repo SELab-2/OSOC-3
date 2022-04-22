@@ -14,7 +14,8 @@ from src.database.models import Edition, Student, Skill, DecisionEmail
 from src.app.schemas.students import (
     ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList,
     Student as StudentModel, Suggestions as SuggestionsModel,
-    NewEmail, DecisionEmail as DecionEmailModel, EmailsSearchQueryParams)
+    NewEmail, DecisionEmail as DecionEmailModel, EmailsSearchQueryParams,
+    ListReturnStudentMailList)
 
 
 def definitive_decision_on_student(db: Session, student: Student, decision: NewDecision) -> None:
@@ -75,7 +76,7 @@ def get_emails_of_student(db: Session, edition: Edition, student: Student) -> Re
     if student.edition != edition:
         raise NoResultFound
     emails: list[DecisionEmail] = get_emails(db, student)
-    return ReturnStudentMailList(emails=emails)
+    return ReturnStudentMailList(emails=emails, student=student)
 
 
 def make_new_email(db: Session, edition: Edition, new_email: NewEmail) -> DecionEmailModel:
@@ -87,7 +88,16 @@ def make_new_email(db: Session, edition: Edition, new_email: NewEmail) -> Decion
     return email
 
 
-def last_emails_of_students(db: Session, edition: Edition, commons: EmailsSearchQueryParams) -> ReturnStudentMailList:
+def last_emails_of_students(db: Session, edition: Edition,
+                            commons: EmailsSearchQueryParams) -> ListReturnStudentMailList:
     """get last emails of students with search params"""
-    emails: list[DecisionEmail] = get_last_emails_of_students(db, edition, commons)
-    return ReturnStudentMailList(emails=emails)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        db, edition, commons)
+    student_emails: list[ReturnStudentMailList] = []
+    for email in emails:
+        student=get_student_by_id(db, email.student_id)
+        student_emails.append(ReturnStudentMailList(student=student,
+                                                    emails=[DecisionEmail(email_id=email.email_id,
+                                                                          decision=email.decision,
+                                                                          date=email.date)]))
+    return ListReturnStudentMailList(student_emails=student_emails)
