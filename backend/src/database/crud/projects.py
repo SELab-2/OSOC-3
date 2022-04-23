@@ -1,4 +1,3 @@
-from sqlalchemy import intersect
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session, Query
 
