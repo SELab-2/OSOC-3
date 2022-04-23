@@ -1,6 +1,8 @@
 /** Context hook to maintain the authentication state of the user **/
 import { Role } from "../data/enums";
-import React, { ReactNode, useContext, useState } from "react";
+import React, { useContext, ReactNode, useState } from "react";
+import { User } from "../data/interfaces";
+import { setCurrentEdition } from "../utils/session-storage";
 
 /**
  * Interface that holds the data stored in the AuthContext.
@@ -34,7 +36,7 @@ function authDefaultState(): AuthContextState {
     };
 }
 
-const AuthContext = React.createContext<AuthContextState>(authDefaultState());
+export const AuthContext = React.createContext<AuthContextState>(authDefaultState());
 
 /**
  * Custom React hook to use our authentication context.
@@ -69,4 +71,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>;
+}
+
+/**
+ * Set the user's login data in the AuthContext
+ */
+export function logIn(user: User, authContext: AuthContextState) {
+    authContext.setUserId(user.userId);
+    authContext.setRole(user.admin ? Role.ADMIN : Role.COACH);
+    authContext.setEditions(user.editions);
+    authContext.setIsLoggedIn(true);
+}
+
+/**
+ * Remove a user's login data from the AuthContext
+ */
+export function logOut(authContext: AuthContextState) {
+    authContext.setIsLoggedIn(false);
+    authContext.setUserId(null);
+    authContext.setRole(null);
+    authContext.setEditions([]);
+
+    // Remove current edition from SessionStorage
+    setCurrentEdition(null);
 }

@@ -1,22 +1,21 @@
 from sqlalchemy.orm import Session
 
 import src.database.crud.users as users_crud
-from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema
+from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
+    FilterParameters
 from src.database.models import User
 
 
-def get_users_list(db: Session, admin: bool, edition_name: str | None, page: int) -> UsersListResponse:
+def get_users_list(
+        db: Session,
+        params: FilterParameters
+) -> UsersListResponse:
     """
     Query the database for a list of users
     and wrap the result in a pydantic model
     """
-    if admin:
-        users_orm = users_crud.get_admins_page(db, page)
-    else:
-        if edition_name is None:
-            users_orm = users_crud.get_users_page(db, page)
-        else:
-            users_orm = users_crud.get_users_for_edition_page(db, edition_name, page)
+
+    users_orm = users_crud.get_users_filtered_page(db, params)
 
     return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
@@ -54,15 +53,20 @@ def remove_coach_all_editions(db: Session, user_id: int):
     users_crud.remove_coach_all_editions(db, user_id)
 
 
-def get_request_list(db: Session, edition_name: str | None, page: int) -> UserRequestsResponse:
+def get_request_list(db: Session, edition_name: str | None, user_name: str | None, page: int) -> UserRequestsResponse:
     """
     Query the database for a list of all user requests
     and wrap the result in a pydantic model
     """
+
+    if user_name is None:
+        user_name = ""
+
     if edition_name is None:
-        requests = users_crud.get_requests_page(db, page)
+        requests = users_crud.get_requests_page(db, page, user_name)
     else:
-        requests = users_crud.get_requests_for_edition_page(db, edition_name, page)
+        requests = users_crud.get_requests_for_edition_page(db, edition_name, page, user_name)
+
     return UserRequestsResponse(requests=requests)
 
 

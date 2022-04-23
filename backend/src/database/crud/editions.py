@@ -1,7 +1,5 @@
-from sqlalchemy import exc
-from sqlalchemy.orm import Query
-from sqlalchemy.orm import Session
-
+from sqlalchemy import exc, func
+from sqlalchemy.orm import Query, Session
 from src.app.exceptions.editions import DuplicateInsertException
 from src.app.schemas.editions import EditionBase
 from src.database.models import Edition
@@ -65,3 +63,9 @@ def delete_edition(db: Session, edition_name: str):
     edition_to_delete = get_edition_by_name(db, edition_name)
     db.delete(edition_to_delete)
     db.commit()
+
+
+def latest_edition(db: Session) -> Edition:
+    """Returns the latest edition from the database"""
+    max_edition_id = db.query(func.max(Edition.edition_id)).scalar()
+    return db.query(Edition).where(Edition.edition_id == max_edition_id).one()

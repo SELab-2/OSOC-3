@@ -1,3 +1,5 @@
+import base64
+
 from sqlalchemy.orm import Session
 
 import settings
@@ -19,11 +21,17 @@ def get_pending_invites_page(db: Session, edition: Edition, page: int) -> Invite
 
 def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddress) -> NewInviteLink:
     """Add a new invite link into the database & return a mailto link for it"""
-    # Create db entry
-    new_link_db = crud.create_invite_link(db, edition, email_address.email)
+    # Create db entry, drop existing.
+    invite = crud.get_optional_invite_link_by_edition_and_email(db, edition, email_address.email)
+    if invite is None:
+        invite = crud.create_invite_link(db, edition, email_address.email)
+
+    # Add edition name & encode with base64
+    encoded_uuid = f"{invite.edition.name}/{invite.uuid}".encode("utf-8")
+    encoded_link = base64.b64encode(encoded_uuid).decode("utf-8")
 
     # Create endpoint for the user to click on
-    link = f"{settings.FRONTEND_URL}/register/{new_link_db.uuid}"
+    link = f"{settings.FRONTEND_URL}/register/{encoded_link}"
 
     return NewInviteLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",

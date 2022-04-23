@@ -7,7 +7,7 @@ from starlette import status
 from .authentication import (
     ExpiredCredentialsException, InvalidCredentialsException,
     MissingPermissionsException, WrongTokenTypeException)
-from .editions import DuplicateInsertException
+from .editions import DuplicateInsertException, ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
 from .register import FailedToAddNewUserException
@@ -97,9 +97,18 @@ def install_handlers(app: FastAPI):
             content={'message': 'Something went wrong while adding this student to the project'}
         )
 
+<<<<<<< HEAD
     @app.exception_handler(WrongTokenTypeException)
     async def wrong_token_type_exception(_request: Request, _exception: WrongTokenTypeException):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={'message': 'U used the wrong token to access this resource.'}
         )
+=======
+    @app.exception_handler(ReadOnlyEditionException)
+    def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
+        return JSONResponse(
+            status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
+            content={'message': 'This edition is Read-Only'}
+        )
+>>>>>>> develop

@@ -5,7 +5,7 @@ from starlette import status
 from src.app.logic.webhooks import process_webhook
 from src.app.routers.tags import Tags
 from src.app.schemas.webhooks import WebhookEvent, WebhookUrlResponse
-from src.app.utils.dependencies import get_edition, require_admin
+from src.app.utils.dependencies import get_edition, require_admin, get_latest_edition
 from src.database.crud.webhooks import get_webhook, create_webhook
 from src.database.database import get_session
 from src.database.models import Edition
@@ -20,7 +20,7 @@ def valid_uuid(uuid: str, database: Session = Depends(get_session)):
 
 @webhooks_router.post("/", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
                       dependencies=[Depends(require_admin)])
-def new(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)):
+def new(edition: Edition = Depends(get_latest_edition), database: Session = Depends(get_session)):
     """Create a new webhook for an edition"""
     return create_webhook(database, edition)
 

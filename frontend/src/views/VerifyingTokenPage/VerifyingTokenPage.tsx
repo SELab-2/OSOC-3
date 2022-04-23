@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 
 import { validateBearerToken } from "../../utils/api/auth";
-import { Role } from "../../data/enums";
-import { AuthContextState, useAuth } from "../../contexts/auth-context";
+import { logIn, logOut, useAuth } from "../../contexts/auth-context";
 import { getAccessToken, getRefreshToken } from "../../utils/local-storage";
 
 /**
@@ -18,19 +17,18 @@ export default function VerifyingTokenPage() {
             const refreshToken = getRefreshToken();
 
             if (accessToken === null || refreshToken === null) {
-                failedVerification(authContext);
+                logOut(authContext);
                 return;
             }
 
             const response = await validateBearerToken(accessToken);
 
             if (response === null) {
-                failedVerification(authContext);
+                logOut(authContext);
             } else {
-                authContext.setIsLoggedIn(true);
-                authContext.setRole(response.admin ? Role.ADMIN : Role.COACH);
-                authContext.setUserId(response.userId);
-                authContext.setEditions(response.editions);
+                // Token was valid, use it as the default request header
+                // and set all data in the AuthContext
+                logIn(response, authContext);
             }
         };
 
@@ -39,12 +37,9 @@ export default function VerifyingTokenPage() {
     }, [authContext]);
 
     // This will be replaced later on
-    return <h1>Loading...</h1>;
-}
-
-function failedVerification(authContext: AuthContextState) {
-    authContext.setIsLoggedIn(false);
-    authContext.setRole(null);
-    authContext.setEditions([]);
-    authContext.setUserId(null);
+    return (
+        <div data-testid={"verifying-page"}>
+            <h1>Loading...</h1>
+        </div>
+    );
 }

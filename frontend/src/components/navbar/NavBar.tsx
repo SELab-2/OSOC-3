@@ -1,7 +1,7 @@
 import React from "react";
 import { Bars, Nav, NavLink, NavMenu } from "./NavBarElements";
 import "./navbar.css";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "../../contexts";
 
 /**
  * NavBar displayed at the top of the page.

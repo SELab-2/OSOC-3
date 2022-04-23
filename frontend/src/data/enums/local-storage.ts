@@ -1,7 +1,7 @@
 /**
  * Enum for the keys in LocalStorage.
  */
-export const enum StorageKey {
+export const enum LocalStorageKey {
     /**
      * Bearer token used to authorize the user's requests in the backend.
      */

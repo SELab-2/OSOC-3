@@ -293,3 +293,18 @@ def test_patch_wrong_project(database_session: Session, auth_client: AuthClient)
 
     assert len(json['projects']) == 1
     assert json['projects'][0]['name'] == 'project'
+
+
+def test_create_project_old_edition(database_with_data: Session, auth_client: AuthClient):
+    """test create a project for a readonly edition"""
+    auth_client.admin()
+    database_with_data.add(Edition(year=2023, name="ed2023"))
+    database_with_data.commit()
+
+    response = \
+        auth_client.post("/editions/ed2022/projects/",
+                         json={"name": "test",
+                               "number_of_students": 5,
+                               "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
+
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

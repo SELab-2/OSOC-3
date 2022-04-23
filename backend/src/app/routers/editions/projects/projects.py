@@ -5,8 +5,8 @@ from starlette.responses import Response
 
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
+from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
 from src.app.schemas.projects import ProjectList, Project, InputProject, ConflictStudentList
-from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach
 from src.database.database import get_session
 from src.database.models import Edition, Project as ProjectModel
 from .students import project_students_router
@@ -26,7 +26,7 @@ async def get_projects(db: Session = Depends(get_session), edition: Edition = De
 @projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Project,
                       dependencies=[Depends(require_admin)])
 async def create_project(input_project: InputProject,
-                         db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
+                         db: Session = Depends(get_session), edition: Edition = Depends(get_latest_edition)):
     """
     Create a new project
     """
@@ -62,7 +62,7 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 
 
 @projects_router.patch("/{project_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                       dependencies=[Depends(require_admin)])
+                       dependencies=[Depends(require_admin), Depends(get_latest_edition)])
 async def patch_project(project_id: int, input_project: InputProject, db: Session = Depends(get_session)):
     """
     Update a project, changing some fields.
