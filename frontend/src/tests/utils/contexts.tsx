@@ -13,8 +13,6 @@ export function defaultAuthState(): AuthContextState {
         setRole: jest.fn(),
         userId: null,
         setUserId: jest.fn(),
-        token: null,
-        setToken: jest.fn(),
         editions: [],
         setEditions: jest.fn(),
     };
