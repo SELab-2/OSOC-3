@@ -20,6 +20,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @enum.unique
 class TokenType(enum.Enum):
+    """Type of the token, used to check no access token is used to refresh and the reverse."""
     ACCESS = "access"
     REFRESH = "refresh"
 
