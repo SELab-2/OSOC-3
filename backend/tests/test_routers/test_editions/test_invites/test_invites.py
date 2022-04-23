@@ -99,6 +99,10 @@ def test_create_invite_invalid(database_session: Session, auth_client: AuthClien
 def test_delete_invite_invalid(database_session: Session, auth_client: AuthClient):
     """Test endpoint for deleting invites when uuid is malformed"""
     auth_client.admin()
+
+    database_session.add(Edition(year=2022, name="ed2022"))
+    database_session.commit()
+
     assert auth_client.delete("/editions/ed2022/invites/1").status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
