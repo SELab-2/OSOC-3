@@ -5,7 +5,7 @@ import { BSBrand } from "./styles";
  */
 export default function Brand() {
     return (
-        <BSBrand>
+        <BSBrand href={"/"}>
             <img
                 width={"60px"}
                 height={"auto"}
