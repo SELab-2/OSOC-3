@@ -1,1 +1,1 @@
-from .students_suggestions import students_suggestions_router
+from .suggestions import students_suggestions_router

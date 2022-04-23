@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session, Query
 
+from src.app.schemas.users import FilterParameters
 from src.database.crud.editions import get_edition_by_name
+from src.database.crud.editions import get_editions
 from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
-from src.database.crud.editions import get_editions
 
 
 def get_user_edition_names(db: Session, user: User) -> list[str]:
@@ -23,14 +24,7 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def get_users_filtered(
-        db: Session,
-        admin: bool | None = None,
-        edition_name: str | None = None,
-        exclude_edition_name: str | None = None,
-        name: str | None = None,
-        page: int = 0
-):
+def get_users_filtered_page(db: Session, params: FilterParameters):
     """
     Get users and filter by optional parameters:
     :param admin: only return admins / only return non-admins
@@ -44,23 +38,23 @@ def get_users_filtered(
 
     query = db.query(User)
 
-    if name is not None:
-        query = query.where(User.name.contains(name))
+    if params.name is not None:
+        query = query.where(User.name.contains(params.name))
 
-    if admin is not None:
-        query = query.filter(User.admin.is_(admin))
+    if params.admin is not None:
+        query = query.filter(User.admin.is_(params.admin))
         # If admin parameter is set, edition & exclude_edition is ignored
-        return paginate(query, page).all()
+        return paginate(query, params.page).all()
 
-    if edition_name is not None:
-        edition = get_edition_by_name(db, edition_name)
+    if params.edition is not None:
+        edition = get_edition_by_name(db, params.edition)
 
         query = query \
             .join(user_editions) \
             .filter(user_editions.c.edition_id == edition.edition_id)
 
-    if exclude_edition_name is not None:
-        exclude_edition = get_edition_by_name(db, exclude_edition_name)
+    if params.exclude_edition is not None:
+        exclude_edition = get_edition_by_name(db, params.exclude_edition)
 
         query = query.filter(
             User.user_id.not_in(
@@ -68,7 +62,7 @@ def get_users_filtered(
             )
         )
 
-    return paginate(query, page).all()
+    return paginate(query, params.page).all()
 
 
 def edit_admin_status(db: Session, user_id: int, admin: bool):
@@ -182,3 +176,14 @@ def remove_request_if_exists(db: Session, user_id: int, edition_name: str):
     edition = db.query(Edition).where(Edition.name == edition_name).one()
     db.query(CoachRequest).where(CoachRequest.user_id == user_id)\
         .where(CoachRequest.edition_id == edition.edition_id).delete()
+
+
+def get_user_by_email(db: Session, email: str) -> User:
+    """Find a user by their email address"""
+    auth_email = db.query(AuthEmail).where(AuthEmail.email == email).one()
+    return db.query(User).where(User.user_id == auth_email.user_id).one()
+
+
+def get_user_by_id(db: Session, user_id: int) -> User:
+    """Find a user by their id"""
+    return db.query(User).where(User.user_id == user_id).one()
