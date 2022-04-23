@@ -1,7 +1,8 @@
+from sqlalchemy import intersect
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session, Query
 
-from src.app.schemas.projects import InputProject
+from src.app.schemas.projects import InputProject, QueryParamsProjects
 from src.database.crud.util import paginate
 from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
 
@@ -15,9 +16,16 @@ def get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
     return _get_projects_for_edition_query(db, edition).all()
 
 
-def get_projects_for_edition_page(db: Session, edition: Edition, page: int) -> list[Project]:
+def get_projects_for_edition_page(db: Session, edition: Edition,
+                                  search_params: QueryParamsProjects, user: User) -> list[Project]:
     """Returns a paginated list of all projects from a certain edition from the database"""
-    return paginate(_get_projects_for_edition_query(db, edition), page).all()
+    query = _get_projects_for_edition_query(db, edition).where(
+        Project.name.contains(search_params.name))
+    projects: list[Project] = paginate(query, search_params.page).all()
+    if not search_params.coach:
+        return projects
+    return list(set(projects) & set(user.projects))
+
 
 
 def add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
@@ -25,12 +33,15 @@ def add_project(db: Session, edition: Edition, input_project: InputProject) -> P
     Add a project to the database
     If there are partner names that are not already in the database, add them
     """
-    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
-    coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
+    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one()
+                  for skill in input_project.skills]
+    coaches_obj = [db.query(User).where(User.user_id == coach).one()
+                   for coach in input_project.coaches]
     partners_obj = []
     for partner in input_project.partners:
         try:
-            partners_obj.append(db.query(Partner).where(Partner.name == partner).one())
+            partners_obj.append(db.query(Partner).where(
+                Partner.name == partner).one())
         except NoResultFound:
             partner_obj = Partner(name=partner)
             db.add(partner_obj)
@@ -50,7 +61,8 @@ def get_project(db: Session, project_id: int) -> Project:
 
 def delete_project(db: Session, project_id: int):
     """Delete a specific project from the database"""
-    proj_roles = db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
+    proj_roles = db.query(ProjectRole).where(
+        ProjectRole.project_id == project_id).all()
     for proj_role in proj_roles:
         db.delete(proj_role)
 
@@ -66,12 +78,15 @@ def patch_project(db: Session, project_id: int, input_project: InputProject):
     """
     project = db.query(Project).where(Project.project_id == project_id).one()
 
-    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one() for skill in input_project.skills]
-    coaches_obj = [db.query(User).where(User.user_id == coach).one() for coach in input_project.coaches]
+    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one()
+                  for skill in input_project.skills]
+    coaches_obj = [db.query(User).where(User.user_id == coach).one()
+                   for coach in input_project.coaches]
     partners_obj = []
     for partner in input_project.partners:
         try:
-            partners_obj.append(db.query(Partner).where(Partner.name == partner).one())
+            partners_obj.append(db.query(Partner).where(
+                Partner.name == partner).one())
         except NoResultFound:
             partner_obj = Partner(name=partner)
             db.add(partner_obj)
@@ -96,10 +111,12 @@ def get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, 
     projs = []
     for student in students:
         if len(student.project_roles) > 1:
-            proj_ids = db.query(ProjectRole.project_id).where(ProjectRole.student_id == student.student_id).all()
+            proj_ids = db.query(ProjectRole.project_id).where(
+                ProjectRole.student_id == student.student_id).all()
             for proj_id in proj_ids:
                 proj_id = proj_id[0]
-                proj = db.query(Project).where(Project.project_id == proj_id).one()
+                proj = db.query(Project).where(
+                    Project.project_id == proj_id).one()
                 projs.append(proj)
             conflict_student = (student, projs)
             conflict_students.append(conflict_student)

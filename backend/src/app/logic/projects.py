@@ -2,14 +2,14 @@ from sqlalchemy.orm import Session
 
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
-    ProjectList, ConflictStudentList, InputProject, ConflictStudent
+    ProjectList, ConflictStudentList, InputProject, ConflictStudent, QueryParamsProjects
 )
-from src.database.models import Edition, Project
+from src.database.models import Edition, Project, User
 
 
-def get_project_list(db: Session, edition: Edition, page: int) -> ProjectList:
+def get_project_list(db: Session, edition: Edition, search_params: QueryParamsProjects, user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
-    return ProjectList(projects=crud.get_projects_for_edition_page(db, edition, page))
+    return ProjectList(projects=crud.get_projects_for_edition_page(db, edition, search_params, user))
 
 
 def create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
