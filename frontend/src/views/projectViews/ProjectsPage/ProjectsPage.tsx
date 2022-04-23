@@ -14,6 +14,7 @@ import { Button } from "react-bootstrap";
 export default function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
+    const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
 
     // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
     const [projects, setProjects] = useState<Project[]>([]);
@@ -22,7 +23,7 @@ export default function ProjectPage() {
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
 
-    const [page, setPage] = useState(0)
+    const [page, setPage] = useState(0);
 
     const { userId } = useAuth();
 
@@ -60,13 +61,17 @@ export default function ProjectPage() {
             setGotProjects(true);
             const response = await getProjects(editionId, page);
             if (response) {
-                setProjectsAPI(response.projects);
-                setProjects(response.projects);
+                if (response.projects.length === 0) {
+                    setMoreProjectsAvailable(false);
+                }
+                setProjectsAPI(projectsAPI.concat(response.projects));
+                setProjects(projects.concat(response.projects));
             }
         }
-        callProjects();
-        
-    }, [editionId, gotProjects, page]);
+        if (moreProjectsAvailable && !gotProjects) {
+            callProjects();
+        }
+    }, [editionId, gotProjects, moreProjectsAvailable, page, projects, projectsAPI]);
 
     return (
         <div>
@@ -93,13 +98,26 @@ export default function ProjectPage() {
                 {projects.map((project, _index) => (
                     <ProjectCard
                         project={project}
-                        refreshProjects={() => setGotProjects(false)}
+                        refreshProjects={() => {
+                            setProjectsAPI([]);
+                            setProjects([]);
+                            setGotProjects(false);
+                            setPage(0);
+                            setMoreProjectsAvailable(true);
+                        }}
                         key={_index}
                     />
                 ))}
             </CardsGrid>
 
-            <Button onClick={() => setPage(page + 1)}>More projects</Button>
+            <Button
+                onClick={() => {
+                    setPage(page + 1);
+                    setGotProjects(false);
+                }}
+            >
+                Load more projects
+            </Button>
         </div>
     );
 }
