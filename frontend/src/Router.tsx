@@ -5,6 +5,7 @@ import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
     EditionsPage,
+    CreateEditionPage,
     LoginPage,
     PendingPage,
     ProjectsPage,
@@ -14,7 +15,6 @@ import {
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
-import CreateEditionPage from "./views/CreateEditionPage";
 import { Role } from "./data/enums";
 
 /**
