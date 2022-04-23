@@ -12,7 +12,6 @@ defaults:
 
 jobs:
   Dependencies:
-    runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +39,6 @@ jobs:
 
   Test:
     needs: [Dependencies]
-    runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -53,7 +51,6 @@ jobs:
 
   Lint:
     needs: [Test]
-    runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -66,7 +63,6 @@ jobs:
 
   Type:
     needs: [Test]
-    runs-on: self-hosted
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
