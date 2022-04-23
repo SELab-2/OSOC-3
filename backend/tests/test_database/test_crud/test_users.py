@@ -655,16 +655,50 @@ def test_reject_request_new_user(database_session: Session):
     # Create edition
     edition1 = models.Edition(year=1, name="ed2022")
     database_session.add(edition1)
-
     database_session.commit()
 
     # Create request
     request1 = models.CoachRequest(user_id=user1.user_id, edition_id=edition1.edition_id)
     database_session.add(request1)
-
     database_session.commit()
 
     users_crud.reject_request(database_session, request1.request_id)
 
     requests = database_session.query(CoachRequest).all()
     assert len(requests) == 0
+
+
+def test_remove_request_if_exists_exists(database_session: Session):
+    """Test deleting a request when it exists"""
+    user = models.User(name="user1")
+    database_session.add(user)
+
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
+    request = models.CoachRequest(user_id=user.user_id, edition_id=edition.edition_id)
+    database_session.add(request)
+    database_session.commit()
+
+    assert database_session.query(CoachRequest).count() == 1
+
+    # Remove the request
+    users_crud.remove_request_if_exists(database_session, user.user_id, edition.name)
+
+    assert database_session.query(CoachRequest).count() == 0
+
+
+def test_remove_request_if_not_exists(database_session: Session):
+    """Test deleting a request when it doesn't exist"""
+    user = models.User(name="user1")
+    database_session.add(user)
+
+    edition = models.Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
+    # Remove the request
+    # If the test succeeds then it means no error was raised, even though the request
+    # doesn't exist
+    users_crud.remove_request_if_exists(database_session, user.user_id, edition.name)
