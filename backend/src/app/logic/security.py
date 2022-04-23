@@ -31,8 +31,8 @@ def create_tokens(user: User) -> tuple[str, str]:
     Returns: (access_token, refresh_token)
     """
     return (
-        _create_token({"type": TokenType.ACCESS.value, "sub": str(user.user_id)}, settings.ACCESS_TOKEN_EXPIRE_MINUTES),
-        _create_token({"type": TokenType.REFRESH.value, "sub": str(user.user_id)}, settings.REFRESH_TOKEN_EXPIRE_MINUTES)
+        _create_token({"type": TokenType.ACCESS.value, "sub": str(user.user_id)}, settings.ACCESS_TOKEN_EXPIRE_M),
+        _create_token({"type": TokenType.REFRESH.value, "sub": str(user.user_id)}, settings.REFRESH_TOKEN_EXPIRE_M)
     )
 
 

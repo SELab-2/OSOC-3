@@ -10,7 +10,7 @@ from src.app.logic.users import get_user_editions
 from src.app.routers.tags import Tags
 from src.app.schemas.login import Token, UserData
 from src.app.schemas.users import user_model_to_schema
-from src.app.utils.dependencies import get_current_active_user, get_user_from_refresh_token
+from src.app.utils.dependencies import get_user_from_refresh_token
 from src.database.database import get_session
 from src.database.models import User
 
