@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.database.models import Project, ProjectRole, Skill, User, Student
 
 
-def db_remove_student_project(db: Session, project: Project, student_id: int):
+def remove_student_project(db: Session, project: Project, student_id: int):
     """Remove a student from a project in the database"""
     proj_role = db.query(ProjectRole).where(
         ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
@@ -11,7 +11,7 @@ def db_remove_student_project(db: Session, project: Project, student_id: int):
     db.commit()
 
 
-def db_add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+def add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Add a student to a project in the database"""
 
     # check if all parameters exist in the database
@@ -25,7 +25,7 @@ def db_add_student_project(db: Session, project: Project, student_id: int, skill
     db.commit()
 
 
-def db_change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+def change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Change the role of a student in a project and update the drafter"""
 
     # check if all parameters exist in the database
@@ -40,7 +40,7 @@ def db_change_project_role(db: Session, project: Project, student_id: int, skill
     db.commit()
 
 
-def db_confirm_project_role(db: Session, project: Project, student_id: int):
+def confirm_project_role(db: Session, project: Project, student_id: int):
     """Confirm a project role"""
     proj_role = db.query(ProjectRole).where(ProjectRole.student_id == student_id) \
         .where(ProjectRole.project == project).one()

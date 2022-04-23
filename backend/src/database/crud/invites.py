@@ -38,6 +38,11 @@ def get_pending_invites_for_edition_page(db: Session, edition: Edition, page: in
     return paginate(_get_pending_invites_for_edition_query(db, edition), page).all()
 
 
+def get_optional_invite_link_by_edition_and_email(db: Session, edition: Edition, email: str) -> InviteLink | None:
+    """Return an optional invite link by edition and target_email"""
+    return db.query(InviteLink).where(InviteLink.edition == edition and InviteLink.target_email == email).one_or_none()
+
+
 def get_invite_link_by_uuid(db: Session, invite_uuid: str | UUID) -> InviteLink:
     """Get an invite link by its id
     As the ids are auto-generated per row, there's no need to use the Edition

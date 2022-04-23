@@ -39,7 +39,6 @@ def test_get_invites(database_session: Session, auth_client: AuthClient):
     link = json["inviteLinks"][0]
     assert link["id"] == 1
     assert link["email"] == "test@ema.il"
-    assert link["editionName"] == "ed2022"
 
 
 def test_get_invites_paginated(database_session: Session, auth_client: AuthClient):
