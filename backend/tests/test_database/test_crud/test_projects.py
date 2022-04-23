@@ -1,5 +1,4 @@
 import pytest
-from sqlalchemy import null
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
