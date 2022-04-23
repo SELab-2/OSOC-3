@@ -12,6 +12,7 @@ defaults:
 
 jobs:
   Dependencies:
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -39,6 +40,7 @@ jobs:
 
   Test:
     needs: [Dependencies]
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -51,6 +53,7 @@ jobs:
 
   Lint:
     needs: [Test]
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -63,6 +66,7 @@ jobs:
 
   Type:
     needs: [Test]
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2

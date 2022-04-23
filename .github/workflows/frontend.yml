@@ -12,6 +12,7 @@ defaults:
 
 jobs:
   Dependencies:
+    runs-on: ubuntu-latest
     container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
@@ -34,6 +35,7 @@ jobs:
 
   Test:
     needs: [Dependencies]
+    runs-on: ubuntu-latest
     container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
@@ -53,6 +55,7 @@ jobs:
 
   Lint:
     needs: [Test]
+    runs-on: ubuntu-latest
     container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
@@ -72,6 +75,7 @@ jobs:
 
   Style:
     needs: [Test]
+    runs-on: ubuntu-latest
     container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
@@ -91,6 +95,7 @@ jobs:
 
   Build:
     needs: [Style, Lint]
+    runs-on: ubuntu-latest
     container: node:16.14.0-alpine
     steps:
       - run: apk add --no-cache tar
