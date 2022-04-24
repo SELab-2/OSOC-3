@@ -40,19 +40,19 @@ At the top left, you can invite someone via an invite link. You can choose betwe
 
 #### Requests
 
-At the top middle of the page, you find a dropdown with **Requests**. When you expend the requests, you see a list of all user requests. This are all users who used an invite link to create an account. 
+At the top middle of the page, you find a dropdown labeled **Requests**. When you expand the dropdown, you can see a list of all pending user requests. These are all users who used an invite link to create an account, and haven't been accepted (or declined) yet. 
 
-Note: the list only contains requests from the current selected edition. Each edition has his own requests.
+Note: the list only contains requests from the current selected edition. Each edition has its own requests.
 
-The list can be filtered by searching a name. Each row contains the name and email of a person. The email contains an icon indicating whether the person registered via email, GitHub or Google. Next to each row there are two buttons to accept or reject the person. When a person is accepted, he will automatically be added as coach to the current edition.
+The list can be filtered by name. Each row of the table contains the name and email address of a person. The email contains an icon indicating whether the person registered via email, GitHub or Google. Next to each row there are two buttons to accept or reject the person. When a person is accepted, he will automatically be added as coach to the current edition.
 
 #### Coaches
 
-A the centre of the page, you find a list of all users who are coach in the current edition. As in the request list, each row contains the name and email address of a user. The list can be filtered by searching a name.
+A the centre of the page, you can find a list of all users who are coach in the current edition. As in the Requests list, each row contains the name and email address of a user. The list can be filtered by name.
 
 Next to the email address, there is a button to remove the user as coach from the currently selected edition. Once clicked, you get two choices:
 
-- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not a coach, he won't be able to see any data from any edition anymore
+- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not an admin, he won't be able to see any data from any edition anymore
 - **Remove from {Edition name}**: The user will be removed as coach from the current selected edition. He will still be able to see data from any other edition wherefrom he is coach.
 
 At the top right of the list, there is a button to add a user as coach to the selected edition. This can be used if a user of a previous edition needs to be a coach in the current edition. You can only add existing users via this button. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose name contains the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as coach to the current edition. A user who is added as coach will be able to see all data of the current edition and participate in the selection process.
@@ -68,7 +68,7 @@ Next to the email address, there is a button to remove a user as admin. Once cli
 
 At the top right of the list, there is a button to add a user as admin.  Once clicked, you see a prompt to search for a user's name. After typing  the name of the user, a list of users whose names contain the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as admin.
 
-**Warning**: A user who is added as admin will be able to edit and delete all data. He will be able to add an remove other admins.
+**Warning**: A user who is added as admin will be able to edit and delete all data. He will be able to add and remove other admins.
 
 ## Editions
 
