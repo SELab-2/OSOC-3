@@ -1,14 +1,17 @@
 import { Button, Form, Spinner } from "react-bootstrap";
-import { SyntheticEvent, useState } from "react";
-import { createEdition } from "../../utils/api/editions";
+import React, { SyntheticEvent, useState } from "react";
+import { createEdition, getSortedEditions } from "../../utils/api/editions";
 import { useNavigate } from "react-router-dom";
 import { CreateEditionDiv, Error, FormGroup, ButtonDiv } from "./styles";
+import { useAuth } from "../../contexts";
 
 /**
  * Page to create a new edition.
  */
 export default function CreateEditionPage() {
     const navigate = useNavigate();
+    const { setEditions } = useAuth();
+
     const currentYear = new Date().getFullYear();
 
     const [name, setName] = useState("");
@@ -18,12 +21,12 @@ export default function CreateEditionPage() {
     const [error, setError] = useState<string | undefined>(undefined);
     const [loading, setLoading] = useState(false);
 
-    async function sendEdition(name: string, year: number) {
+    async function sendEdition(name: string, year: number): Promise<boolean> {
         const response = await createEdition(name, year);
-        setLoading(false);
-        let success = false;
         if (response === 201) {
-            success = true;
+            const allEditions = await getSortedEditions();
+            setEditions(allEditions);
+            return true;
         } else if (response === 409) {
             setNameError("Edition name already exists.");
         } else if (response === 422) {
@@ -31,13 +34,12 @@ export default function CreateEditionPage() {
         } else {
             setError("Something went wrong.");
         }
-        if (success) {
-            // navigate must be at the end of the function
-            navigate("/editions/");
-        }
+        return false;
     }
 
-    const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+        event.stopPropagation();
+        event.preventDefault();
         let correct = true;
 
         // Edition name can't contain spaces and must be at least 5 long.
@@ -45,7 +47,7 @@ export default function CreateEditionPage() {
             if (name.includes(" ")) {
                 setNameError("Edition name can't contain spaces.");
             } else if (name.length < 5) {
-                setNameError("Edition name must be longer than 4.");
+                setNameError("Edition name must be longer than 4 characters.");
             } else {
                 setNameError("Invalid edition name.");
             }
@@ -66,13 +68,18 @@ export default function CreateEditionPage() {
             }
         }
 
+        let success = false;
         if (correct) {
             setLoading(true);
-            sendEdition(name, yearNumber);
+            success = await sendEdition(name, yearNumber);
+            setLoading(false);
         }
-        event.preventDefault();
-        event.stopPropagation();
-    };
+
+        if (success) {
+            // navigate must be at the end of the function
+            navigate("/editions/");
+        }
+    }
 
     let submitButton;
     if (loading) {

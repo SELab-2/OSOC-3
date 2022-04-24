@@ -20,6 +20,14 @@ export async function getEditions(): Promise<EditionsResponse> {
 }
 
 /**
+ * Get all edition names sorted the user can see
+ */
+export async function getSortedEditions(): Promise<string[]> {
+    const response = await axiosInstance.get("/users/current");
+    return response.data.editions;
+}
+
+/**
  * Delete an edition by name
  */
 export async function deleteEdition(name: string): Promise<number> {
@@ -39,7 +47,7 @@ export async function createEdition(name: string, year: number): Promise<number>
         if (axios.isAxiosError(error) && error.response !== undefined) {
             return error.response.status;
         } else {
-            return -1;
+            throw error;
         }
     }
 }
