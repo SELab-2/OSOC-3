@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { ProjectCard } from "../../../components/ProjectsComponents";
-import { CardsGrid, CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
+import { ProjectCard, LoadSpinner } from "../../../components/ProjectsComponents";
+import {
+    CardsGrid,
+    CreateButton,
+    SearchButton,
+    SearchField,
+    OwnProject,
+    ProjectsContainer,
+    LoadMoreContainer,
+    LoadMoreButton,
+} from "./styles";
 import { useAuth } from "../../../contexts/auth-context";
 import { Project } from "../../../data/interfaces";
 import { useNavigate, useParams } from "react-router-dom";
-
+import InfiniteScroll from "react-infinite-scroller";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -13,6 +22,8 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function ProjectPage() {
     const [projectsAPI, setProjectsAPI] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
 
     // To filter projects we need to keep a separate list to avoid calling the API every time we change te filters.
     const [projects, setProjects] = useState<Project[]>([]);
@@ -23,6 +34,7 @@ export default function ProjectPage() {
 
     const navigate = useNavigate();
     const { userId, role } = useAuth();
+    const [page, setPage] = useState(0);
 
     const params = useParams();
     const editionId = params.editionId!;
@@ -53,19 +65,29 @@ export default function ProjectPage() {
     /**
      * Used to fetch the projects
      */
-    useEffect(() => {
-        async function callProjects() {
-            setGotProjects(true);
-            const response = await getProjects(editionId);
-            if (response) {
-                setProjectsAPI(response.projects);
-                setProjects(response.projects);
+    async function callProjects(newPage: number) {
+        if (loading) return;
+        setLoading(true);
+        const response = await getProjects(editionId, newPage);
+        setGotProjects(true);
+
+        if (response) {
+            if (response.projects.length === 0) {
+                setMoreProjectsAvailable(false);
+            } else {
+                setPage(page + 1);
+                setProjectsAPI(projectsAPI.concat(response.projects));
+                setProjects(projects.concat(response.projects));
             }
         }
-        if (!gotProjects) {
-            callProjects();
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if (moreProjectsAvailable && !gotProjects) {
+            callProjects(0);
         }
-    }, [editionId, gotProjects]);
+    });
 
     return (
         <div>
@@ -92,15 +114,47 @@ export default function ProjectPage() {
                 }}
             />
 
-            <CardsGrid>
-                {projects.map((project, _index) => (
-                    <ProjectCard
-                        project={project}
-                        refreshProjects={() => setGotProjects(false)}
-                        key={_index}
-                    />
-                ))}
-            </CardsGrid>
+            <InfiniteScroll
+                pageStart={0}
+                loadMore={(newPage: number) => {
+                    console.log("loading more" + newPage);
+                }}
+                hasMore={moreProjectsAvailable}
+                useWindow={false}
+                initialLoad={true}
+            >
+                <ProjectsContainer>
+                    <CardsGrid>
+                        {projects.map((project, _index) => (
+                            <ProjectCard
+                                project={project}
+                                refreshProjects={() => {
+                                    setProjectsAPI([]);
+                                    setProjects([]);
+                                    setGotProjects(false);
+                                    setPage(0);
+                                    setMoreProjectsAvailable(true);
+                                }}
+                                key={_index}
+                            />
+                        ))}
+                    </CardsGrid>
+                </ProjectsContainer>
+            </InfiniteScroll>
+
+            <LoadSpinner show={loading} />
+
+            <LoadMoreContainer>
+                <LoadMoreButton
+                    onClick={() => {
+                        if (moreProjectsAvailable) {
+                            callProjects(page);
+                        }
+                    }}
+                >
+                    Load more projects
+                </LoadMoreButton>
+            </LoadMoreContainer>
         </div>
     );
 }

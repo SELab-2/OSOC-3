@@ -2,9 +2,9 @@ import axios from "axios";
 import { Projects, Project, CreateProject } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
-export async function getProjects(edition: string) {
+export async function getProjects(edition: string, page: number) {
     try {
-        const response = await axiosInstance.get("/editions/" + edition + "/projects/");
+        const response = await axiosInstance.get("/editions/" + edition + "/projects/?page=" + page.toString());
         const projects = response.data as Projects;
         return projects;
     } catch (error) {
