@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
 
+import src.app.logic.partners as partners_logic
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
-    ProjectList, ConflictStudentList, InputProject, ConflictStudent, QueryParamsProjects
+    ProjectList, ConflictStudentList, InputProject, ConflictStudent, InputProjectRole, QueryParamsProjects
 )
-from src.database.models import Edition, Project, User
+from src.database.models import Edition, Project, ProjectRole, User
 
 
 def get_project_list(db: Session, edition: Edition, search_params: QueryParamsProjects, user: User) -> ProjectList:
@@ -14,17 +15,58 @@ def get_project_list(db: Session, edition: Edition, search_params: QueryParamsPr
 
 def create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
     """Create a new project"""
-    return crud.add_project(db, edition, input_project)
+    transaction = db.begin_nested()
+
+    try:
+        # Fetch or create all partners
+        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners)
+
+        # Create the project
+        project = crud.create_project(db, edition, input_project, partners)
+
+        # Create the project roles
+        # for input_project_role in input_project.project_roles:
+        #     projects_students_crud.create_project_role(db, project, input_project_role)
+
+        # Save the changes to the database
+        transaction.commit()
+
+        return project
+    finally:
+        # When an error occurs undo al database changes
+        transaction.rollback()
 
 
-def delete_project(db: Session, project_id: int):
-    """Delete a project"""
-    crud.delete_project(db, project_id)
-
-
-def patch_project(db: Session, project_id: int, input_project: InputProject):
+def patch_project(db: Session, project: Project, input_project: InputProject) -> Project:
     """Make changes to a project"""
-    crud.patch_project(db, project_id, input_project)
+    transaction = db.begin_nested()
+
+    try:
+        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners)
+
+        crud.patch_project(db, project, input_project, partners)
+
+        return project
+    finally:
+        # When an error occurs undo al database changes
+        transaction.rollback()
+
+
+def delete_project(db: Session, project: Project):
+    """Delete a project"""
+    crud.delete_project(db, project)
+
+
+def get_project_roles(db: Session, project: Project) -> list[ProjectRole]:
+    return crud.get_project_roles_for_project(db, project)
+
+
+def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
+    return crud.create_project_role(db, project, input_project_role)
+
+
+def patch_project_role(db: Session, project_role_id: int, input_project_role: InputProjectRole) -> ProjectRole:
+    return crud.patch_project_role(db, project_role_id, input_project_role)
 
 
 def get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:

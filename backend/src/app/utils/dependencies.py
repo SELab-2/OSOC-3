@@ -7,9 +7,13 @@ from sqlalchemy.orm import Session
 import settings
 import src.database.crud.projects as crud_projects
 from src.app.exceptions.authentication import (
-    ExpiredCredentialsException, InvalidCredentialsException,
-    MissingPermissionsException, WrongTokenTypeException)
+    ExpiredCredentialsException,
+    InvalidCredentialsException,
+    MissingPermissionsException,
+    WrongTokenTypeException
+)
 from src.app.exceptions.editions import ReadOnlyEditionException
+from src.app.exceptions.util import NotFound
 from src.app.logic.security import ALGORITHM, TokenType
 from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.invites import get_invite_link_by_uuid
@@ -27,6 +31,7 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
 
 def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
     """Get the student from the database, given the id in the path"""
+    # TODO: check user in edition!
     return get_student_by_id(database, student_id)
 
 
@@ -133,6 +138,23 @@ def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> Inv
     return get_invite_link_by_uuid(db, invite_uuid)
 
 
-def get_project(project_id: int, db: Session = Depends(get_session)) -> Project:
+def get_project(
+        project_id: int,
+        db: Session = Depends(get_session),
+        edition: Edition = Depends(get_edition)) -> Project:
     """Get a project from het database, given the id in the path"""
-    return crud_projects.get_project(db, project_id)
+    project = crud_projects.get_project(db, project_id)
+    if project.edition != edition:
+        raise NotFound()
+    return project
+
+
+def get_project_role(
+        project_role_id: int,
+        project: Project = Depends(get_project),
+        db: Session = Depends(get_session)) -> Project:
+    """Get a project from het database, given the id in the path"""
+    project_role = crud_projects.get_project_role(db, project_role_id)
+    if project_role.project != project:
+        raise NotFound()
+    return project

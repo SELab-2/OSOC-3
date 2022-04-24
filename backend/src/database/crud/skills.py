@@ -21,6 +21,11 @@ def get_skills_by_ids(db: Session, skill_ids) -> list[Skill]:
     return db.query(Skill).where(Skill.skill_id.in_(skill_ids)).all()
 
 
+def get_skill_by_id(db: Session, skill_id: int) -> Skill:
+    """Get a skill for a id"""
+    return db.query(Skill).where(Skill.skill_id == skill_id).one()
+
+
 def create_skill(db: Session, skill: SkillBase) -> Skill:
     """Add a new skill into the database.
 
@@ -31,7 +36,7 @@ def create_skill(db: Session, skill: SkillBase) -> Skill:
     Returns:
         Skill: returns the new skill.
     """
-    new_skill: Skill = Skill(name=skill.name, description=skill.description)
+    new_skill: Skill = Skill(name=skill.name)
     db.add(new_skill)
     db.commit()
     db.refresh(new_skill)

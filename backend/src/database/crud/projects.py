@@ -1,9 +1,10 @@
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session, Query
 
-from src.app.schemas.projects import InputProject, QueryParamsProjects
+import src.database.crud.skills as skills_crud
+from src.app.schemas.projects import InputProject, InputProjectRole, QueryParamsProjects
+from src.database.crud.users import get_user_by_id
 from src.database.crud.util import paginate
-from src.database.models import Project, Edition, Student, ProjectRole, Skill, User, Partner
+from src.database.models import Project, Edition, Student, ProjectRole, Partner, User
 
 
 def _get_projects_for_edition_query(db: Session, edition: Edition) -> Query:
@@ -27,29 +28,23 @@ def get_projects_for_edition_page(db: Session, edition: Edition,
     return projects
 
 
-def add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
+def create_project(db: Session, edition: Edition, input_project: InputProject, partners: list[Partner]) -> Project:
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
     """
-    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one()
-                  for skill in input_project.skills]
-    coaches_obj = [db.query(User).where(User.user_id == coach).one()
-                   for coach in input_project.coaches]
-    partners_obj = []
-    for partner in input_project.partners:
-        try:
-            partners_obj.append(db.query(Partner).where(
-                Partner.name == partner).one())
-        except NoResultFound:
-            partner_obj = Partner(name=partner)
-            db.add(partner_obj)
-            partners_obj.append(partner_obj)
-    project = Project(name=input_project.name, number_of_students=input_project.number_of_students,
-                      edition_id=edition.edition_id, skills=skills_obj, coaches=coaches_obj, partners=partners_obj)
+    coaches = [get_user_by_id(db, coach) for coach in input_project.coaches]
+
+    project = Project(
+        name=input_project.name,
+        edition_id=edition.edition_id,
+        coaches=coaches,
+        partners=partners
+    )
 
     db.add(project)
     db.commit()
+
     return project
 
 
@@ -58,39 +53,66 @@ def get_project(db: Session, project_id: int) -> Project:
     return db.query(Project).where(Project.project_id == project_id).one()
 
 
-def delete_project(db: Session, project_id: int):
+def delete_project(db: Session, project: Project):
     """Delete a specific project from the database"""
-    db.delete(get_project(db, project_id))
+    db.delete(project)
     db.commit()
 
 
-def patch_project(db: Session, project_id: int, input_project: InputProject):
+def patch_project(db: Session, project: Project, input_project: InputProject, partners: list[Partner]):
     """
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
     """
-    project = db.query(Project).where(Project.project_id == project_id).one()
 
-    skills_obj = [db.query(Skill).where(Skill.skill_id == skill).one()
-                  for skill in input_project.skills]
-    coaches_obj = [db.query(User).where(User.user_id == coach).one()
-                   for coach in input_project.coaches]
-    partners_obj = []
-    for partner in input_project.partners:
-        try:
-            partners_obj.append(db.query(Partner).where(
-                Partner.name == partner).one())
-        except NoResultFound:
-            partner_obj = Partner(name=partner)
-            db.add(partner_obj)
-            partners_obj.append(partner_obj)
+    coaches = [get_user_by_id(db, coach) for coach in input_project.coaches]
 
     project.name = input_project.name
-    project.number_of_students = input_project.number_of_students
-    project.skills = skills_obj
-    project.coaches = coaches_obj
-    project.partners = partners_obj
+    project.coaches = coaches
+    project.partners = partners
+
     db.commit()
+
+
+def get_project_role(db: Session, project_role_id: int) -> ProjectRole:
+    return db.query(ProjectRole).where(ProjectRole.project_role_id == project_role_id).one()
+
+
+def get_project_roles_for_project(db: Session, project_id: int) -> list[ProjectRole]:
+    """Get the project roles associated with a project"""
+    return db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
+
+
+def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
+    """Create a project role for a project"""
+    skill = skills_crud.get_skill_by_id(db, input_project_role.skill_id)
+
+    project_role = ProjectRole(
+        project=project,
+        skill=skill,
+        description=input_project_role.description,
+        slots=input_project_role.slots
+    )
+
+    db.add(project_role)
+    db.commit()
+    return project_role
+
+
+def patch_project_role(
+        db: Session,
+        project_role_id: int,
+        input_project_role: InputProjectRole) -> ProjectRole:
+    """Create a project role for a project"""
+    skill = skills_crud.get_skill_by_id(db, input_project_role.skill_id)
+    project_role = get_project_role(db, project_role_id)
+
+    project_role.skill = skill
+    project_role.description = input_project_role.description
+    project_role.slots = input_project_role.slots
+
+    db.commit()
+    return project_role
 
 
 def get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, list[Project]]]:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from pydantic import BaseModel
 
+from src.app.schemas.skills import Skill
 from src.app.schemas.utils import CamelCaseModel
 
 
@@ -8,17 +9,6 @@ class User(CamelCaseModel):
     """Represents a User from the database"""
     user_id: int
     name: str
-
-    class Config:
-        """Set to ORM mode"""
-        orm_mode = True
-
-
-class Skill(CamelCaseModel):
-    """Represents a Skill from the database"""
-    skill_id: int
-    name: str
-    description: str
 
     class Config:
         """Set to ORM mode"""
@@ -37,12 +27,10 @@ class Partner(CamelCaseModel):
 
 class ProjectRole(CamelCaseModel):
     """Represents a ProjectRole from the database"""
-    student_id: int
     project_id: int
-    skill_id: int
-    definitive: bool
-    argumentation: str | None
-    drafter_id: int
+    description: str | None
+    skill: Skill
+    slots: int
 
     class Config:
         """Set to ORM mode"""
@@ -56,7 +44,6 @@ class Project(CamelCaseModel):
     number_of_students: int
 
     coaches: list[User]
-    skills: list[Skill]
     partners: list[Partner]
     project_roles: list[ProjectRole]
 
@@ -106,18 +93,23 @@ class ConflictStudentList(CamelCaseModel):
     conflict_students: list[ConflictStudent]
 
 
+class InputProjectRole(BaseModel):
+    """Used for creating a project role"""
+    skill_id: int
+    description: str | None
+    slots: int
+
+
 class InputProject(BaseModel):
     """Used for passing the details of a project when creating/patching a project"""
     name: str
-    number_of_students: int
-    skills: list[int]
     partners: list[str]
     coaches: list[int]
 
 
-class InputStudentRole(BaseModel):
+class InputArgumentation(BaseModel):
     """Used for creating/patching a student role"""
-    skill_id: int
+    argumentation: str | None
 
 
 @dataclass

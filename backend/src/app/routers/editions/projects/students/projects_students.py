@@ -5,52 +5,66 @@ from starlette.responses import Response
 
 import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
-from src.app.schemas.projects import InputStudentRole
-from src.app.utils.dependencies import get_project, require_admin, require_coach, get_latest_edition
+from src.app.schemas.projects import InputArgumentation
+from src.app.utils.dependencies import (
+    require_coach, get_latest_edition, get_student,
+    get_project_role
+)
 from src.database.database import get_session
-from src.database.models import Project, User
+from src.database.models import User, Student, ProjectRole
 
 project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tags.STUDENTS])
 
 
-@project_students_router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                                dependencies=[Depends(require_coach)])
-async def remove_student_from_project(student_id: int, db: Session = Depends(get_session),
-                                      project: Project = Depends(get_project)):
+@project_students_router.delete(
+    "/{student_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+    dependencies=[Depends(require_coach), Depends(get_latest_edition)]
+)
+async def remove_student_from_project(
+        student: Student = Depends(get_student),
+        db: Session = Depends(get_session),
+        project_role: ProjectRole = Depends(get_project_role)):
     """
     Remove a student from a project.
     """
-    logic.remove_student_project(db, project, student_id)
+    logic.remove_project_role_suggestion(db, project_role, student)
 
 
-@project_students_router.patch("/{student_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                               dependencies=[Depends(get_latest_edition)])
-async def change_project_role(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
-                              project: Project = Depends(get_project), user: User = Depends(require_coach)):
+@project_students_router.patch(
+    "/{student_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+    dependencies=[Depends(get_latest_edition), Depends(get_project_role)]
+)
+async def change_project_role(
+        argumentation: InputArgumentation,
+        student: Student = Depends(get_student),
+        db: Session = Depends(get_session),
+        project_role: ProjectRole = Depends(get_project_role),
+        user: User = Depends(require_coach)):
     """
     Change the role a student is drafted for in a project.
     """
-    logic.change_project_role(db, project, student_id, input_sr.skill_id, user.user_id)
+    logic.change_project_role_suggestion(db, project_role, student, user, argumentation)
 
 
-@project_students_router.post("/{student_id}", status_code=status.HTTP_201_CREATED, response_class=Response,
-                              dependencies=[Depends(get_latest_edition)])
-async def add_student_to_project(student_id: int, input_sr: InputStudentRole, db: Session = Depends(get_session),
-                                 project: Project = Depends(get_project), user: User = Depends(require_coach)):
+@project_students_router.post(
+    "/{student_id}",
+    status_code=status.HTTP_201_CREATED,
+    response_class=Response,
+    dependencies=[Depends(get_latest_edition)]
+)
+async def add_student_to_project(
+        argumentation: InputArgumentation,
+        student: Student = Depends(get_student),
+        db: Session = Depends(get_session),
+        project_role: ProjectRole = Depends(get_project_role),
+        user: User = Depends(require_coach)):
     """
     Add a student to a project.
 
     This is not a definitive decision, but represents a coach drafting the student.
     """
-    logic.add_student_project(db, project, student_id, input_sr.skill_id, user.user_id)
-
-
-@project_students_router.post("/{student_id}/confirm", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                              dependencies=[Depends(require_admin), Depends(get_latest_edition)])
-async def confirm_project_role(student_id: int, db: Session = Depends(get_session),
-                               project: Project = Depends(get_project)):
-    """
-    Definitively add a student to a project (confirm its role).
-    This can only be performed by an admin.
-    """
-    logic.confirm_project_role(db, project, student_id)
+    logic.add_student_project(db, project_role, student, user, argumentation)
