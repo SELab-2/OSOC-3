@@ -4,7 +4,7 @@ import { axiosInstance } from "./api";
 
 export async function getProjects(edition: string, page: number) {
     try {
-        const response = await axiosInstance.get("/editions/" + edition + "/projects?page=" + page.toString());
+        const response = await axiosInstance.get("/editions/" + edition + "/projects/?page=" + page.toString());
         const projects = response.data as Projects;
         return projects;
     } catch (error) {
