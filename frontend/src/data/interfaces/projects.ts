@@ -54,6 +54,20 @@ export interface Projects {
 }
 
 /**
+ * Used to add skills to a project
+ */
+export interface SkillProject {
+    /** The name of the skill */
+    skill: string;
+
+    /** More info about this skill in a specific project */
+    description: string | undefined;
+
+    /** Number of positions of this skill in a project */
+    amount: number | undefined;
+}
+
+/**
  * Used when creating a new project
  */
 export interface CreateProject {

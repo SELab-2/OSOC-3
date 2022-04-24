@@ -12,16 +12,21 @@ import {
     PartnerInput,
     AddedCoaches,
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
+import { SkillProject } from "../../../data/interfaces/projects";
+import AddedSkills from "../../../components/ProjectsComponents/CreateProjectComponents/AddedSkills/AddedSkills";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
     const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
-    const [skills, setSkills] = useState<string[]>([]);
     const [partners, setPartners] = useState<string[]>([]);
 
     // States for coaches
     const [coach, setCoach] = useState("");
     const [coaches, setCoaches] = useState<string[]>([]);
+
+    // States for skills
+    const [skill, setSkill] = useState("");
+    const [skills, setSkills] = useState<SkillProject[]>([]);
 
     const navigate = useNavigate();
 
@@ -48,7 +53,9 @@ export default function CreateProjectPage() {
             />
             <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
 
-            <SkillInput skills={skills} setSkills={setSkills} />
+            <SkillInput skill={skill} setSkill={setSkill} skills={skills} setSkills={setSkills} />
+            <AddedSkills skills={skills} setSkills={setSkills} />
+
             <PartnerInput partners={partners} setPartners={setPartners} />
             <CreateButton
                 onClick={async () => {
@@ -56,7 +63,7 @@ export default function CreateProjectPage() {
                         "2022",
                         name,
                         numberOfStudents!,
-                        skills,
+                        [],
                         partners,
                         coaches
                     );

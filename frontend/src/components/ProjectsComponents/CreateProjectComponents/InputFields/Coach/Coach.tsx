@@ -33,10 +33,12 @@ export default function Coach({
             <AddButton
                 onClick={() => {
                     if (availableCoaches.some(availableCoach => availableCoach === coach)) {
-                        const newCoaches = [...coaches];
-                        newCoaches.push(coach);
-                        setCoaches(newCoaches);
-                        setShowAlert(false);
+                        if (!coaches.includes(coach)) {
+                            const newCoaches = [...coaches];
+                            newCoaches.push(coach);
+                            setCoaches(newCoaches);
+                            setShowAlert(false);
+                        }
                     } else setShowAlert(true);
                 }}
             >
