@@ -51,7 +51,7 @@ A the centre of the page, you can find a list of all users who are coach in the 
 
 Next to the email address, there is a button to remove the user as coach from the currently selected edition. Once clicked, you get two choices:
 
-- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not a coach, he won't be able to see any data from any edition anymore
+- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not an admin, he won't be able to see any data from any edition anymore
 - **Remove from {Edition name}**: The user will be removed as coach from the current selected edition. He will still be able to see data from any other edition wherefrom he is coach.
 
 At the top right of the list, there is a button to add a user as coach to the selected edition. This can be used if a user of a previous edition needs to be a coach in the current edition. You can only add existing users via this button. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose name contains the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as coach to the current edition. A user who is added as coach will be able to see all data of the current edition and participate in the selection process.
