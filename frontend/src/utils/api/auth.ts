@@ -47,13 +47,17 @@ export async function validateRegistrationUrl(edition: string, uuid: string): Pr
     }
 }
 
+/**
+ * Interface containg the newly fetched tokens.
+ */
 export interface Tokens {
     access_token: string;
     refresh_token: string;
 }
 
 /**
- *
+ * Function to fetch the new tokens based on the refreshtoken.
+ * We use a separate axios intance here because this request would otherwise be blocked by our interceptor.
  */
 export async function refreshTokens(): Promise<Tokens> {
     // Don't use axiosInstance to pass interceptors.
