@@ -8,7 +8,7 @@ from src.app.exceptions.authentication import InvalidCredentialsException
 from src.app.logic.security import authenticate_user, create_tokens
 from src.app.logic.users import get_user_editions
 from src.app.routers.tags import Tags
-from src.app.schemas.login import Token, UserData
+from src.app.schemas.login import Token
 from src.app.schemas.users import user_model_to_schema
 from src.app.utils.dependencies import get_user_from_refresh_token
 from src.database.database import get_session
@@ -28,24 +28,20 @@ async def login_for_access_token(db: Session = Depends(get_session),
         # be a 401 instead of a 404
         raise InvalidCredentialsException() from not_found
 
-    access_token, refresh_token = create_tokens(user)
-
-    user_data: dict = user_model_to_schema(user).__dict__
-    user_data["editions"] = get_user_editions(db, user)
-
-    return Token(
-        access_token=access_token,
-        refresh_token=refresh_token,
-        token_type="bearer",
-        user=user_data
-    )
+    return await generate_token_response_for_user(db, user)
 
 
 @login_router.post("/refresh", response_model=Token)
 async def refresh_access_token(db: Session = Depends(get_session), user: User = Depends(get_user_from_refresh_token)):
-    """Return a new access & refresh token using on the old refresh token
+    """
+    Return a new access & refresh token using on the old refresh token
 
-    Swagger note: This endpoint will not work on swagger because it uses the access token to try & refresh"""
+    Swagger note: This endpoint will not work on swagger because it uses the access token to try & refresh
+    """
+    return await generate_token_response_for_user(db, user)
+
+
+async def generate_token_response_for_user(db: Session, user: User) -> Token:
     access_token, refresh_token = create_tokens(user)
 
     user_data: dict = user_model_to_schema(user).__dict__
