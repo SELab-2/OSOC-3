@@ -101,7 +101,7 @@ def install_handlers(app: FastAPI):
     async def wrong_token_type_exception(_request: Request, _exception: WrongTokenTypeException):
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={'message': 'U used the wrong token to access this resource.'}
+            content={'message': 'You used the wrong token to access this resource.'}
         )
     @app.exception_handler(ReadOnlyEditionException)
     def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
