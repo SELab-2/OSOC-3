@@ -6,7 +6,7 @@ from src.app.routers.tags import Tags
 from src.app.schemas.login import UserData
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
     FilterParameters
-from src.app.utils.dependencies import require_admin, get_current_active_user
+from src.app.utils.dependencies import require_admin, get_user_from_access_token
 from src.database.database import get_session
 from src.database.models import User as UserDB
 
@@ -27,7 +27,7 @@ async def get_users(
 
 
 @users_router.get("/current", response_model=UserData)
-async def get_current_user(db: Session = Depends(get_session), user: UserDB = Depends(get_current_active_user)):
+async def get_current_user(db: Session = Depends(get_session), user: UserDB = Depends(get_user_from_access_token)):
     """Get a user based on their authorization credentials"""
     user_data = user_model_to_schema(user).__dict__
     user_data["editions"] = logic.get_user_editions(db, user)

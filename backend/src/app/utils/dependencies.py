@@ -13,20 +13,22 @@ from src.app.exceptions.editions import ReadOnlyEditionException
 from src.app.logic.security import ALGORITHM, TokenType
 from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.invites import get_invite_link_by_uuid
+from src.database.crud.students import get_student_by_id
+from src.database.crud.suggestions import get_suggestion_by_id
 from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
 from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project
-from src.database.crud.students import get_student_by_id
-from src.database.crud.suggestions import get_suggestion_by_id
 
 
 def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the name in the path"""
     return get_edition_by_name(database, edition_name)
 
+
 def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
     """Get the student from the database, given the id in the path"""
     return get_student_by_id(database, student_id)
+
 
 def get_suggestion(suggestion_id: int, database: Session = Depends(get_session)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
@@ -69,7 +71,7 @@ async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -
         raise InvalidCredentialsException() from jwt_err
 
 
-async def get_current_active_user(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_access_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its access token
     This function is used as a dependency for other functions
     """
@@ -83,7 +85,7 @@ async def get_user_from_refresh_token(db: Session = Depends(get_session), token:
     return await _get_user_from_token(TokenType.REFRESH, db, token)
 
 
-async def require_auth(user: User = Depends(get_current_active_user)) -> User:
+async def require_auth(user: User = Depends(get_user_from_access_token)) -> User:
     """Dependency to check if a user is at least a coach
     This dependency should be used to check for resources that aren't linked to
     editions
@@ -102,7 +104,7 @@ async def require_auth(user: User = Depends(get_current_active_user)) -> User:
     return user
 
 
-async def require_admin(user: User = Depends(get_current_active_user)) -> User:
+async def require_admin(user: User = Depends(get_user_from_access_token)) -> User:
     """Dependency to create an admin-only route"""
     if not user.admin:
         raise MissingPermissionsException()
@@ -110,7 +112,7 @@ async def require_admin(user: User = Depends(get_current_active_user)) -> User:
     return user
 
 
-async def require_coach(edition: Edition = Depends(get_edition), user: User = Depends(get_current_active_user)) -> User:
+async def require_coach(edition: Edition = Depends(get_edition), user: User = Depends(get_user_from_access_token)) -> User:
     """Dependency to check if a user can see a given resource
     This comes down to checking if a coach is linked to an edition or not
     """
