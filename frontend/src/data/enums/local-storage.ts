@@ -5,5 +5,7 @@ export const enum LocalStorageKey {
     /**
      * Bearer token used to authorize the user's requests in the backend.
      */
-    BEARER_TOKEN = "bearerToken",
+    ACCESS_TOKEN = "accessToken",
+    REFRESH_TOKEN = "refreshToken",
+    REFRESH_TOKEN_LOCK = "refreshTokenLock",
 }

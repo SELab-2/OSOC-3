@@ -4,7 +4,9 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from starlette import status
 
-from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
+from .authentication import (
+    ExpiredCredentialsException, InvalidCredentialsException,
+    MissingPermissionsException, WrongTokenTypeException)
 from .editions import DuplicateInsertException, ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
@@ -95,6 +97,12 @@ def install_handlers(app: FastAPI):
             content={'message': 'Something went wrong while adding this student to the project'}
         )
 
+    @app.exception_handler(WrongTokenTypeException)
+    async def wrong_token_type_exception(_request: Request, _exception: WrongTokenTypeException):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={'message': 'You used the wrong token to access this resource.'}
+        )
     @app.exception_handler(ReadOnlyEditionException)
     def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
         return JSONResponse(
