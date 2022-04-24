@@ -16,6 +16,7 @@ import {
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
 import CreateEditionPage from "./views/CreateEditionPage";
 import { Role } from "./data/enums";
+import StudentInfoPage from "./views/StudentInfoPage";
 
 /**
  * Router component to render different pages depending on the current url. Renders
@@ -73,7 +74,7 @@ export default function Router() {
                                     {/* Students routes */}
                                     <Route path={"students"} element={<StudentsPage />} />
                                     {/* TODO student page */}
-                                    <Route path={"students/:id"} element={<div />} />
+                                    <Route path={"students/:id"} element={<StudentInfoPage />} />
                                     {/* TODO student emails page */}
                                     <Route path={"students/:id/emails"} element={<div />} />
 
