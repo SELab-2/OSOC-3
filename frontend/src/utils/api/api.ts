@@ -16,7 +16,7 @@ axiosInstance.defaults.baseURL = BASE_URL;
 axiosInstance.interceptors.request.use(async config => {
     // If the request is sent when a token is being refreshed, delay it for 100ms.
     while (getRefreshTokenLock()) {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
     const accessToken = getAccessToken();
     if (accessToken) {
