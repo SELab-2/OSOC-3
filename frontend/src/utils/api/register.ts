@@ -35,3 +35,8 @@ export async function register(
         }
     }
 }
+
+/**
+ * Function to register a user using GitHub OAuth
+ */
+export async function registerGithub(edition: string, uuid: string, token: string) {}
