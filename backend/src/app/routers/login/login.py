@@ -37,7 +37,7 @@ async def login_for_access_token(db: Session = Depends(get_session),
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        user=UserData(**user_data)
+        user=user_data
     )
 
 
@@ -55,5 +55,5 @@ async def refresh_access_token(db: Session = Depends(get_session), user: User = 
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
-        user=UserData(**user_data)
+        user=user_data
     )
