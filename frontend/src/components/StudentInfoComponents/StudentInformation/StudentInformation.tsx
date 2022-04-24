@@ -22,58 +22,63 @@ interface Props {
 }
 
 export default function StudentInformation(props: Props) {
-
+    console.log(props.currentStudent)
     useEffect(() => {
-        console.log(props)
-    }, [props]);
+        console.log(props.currentStudent)
+        console.log(props.currentStudent.firstName)
+    }, []);
 
-    return (
-        <StudentInformationContainer>
-            <FullName>
-                <FirstName>"Riley"</FirstName>
-                <LastName>"Pacocha"</LastName>
-            </FullName>
-            <PreferedName>Prefered name: "Rey"</PreferedName>
-            <LineBreak />
-            <StudentInfoTitle>Suggestions</StudentInfoTitle>
-            <Suggestion>
-                Wow this student is really incredible! We should give her a project!
-            </Suggestion>
-            <Suggestion>
-                Wow this student is really incredible! We should give her a project!
-            </Suggestion>
-            <Suggestion>
-                Wow this student is really incredible! We should give her a project!
-            </Suggestion>
-            <LineBreak />
-            <StudentInfoTitle>Personal information</StudentInfoTitle>
-            <PersonalInfoField className="email-field">
-                Email <PersonalInfoFieldValue>riley.pacocha@test.com</PersonalInfoFieldValue>
-            </PersonalInfoField>
-            <PersonalInfoField className="phonenumber-field">
-                Phone number <PersonalInfoFieldValue>0123 456 789</PersonalInfoFieldValue>
-            </PersonalInfoField>
-            <PersonalInfoField className="alumni-field">
-                Is an alumni? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
-            </PersonalInfoField>
-            <PersonalInfoField className="studentcoach-field">
-                Wants to be student coach? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
-            </PersonalInfoField>
-            <LineBreak />
-            <StudentInfoTitle>Skills</StudentInfoTitle>
-            <RolesField>
-                Roles:
-                <RolesValues>
-                    <Role>Frontend</Role>
-                    <Role>Design</Role>
-                    <Role>Communication</Role>
-                </RolesValues>
-            </RolesField>
-            <LineBreak />
-            <div>
-                <CoachSuggestionContainer />
-                <AdminDecisionContainer />
-            </div>
-        </StudentInformationContainer>
-    );
+    if (!props.currentStudent) {
+        return <div><h1>loading</h1></div>
+    } else {
+        return (
+            <StudentInformationContainer>
+                <FullName>
+                    <FirstName>{props.currentStudent.firstName}</FirstName>
+                    <LastName>{props.currentStudent.firstName}</LastName>
+                </FullName>
+                <PreferedName>Prefered name: {props.currentStudent.firstName}</PreferedName>
+                <LineBreak/>
+                <StudentInfoTitle>Suggestions</StudentInfoTitle>
+                <Suggestion>
+                    Wow this student is really incredible! We should give her a project!
+                </Suggestion>
+                <Suggestion>
+                    Wow this student is really incredible! We should give her a project!
+                </Suggestion>
+                <Suggestion>
+                    Wow this student is really incredible! We should give her a project!
+                </Suggestion>
+                <LineBreak/>
+                <StudentInfoTitle>Personal information</StudentInfoTitle>
+                <PersonalInfoField className="email-field">
+                    Email <PersonalInfoFieldValue>riley.pacocha@test.com</PersonalInfoFieldValue>
+                </PersonalInfoField>
+                <PersonalInfoField className="phonenumber-field">
+                    Phone number <PersonalInfoFieldValue>0123 456 789</PersonalInfoFieldValue>
+                </PersonalInfoField>
+                <PersonalInfoField className="alumni-field">
+                    Is an alumni? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
+                </PersonalInfoField>
+                <PersonalInfoField className="studentcoach-field">
+                    Wants to be student coach? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
+                </PersonalInfoField>
+                <LineBreak/>
+                <StudentInfoTitle>Skills</StudentInfoTitle>
+                <RolesField>
+                    Roles:
+                    <RolesValues>
+                        <Role>Frontend</Role>
+                        <Role>Design</Role>
+                        <Role>Communication</Role>
+                    </RolesValues>
+                </RolesField>
+                <LineBreak/>
+                <div>
+                    <CoachSuggestionContainer/>
+                    <AdminDecisionContainer/>
+                </div>
+            </StudentInformationContainer>
+        );
+    }
 }

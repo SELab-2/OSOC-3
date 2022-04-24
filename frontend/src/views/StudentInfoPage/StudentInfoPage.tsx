@@ -25,7 +25,6 @@ function StudentInfoPage() {
         try {
             const response = await getStudent("OSOC_2022", params.id!);
             setCurrentStudent(response);
-            console.log(currentStudent)
         } catch (error) {
             console.log(error);
         }
@@ -34,13 +33,27 @@ function StudentInfoPage() {
     useEffect(() => {
         callGetStudent();
         callGetStudents();
-    }, []);
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
 
-    return (
-        <div>
-            <StudentInfo students={students} currentStudent={currentStudent!} nameFilter={nameFilter} setNameFilter={setNameFilter} alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} studentCoachVolunteerFilter={studentCoachVolunteerFilter} setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter} />
-        </div>
-    );
+    if (!currentStudent) {
+        console.log("no current student")
+        return (<div>
+            <h1>loading</h1>
+        </div>);
+    }
+    else {
+        console.log(currentStudent)
+        return (
+            <div>
+                <StudentInfo students={students} currentStudent={currentStudent!}
+                             nameFilter={nameFilter} setNameFilter={setNameFilter}
+                             alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter}
+                             rolesFilter={rolesFilter} setRolesFilter={setRolesFilter}
+                             studentCoachVolunteerFilter={studentCoachVolunteerFilter}
+                             setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}/>
+            </div>
+        );
+    }
 }
 
 export default StudentInfoPage;

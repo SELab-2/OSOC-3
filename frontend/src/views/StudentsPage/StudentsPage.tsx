@@ -15,7 +15,6 @@ function StudentsPage() {
             const response = await getStudents("OSOC_2022", nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter);
             if (response) {
                 setStudents(response.students);
-                console.log(students);
             }
         } catch (error) {
             console.log(error);
@@ -24,7 +23,6 @@ function StudentsPage() {
 
     useEffect(() => {
         callGetStudents();
-        console.log("changed")
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
 
     return (
