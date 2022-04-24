@@ -23,7 +23,7 @@ export default function EmptyEditionsTableMessage() {
     } else {
         message = (
             <>
-                It looks like you're not a part of any editions so far.
+                It looks like you're not a part of any editions.
                 <br />
                 Contact an admin to receive an invite.
             </>
