@@ -74,10 +74,11 @@ export default function ProjectPage() {
         if (response) {
             if (response.projects.length === 0) {
                 setMoreProjectsAvailable(false);
-            } else setPage(page + 1);
-
-            setProjectsAPI(projectsAPI.concat(response.projects));
-            setProjects(projects.concat(response.projects));
+            } else {
+                setPage(page + 1);
+                setProjectsAPI(projectsAPI.concat(response.projects));
+                setProjects(projects.concat(response.projects));
+            }
         }
         setLoading(false);
     }
