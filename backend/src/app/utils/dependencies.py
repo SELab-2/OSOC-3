@@ -112,7 +112,8 @@ async def require_admin(user: User = Depends(get_user_from_access_token)) -> Use
     return user
 
 
-async def require_coach(edition: Edition = Depends(get_edition), user: User = Depends(get_user_from_access_token)) -> User:
+async def require_coach(edition: Edition = Depends(get_edition),
+                        user: User = Depends(get_user_from_access_token)) -> User:
     """Dependency to check if a user can see a given resource
     This comes down to checking if a coach is linked to an edition or not
     """

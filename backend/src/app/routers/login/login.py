@@ -41,6 +41,9 @@ async def refresh_access_token(db: Session = Depends(get_session), user: User = 
 
 
 async def generate_token_response_for_user(db: Session, user: User) -> Token:
+    """
+    Generate new tokens for a user and put them in the Token response schema.
+    """
     access_token, refresh_token = create_tokens(user)
 
     user_data: dict = user_model_to_schema(user).__dict__
