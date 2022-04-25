@@ -16,7 +16,7 @@ import {
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
 import { decodeRegistrationLink } from "../../../utils/logic/registration";
-import PendingPage from "../PendingPage";
+import PendingPage from "../../PendingPage";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
