@@ -1,8 +1,6 @@
-from re import S
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.app.exceptions.students_email import FailedToAddNewEmailException
 from src.app.schemas.students import NewDecision
 from src.database.crud.skills import get_skills_by_ids
 from src.database.crud.students import (get_last_emails_of_students, get_student_by_id,
@@ -15,7 +13,7 @@ from src.database.models import Edition, Student, Skill, DecisionEmail
 from src.app.schemas.students import (
     ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList,
     Student as StudentModel, Suggestions as SuggestionsModel,
-    NewEmail, DecisionEmail as DecionEmailModel, EmailsSearchQueryParams,
+    NewEmail, EmailsSearchQueryParams,
     ListReturnStudentMailList)
 
 

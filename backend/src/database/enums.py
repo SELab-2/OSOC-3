@@ -15,7 +15,7 @@ class DecisionEnum(enum.Enum):
 
 
 @enum.unique
-class EmailStatusEnum(enum.Enum):
+class EmailStatusEnum(enum.IntEnum):
     """Enum for the status attached to an email sent to a student"""
     # Nothing happened (undecided/screening)
     APPLIED = 0

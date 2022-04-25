@@ -45,11 +45,6 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(student30)
     database_session.commit()
 
-    # DecisionEmail
-    decision_email: DecisionEmail = DecisionEmail(
-        student=student01, decision=EmailStatusEnum.APPROVED, date=datetime.datetime.now())
-    database_session.add(decision_email)
-    database_session.commit()
     return database_session
 
 
@@ -394,6 +389,8 @@ def test_get_emails_student_coach(database_with_data: Session, auth_client: Auth
 def test_get_emails_student_admin(database_with_data: Session, auth_client: AuthClient):
     """tests that an admin can get the mails of a student"""
     auth_client.admin()
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 1})
     response = auth_client.get("/editions/ed2022/students/1/emails")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["emails"]) == 1
@@ -522,7 +519,7 @@ def test_get_emails(database_with_data: Session, auth_client: AuthClient):
     """test get emails"""
     auth_client.admin()
     response = auth_client.post("/editions/ed2022/students/emails",
-                     json={"students_id": [1], "email_status": 3})
+                                json={"students_id": [1], "email_status": 3})
     auth_client.post("/editions/ed2022/students/emails",
                      json={"students_id": [2], "email_status": 5})
     response = auth_client.get("/editions/ed2022/students/emails")
@@ -532,3 +529,40 @@ def test_get_emails(database_with_data: Session, auth_client: AuthClient):
     assert response.json()["studentEmails"][0]["emails"][0]["decision"] == 3
     assert response.json()["studentEmails"][1]["student"]["studentId"] == 2
     assert response.json()["studentEmails"][1]["emails"][0]["decision"] == 5
+
+
+def test_emails_filter_first_name(database_with_data: Session, auth_client: AuthClient):
+    """test get emails with filter first name"""
+    auth_client.admin()
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 1})
+    response = auth_client.get(
+        "/editions/ed2022/students/emails/?first_name=Jos")
+    assert len(response.json()["studentEmails"]) == 1
+    assert response.json()["studentEmails"][0]["student"]["firstName"] == "Jos"
+
+
+def test_emails_filter_last_name(database_with_data: Session, auth_client: AuthClient):
+    """test get emails with filter last name"""
+    auth_client.admin()
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 1})
+    response = auth_client.get(
+        "/editions/ed2022/students/emails/?last_name=Vermeulen")
+    assert len(response.json()["studentEmails"]) == 1
+    assert response.json()[
+        "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
+
+
+def test_emails_filter_emailstatus(database_with_data: Session, auth_client: AuthClient):
+    """test to get all email status, and you only filter on the email send"""
+    auth_client.admin()
+    for i in range(0, 6):
+        auth_client.post("/editions/ed2022/students/emails",
+                         json={"students_id": [2], "email_status": i})
+        response = auth_client.get(
+            "/editions/ed2022/students/emails/?email_status="+str(i))
+        assert len(response.json()["studentEmails"]) == 1
+        if i > 0:
+            response = auth_client.get(
+                "/editions/ed2022/students/emails/?email_status="+str(i-1))

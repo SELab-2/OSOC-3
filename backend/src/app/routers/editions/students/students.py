@@ -9,7 +9,7 @@ from src.app.logic.students import (
     get_students_search, get_emails_of_student, make_new_email,
     last_emails_of_students)
 from src.app.schemas.students import (NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList,
-                                      ReturnStudentMailList, DecisionEmail, NewEmail, EmailsSearchQueryParams,
+                                      ReturnStudentMailList, NewEmail, EmailsSearchQueryParams,
                                       ListReturnStudentMailList)
 from src.database.database import get_session
 from src.database.models import Student, Edition
