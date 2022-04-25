@@ -76,9 +76,8 @@ def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSe
                 last_emails, DecisionEmail.email_id == last_emails.c.email_id
              )
 
-    # it has to be here, otherwise it skips it when it's 0 (APPROVED)
-    if commons.email_status is not None:
-        emails = emails.where(DecisionEmail.decision == commons.email_status)
+    if commons.email_status:
+        emails = emails.where(DecisionEmail.decision.in_(commons.email_status))
 
     emails = emails.order_by(DecisionEmail.student_id)
     return paginate(emails, commons.page).all()

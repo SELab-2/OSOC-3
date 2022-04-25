@@ -77,7 +77,7 @@ class EmailsSearchQueryParams:
     """search query paramaters for email"""
     first_name: str = ""
     last_name: str = ""
-    email_status: EmailStatusEnum | None = None
+    email_status: list[EmailStatusEnum] = Query([])
     page: int = 0
 
 

@@ -561,8 +561,24 @@ def test_emails_filter_emailstatus(database_with_data: Session, auth_client: Aut
         auth_client.post("/editions/ed2022/students/emails",
                          json={"students_id": [2], "email_status": i})
         response = auth_client.get(
-            "/editions/ed2022/students/emails/?email_status="+str(i))
+            f"/editions/ed2022/students/emails/?email_status={i}")
+        print(response.json())
         assert len(response.json()["studentEmails"]) == 1
         if i > 0:
             response = auth_client.get(
-                "/editions/ed2022/students/emails/?email_status="+str(i-1))
+                f"/editions/ed2022/students/emails/?email_status={i-1}")
+            assert len(response.json()["studentEmails"]) == 0
+
+
+def test_emails_filter_emailstatus_multiple_status(database_with_data: Session, auth_client: AuthClient):
+    """test to get all email status with multiple status"""
+    auth_client.admin()
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [2], "email_status": 1})
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 3})
+    response = auth_client.get(
+        "/editions/ed2022/students/emails/?email_status=3&email_status=1")
+    assert len(response.json()["studentEmails"]) == 2
+    assert response.json()["studentEmails"][0]["student"]["studentId"] == 1
+    assert response.json()["studentEmails"][1]["student"]["studentId"] == 2

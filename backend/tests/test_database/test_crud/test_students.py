@@ -282,7 +282,7 @@ def test_get_last_emails_of_students_filter_applied(database_with_data: Session)
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.APPLIED))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.APPLIED]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -301,7 +301,7 @@ def test_get_last_emails_of_students_filter_awaiting_project(database_with_data:
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.AWAITING_PROJECT))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.AWAITING_PROJECT]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -320,7 +320,7 @@ def test_get_last_emails_of_students_filter_approved(database_with_data: Session
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.APPROVED))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.APPROVED]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -337,7 +337,7 @@ def test_get_last_emails_of_students_filter_contract_confirmed(database_with_dat
     create_email(database_with_data, student2,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.CONTRACT_CONFIRMED))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.CONTRACT_CONFIRMED]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -356,7 +356,7 @@ def test_get_last_emails_of_students_filter_contract_declined(database_with_data
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.CONTRACT_DECLINED))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.CONTRACT_DECLINED]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -375,7 +375,7 @@ def test_get_last_emails_of_students_filter_rejected(database_with_data: Session
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=EmailStatusEnum.REJECTED))
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[EmailStatusEnum.REJECTED]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 2
@@ -418,3 +418,26 @@ def test_get_last_emails_of_students_last_name(database_with_data: Session):
     assert len(emails) == 1
     assert emails[0].student_id == 1
     assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+
+
+def test_get_last_emails_of_students_filter_mutliple_status(database_with_data: Session):
+    """tests get all emails where last emails is applied"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(email_status=
+        [
+            EmailStatusEnum.APPLIED,
+            EmailStatusEnum.CONTRACT_CONFIRMED
+        ]))
+
+    assert len(emails) == 2
+    assert emails[0].student_id == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+    assert emails[1].student_id == 2
+    assert emails[1].decision == EmailStatusEnum.APPLIED
