@@ -97,9 +97,9 @@ export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
 export function setStateRequest(eventKey: string | null, edition: string | undefined) {
     console.log(eventKey);
     console.log(selectedRows);
-    // TODO do post request with selected data
+    // post request with selected data
     // const response = await axiosInstance.post(`/editions/${edition}/emails/`,
-    // {student_ids: selectedRows, email_status: eventKey});
+    // {student_id: selectedRows, email_status: eventKey});
 }
 
 let selectedFilters: EmailType[] = [];
