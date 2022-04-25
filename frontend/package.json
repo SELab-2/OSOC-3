@@ -58,12 +58,6 @@
         "lint": "eslint . --ext js,ts,jsx,tsx",
         "test": "react-scripts test --watchAll=false --verbose"
     },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
-    },
     "browserslist": {
         "production": [
             ">0.2%",
