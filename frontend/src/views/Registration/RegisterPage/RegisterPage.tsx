@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { register } from "../../utils/api/register";
-import { validateRegistrationUrl } from "../../utils/api";
+import { register } from "../../../utils/api/register";
+import { validateRegistrationUrl } from "../../../utils/api";
 
 import {
     Email,
@@ -12,10 +12,10 @@ import {
     SocialButtons,
     InfoText,
     BadInviteLink,
-} from "../../components/RegisterComponents";
+} from "../../../components/RegisterComponents";
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
-import { decodeRegistrationLink } from "../../utils/logic/registration";
+import { decodeRegistrationLink } from "../../../utils/logic/registration";
 import PendingPage from "../PendingPage";
 
 /**
@@ -84,7 +84,7 @@ export default function RegisterPage() {
         <div>
             <RegisterFormContainer>
                 <InfoText />
-                <SocialButtons />
+                <SocialButtons edition={data.edition} uuid={data.uuid} />
                 <Or>or</Or>
                 <Email email={email} setEmail={setEmail} />
                 <Name name={name} setName={setName} />
