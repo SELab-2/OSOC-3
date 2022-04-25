@@ -1,12 +1,15 @@
 import aiohttp
+from sqlalchemy.orm import Session
 from starlette import status
 
 from src.app.exceptions.register import InvalidGitHubCode
+from src.database.crud.users import get_user_by_github_id
+from src.database.models import User
 from src.app.schemas.oauth.github import AccessTokenResponse, GitHubProfile
 import settings
 
 
-async def get_github_access_token(session: aiohttp.ClientSession, code: str) -> AccessTokenResponse:
+async def get_github_access_token(http_session: aiohttp.ClientSession, code: str) -> AccessTokenResponse:
     """Get a user's GitHub access token"""
     headers = {
         # Explicitly request the V3 API as recommended in the docs:
@@ -20,7 +23,7 @@ async def get_github_access_token(session: aiohttp.ClientSession, code: str) -> 
         "code": code
     }
 
-    token_response = await session.post("https://github.com/login/oauth/access_token", headers=headers, params=params)
+    token_response = await http_session.post("https://github.com/login/oauth/access_token", headers=headers, params=params)
     token_response_json = await token_response.json()
 
     # For some reason this endpoint responds with a 200 if something is wrong so we have to check
@@ -31,13 +34,13 @@ async def get_github_access_token(session: aiohttp.ClientSession, code: str) -> 
     return AccessTokenResponse(**token_response_json)
 
 
-async def get_github_email(session: aiohttp.ClientSession, access_token: str) -> GitHubProfile:
+async def get_github_email(http_session: aiohttp.ClientSession, access_token: str) -> GitHubProfile:
     """Get a user's profile info used on GitHub"""
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
 
-    profile = await session.get("https://api.github.com/user", headers=headers)
+    profile = await http_session.get("https://api.github.com/user", headers=headers)
     profile_json = await profile.json()
 
     assert profile.status == status.HTTP_200_OK, profile_json
@@ -49,7 +52,7 @@ async def get_github_email(session: aiohttp.ClientSession, access_token: str) ->
     # Email can be private, in which case we have to send another request
     # to access all their other emails
     if email is None:
-        user_emails = await session.get("https://api.github.com/user/emails", headers=headers)
+        user_emails = await http_session.get("https://api.github.com/user/emails", headers=headers)
         user_emails_json = await user_emails.json()
 
         assert user_emails.status == status.HTTP_200_OK, user_emails_json
@@ -65,4 +68,25 @@ async def get_github_email(session: aiohttp.ClientSession, access_token: str) ->
         if email is None:
             email = user_emails_json[0]["email"]
 
-    return GitHubProfile(access_token=access_token, email=email, name=name)
+    return GitHubProfile(access_token=access_token, email=email, id=profile_json["id"], name=name)
+
+
+async def get_github_id(http_session: aiohttp.ClientSession, access_token: str) -> int:
+    """Get a user's GitHub user id"""
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    profile = await http_session.get("https://api.github.com/user", headers=headers)
+    profile_json = await profile.json()
+
+    assert profile.status == status.HTTP_200_OK, profile_json
+
+    return profile_json["id"]
+
+
+async def get_user_by_github_code(http_session: aiohttp.ClientSession, db: Session, code: str) -> User:
+    """Find a User by their GitHub auth code"""
+    token_data = await get_github_access_token(http_session, code)
+    github_id = await get_github_id(http_session, token_data.access_token)
+    return get_user_by_github_id(db, github_id)

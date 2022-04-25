@@ -25,4 +25,5 @@ class GitHubProfile(BaseModel):
     """Model for data we have about a user's GitHub profile"""
     access_token: str
     email: str
+    id: int
     name: str

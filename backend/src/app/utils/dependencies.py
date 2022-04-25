@@ -51,7 +51,7 @@ async def get_latest_edition(edition: Edition = Depends(get_edition), database: 
     return latest
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")
 
 
 async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:

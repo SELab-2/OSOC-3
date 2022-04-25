@@ -43,8 +43,9 @@ class AuthGitHub(Base):
 
     # Allow nullable in case a token gets invalidated
     access_token = Column(Text, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     email = Column(Text, unique=True, nullable=False)
+    github_user_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False)
 
