@@ -55,6 +55,7 @@ export default function Router() {
                             </Route>
                             {/* Redirect /login to the login page */}
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />
+                            <Route path={"/register/redirect"} element={<RedirectPage />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
                             {/* Catch all routes in a PrivateRoute, so you can't visit them */}
                             {/* unless you are logged in */}
