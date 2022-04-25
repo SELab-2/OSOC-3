@@ -98,7 +98,6 @@ def last_emails_of_students(db: Session, edition: Edition,
         db, edition, commons)
     student_emails: list[ReturnStudentMailList] = []
     for email in emails:
-        student=get_student_by_id(db, email.student_id)
-        student_emails.append(ReturnStudentMailList(student=student,
+        student_emails.append(ReturnStudentMailList(student=email.student,
                                                     emails=[email]))
     return ListReturnStudentMailList(student_emails=student_emails)
