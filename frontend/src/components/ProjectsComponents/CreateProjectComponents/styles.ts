@@ -29,8 +29,9 @@ export const RemoveButton = styled.button`
     align-items: center;
 `;
 
-export const AddedCoach = styled.div`
+export const AddedItem = styled.div`
     margin: 5px;
+    margin-left: 0;
     padding: 5px;
     background-color: #1a1a36;
     max-width: fit-content;

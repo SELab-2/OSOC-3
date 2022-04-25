@@ -42,4 +42,7 @@ export const CreateButton = styled.button`
     border-radius: 5px;
 `;
 
-
+export const Label = styled.h5`
+    margin-top: 20px;
+    margin-bottom: 0px;
+`

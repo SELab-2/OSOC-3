@@ -1,4 +1,4 @@
-import { CreateProjectContainer, CreateButton } from "./styles";
+import { CreateProjectContainer, CreateButton, Label } from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,15 +10,14 @@ import {
     CoachInput,
     SkillInput,
     PartnerInput,
-    AddedCoaches,
+    AddedItems,
+    AddedSkills,
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
 import { SkillProject } from "../../../data/interfaces/projects";
-import AddedSkills from "../../../components/ProjectsComponents/CreateProjectComponents/AddedSkills/AddedSkills";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
     const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
-    const [partners, setPartners] = useState<string[]>([]);
 
     // States for coaches
     const [coach, setCoach] = useState("");
@@ -27,6 +26,10 @@ export default function CreateProjectPage() {
     // States for skills
     const [skill, setSkill] = useState("");
     const [skills, setSkills] = useState<SkillProject[]>([]);
+
+    // States for partners
+    const [partner, setPartner] = useState("");
+    const [partners, setPartners] = useState<string[]>([]);
 
     const navigate = useNavigate();
 
@@ -38,25 +41,37 @@ export default function CreateProjectPage() {
             </GoBack>
             <h2>New Project</h2>
 
+            <Label>Name</Label>
             <NameInput name={name} setName={setName} />
 
+            <Label>Number of students</Label>
             <NumberOfStudentsInput
                 numberOfStudents={numberOfStudents}
                 setNumberOfStudents={setNumberOfStudents}
             />
 
+            <Label>Coaches</Label>
             <CoachInput
                 coach={coach}
                 setCoach={setCoach}
                 coaches={coaches}
                 setCoaches={setCoaches}
             />
-            <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
+            <AddedItems items={coaches} setItems={setCoaches} />
 
+            <Label>Skills</Label>
             <SkillInput skill={skill} setSkill={setSkill} skills={skills} setSkills={setSkills} />
             <AddedSkills skills={skills} setSkills={setSkills} />
 
-            <PartnerInput partners={partners} setPartners={setPartners} />
+            <Label>Partners</Label>
+            <PartnerInput
+                partner={partner}
+                setPartner={setPartner}
+                partners={partners}
+                setPartners={setPartners}
+            />
+            <AddedItems items={partners} setItems={setPartners} />
+
             <CreateButton
                 onClick={async () => {
                     const response = await createProject(

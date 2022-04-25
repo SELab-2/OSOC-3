@@ -3,7 +3,6 @@ import styled from "styled-components";
 export const SkillContainer = styled.div`
     border-radius: 5px;
     margin-top: 10px;
-    margin-left: 5px;
     background-color: #1a1a36;
     padding: 5px 10px;
     width: fit-content;

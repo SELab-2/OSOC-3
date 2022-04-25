@@ -5,4 +5,5 @@ export {
     SkillInput,
     PartnerInput,
 } from "./InputFields";
-export { default as AddedCoaches } from "./AddedCoaches";
+export { default as AddedItems } from "./AddedItems";
+export { default as AddedSkills } from "./AddedSkills";
