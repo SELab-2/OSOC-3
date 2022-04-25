@@ -1,5 +1,5 @@
 from src.app.schemas.users import User
-from src.app.schemas.utils import CamelCaseModel
+from src.app.schemas.utils import BaseModel
 
 
 class UserData(User):
@@ -7,10 +7,11 @@ class UserData(User):
     editions: list[str] = []
 
 
-class Token(CamelCaseModel):
+class Token(BaseModel):
     """Token generated after login
     Also contains data about the User to set permissions in frontend
     """
     access_token: str
+    refresh_token: str
     token_type: str
     user: UserData

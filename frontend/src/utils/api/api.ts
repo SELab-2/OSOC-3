@@ -1,20 +1,60 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "../../settings";
+import {
+    getAccessToken,
+    getRefreshTokenLock,
+    setAccessToken,
+    setRefreshToken,
+    setRefreshTokenLock,
+} from "../local-storage/auth";
+import { refreshTokens } from "./auth";
 
 export const axiosInstance = axios.create();
+
 axiosInstance.defaults.baseURL = BASE_URL;
 
-/**
- * Function to set the default bearer token in the request headers.
- * Passing `null` as the value will remove the header instead.
- */
-export function setBearerToken(value: string | null) {
-    // Remove the header
-    // Note: setting to "null" or "undefined" is not possible
-    if (value === null) {
-        delete axiosInstance.defaults.headers.common.Authorization;
-        return;
+axiosInstance.interceptors.request.use(async config => {
+    // If the request is sent when a token is being refreshed, delay it for 100ms.
+    while (getRefreshTokenLock()) {
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
+    const accessToken = getAccessToken();
+    if (accessToken) {
+        if (config.headers) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        }
+    }
+    return config;
+});
 
-    axiosInstance.defaults.headers.common.Authorization = `Bearer ${value}`;
-}
+axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+        if (getRefreshTokenLock()) {
+            // If the token is already being refreshed, resend it (will be delayed until the token has been refreshed)
+            return axiosInstance(error.config);
+        } else {
+            setRefreshTokenLock(true);
+            try {
+                const tokens = await refreshTokens();
+
+                setAccessToken(tokens.access_token);
+                setRefreshToken(tokens.refresh_token);
+
+                setRefreshTokenLock(false);
+
+                return axiosInstance(error.config);
+            } catch (refreshError) {
+                if (axios.isAxiosError(refreshError)) {
+                    const axiosError: AxiosError = refreshError;
+                    if (axiosError.response?.status === 401) {
+                        // refreshing failed with an unauthorized status
+                        localStorage.clear();
+                        window.location.replace("/");
+                    }
+                }
+            }
+            setRefreshTokenLock(false);
+        }
+    }
+    throw error;
+});
