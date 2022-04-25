@@ -4,7 +4,7 @@ import { Form } from "react-bootstrap";
 export const CardsGrid = styled.div`
     display: grid;
     grid-gap: 5px;
-    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
     grid-auto-flow: dense;
 `;
 
