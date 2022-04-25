@@ -39,4 +39,10 @@ async def create_auth_email(db: AsyncSession, user: User, pw_hash: str, email: s
 
 async def create_auth_github(db: AsyncSession, user: User, profile: GitHubProfile, commit: bool = True) -> AuthGitHub:
     """Create an authentication entry for GitHub"""
-    auth_gh = AuthGitHub()
+    auth_gh = AuthGitHub(user=user, access_token=profile.access_token, email=profile.email)
+    db.add(auth_gh)
+
+    if commit:
+        db.commit()
+
+    return auth_gh

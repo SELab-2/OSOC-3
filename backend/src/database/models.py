@@ -40,6 +40,9 @@ class AuthGitHub(Base):
     __tablename__ = "github_auths"
 
     gh_auth_id = Column(Integer, primary_key=True)
+
+    # Allow nullable in case a token gets invalidated
+    access_token = Column(Text, nullable=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     email = Column(Text, unique=True, nullable=False)
 

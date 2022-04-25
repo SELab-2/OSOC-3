@@ -10,7 +10,7 @@ from .authentication import (
 from .editions import DuplicateInsertException, ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
-from .register import FailedToAddNewUserException
+from .register import FailedToAddNewUserException, InvalidGitHubCode
 from .students_email import FailedToAddNewEmailException
 from .webhooks import WebhookProcessException
 from .util import NotFound
@@ -32,6 +32,13 @@ def install_handlers(app: FastAPI):  # pylint: disable=R0914
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    @app.exception_handler(InvalidGitHubCode)
+    def invalid_github_code(_request: Request, _exception: InvalidGitHubCode):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(_exception)}
         )
 
     @app.exception_handler(MalformedUUIDError)
