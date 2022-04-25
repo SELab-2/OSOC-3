@@ -1,6 +1,15 @@
 import { axiosInstance } from "../api";
 
 /**
+ * Enum for the different types of authentication.
+ */
+export enum AuthType {
+    Email = "email",
+    GitHub = "github",
+    Google = "google",
+}
+
+/**
  *  Interface of a user.
  */
 export interface User {
@@ -8,7 +17,7 @@ export interface User {
     name: string;
     admin: boolean;
     auth: {
-        authType: string;
+        authType: AuthType;
         email: string;
     };
 }
@@ -53,6 +62,7 @@ export async function getUsersExcludeEdition(
         const response = await axiosInstance.get(
             `/users/?page=${page}&exclude_edition=${edition}&name=${name}`
         );
+        console.log(response.data);
         return response.data as UsersList;
     }
     const response = await axiosInstance.get(`/users/?exclude_edition=${edition}&page=${page}`);
