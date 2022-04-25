@@ -15,7 +15,7 @@ import {
 } from "../../../components/RegisterComponents";
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
-import { decodeRegistrationLink } from "../../../utils/logic/registration";
+import { decodeRegistrationLink } from "../../../utils/logic";
 import PendingPage from "../../PendingPage";
 
 /**

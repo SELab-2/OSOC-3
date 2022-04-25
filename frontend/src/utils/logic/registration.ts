@@ -39,5 +39,6 @@ export function createRedirectUri(
     provider: OAuthProvider,
     data: { edition: string; uuid: string }
 ): string {
-    return `${FE_BASE_URL}/register/redirect?provider=${provider}&edition=${data.edition}&uuid=${data.uuid}`;
+    const encodedEdition = encodeURIComponent(data.edition);
+    return `${FE_BASE_URL}/register/redirect?provider=${provider}&edition=${encodedEdition}&uuid=${data.uuid}`;
 }

@@ -3,6 +3,7 @@ import { Socials, SocialsContainer } from "./styles";
 import { GITHUB_CLIENT_ID } from "../../../settings";
 import { createRedirectUri } from "../../../utils/logic";
 import { OAuthProvider } from "../../../data/enums";
+import { generateRegisterState } from "../../../utils/session-storage";
 
 export default function SocialButtons(props: { edition: string; uuid: string }) {
     async function githubRegister() {
@@ -11,6 +12,7 @@ export default function SocialButtons(props: { edition: string; uuid: string }) 
             createRedirectUri(OAuthProvider.GITHUB, props)
         )}`;
         authUrl += "&scope=read:user%20user:email";
+        authUrl += `&state=${generateRegisterState()}`;
 
         window.location.replace(authUrl);
     }
