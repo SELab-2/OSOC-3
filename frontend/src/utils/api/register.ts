@@ -39,4 +39,18 @@ export async function register(
 /**
  * Function to register a user using GitHub OAuth
  */
-export async function registerGithub(edition: string, uuid: string, token: string) {}
+export async function registerGithub(edition: string, uuid: string, code: string) {
+    const payload = {
+        uuid: uuid,
+        code: code,
+    };
+
+    try {
+        const response = await axiosInstance.post(`/editions/${edition}/register/github`, payload);
+        console.log(response);
+    } catch (e) {
+        if (axios.isAxiosError(e)) {
+            console.log(e.response);
+        }
+    }
+}

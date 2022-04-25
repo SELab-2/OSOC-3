@@ -1,3 +1,6 @@
+from typing import AsyncGenerator
+
+import aiohttp
 import sqlalchemy.exc
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -160,3 +163,9 @@ async def get_project_role(
     if project_role.project != project:
         raise NotFound()
     return project_role
+
+
+async def get_http_session() -> AsyncGenerator[aiohttp.ClientSession, None]:
+    """Get an aiohttp ClientSession to send requests with"""
+    async with aiohttp.ClientSession() as session:
+        yield session
