@@ -20,11 +20,11 @@ def get_projects_for_edition_page(db: Session, edition: Edition,
     """Returns a paginated list of all projects from a certain edition from the database"""
     query = _get_projects_for_edition_query(db, edition).where(
         Project.name.contains(search_params.name))
+    if search_params.coach:
+        query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
     projects: list[Project] = paginate(query, search_params.page).all()
-    if not search_params.coach:
-        return projects
-    return list(set(projects) & set(user.projects))
 
+    return projects
 
 
 def add_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
