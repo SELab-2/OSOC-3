@@ -30,19 +30,17 @@ export default function Skill({
 
             <AddButton
                 onClick={() => {
-                    
                     if (availableSkills.some(availableSkill => availableSkill === skill)) {
-                        if (!skills.some(existingSkill => existingSkill.skill === skill)) {
-                            const newSkills = [...skills];
-                            const newSkill: SkillProject = {
-                                skill: skill,
-                                description: undefined,
-                                amount: undefined,
-                            };
-                            newSkills.push(newSkill);
-                            setSkills(newSkills);
-                        }
+                        const newSkills = [...skills];
+                        const newSkill: SkillProject = {
+                            skill: skill,
+                            description: undefined,
+                            amount: undefined,
+                        };
+                        newSkills.push(newSkill);
+                        setSkills(newSkills);
                     }
+                    setSkill("");
                 }}
             >
                 Add skill

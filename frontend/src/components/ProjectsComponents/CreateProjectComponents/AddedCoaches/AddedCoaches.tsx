@@ -21,6 +21,7 @@ export default function AddedCoaches({
                         }}
                     >
                         <TiDeleteOutline size={"20px"} />
+                        
                     </RemoveButton>
                 </AddedCoach>
             ))}
