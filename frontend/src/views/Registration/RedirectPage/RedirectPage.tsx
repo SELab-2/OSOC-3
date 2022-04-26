@@ -1,10 +1,10 @@
 import { useSearchParams } from "react-router-dom";
-import { RedirectPageContainer } from "./styles";
 import { useEffect, useState } from "react";
 import { getRegisterState } from "../../../utils/session-storage";
 import { registerGithub } from "../../../utils/api/register";
 import axios from "axios";
 import PendingPage from "../../PendingPage";
+import { CenterText, PageContainer } from "../../../app.styles";
 
 /**
  * Page where users end up after using an OAuth application
@@ -57,18 +57,24 @@ export default function RedirectPage() {
 
     if (showErrorMessage) {
         return (
-            <RedirectPageContainer>
-                <h2>Uh-oh!</h2>
-                <br />
-                That doesn't look like a valid URI.
-                <br />
-                Did you fiddle with something?
-            </RedirectPageContainer>
+            <PageContainer>
+                <CenterText>
+                    <h2>Uh-oh!</h2>
+                    <br />
+                    That doesn't look like a valid URI.
+                    <br />
+                    Did you fiddle with something?
+                </CenterText>
+            </PageContainer>
         );
     }
 
     if (loading) {
-        return <RedirectPageContainer>Registering...</RedirectPageContainer>;
+        return (
+            <PageContainer>
+                <CenterText>Registering...</CenterText>
+            </PageContainer>
+        );
     }
 
     return <PendingPage />;

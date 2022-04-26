@@ -47,11 +47,11 @@ export default function Router() {
                         <Routes>
                             <Route path={"/"} element={<LoginPage />} />
                             <Route path={"/oauth"} element={<Outlet />}>
+                                <Route path={"github"} element={<GitHubOAuth />} />
                                 <Route
-                                    path={""}
+                                    path={"*"}
                                     element={<Navigate to={"/404-not-found"} replace />}
                                 />
-                                <Route path={"github"} element={<GitHubOAuth />} />
                             </Route>
                             {/* Redirect /login to the login page */}
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />

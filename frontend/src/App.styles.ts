@@ -9,3 +9,16 @@ export const Container = styled.div`
 export const ContentWrapper = styled.div`
     flex: 1;
 `;
+
+export const PageContainer = styled.div.attrs(() => ({
+    className: "mt-2",
+}))`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+`;
+
+export const CenterText = styled.div`
+    text-align: center;
+`;
