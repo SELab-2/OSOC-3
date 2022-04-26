@@ -57,7 +57,7 @@ def database_with_data(database_session: Session) -> Session:
 
 
 def test_new_suggestion(database_with_data: Session, auth_client: AuthClient):
-    """Tests a new sugesstion"""
+    """Tests creating a new suggestion"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     resp = auth_client.post("/editions/ed2022/students/2/suggestions/",
@@ -70,6 +70,29 @@ def test_new_suggestion(database_with_data: Session, auth_client: AuthClient):
                         ["suggestion"]) == suggestions[0].suggestion
     assert resp.json()[
         "suggestion"]["argumentation"] == suggestions[0].argumentation
+
+
+def test_overwrite_suggestion(database_with_data: Session, auth_client: AuthClient):
+    """Tests that when you've already made a suggestion earlier, the existing one is replaced"""
+    # Create initial suggestion
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    auth_client.post("/editions/ed2022/students/2/suggestions/",
+                     json={"suggestion": 1, "argumentation": "test"})
+
+    suggestions: list[Suggestion] = database_with_data.query(
+        Suggestion).where(Suggestion.student_id == 2).all()
+    assert len(suggestions) == 1
+
+    # Send a new request
+    arg = "overwritten"
+    resp = auth_client.post("/editions/ed2022/students/2/suggestions/",
+                            json={"suggestion": 2, "argumentation": arg})
+    assert resp.status_code == status.HTTP_201_CREATED
+    suggestions: list[Suggestion] = database_with_data.query(
+        Suggestion).where(Suggestion.student_id == 2).all()
+    assert len(suggestions) == 1
+    assert suggestions[0].argumentation == arg
 
 
 def test_new_suggestion_not_authorized(database_with_data: Session, auth_client: AuthClient):

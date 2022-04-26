@@ -1,6 +1,8 @@
 import { useEffect } from "react";
+
 import { validateBearerToken } from "../../utils/api/auth";
-import { logIn, logOut, useAuth } from "../../contexts";
+import { logIn, logOut, useAuth } from "../../contexts/auth-context";
+import { getAccessToken, getRefreshToken } from "../../utils/local-storage";
 
 /**
  * Placeholder page shown while the bearer token found in LocalStorage is being verified.
@@ -11,14 +13,22 @@ export default function VerifyingTokenPage() {
 
     useEffect(() => {
         const verifyToken = async () => {
-            const response = await validateBearerToken(authContext.token);
+            const accessToken = getAccessToken();
+            const refreshToken = getRefreshToken();
+
+            if (accessToken === null || refreshToken === null) {
+                logOut(authContext);
+                return;
+            }
+
+            const response = await validateBearerToken(accessToken);
 
             if (response === null) {
                 logOut(authContext);
             } else {
                 // Token was valid, use it as the default request header
                 // and set all data in the AuthContext
-                logIn(response, authContext.token, authContext);
+                logIn(response, authContext);
             }
         };
 

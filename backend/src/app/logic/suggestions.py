@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from src.app.schemas.suggestion import NewSuggestion
 from src.database.crud.suggestions import (
-    create_suggestion, get_suggestions_of_student, delete_suggestion, update_suggestion)
+    create_suggestion, get_suggestions_of_student, get_own_suggestion, delete_suggestion, update_suggestion)
 from src.database.models import Suggestion, User
 from src.app.schemas.suggestion import SuggestionListResponse, SuggestionResponse, suggestion_model_to_schema
 from src.app.exceptions.authentication import MissingPermissionsException
@@ -11,8 +11,15 @@ from src.app.exceptions.authentication import MissingPermissionsException
 def make_new_suggestion(db: Session, new_suggestion: NewSuggestion,
                         user: User, student_id: int | None) -> SuggestionResponse:
     """"Make a new suggestion"""
-    suggestion_orm = create_suggestion(
-        db, user.user_id, student_id, new_suggestion.suggestion, new_suggestion.argumentation)
+    own_suggestion = get_own_suggestion(db, student_id, user.user_id)
+
+    if own_suggestion is None:
+        suggestion_orm = create_suggestion(
+            db, user.user_id, student_id, new_suggestion.suggestion, new_suggestion.argumentation)
+    else:
+        update_suggestion(db, own_suggestion, new_suggestion.suggestion, new_suggestion.argumentation)
+        suggestion_orm = own_suggestion
+
     suggestion = suggestion_model_to_schema(suggestion_orm)
     return SuggestionResponse(suggestion=suggestion)
 

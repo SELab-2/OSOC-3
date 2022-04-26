@@ -25,6 +25,6 @@ else:
         host=settings.DB_HOST,
         port=settings.DB_PORT,
         database=settings.DB_NAME
-    ))
+    ), pool_pre_ping=True)
 
 DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
