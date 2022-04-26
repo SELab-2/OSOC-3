@@ -205,7 +205,7 @@ def test_get_first_name_students(database_with_data: Session, auth_client: AuthC
     """tests get students based on query paramer first name"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    response = auth_client.get("/editions/ed2022/students/?first_name=Jos")
+    response = auth_client.get("/editions/ed2022/students/?name=Jos")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
 
@@ -221,11 +221,11 @@ def test_get_first_name_student_pagination(database_with_data: Session, auth_cli
         database_with_data.add(student)
     database_with_data.commit()
     response = auth_client.get(
-        "/editions/ed2022/students/?first_name=Student&page=0")
+        "/editions/ed2022/students/?name=Student&page=0")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == DB_PAGE_SIZE
     response = auth_client.get(
-        "/editions/ed2022/students/?first_name=Student&page=1")
+        "/editions/ed2022/students/?name=Student&page=1")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()['students']) == max(
         round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
@@ -236,7 +236,7 @@ def test_get_last_name_students(database_with_data: Session, auth_client: AuthCl
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     response = auth_client.get(
-        "/editions/ed2022/students/?last_name=Vermeulen")
+        "/editions/ed2022/students/?name=Vermeulen")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
 
@@ -252,11 +252,11 @@ def test_get_last_name_students_pagination(database_with_data: Session, auth_cli
         database_with_data.add(student)
     database_with_data.commit()
     response = auth_client.get(
-        "/editions/ed2022/students/?last_name=Student&page=0")
+        "/editions/ed2022/students/?name=Student&page=0")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == DB_PAGE_SIZE
     response = auth_client.get(
-        "/editions/ed2022/students/?last_name=Student&page=1")
+        "/editions/ed2022/students/?name=Student&page=1")
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()['students']) == max(
         round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)

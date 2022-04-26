@@ -64,8 +64,7 @@ class ReturnStudentList(CamelCaseModel):
 @dataclass
 class CommonQueryParams:
     """search query paramaters"""
-    first_name: str = ""
-    last_name: str = ""
+    name: str = ""
     alumni: bool = False
     student_coach: bool = False
     skill_ids: list[int] = Query([])

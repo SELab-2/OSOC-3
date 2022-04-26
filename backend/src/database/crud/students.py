@@ -31,8 +31,7 @@ def get_students(db: Session, edition: Edition,
     """Get students"""
     query = db.query(Student)\
         .where(Student.edition == edition)\
-        .where(Student.first_name.contains(commons.first_name))\
-        .where(Student.last_name.contains(commons.last_name))\
+        .where((Student.first_name + ' ' + Student.last_name).contains(commons.name))\
 
     if commons.alumni:
         query = query.where(Student.alumni)

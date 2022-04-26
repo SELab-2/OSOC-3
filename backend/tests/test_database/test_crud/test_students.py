@@ -123,7 +123,7 @@ def test_search_students_on_first_name(database_with_data: Session):
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition,
-                            CommonQueryParams(first_name="Jos"))
+                            CommonQueryParams(name="Jos"))
     assert len(students) == 1
 
 
@@ -132,7 +132,7 @@ def test_search_students_on_last_name(database_with_data: Session):
     edition: Edition = database_with_data.query(
         Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition,
-                            CommonQueryParams(last_name="Vermeulen"))
+                            CommonQueryParams(name="Vermeulen"))
     assert len(students) == 1
 
 
