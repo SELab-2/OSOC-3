@@ -74,8 +74,7 @@ class CommonQueryParams:
 @dataclass
 class EmailsSearchQueryParams:
     """search query paramaters for email"""
-    first_name: str = ""
-    last_name: str = ""
+    name: str = ""
     email_status: list[EmailStatusEnum] = Query([])
     page: int = 0
 

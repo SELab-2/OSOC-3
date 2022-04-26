@@ -536,8 +536,10 @@ def test_emails_filter_first_name(database_with_data: Session, auth_client: Auth
     auth_client.admin()
     auth_client.post("/editions/ed2022/students/emails",
                      json={"students_id": [1], "email_status": 1})
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [2], "email_status": 1})
     response = auth_client.get(
-        "/editions/ed2022/students/emails/?first_name=Jos")
+        "/editions/ed2022/students/emails/?name=Jos")
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()["studentEmails"][0]["student"]["firstName"] == "Jos"
 
@@ -547,8 +549,10 @@ def test_emails_filter_last_name(database_with_data: Session, auth_client: AuthC
     auth_client.admin()
     auth_client.post("/editions/ed2022/students/emails",
                      json={"students_id": [1], "email_status": 1})
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [2], "email_status": 1})
     response = auth_client.get(
-        "/editions/ed2022/students/emails/?last_name=Vermeulen")
+        "/editions/ed2022/students/emails/?name=Vermeulen")
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()[
         "studentEmails"][0]["student"]["lastName"] == "Vermeulen"

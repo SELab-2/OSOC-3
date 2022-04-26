@@ -67,8 +67,7 @@ def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSe
     last_emails = db.query(DecisionEmail.email_id, func.max(DecisionEmail.date))\
                     .join(Student)\
                     .where(Student.edition == edition)\
-                    .where(Student.first_name.contains(commons.first_name))\
-                    .where(Student.last_name.contains(commons.last_name))\
+                    .where((Student.first_name + ' ' + Student.last_name).contains(commons.name))\
                     .group_by(DecisionEmail.student_id).subquery()
 
     emails = db.query(DecisionEmail).join(

@@ -394,7 +394,7 @@ def test_get_last_emails_of_students_first_name(database_with_data: Session):
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(first_name="Jos", email_status=[]))
+        database_with_data, edition, EmailsSearchQueryParams(name="Jos", email_status=[]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 1
@@ -413,7 +413,7 @@ def test_get_last_emails_of_students_last_name(database_with_data: Session):
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(last_name="Vermeulen", email_status=[]))
+        database_with_data, edition, EmailsSearchQueryParams(name="Vermeulen", email_status=[]))
 
     assert len(emails) == 1
     assert emails[0].student_id == 1
