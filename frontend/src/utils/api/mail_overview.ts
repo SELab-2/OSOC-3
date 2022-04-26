@@ -1,6 +1,7 @@
 import { Email, Student } from "../../data/interfaces";
 import { ChangeEvent } from "react";
 import { EmailType } from "../../data/enums";
+import { axiosInstance } from "./api";
 /**
  * A student together with its email history
  */
@@ -23,40 +24,15 @@ export async function getMailOverview(
     edition: string | undefined,
     page: number
 ): Promise<StudentEmails> {
-    // const FormatFilters: number[] = finalFilters.map(filter => {
-    //     return Object.values(EmailType).indexOf(filter);
-    // });
-    // const response = await axiosInstance.get(
-    //    `/editions/${edition}/emails/?page=${page}&first_name=${finalSearch}&email_status=${FormatFilters}`
-    // );
-    // return response.data as StudentEmails;
-    console.log(finalFilters);
-    console.log(finalSearch);
-    // placeholder while the real API call is not available
-    if (page > 0) {
-        return { studentEmails: [] } as StudentEmails;
-    }
-    const data = {
-        studentEmails: [
-            {
-                student: { studentId: 1, firstName: "Bert", lastName: "Guillemyn" },
-                emails: [
-                    { emailId: 1, studentId: 1, date: "2022-04-13T11:46:28.641337", decision: 0 },
-                    { emailId: 2, studentId: 1, date: "2022-04-14T12:36:28.641337", decision: 1 },
-                    { emailId: 3, studentId: 1, date: "2022-04-15T13:38:38.641337", decision: 2 },
-                ],
-            },
-            {
-                student: { studentId: 2, firstName: "Test", lastName: "Person" },
-                emails: [
-                    { emailId: 1, studentId: 2, date: "2022-04-13T08:25:46.641337", decision: 4 },
-                    { emailId: 2, studentId: 2, date: "2022-04-14T12:36:28.641337", decision: 1 },
-                    { emailId: 3, studentId: 2, date: "2022-04-15T13:38:38.641337", decision: 2 },
-                ],
-            },
-        ],
-    };
-    return data as StudentEmails;
+    const FormatFilters: string[] = finalFilters.map(filter => {
+        return `&email_status=${Object.values(EmailType).indexOf(filter)}`;
+    });
+    const concatted: string = FormatFilters.join("");
+    const response = await axiosInstance.get(
+        `/editions/${edition}/students/emails?page=${page}&first_name=${finalSearch}${concatted}`
+    );
+    console.log(response.data);
+    return response.data as StudentEmails;
 }
 
 const selectedRows: number[] = [];
@@ -94,12 +70,15 @@ export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
  * @param eventKey
  * @param edition
  */
-export function setStateRequest(eventKey: string | null, edition: string | undefined) {
+export async function setStateRequest(eventKey: string | null, edition: string | undefined) {
     console.log(eventKey);
     console.log(selectedRows);
     // post request with selected data
-    // const response = await axiosInstance.post(`/editions/${edition}/emails/`,
-    // {student_id: selectedRows, email_status: eventKey});
+    const response = await axiosInstance.post(`/editions/${edition}/students/emails`, {
+        students_id: selectedRows,
+        email_status: eventKey,
+    });
+    console.log(response);
 }
 
 let selectedFilters: EmailType[] = [];
@@ -121,7 +100,7 @@ export function handleSetSearch(event: ChangeEvent<{ value: string }>) {
     searchTerm = event.target.value;
 }
 
-let finalFilters: string[] = [];
+let finalFilters: EmailType[] = [];
 let finalSearch: string = "";
 
 /**

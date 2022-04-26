@@ -50,13 +50,19 @@ export default function MailOverviewPage() {
             if (studentEmails.studentEmails.length === 0) {
                 setMoreEmailsAvailable(false);
             }
-            if (page === 0) {
-                setTable(studentEmails);
-            } else {
-                setTable({
-                    studentEmails: table.studentEmails.concat(studentEmails.studentEmails),
-                });
+            if (
+                studentEmails.studentEmails.length !== 0 ||
+                (studentEmails.studentEmails.length === 0 && page === 0)
+            ) {
+                if (page === 0) {
+                    setTable(studentEmails);
+                } else {
+                    setTable({
+                        studentEmails: table.studentEmails.concat(studentEmails.studentEmails),
+                    });
+                }
             }
+
             setGotData(true);
         } catch (exception) {
             console.log(exception);
@@ -83,8 +89,8 @@ export default function MailOverviewPage() {
      * handle selecting a new email state
      * @param eventKey
      */
-    function handleSetState(eventKey: string | null) {
-        setStateRequest(eventKey, editionId);
+    async function handleSetState(eventKey: string | null) {
+        await setStateRequest(eventKey, editionId);
         setGotData(false);
         setMoreEmailsAvailable(true);
         updateMailOverview(0);
@@ -138,7 +144,11 @@ export default function MailOverviewPage() {
                             placeholder="Search a student"
                             aria-label="Username"
                             onChange={handleSetSearch}
-                            onSubmit={handleDoSearch}
+                            onKeyPress={event => {
+                                if (event.key === "Enter") {
+                                    return handleDoSearch();
+                                }
+                            }}
                         />
                     </InputGroup>
                 </SearchDiv>
