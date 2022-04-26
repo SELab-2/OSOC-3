@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { axiosInstance } from "./api";
 
 interface RegisterFields {
@@ -39,18 +39,15 @@ export async function register(
 /**
  * Function to register a user using GitHub OAuth
  */
-export async function registerGithub(edition: string, uuid: string, code: string) {
+export async function registerGithub(
+    edition: string,
+    uuid: string,
+    code: string
+): Promise<AxiosResponse> {
     const payload = {
         uuid: uuid,
         code: code,
     };
 
-    try {
-        const response = await axiosInstance.post(`/editions/${edition}/register/github`, payload);
-        console.log(response);
-    } catch (e) {
-        if (axios.isAxiosError(e)) {
-            console.log(e.response);
-        }
-    }
+    return await axiosInstance.post(`/editions/${edition}/register/github`, payload);
 }
