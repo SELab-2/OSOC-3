@@ -27,7 +27,7 @@ export async function logIn(
     payload.append("password", password);
 
     try {
-        const response = await axiosInstance.post("/login/token", payload);
+        const response = await axiosInstance.post("/login/token/email", payload);
         const login = response.data as LoginResponse;
 
         setAccessToken(login.access_token);

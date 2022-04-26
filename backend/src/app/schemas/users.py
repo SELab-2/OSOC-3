@@ -1,3 +1,5 @@
+from typing import Type
+
 from src.app.schemas.editions import Edition
 from src.app.schemas.utils import CamelCaseModel, BaseModel
 from src.database.models import User as ModelUser
@@ -9,12 +11,32 @@ class Authentication(CamelCaseModel):
     email: str
 
 
+def get_user_model_auth(model_user: ModelUser) -> Authentication | None:
+    """Get a user's auth type"""
+    auth: Authentication | None = None
+
+    if model_user.email_auth is not None:
+        auth = Authentication(auth_type="email", email=model_user.email_auth.email)
+    elif model_user.github_auth is not None:
+        auth = Authentication(auth_type="github", email=model_user.github_auth.email)
+    elif model_user.google_auth is not None:
+        auth = Authentication(auth_type="google", email=model_user.google_auth.email)
+
+    return auth
+
+
 class User(CamelCaseModel):
     """Model for a user"""
     user_id: int
     name: str
     admin: bool
     auth: Authentication | None
+
+    @classmethod
+    def from_orm(cls: Type['User'], obj: ModelUser) -> 'User':
+        """Override from_orm in order to instantiate the auth field"""
+        auth = get_user_model_auth(obj)
+        return cls(user_id=obj.user_id, name=obj.name, admin=obj.admin, auth=auth)
 
     class Config:
         """Set to ORM mode"""
@@ -23,13 +45,7 @@ class User(CamelCaseModel):
 
 def user_model_to_schema(model_user: ModelUser) -> User:
     """Create User Schema from User Model"""
-    auth: Authentication | None = None
-    if model_user.email_auth is not None:
-        auth = Authentication(auth_type="email", email=model_user.email_auth.email)
-    elif model_user.github_auth is not None:
-        auth = Authentication(auth_type="github", email=model_user.github_auth.email)
-    elif model_user.google_auth is not None:
-        auth = Authentication(auth_type="google", email=model_user.google_auth.email)
+    auth = get_user_model_auth(model_user)
 
     return User(
         user_id=model_user.user_id,
