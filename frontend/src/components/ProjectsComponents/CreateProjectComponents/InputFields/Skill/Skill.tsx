@@ -34,8 +34,8 @@ export default function Skill({
                         const newSkills = [...skills];
                         const newSkill: SkillProject = {
                             skill: skill,
-                            description: undefined,
-                            amount: undefined,
+                            description: "",
+                            amount: 1,
                         };
                         newSkills.push(newSkill);
                         setSkills(newSkills);

@@ -1,5 +1,5 @@
 import { TiDeleteOutline } from "react-icons/ti";
-import { AddedItem, RemoveButton } from "../styles";
+import { AddedItem, ItemName, RemoveButton } from "../styles";
 
 export default function AddedItems({
     items,
@@ -12,7 +12,7 @@ export default function AddedItems({
         <div>
             {items.map((element, _index) => (
                 <AddedItem key={_index}>
-                    {element}
+                    <ItemName>{element}</ItemName>
                     <RemoveButton
                         onClick={() => {
                             const newItems = [...items];

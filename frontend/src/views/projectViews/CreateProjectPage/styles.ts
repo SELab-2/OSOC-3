@@ -38,11 +38,11 @@ export const CreateButton = styled.button`
     background-color: #44dba4;
     color: white;
     border: none;
-    margin-top: 10px;
+    margin-top: 30px;
     border-radius: 5px;
 `;
 
 export const Label = styled.h5`
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: 0px;
 `

@@ -14,7 +14,7 @@ export default function Coach({
     setCoaches: (coaches: string[]) => void;
 }) {
     const [showAlert, setShowAlert] = useState(false);
-    const availableCoaches = ["coach1", "coach2", "admin1", "admin2"]; // TODO get users from API call
+    const availableCoaches = ["coach1", "coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2", "admin1", "admin2"]; // TODO get users from API call
 
     return (
         <div>

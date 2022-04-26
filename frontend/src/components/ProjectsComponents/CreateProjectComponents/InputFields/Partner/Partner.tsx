@@ -30,7 +30,7 @@ export default function Partner({
 
             <AddButton
                 onClick={() => {
-                    if (!partners.includes(partner)) {
+                    if (!partners.includes(partner) && partner.length > 0) {
                         const newPartners = [...partners];
                         newPartners.push(partner);
                         setPartners(newPartners);

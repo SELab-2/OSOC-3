@@ -61,10 +61,10 @@ export interface SkillProject {
     skill: string;
 
     /** More info about this skill in a specific project */
-    description: string | undefined;
+    description: string;
 
     /** Number of positions of this skill in a project */
-    amount: number | undefined;
+    amount: number;
 }
 
 /**

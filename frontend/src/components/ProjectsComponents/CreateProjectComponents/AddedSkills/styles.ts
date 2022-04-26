@@ -5,13 +5,19 @@ export const SkillContainer = styled.div`
     margin-top: 10px;
     background-color: #1a1a36;
     padding: 5px 10px;
-    width: fit-content;
+    width: min-content;
+    max-width: 75%;
 `;
 
 export const TopContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+`;
+
+export const SkillName = styled.div`
+    overflow-x: scroll;
+    text-overflow: ellipsis;
 `;
 
 export const Delete = styled.button`
@@ -26,6 +32,7 @@ export const Delete = styled.button`
 
 export const DescriptionContainer = styled.div`
     margin-bottom: 10px;
+    width: fit-content;
 `;
 
 export const AmountInput = styled.input`
@@ -35,6 +42,5 @@ export const AmountInput = styled.input`
     color: white;
     border: none;
     border-radius: 5px;
-
     width: 100px;
 `;

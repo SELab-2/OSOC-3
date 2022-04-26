@@ -29,12 +29,18 @@ export const RemoveButton = styled.button`
     align-items: center;
 `;
 
+export const ItemName = styled.div`
+    overflow-x: scroll;
+    text-overflow: ellipsis;
+`;
+
 export const AddedItem = styled.div`
     margin: 5px;
     margin-left: 0;
     padding: 5px;
     background-color: #1a1a36;
-    max-width: fit-content;
+    width: fit-content;
+    max-width: 75%;
     border-radius: 5px;
     display: flex;
 `;
