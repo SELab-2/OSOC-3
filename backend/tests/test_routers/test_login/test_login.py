@@ -14,7 +14,7 @@ async def test_login_non_existing(test_client: AsyncClient):
         "password": "does not exist"
     }
     async with test_client:
-        assert (await test_client.post("/login/token", data=form)).status_code == status.HTTP_401_UNAUTHORIZED
+        assert (await test_client.post("/login/token/email", data=form)).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_login_existing(database_session: AsyncSession, test_client: AsyncClient):
@@ -39,7 +39,7 @@ async def test_login_existing(database_session: AsyncSession, test_client: Async
         "password": password
     }
     async with test_client:
-        assert (await test_client.post("/login/token", data=form)).status_code == status.HTTP_200_OK
+        assert (await test_client.post("/login/token/email", data=form)).status_code == status.HTTP_200_OK
 
 
 async def test_login_existing_wrong_credentials(database_session: AsyncSession, test_client: AsyncClient):
@@ -64,4 +64,4 @@ async def test_login_existing_wrong_credentials(database_session: AsyncSession, 
         "password": "another password"
     }
     async with test_client:
-        assert (await test_client.post("/login/token", data=form)).status_code == status.HTTP_401_UNAUTHORIZED
+        assert (await test_client.post("/login/token/email", data=form)).status_code == status.HTTP_401_UNAUTHORIZED

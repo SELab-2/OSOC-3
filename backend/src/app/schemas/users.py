@@ -87,8 +87,8 @@ class UserRequestsResponse(CamelCaseModel):
 
 class FilterParameters(BaseModel):
     """Schema for query parameters"""
-    edition: str | None
-    exclude_edition: str | None
-    name: str | None
-    admin: bool | None
+    edition: str | None = None
+    exclude_edition: str | None = None
+    name: str | None = None
+    admin: bool | None = None
     page: int = 0
