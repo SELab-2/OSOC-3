@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.expression import func, and_
 from src.database.crud.util import paginate
 from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Edition, Skill, Student, DecisionEmail
@@ -65,7 +65,7 @@ def create_email(db: Session, student: Student, email_status: EmailStatusEnum) -
 
 def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSearchQueryParams) -> list[DecisionEmail]:
     """get last email of all students that got an email"""
-    last_emails = db.query(DecisionEmail.email_id, func.max(DecisionEmail.date))\
+    last_emails = db.query(DecisionEmail.student_id, func.max(DecisionEmail.date).label("maxdate"))\
                     .join(Student)\
                     .where(Student.edition == edition)\
                     .where(Student.first_name.contains(commons.first_name))\
@@ -73,7 +73,8 @@ def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSe
                     .group_by(DecisionEmail.student_id).subquery()
 
     emails = db.query(DecisionEmail).join(
-                last_emails, DecisionEmail.email_id == last_emails.c.email_id
+                last_emails, and_(DecisionEmail.student_id == last_emails.c.student_id,
+                                  DecisionEmail.date == last_emails.c.maxdate)
              )
 
     if commons.email_status:

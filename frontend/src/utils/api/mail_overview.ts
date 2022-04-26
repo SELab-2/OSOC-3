@@ -31,7 +31,6 @@ export async function getMailOverview(
     const response = await axiosInstance.get(
         `/editions/${edition}/students/emails?page=${page}&first_name=${finalSearch}${concatted}`
     );
-    console.log(response.data);
     return response.data as StudentEmails;
 }
 
@@ -71,14 +70,11 @@ export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
  * @param edition
  */
 export async function setStateRequest(eventKey: string | null, edition: string | undefined) {
-    console.log(eventKey);
-    console.log(selectedRows);
     // post request with selected data
-    const response = await axiosInstance.post(`/editions/${edition}/students/emails`, {
+    await axiosInstance.post(`/editions/${edition}/students/emails`, {
         students_id: selectedRows,
         email_status: eventKey,
     });
-    console.log(response);
 }
 
 let selectedFilters: EmailType[] = [];
