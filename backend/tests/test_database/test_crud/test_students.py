@@ -136,6 +136,15 @@ def test_search_students_on_last_name(database_with_data: Session):
     assert len(students) == 1
 
 
+def test_search_students_on_between_first_and_last_name(database_with_data: Session):
+    """tests search on between first- and last name"""
+    edition: Edition = database_with_data.query(
+        Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition,
+                            CommonQueryParams(name="os V"))
+    assert len(students) == 1
+
+
 def test_search_students_alumni(database_with_data: Session):
     """tests search on alumni"""
     edition: Edition = database_with_data.query(
@@ -420,6 +429,25 @@ def test_get_last_emails_of_students_last_name(database_with_data: Session):
     assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
 
 
+def test_get_last_emails_of_students_between_first_and_last_name(database_with_data: Session):
+    """tests get all emails where last emails is between first- and last name"""
+    student1: Student = get_student_by_id(database_with_data, 1)
+    student2: Student = get_student_by_id(database_with_data, 2)
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.APPLIED)
+    create_email(database_with_data, student2,
+                 EmailStatusEnum.REJECTED)
+    create_email(database_with_data, student1,
+                 EmailStatusEnum.CONTRACT_CONFIRMED)
+    emails: list[DecisionEmail] = get_last_emails_of_students(
+        database_with_data, edition, EmailsSearchQueryParams(name="os V", email_status=[]))
+
+    assert len(emails) == 1
+    assert emails[0].student_id == 1
+    assert emails[0].decision == EmailStatusEnum.CONTRACT_CONFIRMED
+
+
 def test_get_last_emails_of_students_filter_mutliple_status(database_with_data: Session):
     """tests get all emails where last emails is applied"""
     student1: Student = get_student_by_id(database_with_data, 1)
@@ -430,8 +458,7 @@ def test_get_last_emails_of_students_filter_mutliple_status(database_with_data: 
     create_email(database_with_data, student1,
                  EmailStatusEnum.CONTRACT_CONFIRMED)
     emails: list[DecisionEmail] = get_last_emails_of_students(
-        database_with_data, edition, EmailsSearchQueryParams(email_status=
-        [
+        database_with_data, edition, EmailsSearchQueryParams(email_status=[
             EmailStatusEnum.APPLIED,
             EmailStatusEnum.CONTRACT_CONFIRMED
         ]))
