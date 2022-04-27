@@ -14,7 +14,7 @@ import {
 } from "./styles";
 
 import { BsPersonFill } from "react-icons/bs";
-import { TiDeleteOutline } from "react-icons/ti";
+import { HiOutlineTrash } from "react-icons/hi";
 
 import { useState } from "react";
 
@@ -66,7 +66,7 @@ export default function ProjectCard({
                 </Title>
 
                 <Delete onClick={handleShow}>
-                    <TiDeleteOutline size={"20px"} />
+                    <HiOutlineTrash size={"20px"} />
                 </Delete>
 
                 <ConfirmDelete
