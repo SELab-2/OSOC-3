@@ -2,10 +2,22 @@ import axios from "axios";
 import { Projects, Project } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
-export async function getProjects(edition: string, page: number): Promise<Projects | null> {
+export async function getProjects(
+    edition: string,
+    name: string,
+    ownProjects: boolean,
+    page: number
+): Promise<Projects | null> {
     try {
         const response = await axiosInstance.get(
-            "/editions/" + edition + "/projects/?page=" + page.toString()
+            "/editions/" +
+                edition +
+                "/projects/?name=" +
+                name +
+                "&coach=" +
+                ownProjects.toString() +
+                "&page=" +
+                page.toString()
         );
         const projects = response.data as Projects;
         return projects;
