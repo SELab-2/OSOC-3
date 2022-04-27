@@ -14,22 +14,31 @@ export default function GitHubOAuth() {
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
+        let unmounted = false;
+
         async function tryLogIn() {
             // No code in the query parameters
             if (!searchParams.has("code")) {
-                await setLoading(false);
-                await setShowError(true);
+                setLoading(false);
+                setShowError(true);
                 return;
             }
 
-            const response = await logInGitHub(authCtx, searchParams.get("code")!);
-            await setLoading(false);
-            if (!response) {
-                await setShowError(true);
+            // Fix memory leak: only send API call if not yet unmounted
+            if (!unmounted) {
+                const response = await logInGitHub(authCtx, searchParams.get("code")!);
+                setLoading(false);
+                if (!response) {
+                    setShowError(true);
+                }
             }
         }
 
         tryLogIn();
+
+        return () => {
+            unmounted = true;
+        };
         // We don't want to update when the "loading" and "authCtx" dependencies change
         // because this creates an infinite loop, so we ignore the eslint warning
         // eslint-disable-next-line react-hooks/exhaustive-deps
