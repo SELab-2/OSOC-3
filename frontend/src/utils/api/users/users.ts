@@ -1,13 +1,5 @@
 import { axiosInstance } from "../api";
-
-/**
- * Enum for the different types of authentication.
- */
-export enum AuthType {
-    Email = "email",
-    GitHub = "github",
-    Google = "google",
-}
+import { AuthType } from "../../../data/enums";
 
 /**
  *  Interface of a user.
