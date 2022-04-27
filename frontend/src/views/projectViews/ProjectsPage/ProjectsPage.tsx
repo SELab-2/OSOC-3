@@ -14,6 +14,7 @@ import {
 import { Project } from "../../../data/interfaces";
 import { useNavigate, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
+import { useAuth } from "../../../contexts";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -29,7 +30,7 @@ export default function ProjectPage() {
     const [ownProjects, setOwnProjects] = useState(false);
 
     const navigate = useNavigate();
-    const { userId, role } = useAuth();
+    const { role } = useAuth();
     const [page, setPage] = useState(0);
 
     const params = useParams();
