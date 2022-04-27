@@ -9,3 +9,4 @@ export interface User {
     admin: boolean;
     editions: string[];
 }
+

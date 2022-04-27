@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import { getCoaches } from "../../../../../utils/api/users/coaches";
+import { User } from "../../../../../utils/api/users/users";
 import { AddButton, Input, WarningContainer } from "../../styles";
 
 export default function Coach({
@@ -14,25 +17,36 @@ export default function Coach({
     setCoaches: (coaches: string[]) => void;
 }) {
     const [showAlert, setShowAlert] = useState(false);
-    const availableCoaches = ["coach1", "coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2coach2", "admin1", "admin2"]; // TODO get users from API call
+    const [availableCoaches, setAvailableCoaches] = useState<User[]>([]);
+    const params = useParams();
+    const editionId = params.editionId!;
+
+    useEffect(() => {
+        async function callCoaches() {
+            setAvailableCoaches((await getCoaches(editionId, coach, 0)).users);
+        }
+        callCoaches();
+    }, [coach, editionId]);
 
     return (
         <div>
             <Input
                 value={coach}
-                onChange={e => setCoach(e.target.value)}
+                onChange={e => {
+                    setCoach(e.target.value);
+                }}
                 list="users"
                 placeholder="Coach"
             />
             <datalist id="users">
                 {availableCoaches.map((availableCoach, _index) => {
-                    return <option key={_index} value={availableCoach} />;
+                    return <option key={_index} value={availableCoach.name} />;
                 })}
             </datalist>
 
             <AddButton
                 onClick={() => {
-                    if (availableCoaches.some(availableCoach => availableCoach === coach)) {
+                    if (availableCoaches.some(availableCoach => availableCoach.name === coach)) {
                         if (!coaches.includes(coach)) {
                             const newCoaches = [...coaches];
                             newCoaches.push(coach);
