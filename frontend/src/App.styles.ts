@@ -10,7 +10,7 @@ export const ContentWrapper = styled.div`
     flex: 1;
 `;
 
-export const PageContainer = styled.div.attrs(() => ({
+export const PageContainer = styled(Container).attrs(() => ({
     className: "mt-2",
 }))`
     display: flex;

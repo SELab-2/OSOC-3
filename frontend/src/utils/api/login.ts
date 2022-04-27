@@ -68,6 +68,7 @@ export async function logInGitHub(authCtx: AuthContextState, code: string): Prom
         return true;
     } catch (error) {
         if (axios.isAxiosError(error)) {
+            console.log(error.response);
             authCtx.setIsLoggedIn(false);
             return false;
         } else {

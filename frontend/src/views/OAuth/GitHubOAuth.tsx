@@ -14,26 +14,26 @@ export default function GitHubOAuth() {
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
-        // Avoid constantly re-triggering itself, tryLogIn updates authCtx
-        // which will create an endless loop
-        if (!loading) return;
-
         async function tryLogIn() {
+            // No code in the query parameters
+            if (!searchParams.has("code")) {
+                await setLoading(false);
+                await setShowError(true);
+                return;
+            }
+
             const response = await logInGitHub(authCtx, searchParams.get("code")!);
-            setLoading(true);
+            await setLoading(false);
             if (!response) {
-                setShowError(true);
+                await setShowError(true);
             }
         }
 
-        if (!searchParams.has("code")) {
-            setLoading(false);
-            setShowError(true);
-            return;
-        }
-
         tryLogIn();
-    }, [authCtx, loading, searchParams]);
+        // We don't want to update when the "loading" and "authCtx" dependencies change
+        // because this creates an infinite loop, so we ignore the eslint warning
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
 
     if (showError) {
         return (
