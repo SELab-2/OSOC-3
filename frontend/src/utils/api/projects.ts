@@ -2,7 +2,7 @@ import axios from "axios";
 import { Projects, Project } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
-export async function getProjects(edition: string, page: number) {
+export async function getProjects(edition: string, page: number): Promise<Projects | null> {
     try {
         const response = await axiosInstance.get(
             "/editions/" + edition + "/projects/?page=" + page.toString()
@@ -18,7 +18,7 @@ export async function getProjects(edition: string, page: number) {
     }
 }
 
-export async function getProject(edition: string, projectId: number) {
+export async function getProject(edition: string, projectId: number): Promise<Project | null> {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
         const project = response.data as Project;
@@ -32,7 +32,7 @@ export async function getProject(edition: string, projectId: number) {
     }
 }
 
-export async function deleteProject(edition: string, projectId: number) {
+export async function deleteProject(edition: string, projectId: number): Promise<boolean> {
     try {
         await axiosInstance.delete("/editions/" + edition + "/projects/" + projectId);
         return true;

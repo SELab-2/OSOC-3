@@ -140,17 +140,19 @@ export default function ProjectPage() {
 
             <LoadSpinner show={loading} />
 
-            <LoadMoreContainer>
-                <LoadMoreButton
-                    onClick={() => {
-                        if (moreProjectsAvailable) {
-                            callProjects(page);
-                        }
-                    }}
-                >
-                    Load more projects
-                </LoadMoreButton>
-            </LoadMoreContainer>
+            {moreProjectsAvailable && (
+                <LoadMoreContainer>
+                    <LoadMoreButton
+                        onClick={() => {
+                            if (moreProjectsAvailable) {
+                                callProjects(page);
+                            }
+                        }}
+                    >
+                        Load more projects
+                    </LoadMoreButton>
+                </LoadMoreContainer>
+            )}
         </div>
     );
 }
