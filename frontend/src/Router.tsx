@@ -64,11 +64,6 @@ export default function Router() {
                                         {/* TODO edition page? do we need? maybe just some nav/links? */}
                                         <Route path={""} element={<div />} />
 
-                                        {/* Mail Overview */}
-                                        <Route path={"emails"} element={<AdminRoute />}>
-                                            <Route path={""} element={<MailOverviewPage />} />
-                                        </Route>
-
                                         {/* Projects routes */}
                                         <Route path="projects" element={<Outlet />}>
                                             <Route path={""} element={<ProjectsPage />} />
@@ -81,14 +76,17 @@ export default function Router() {
                                         </Route>
 
                                         {/* Students routes */}
-                                        <Route path={"students"} element={<StudentsPage />} />
-                                        {/* TODO student page */}
-                                        <Route path={"students/:id"} element={<div />} />
-                                        {/* student emails page */}
-                                        <Route
-                                            path={"students/:id/emails"}
-                                            element={<StudentMailHistoryPage />}
-                                        />
+                                        <Route path={"students"} element={<Outlet />}>
+                                            <Route path={""} element={<StudentsPage />} />
+                                            <Route path={"emails"} element={<AdminRoute />}>
+                                                <Route path={""} element={<MailOverviewPage />} />
+                                            </Route>
+                                            <Route path={":id"} element={<div />} />
+                                            <Route
+                                                path={":id/emails"}
+                                                element={<StudentMailHistoryPage />}
+                                            />
+                                        </Route>
 
                                         {/* Users routes */}
                                         <Route path="users" element={<AdminRoute />}>
