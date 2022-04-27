@@ -262,6 +262,16 @@ def test_get_last_name_students_pagination(database_with_data: Session, auth_cli
         round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
 
 
+def test_get_between_first_and_last_name_students(database_with_data: Session, auth_client: AuthClient):
+    """tests get students based on query paramer first- and last name"""
+    edition: Edition = database_with_data.query(Edition).all()[0]
+    auth_client.coach(edition)
+    response = auth_client.get(
+        "/editions/ed2022/students/?name=os V")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
 def test_get_alumni_students(database_with_data: Session, auth_client: AuthClient):
     """tests get students based on query paramer alumni"""
     edition: Edition = database_with_data.query(Edition).all()[0]
@@ -554,6 +564,22 @@ def test_emails_filter_last_name(database_with_data: Session, auth_client: AuthC
     response = auth_client.get(
         "/editions/ed2022/students/emails/?name=Vermeulen")
     assert len(response.json()["studentEmails"]) == 1
+    assert response.json()[
+        "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
+
+
+def test_emails_filter_between_first_and_last_name(database_with_data: Session, auth_client: AuthClient):
+    """test get emails with filter last name"""
+    auth_client.admin()
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [1], "email_status": 1})
+    auth_client.post("/editions/ed2022/students/emails",
+                     json={"students_id": [2], "email_status": 1})
+    response = auth_client.get(
+        "/editions/ed2022/students/emails/?name=os V")
+    assert len(response.json()["studentEmails"]) == 1
+    assert response.json()[
+        "studentEmails"][0]["student"]["firstName"] == "Jos"
     assert response.json()[
         "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
 
