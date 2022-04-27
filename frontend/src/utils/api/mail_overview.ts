@@ -29,7 +29,7 @@ export async function getMailOverview(
     });
     const concatted: string = FormatFilters.join("");
     const response = await axiosInstance.get(
-        `/editions/${edition}/students/emails?page=${page}&first_name=${finalSearch}${concatted}`
+        `/editions/${edition}/students/emails?page=${page}&name=${finalSearch}${concatted}`
     );
     return response.data as StudentEmails;
 }
