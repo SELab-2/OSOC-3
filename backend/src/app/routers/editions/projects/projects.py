@@ -6,21 +6,24 @@ from starlette.responses import Response
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
 from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
-from src.app.schemas.projects import ProjectList, Project, InputProject, ConflictStudentList
+from src.app.schemas.projects import (ProjectList, Project, InputProject,
+                                      ConflictStudentList, QueryParamsProjects)
 from src.database.database import get_session
-from src.database.models import Edition, Project as ProjectModel
+from src.database.models import Edition, Project as ProjectModel, User
 from .students import project_students_router
 
 projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
 projects_router.include_router(project_students_router, prefix="/{project_id}")
 
 
-@projects_router.get("/", response_model=ProjectList, dependencies=[Depends(require_coach)])
-async def get_projects(db: Session = Depends(get_session), edition: Edition = Depends(get_edition), page: int = 0):
+@projects_router.get("/", response_model=ProjectList)
+async def get_projects(db: Session = Depends(get_session), edition: Edition = Depends(get_edition),
+                       search_params: QueryParamsProjects = Depends(QueryParamsProjects),
+                       user: User = Depends(require_coach)):
     """
     Get a list of all projects.
     """
-    return logic.get_project_list(db, edition, page)
+    return logic.get_project_list(db, edition, search_params, user)
 
 
 @projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Project,
