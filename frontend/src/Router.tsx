@@ -12,6 +12,7 @@ import {
     RegisterPage,
     StudentsPage,
     UsersPage,
+    AdminsPage,
     VerifyingTokenPage,
     StudentMailHistoryPage,
     MailOverviewPage,
@@ -51,8 +52,7 @@ export default function Router() {
                             {/* unless you are logged in */}
                             <Route path={"*"} element={<PrivateRoute />}>
                                 <Route path={"admins"} element={<AdminRoute />}>
-                                    {/* TODO admins page */}
-                                    <Route path={""} element={<div />} />
+                                    <Route path={""} element={<AdminsPage />} />
                                 </Route>
                                 <Route path={"editions"} element={<PrivateRoute />}>
                                     <Route path={""} element={<EditionsPage />} />

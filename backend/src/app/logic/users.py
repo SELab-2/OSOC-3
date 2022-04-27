@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 import src.database.crud.users as users_crud
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
-    FilterParameters
+    FilterParameters, UserRequest
 from src.database.models import User
 
 
@@ -68,7 +68,12 @@ def get_request_list(db: Session, edition_name: str | None, user_name: str | Non
     else:
         requests = users_crud.get_requests_for_edition_page(db, edition_name, page, user_name)
 
-    return UserRequestsResponse(requests=requests)
+    requests_model = []
+    for request in requests:
+        user_req = UserRequest(request_id=request.request_id, edition=request.edition,
+                               user=user_model_to_schema(request.user))
+        requests_model.append(user_req)
+    return UserRequestsResponse(requests=requests_model)
 
 
 def accept_request(db: Session, request_id: int):
