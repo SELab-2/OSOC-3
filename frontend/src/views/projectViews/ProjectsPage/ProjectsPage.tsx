@@ -82,7 +82,9 @@ export default function ProjectPage() {
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
                 {role === 0 ? (
-                    <CreateButton onClick={() => navigate("/editions/summerof2022/projects/new")}>
+                    <CreateButton
+                        onClick={() => navigate("/editions/" + editionId + "/projects/new")}
+                    >
                         Create Project
                     </CreateButton>
                 ) : null}

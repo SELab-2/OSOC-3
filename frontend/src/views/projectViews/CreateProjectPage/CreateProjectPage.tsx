@@ -1,7 +1,7 @@
 import { CreateProjectContainer, CreateButton, Label } from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GoBack } from "../ProjectDetailPage/styles";
 import { BiArrowBack } from "react-icons/bi";
 import {
@@ -33,9 +33,12 @@ export default function CreateProjectPage() {
 
     const navigate = useNavigate();
 
+    const params = useParams();
+    const editionId = params.editionId!;
+
     return (
         <CreateProjectContainer>
-            <GoBack onClick={() => navigate("/editions/2022/projects/")}>
+            <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
                 <BiArrowBack />
                 Cancel
             </GoBack>
@@ -75,7 +78,7 @@ export default function CreateProjectPage() {
             <CreateButton
                 onClick={async () => {
                     const response = await createProject(
-                        "2022",
+                        editionId,
                         name,
                         numberOfStudents!,
                         [],
@@ -83,7 +86,7 @@ export default function CreateProjectPage() {
                         coaches
                     );
                     if (response) {
-                        navigate("/editions/2022/projects/");
+                        navigate("/editions/" + editionId + "/projects/");
                     } else alert("Something went wrong :(");
                 }}
             >
