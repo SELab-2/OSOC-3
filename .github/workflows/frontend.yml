@@ -1,10 +1,10 @@
 name: Frontend CI
 on:
+  pull_request:
   push:
-    paths:
-      - ".github/workflows/frontend.yml"
-      - "frontend/**"
-      - "!**.md"
+    branches:
+      - master
+      - develop
 
 defaults:
   run:
@@ -12,12 +12,10 @@ defaults:
 
 jobs:
   Dependencies:
-    runs-on: self-hosted
-    container: node:16.14.0-alpine
+    runs-on: ubuntu-latest
+    container: node:16.14.0-bullseye-slim
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -35,12 +33,10 @@ jobs:
 
   Test:
     needs: [Dependencies]
-    runs-on: self-hosted
-    container: node:16.14.0-alpine
+    runs-on: ubuntu-latest
+    container: node:16.14.0-bullseye-slim
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -55,12 +51,10 @@ jobs:
 
   Lint:
     needs: [Test]
-    runs-on: self-hosted
-    container: node:16.14.0-alpine
+    runs-on: ubuntu-latest
+    container: node:16.14.0-bullseye-slim
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -75,12 +69,10 @@ jobs:
 
   Style:
     needs: [Test]
-    runs-on: self-hosted
-    container: node:16.14.0-alpine
+    runs-on: ubuntu-latest
+    container: node:16.14.0-bullseye-slim
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -95,12 +87,10 @@ jobs:
 
   Build:
     needs: [Style, Lint]
-    runs-on: self-hosted
-    container: node:16.14.0-alpine
+    runs-on: ubuntu-latest
+    container: node:16.14.0-bullseye-slim
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
