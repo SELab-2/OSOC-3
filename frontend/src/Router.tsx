@@ -17,7 +17,7 @@ import {
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
-import { RegisterPage } from "./views/Registration";
+import { RedirectPage, RegisterPage } from "./views/Registration";
 import { Role } from "./data/enums";
 import { GitHubOAuth } from "./views/OAuth";
 
