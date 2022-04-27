@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {
     FullName,
     FirstName,
@@ -10,6 +10,7 @@ import {
     StudentInformationContainer,
     PersonalInfoField,
     PersonalInfoFieldValue,
+    PersonalInfoFieldSubject,
     RolesField,
     RolesValues,
     Role,
@@ -22,11 +23,6 @@ interface Props {
 }
 
 export default function StudentInformation(props: Props) {
-    console.log(props.currentStudent)
-    useEffect(() => {
-        console.log(props.currentStudent)
-        console.log(props.currentStudent.firstName)
-    }, []);
 
     if (!props.currentStudent) {
         return <div><h1>loading</h1></div>
@@ -35,9 +31,9 @@ export default function StudentInformation(props: Props) {
             <StudentInformationContainer>
                 <FullName>
                     <FirstName>{props.currentStudent.firstName}</FirstName>
-                    <LastName>{props.currentStudent.firstName}</LastName>
+                    <LastName>{props.currentStudent.lastName}</LastName>
                 </FullName>
-                <PreferedName>Prefered name: {props.currentStudent.firstName}</PreferedName>
+                <PreferedName>Prefered name: {props.currentStudent.preferredName}</PreferedName>
                 <LineBreak/>
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
                 <Suggestion>
@@ -51,17 +47,21 @@ export default function StudentInformation(props: Props) {
                 </Suggestion>
                 <LineBreak/>
                 <StudentInfoTitle>Personal information</StudentInfoTitle>
-                <PersonalInfoField className="email-field">
-                    Email <PersonalInfoFieldValue>riley.pacocha@test.com</PersonalInfoFieldValue>
+                <PersonalInfoField>
+                    <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
+                    <PersonalInfoFieldValue>{props.currentStudent.emailAddress}</PersonalInfoFieldValue>
                 </PersonalInfoField>
-                <PersonalInfoField className="phonenumber-field">
-                    Phone number <PersonalInfoFieldValue>0123 456 789</PersonalInfoFieldValue>
+                <PersonalInfoField>
+                    <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
+                    <PersonalInfoFieldValue>{props.currentStudent.phoneNumber}</PersonalInfoFieldValue>
                 </PersonalInfoField>
-                <PersonalInfoField className="alumni-field">
-                    Is an alumni? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
+                <PersonalInfoField>
+                    <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
+                    <PersonalInfoFieldValue>{props.currentStudent.alumni? "Yes": "No" }</PersonalInfoFieldValue>
                 </PersonalInfoField>
-                <PersonalInfoField className="studentcoach-field">
-                    Wants to be student coach? <PersonalInfoFieldValue>Yes</PersonalInfoFieldValue>
+                <PersonalInfoField>
+                    <PersonalInfoFieldSubject>Wants to be student coach?:</PersonalInfoFieldSubject>
+                    <PersonalInfoFieldValue>{props.currentStudent.wantsToBeStudentCoach? "Yes" : "No" }</PersonalInfoFieldValue>
                 </PersonalInfoField>
                 <LineBreak/>
                 <StudentInfoTitle>Skills</StudentInfoTitle>
@@ -75,7 +75,7 @@ export default function StudentInformation(props: Props) {
                 </RolesField>
                 <LineBreak/>
                 <div>
-                    <CoachSuggestionContainer/>
+                    <CoachSuggestionContainer student={props.currentStudent}/>
                     <AdminDecisionContainer/>
                 </div>
             </StudentInformationContainer>

@@ -30,12 +30,16 @@ export const Suggestion = styled.p`
 `;
 
 export const PersonalInfoField = styled.p`
+    width: 100%;
     display: flex;
 `;
 
+export const PersonalInfoFieldSubject = styled.p`
+    width: 50%;
+`;
+
 export const PersonalInfoFieldValue = styled.p`
-    position: absolute;
-    margin-left: 250px;
+    margin-left: 5%;
 `;
 
 export const RolesField = styled.div`

@@ -24,7 +24,7 @@ function StudentInfoPage() {
     async function callGetStudent() {
         try {
             const response = await getStudent("OSOC_2022", params.id!);
-            setCurrentStudent(response);
+            setCurrentStudent(response)
         } catch (error) {
             console.log(error);
         }
@@ -33,7 +33,7 @@ function StudentInfoPage() {
     useEffect(() => {
         callGetStudent();
         callGetStudents();
-    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, params.id!]);
 
     if (!currentStudent) {
         console.log("no current student")

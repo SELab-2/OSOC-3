@@ -20,7 +20,7 @@ export async function getStudent(edition: string, studentId: string){
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString()
         const response = await axiosInstance.get(request);
-        const student = response.data as Student;
+        const student = response.data.student as Student;
         return student;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -30,3 +30,31 @@ export async function getStudent(edition: string, studentId: string){
         }
     }
 }
+
+export async function removeStudent(edition: string, studentId: string){
+    try {
+        const request = "/editions/" + edition + "/students/" + studentId.toString()
+        await axiosInstance.delete(request);
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return false;
+        } else {
+            throw error;
+        }
+    }
+}
+
+/* export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string){
+    try {
+        const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions"
+        const response = await axiosInstance.post(request, { suggestion: suggestionArg, argumentation: argumentationArg });
+        return response.status === 201;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return false;
+        } else {
+            throw error;
+        }
+    }
+} */

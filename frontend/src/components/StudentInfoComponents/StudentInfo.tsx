@@ -1,8 +1,9 @@
 import React from "react";
 import { StudentListFilters } from "../StudentsComponents";
 import StudentInformation from "./StudentInformation/StudentInformation";
-import { StudentRemoveButton, StudentInfoPageContent } from "./styles";
+import { StudentInfoPageContent } from "./styles";
 import {Student} from "../../data/interfaces/students";
+import RemoveStudentButton from "./RemoveStudentButton/RemoveStudentButton";
 
 interface Props {
     students: Student[];
@@ -21,7 +22,7 @@ export default function StudentInfo(props: Props) {
     return (
         <StudentInfoPageContent>
             <StudentListFilters students={props.students} nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} alumniFilter={props.alumniFilter} setAlumniFilter={props.setAlumniFilter} rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} studentCoachVolunteerFilter={props.studentCoachVolunteerFilter} setStudentCoachVolunteerFilter={props.setStudentCoachVolunteerFilter} />
-            <StudentRemoveButton>Remove Student</StudentRemoveButton>
+            <RemoveStudentButton />
             <StudentInformation currentStudent={props.currentStudent}/>
         </StudentInfoPageContent>
     );
