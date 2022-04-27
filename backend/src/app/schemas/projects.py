@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pydantic import BaseModel
 
 from src.app.schemas.utils import CamelCaseModel
@@ -117,3 +118,11 @@ class InputProject(BaseModel):
 class InputStudentRole(BaseModel):
     """Used for creating/patching a student role"""
     skill_id: int
+
+
+@dataclass
+class QueryParamsProjects:
+    """search query parameters for projects"""
+    name: str = ""
+    coach: bool = False
+    page: int = 0

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyledTable, LoadingSpinner } from "./styles";
 import { getEditions } from "../../utils/api/editions";
 import EditionRow from "./EditionRow";
+import EmptyEditionsTableMessage from "./EmptyEditionsTableMessage";
 
 /**
  * Table on the [[EditionsPage]] that renders a list of all editions
@@ -34,13 +35,7 @@ export default function EditionsTable() {
     }
 
     if (rows.length === 0) {
-        return (
-            <div className={"mx-auto text-center"}>
-                It looks like you're not a part of any editions so far.
-                <br />
-                Contact an admin to receive an invite.
-            </div>
-        );
+        return <EmptyEditionsTableMessage />;
     }
 
     return (

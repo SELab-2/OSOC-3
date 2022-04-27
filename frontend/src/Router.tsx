@@ -6,6 +6,7 @@ import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
     EditionsPage,
+    CreateEditionPage,
     LoginPage,
     PendingPage,
     ProjectsPage,
@@ -14,10 +15,10 @@ import {
     RegisterPage,
     StudentsPage,
     UsersPage,
+    AdminsPage,
     VerifyingTokenPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
-import CreateEditionPage from "./views/CreateEditionPage";
 import { Role } from "./data/enums";
 
 /**
@@ -48,51 +49,56 @@ export default function Router() {
                             {/* Redirect /login to the login page */}
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
-                            <Route path={"/admins"} element={<AdminRoute />}>
-                                {/* TODO admins page */}
-                                <Route path={""} element={<div />} />
-                            </Route>
-                            <Route path={"/editions"} element={<PrivateRoute />}>
-                                <Route path={""} element={<EditionsPage />} />
-                                <Route path={"new"} element={<AdminRoute />}>
-                                    {/* TODO create edition page */}
-                                    <Route path={""} element={<CreateEditionPage />} />
+                            {/* Catch all routes in a PrivateRoute, so you can't visit them */}
+                            {/* unless you are logged in */}
+                            <Route path={"*"} element={<PrivateRoute />}>
+                                <Route path={"admins"} element={<AdminRoute />}>
+                                    <Route path={""} element={<AdminsPage />} />
                                 </Route>
-                                <Route path={":editionId"} element={<Outlet />}>
-                                    {/* TODO edition page? do we need? maybe just some nav/links? */}
-                                    <Route path={""} element={<div />} />
+                                <Route path={"editions"} element={<PrivateRoute />}>
+                                    <Route path={""} element={<EditionsPage />} />
+                                    <Route path={"new"} element={<AdminRoute />}>
+                                        {/* TODO create edition page */}
+                                        <Route path={""} element={<CreateEditionPage />} />
+                                    </Route>
+                                    <Route path={":editionId"} element={<Outlet />}>
+                                        {/* TODO edition page? do we need? maybe just some nav/links? */}
+                                        <Route path={""} element={<div />} />
 
-                                    {/* Projects routes */}
-                                    <Route path="projects" element={<Outlet />}>
-                                        <Route path={""} element={<ProjectsPage />} />
-                                        <Route path={"new"} element={<AdminRoute />}>
-                                            {/* TODO create project page */}
-                                            <Route path={""} element={<CreateProjectPage />} />
+                                        {/* Projects routes */}
+                                        <Route path="projects" element={<Outlet />}>
+                                            <Route path={""} element={<ProjectsPage />} />
+                                            <Route path={"new"} element={<AdminRoute />}>
+                                                {/* create project page */}
+                                                <Route path={""} element={<CreateProjectPage />} />
+                                            </Route>
+                                            {/* project page */}
+                                            <Route
+                                                path={":projectId"}
+                                                element={<ProjectDetailPage />}
+                                            />
                                         </Route>
-                                        {/* TODO project page */}
-                                        <Route
-                                            path={":projectId"}
-                                            element={<ProjectDetailPage />}
-                                        />
-                                    </Route>
 
-                                    {/* Students routes */}
-                                    <Route path={"students"} element={<StudentsPage />} />
-                                    {/* TODO student page */}
-                                    <Route path={"students/:id"} element={<div />} />
-                                    {/* TODO student emails page */}
-                                    <Route path={"students/:id/emails"} element={<div />} />
+                                        {/* Students routes */}
+                                        <Route path={"students"} element={<StudentsPage />} />
+                                        {/* TODO student page */}
+                                        <Route path={"students/:id"} element={<div />} />
+                                        {/* TODO student emails page */}
+                                        <Route path={"students/:id/emails"} element={<div />} />
 
-                                    {/* Users routes */}
-                                    <Route path="users" element={<AdminRoute />}>
-                                        <Route path={""} element={<UsersPage />} />
+                                        {/* Users routes */}
+                                        <Route path="users" element={<AdminRoute />}>
+                                            <Route path={""} element={<UsersPage />} />
+                                        </Route>
                                     </Route>
                                 </Route>
+                                <Route path={"403-forbidden"} element={<ForbiddenPage />} />
+                                <Route path={"404-not-found"} element={<NotFoundPage />} />
+                                <Route
+                                    path="*"
+                                    element={<Navigate to={"/404-not-found"} replace />}
+                                />
                             </Route>
-                            <Route path="/pending" element={<PendingPage />} />
-                            <Route path={"/403-forbidden"} element={<ForbiddenPage />} />
-                            <Route path={"/404-not-found"} element={<NotFoundPage />} />
-                            <Route path="*" element={<Navigate to={"/404-not-found"} replace />} />
                         </Routes>
                     )}
                 </ContentWrapper>

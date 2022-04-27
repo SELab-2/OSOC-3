@@ -5,12 +5,11 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.database.models import Suggestion, Student, User, Edition, Skill
 
-
 from src.database.crud.suggestions import (create_suggestion, get_suggestions_of_student,
-                                           get_suggestion_by_id, delete_suggestion, update_suggestion,
+                                           get_suggestion_by_id, get_own_suggestion, delete_suggestion,
+                                           update_suggestion,
                                            get_suggestions_of_student_by_type)
 from src.database.enums import DecisionEnum
-
 
 
 @pytest.fixture
@@ -129,6 +128,42 @@ def test_create_suggestion_maybe(database_with_data: Session):
     assert suggestion.student == student
     assert suggestion.suggestion == DecisionEnum.MAYBE
     assert suggestion.argumentation == "Idk if it's good student"
+
+
+def test_get_own_suggestion_existing(database_with_data: Session):
+    """Test getting your own suggestion"""
+    user: User = database_with_data.query(
+        User).where(User.name == "coach1").one()
+    student1: Student = database_with_data.query(Student).where(
+        Student.email_address == "josvermeulen@mail.com").one()
+
+    suggestion = create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
+
+    assert get_own_suggestion(database_with_data, student1.student_id, user.user_id) == suggestion
+
+
+def test_get_own_suggestion_non_existing(database_with_data: Session):
+    """Test getting your own suggestion when it doesn't exist"""
+    user: User = database_with_data.query(
+        User).where(User.name == "coach1").one()
+    student1: Student = database_with_data.query(Student).where(
+        Student.email_address == "josvermeulen@mail.com").one()
+
+    assert get_own_suggestion(database_with_data, student1.student_id, user.user_id) is None
+
+
+def test_get_own_suggestion_fields_none(database_with_data: Session):
+    """Test getting your own suggestion when either of the fields are None
+    This is really only to increase coverage, the case isn't possible in practice
+    """
+    user: User = database_with_data.query(
+        User).where(User.name == "coach1").one()
+    student1: Student = database_with_data.query(Student).where(
+        Student.email_address == "josvermeulen@mail.com").one()
+    create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
+
+    assert get_own_suggestion(database_with_data, None, user.user_id) is None
+    assert get_own_suggestion(database_with_data, student1.student_id, None) is None
 
 
 def test_one_coach_two_students(database_with_data: Session):
@@ -281,4 +316,3 @@ def test_get_suggestions_of_student_by_type(database_with_data: Session):
     assert len(suggestions_student_yes) == 1
     assert len(suggestions_student_no) == 1
     assert len(suggestions_student_maybe) == 1
-    

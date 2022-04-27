@@ -2,9 +2,11 @@ import axios from "axios";
 import { axiosInstance } from "./api";
 import { AuthContextState, logIn as ctxLogIn } from "../../contexts";
 import { User } from "../../data/interfaces";
+import { setAccessToken, setRefreshToken } from "../local-storage";
 
 interface LoginResponse {
-    accessToken: string;
+    access_token: string;
+    refresh_token: string;
     user: User;
 }
 
@@ -15,7 +17,11 @@ interface LoginResponse {
  * @param email email entered
  * @param password password entered
  */
-export async function logIn(auth: AuthContextState, email: string, password: string) {
+export async function logIn(
+    auth: AuthContextState,
+    email: string,
+    password: string
+): Promise<boolean> {
     const payload = new FormData();
     payload.append("username", email);
     payload.append("password", password);
@@ -23,7 +29,11 @@ export async function logIn(auth: AuthContextState, email: string, password: str
     try {
         const response = await axiosInstance.post("/login/token", payload);
         const login = response.data as LoginResponse;
-        ctxLogIn(login.user, login.accessToken, auth);
+
+        setAccessToken(login.access_token);
+        setRefreshToken(login.refresh_token);
+
+        ctxLogIn(login.user, auth);
 
         return true;
     } catch (error) {

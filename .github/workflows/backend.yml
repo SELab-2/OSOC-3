@@ -1,10 +1,10 @@
 name: Backend CI
 on:
+  pull_request:
   push:
-    paths:
-      - ".github/workflows/backend.yml"
-      - "backend/**"
-      - "!**.md"
+    branches:
+      - master
+      - develop
 
 defaults:
   run:
@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   Dependencies:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
 
   Test:
     needs: [Dependencies]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -53,7 +53,7 @@ jobs:
 
   Lint:
     needs: [Test]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2
@@ -66,7 +66,7 @@ jobs:
 
   Type:
     needs: [Test]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container: python:3.10.2-slim-bullseye
     steps:
       - uses: actions/checkout@v2

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
 import { User } from "../../data/interfaces";
+import { getRefreshToken } from "../local-storage";
 
 /**
  * Check if a bearer token is valid.
@@ -44,4 +45,27 @@ export async function validateRegistrationUrl(edition: string, uuid: string): Pr
             throw error;
         }
     }
+}
+
+/**
+ * Interface containg the newly fetched tokens.
+ */
+export interface Tokens {
+    access_token: string;
+    refresh_token: string;
+}
+
+/**
+ * Function to fetch the new tokens based on the refreshtoken.
+ * We use a separate axios intance here because this request would otherwise be blocked by our interceptor.
+ */
+export async function refreshTokens(): Promise<Tokens> {
+    // Don't use axiosInstance to pass interceptors.
+    const response = await axios.post("/login/refresh", null, {
+        baseURL: axiosInstance.defaults.baseURL,
+        headers: {
+            Authorization: `Bearer ${getRefreshToken()}`,
+        },
+    });
+    return response.data as Tokens;
 }

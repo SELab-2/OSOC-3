@@ -2,9 +2,23 @@ import axios from "axios";
 import { Projects, Project, CreateProject } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
-export async function getProjects(edition: string, page: number) {
+export async function getProjects(
+    edition: string,
+    name: string,
+    ownProjects: boolean,
+    page: number
+): Promise<Projects | null> {
     try {
-        const response = await axiosInstance.get("/editions/" + edition + "/projects/?page=" + page.toString());
+        const response = await axiosInstance.get(
+            "/editions/" +
+                edition +
+                "/projects/?name=" +
+                name +
+                "&coach=" +
+                ownProjects.toString() +
+                "&page=" +
+                page.toString()
+        );
         const projects = response.data as Projects;
         return projects;
     } catch (error) {
@@ -16,7 +30,7 @@ export async function getProjects(edition: string, page: number) {
     }
 }
 
-export async function getProject(edition: string, projectId: number) {
+export async function getProject(edition: string, projectId: number): Promise<Project | null> {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
         const project = response.data as Project;
@@ -60,7 +74,7 @@ export async function createProject(
     }
 }
 
-export async function deleteProject(edition: string, projectId: number) {
+export async function deleteProject(edition: string, projectId: number): Promise<boolean> {
     try {
         await axiosInstance.delete("/editions/" + edition + "/projects/" + projectId);
         return true;

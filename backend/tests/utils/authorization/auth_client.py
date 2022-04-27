@@ -5,7 +5,7 @@ from requests import Response
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
-from src.app.logic.security import create_access_token
+from src.app.logic.security import create_tokens
 from src.database.models import User, Edition
 
 
@@ -53,10 +53,8 @@ class AuthClient(TestClient):
         """Sign in as a user for all future requests"""
         self.user = user
 
-        access_token_expires = timedelta(hours=24*7)
-        access_token = create_access_token(
-            data={"sub": str(user.user_id)}, expires_delta=access_token_expires
-        )
+        # Since an authclient is created for every test, the access_token will most likely not run out
+        access_token, _refresh_token = create_tokens(user)
 
         # Add auth headers into dict
         self.headers = {"Authorization": f"Bearer {access_token}"}
