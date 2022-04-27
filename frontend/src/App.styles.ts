@@ -1,3 +1,4 @@
+import RBContainer from "react-bootstrap/Container";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -10,7 +11,7 @@ export const ContentWrapper = styled.div`
     flex: 1;
 `;
 
-export const PageContainer = styled(Container).attrs(() => ({
+export const PageContainer = styled(RBContainer).attrs(() => ({
     className: "mt-2",
 }))`
     display: flex;
