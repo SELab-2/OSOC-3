@@ -3,6 +3,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem } from "./styles";
 import { Role } from "../../data/enums";
 import { LinkContainer } from "react-router-bootstrap";
+import EditionNavLink from "./EditionNavLink";
 
 interface Props {
     currentEdition: string;
@@ -26,9 +27,11 @@ export default function UsersDropdown({ currentEdition }: Props) {
             <LinkContainer to={"/admins"}>
                 <StyledDropdownItem>Admins</StyledDropdownItem>
             </LinkContainer>
-            <LinkContainer to={`/editions/${currentEdition}/users`}>
-                <StyledDropdownItem>Coaches</StyledDropdownItem>
-            </LinkContainer>
+            <EditionNavLink currentEdition={currentEdition}>
+                <LinkContainer to={`/editions/${currentEdition}/users`}>
+                    <StyledDropdownItem>Coaches</StyledDropdownItem>
+                </LinkContainer>
+            </EditionNavLink>
         </NavDropdown>
     );
 }

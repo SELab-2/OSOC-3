@@ -60,14 +60,22 @@ class ReturnStudentList(CamelCaseModel):
     """
     students: list[Student]
 
+
 @dataclass
 class CommonQueryParams:
     """search query paramaters"""
-    first_name: str = ""
-    last_name: str = ""
+    name: str = ""
     alumni: bool = False
     student_coach: bool = False
     skill_ids: list[int] = Query([])
+    page: int = 0
+
+
+@dataclass
+class EmailsSearchQueryParams:
+    """search query paramaters for email"""
+    name: str = ""
+    email_status: list[EmailStatusEnum] = Query([])
     page: int = 0
 
 
@@ -76,7 +84,6 @@ class DecisionEmail(CamelCaseModel):
     Model to represent DecisionEmail
     """
     email_id: int
-    student_id: int
     decision: EmailStatusEnum
     date: datetime
 
@@ -89,4 +96,16 @@ class ReturnStudentMailList(CamelCaseModel):
     """
     Model to return a list of mails of a student
     """
+    student: Student
     emails: list[DecisionEmail]
+
+
+class ListReturnStudentMailList(CamelCaseModel):
+    """Model to give a list of ReturnStudentMailList"""
+    student_emails: list[ReturnStudentMailList]
+
+
+class NewEmail(CamelCaseModel):
+    """The fields of a DecisionEmail"""
+    students_id: list[int]
+    email_status: EmailStatusEnum

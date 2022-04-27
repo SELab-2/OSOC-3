@@ -4,11 +4,14 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from starlette import status
 
-from .authentication import ExpiredCredentialsException, InvalidCredentialsException, MissingPermissionsException
+from .authentication import (
+    ExpiredCredentialsException, InvalidCredentialsException,
+    MissingPermissionsException, WrongTokenTypeException)
 from .editions import DuplicateInsertException, ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
 from .register import FailedToAddNewUserException
+from .students_email import FailedToAddNewEmailException
 from .webhooks import WebhookProcessException
 
 
@@ -85,19 +88,34 @@ def install_handlers(app: FastAPI):
     def student_in_conflict_exception(_request: Request, _exception: StudentInConflictException):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
-            content={'message': 'Resolve the conflict this student is in before confirming their role'}
+            content={
+                'message': 'Resolve the conflict this student is in before confirming their role'}
         )
 
     @app.exception_handler(FailedToAddProjectRoleException)
     def failed_to_add_project_role_exception(_request: Request, _exception: FailedToAddProjectRoleException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={'message': 'Something went wrong while adding this student to the project'}
+            content={
+                'message': 'Something went wrong while adding this student to the project'}
         )
 
+    @app.exception_handler(WrongTokenTypeException)
+    async def wrong_token_type_exception(_request: Request, _exception: WrongTokenTypeException):
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={'message': 'You used the wrong token to access this resource.'}
+        )
     @app.exception_handler(ReadOnlyEditionException)
     def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
         return JSONResponse(
             status_code=status.HTTP_405_METHOD_NOT_ALLOWED,
             content={'message': 'This edition is Read-Only'}
+        )
+
+    @app.exception_handler(FailedToAddNewEmailException)
+    def failed_to_add_new_email_exception(_request: Request, _exception: FailedToAddNewEmailException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={'message': 'Something went wrong while creating a new email'}
         )

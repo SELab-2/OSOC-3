@@ -1,9 +1,7 @@
 /** Context hook to maintain the authentication state of the user **/
 import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
-import { getToken, setToken as setTokenInStorage } from "../utils/local-storage";
 import { User } from "../data/interfaces";
-import { setBearerToken } from "../utils/api";
 import { setCurrentEdition } from "../utils/session-storage";
 
 /**
@@ -16,8 +14,6 @@ export interface AuthContextState {
     setRole: (value: Role | null) => void;
     userId: number | null;
     setUserId: (value: number | null) => void;
-    token: string | null;
-    setToken: (value: string | null) => void;
     editions: string[];
     setEditions: (value: string[]) => void;
 }
@@ -35,8 +31,6 @@ function authDefaultState(): AuthContextState {
         setRole: (_: Role | null) => {},
         userId: null,
         setUserId: (_: number | null) => {},
-        token: getToken(),
-        setToken: (_: string | null) => {},
         editions: [],
         setEditions: (_: string[]) => {},
     };
@@ -63,8 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [role, setRole] = useState<Role | null>(null);
     const [editions, setEditions] = useState<string[]>([]);
     const [userId, setUserId] = useState<number | null>(null);
-    // Default value: check LocalStorage
-    const [token, setToken] = useState<string | null>(getToken());
 
     // Create AuthContext value
     const authContextValue: AuthContextState = {
@@ -74,20 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole: setRole,
         userId: userId,
         setUserId: setUserId,
-        token: token,
-        setToken: (value: string | null) => {
-            // Log the user out if token is null
-            if (value === null) {
-                setIsLoggedIn(false);
-            }
-
-            // Set the token in LocalStorage
-            setTokenInStorage(value);
-            setToken(value);
-
-            // Set token in request headers
-            setBearerToken(value);
-        },
         editions: editions,
         setEditions: setEditions,
     };
@@ -98,11 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 /**
  * Set the user's login data in the AuthContext
  */
-export function logIn(user: User, token: string | null, authContext: AuthContextState) {
+export function logIn(user: User, authContext: AuthContextState) {
     authContext.setUserId(user.userId);
     authContext.setRole(user.admin ? Role.ADMIN : Role.COACH);
     authContext.setEditions(user.editions);
-    authContext.setToken(token);
     authContext.setIsLoggedIn(true);
 }
 
@@ -114,7 +91,6 @@ export function logOut(authContext: AuthContextState) {
     authContext.setUserId(null);
     authContext.setRole(null);
     authContext.setEditions([]);
-    authContext.setToken(null);
 
     // Remove current edition from SessionStorage
     setCurrentEdition(null);

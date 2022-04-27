@@ -14,7 +14,7 @@ def database_with_data(database_session: Session) -> Session:
     database_session.add(edition)
     project1 = Project(name="project1", edition=edition, number_of_students=2)
     project2 = Project(name="project2", edition=edition, number_of_students=3)
-    project3 = Project(name="project3", edition=edition, number_of_students=3)
+    project3 = Project(name="super nice project", edition=edition, number_of_students=3)
     database_session.add(project1)
     database_session.add(project2)
     database_session.add(project3)
@@ -61,7 +61,7 @@ def test_get_projects(database_with_data: Session, auth_client: AuthClient):
     assert len(json['projects']) == 3
     assert json['projects'][0]['name'] == "project1"
     assert json['projects'][1]['name'] == "project2"
-    assert json['projects'][2]['name'] == "project3"
+    assert json['projects'][2]['name'] == "super nice project"
 
 
 def test_get_projects_paginated(database_session: Session, auth_client: AuthClient):
@@ -308,3 +308,26 @@ def test_create_project_old_edition(database_with_data: Session, auth_client: Au
                                "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
 
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
+def test_search_project_name(database_with_data: Session, auth_client: AuthClient):
+    """test search project on name"""
+    auth_client.admin()
+    response = auth_client.get("/editions/ed2022/projects/?name=super")
+    assert len(response.json()["projects"]) == 1
+    assert response.json()["projects"][0]["name"] == "super nice project"
+
+
+def test_search_project_coach(database_with_data: Session, auth_client: AuthClient):
+    """test search project on coach"""
+    auth_client.admin()
+    user: User = database_with_data.query(User).where(User.name == "Pytest Admin").one()
+    auth_client.post("/editions/ed2022/projects/",
+                         json={"name": "test",
+                               "number_of_students": 2,
+                               "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [user.user_id]})
+    response = auth_client.get("/editions/ed2022/projects/?coach=true")
+    print(response.json())
+    assert len(response.json()["projects"]) == 1
+    assert response.json()["projects"][0]["name"] == "test"
+    assert response.json()["projects"][0]["coaches"][0]["userId"] == user.user_id

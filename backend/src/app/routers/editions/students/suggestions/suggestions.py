@@ -20,6 +20,9 @@ async def create_suggestion(new_suggestion: NewSuggestion, student: Student = De
                             db: Session = Depends(get_session), user: User = Depends(require_auth)):
     """
     Make a suggestion about a student.
+
+    In case you've already made a suggestion previously, this replaces the existing suggestion.
+    This simplifies the process in frontend, so we can just send a new request without making an edit interface.
     """
     return make_new_suggestion(db, new_suggestion, user, student.student_id)
 

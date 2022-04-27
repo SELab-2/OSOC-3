@@ -171,6 +171,13 @@ def reject_request(db: Session, request_id: int):
     db.commit()
 
 
+def remove_request_if_exists(db: Session, user_id: int, edition_name: str):
+    """Remove a pending request for a user if there is one, otherwise do nothing"""
+    edition = db.query(Edition).where(Edition.name == edition_name).one()
+    db.query(CoachRequest).where(CoachRequest.user_id == user_id)\
+        .where(CoachRequest.edition_id == edition.edition_id).delete()
+
+
 def get_user_by_email(db: Session, email: str) -> User:
     """Find a user by their email address"""
     auth_email = db.query(AuthEmail).where(AuthEmail.email == email).one()

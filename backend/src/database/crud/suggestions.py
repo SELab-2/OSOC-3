@@ -21,6 +21,16 @@ def get_suggestions_of_student(db: Session, student_id: int | None) -> list[Sugg
     return db.query(Suggestion).where(Suggestion.student_id == student_id).all()
 
 
+def get_own_suggestion(db: Session, student_id: int | None, user_id: int | None) -> Suggestion | None:
+    """Get the suggestion you made for a student"""
+    # This isn't even possible but it pleases Mypy
+    if student_id is None or user_id is None:
+        return None
+
+    return db.query(Suggestion).where(Suggestion.student_id == student_id).where(
+        Suggestion.coach_id == user_id).one_or_none()
+
+
 def get_suggestion_by_id(db: Session, suggestion_id: int) -> Suggestion:
     """Give a suggestion based on the ID"""
     return db.query(Suggestion).where(Suggestion.suggestion_id == suggestion_id).one()
@@ -42,6 +52,6 @@ def update_suggestion(db: Session, suggestion: Suggestion, decision: DecisionEnu
 def get_suggestions_of_student_by_type(db: Session, student_id: int | None,
                                        type_suggestion: DecisionEnum) -> list[Suggestion]:
     """Give all suggestions of a student by type"""
-    return db.query(Suggestion)\
-             .where(Suggestion.student_id == student_id)\
-             .where(Suggestion.suggestion == type_suggestion).all()
+    return db.query(Suggestion) \
+        .where(Suggestion.student_id == student_id) \
+        .where(Suggestion.suggestion == type_suggestion).all()
