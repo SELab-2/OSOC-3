@@ -1,20 +1,11 @@
 import { useEffect, useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { ProjectCard, LoadSpinner } from "../../../components/ProjectsComponents";
-import {
-    CardsGrid,
-    CreateButton,
-    SearchButton,
-    SearchField,
-    OwnProject,
-    ProjectsContainer,
-    LoadMoreContainer,
-    LoadMoreButton,
-} from "./styles";
+import { CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
 import { useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroller";
+import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useAuth } from "../../../contexts";
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -39,20 +30,24 @@ export default function ProjectPage() {
     /**
      * Used to fetch the projects
      */
-    async function callProjects(newPage: number) {
-        if (loading) return;
+    async function callProjects() {
+        if (loading) {
+            return;
+        }
         setLoading(true);
-        const response = await getProjects(editionId, searchString, ownProjects, newPage);
-        setGotProjects(true);
-
+        const response = await getProjects(editionId, searchString, ownProjects, page);
         if (response) {
             if (response.projects.length === 0) {
                 setMoreProjectsAvailable(false);
+            }
+            if (page === 0) {
+                setProjects(response.projects);
             } else {
-                setPage(page + 1);
                 setProjects(projects.concat(response.projects));
             }
+            setPage(page + 1);
         }
+        setGotProjects(true);
         setLoading(false);
     }
 
@@ -65,9 +60,21 @@ export default function ProjectPage() {
 
     useEffect(() => {
         if (moreProjectsAvailable && !gotProjects) {
-            callProjects(0);
+            callProjects();
         }
     });
+
+    /**
+     * Remove a project in local list.
+     * @param project The project to remove.
+     */
+    function removeProject(project: Project) {
+        setProjects(
+            projects.filter(object => {
+                return object !== project;
+            })
+        );
+    }
 
     return (
         <div>
@@ -93,44 +100,14 @@ export default function ProjectPage() {
                     refreshProjects();
                 }}
             />
-
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={(newPage: number) => {
-                    console.log("loading more" + newPage);
-                }}
-                hasMore={moreProjectsAvailable}
-                useWindow={false}
-                initialLoad={true}
-            >
-                <ProjectsContainer>
-                    <CardsGrid>
-                        {projects.map((project, _index) => (
-                            <ProjectCard
-                                project={project}
-                                refreshProjects={refreshProjects}
-                                key={_index}
-                            />
-                        ))}
-                    </CardsGrid>
-                </ProjectsContainer>
-            </InfiniteScroll>
-
-            <LoadSpinner show={loading} />
-
-            {moreProjectsAvailable && (
-                <LoadMoreContainer>
-                    <LoadMoreButton
-                        onClick={() => {
-                            if (moreProjectsAvailable) {
-                                callProjects(page);
-                            }
-                        }}
-                    >
-                        Load more projects
-                    </LoadMoreButton>
-                </LoadMoreContainer>
-            )}
+            <ProjectTable
+                projects={projects}
+                loading={loading}
+                gotData={gotProjects}
+                getMoreProjects={callProjects}
+                moreProjectsAvailable={moreProjectsAvailable}
+                removeProject={removeProject}
+            />
         </div>
     );
 }
