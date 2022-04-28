@@ -24,20 +24,6 @@ export default function ProjectTable(props: {
     moreProjectsAvailable: boolean;
     removeProject: (project: Project) => void;
 }) {
-    if (props.projects.length === 0) {
-        if (props.loading) {
-            return (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
-        } else if (props.gotData) {
-            return <div>No projects found</div>;
-        } else {
-            return null;
-        }
-    }
-
     return (
         <ProjectTableDiv>
             <InfiniteScroll

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
 import { CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
@@ -31,6 +31,7 @@ export default function ProjectPage() {
      * Used to fetch the projects
      */
     async function callProjects() {
+        console.log("call " + page + " | " + loading);
         if (loading) {
             return;
         }
@@ -40,6 +41,7 @@ export default function ProjectPage() {
             if (response.projects.length === 0) {
                 setMoreProjectsAvailable(false);
             }
+            console.log("set");
             if (page === 0) {
                 setProjects(response.projects);
             } else {
@@ -57,12 +59,6 @@ export default function ProjectPage() {
         setMoreProjectsAvailable(true);
         setGotProjects(false);
     }
-
-    useEffect(() => {
-        if (moreProjectsAvailable && !gotProjects) {
-            callProjects();
-        }
-    });
 
     /**
      * Remove a project in local list.
