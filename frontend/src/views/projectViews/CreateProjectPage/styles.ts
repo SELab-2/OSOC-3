@@ -45,4 +45,4 @@ export const CreateButton = styled.button`
 export const Label = styled.h5`
     margin-top: 30px;
     margin-bottom: 0px;
-`
+`;

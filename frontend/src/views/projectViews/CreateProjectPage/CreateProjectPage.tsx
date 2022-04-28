@@ -17,6 +17,10 @@ import {
 import { SkillProject } from "../../../data/interfaces/projects";
 import { User } from "../../../utils/api/users/users";
 
+/**
+ * React component of the create project page.
+ * @returns The create project page.
+ */
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
     const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
@@ -79,18 +83,18 @@ export default function CreateProjectPage() {
 
             <CreateButton
                 onClick={async () => {
-                    const coachesIds: number[] = [];
+                    const coachIds: number[] = [];
                     coaches.forEach(coachToAdd => {
-                        coachesIds.push(coachToAdd.userId);
+                        coachIds.push(coachToAdd.userId);
                     });
 
                     const response = await createProject(
                         editionId,
                         name,
                         numberOfStudents!,
-                        [],
+                        [], // Empty skills for now TODO
                         partners,
-                        coachesIds
+                        coachIds
                     );
                     if (response) {
                         navigate("/editions/" + editionId + "/projects/");

@@ -2,6 +2,14 @@ import axios from "axios";
 import { Projects, Project, CreateProject } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
+/**
+ * API call to get projects (and filter them)
+ * @param edition The edition name.
+ * @param name To filter on project name.
+ * @param ownProjects To filter on your own projects.
+ * @param page The requested page.
+ * @returns
+ */
 export async function getProjects(
     edition: string,
     name: string,
@@ -30,6 +38,12 @@ export async function getProjects(
     }
 }
 
+/**
+ * API call to get a specific project.
+ * @param edition The edition name.
+ * @param projectId The ID of the project.
+ * @returns A Project object when successful.
+ */
 export async function getProject(edition: string, projectId: number): Promise<Project | null> {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
@@ -44,6 +58,16 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
     }
 }
 
+/**
+ * API call to create a project.
+ * @param edition The edition name.
+ * @param name The name of the new project.
+ * @param numberOfStudents The amount of students needed for this project.
+ * @param skills The skills that are needed for this project.
+ * @param partners The partners of the project.
+ * @param coaches The coaches that will coach the project.
+ * @returns The newly created object.
+ */
 export async function createProject(
     edition: string,
     name: string,
@@ -51,7 +75,7 @@ export async function createProject(
     skills: string[],
     partners: string[],
     coaches: number[]
-) {
+): Promise<Project | null> {
     const payload: CreateProject = {
         name: name,
         number_of_students: numberOfStudents,
@@ -74,6 +98,12 @@ export async function createProject(
     }
 }
 
+/**
+ * API call to delete a project.
+ * @param edition The edition name.
+ * @param projectId The ID of the project that needs to be deleted.
+ * @returns true if the deletion was successful or false if it failed.
+ */
 export async function deleteProject(edition: string, projectId: number): Promise<boolean> {
     try {
         await axiosInstance.delete("/editions/" + edition + "/projects/" + projectId);
