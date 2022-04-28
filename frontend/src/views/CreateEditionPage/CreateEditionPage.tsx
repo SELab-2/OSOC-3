@@ -4,6 +4,7 @@ import { createEdition, getSortedEditions } from "../../utils/api/editions";
 import { useNavigate } from "react-router-dom";
 import { CreateEditionDiv, Error, FormGroup, ButtonDiv } from "./styles";
 import { useAuth } from "../../contexts";
+import { setCurrentEdition } from "../../utils/session-storage";
 
 /**
  * Page to create a new edition.
@@ -26,6 +27,7 @@ export default function CreateEditionPage() {
         if (response === 201) {
             const allEditions = await getSortedEditions();
             setEditions(allEditions);
+            setCurrentEdition(name);
             return true;
         } else if (response === 409) {
             setNameError("Edition name already exists.");
