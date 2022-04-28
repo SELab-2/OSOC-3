@@ -12,9 +12,10 @@ import {
     LoadMoreButton,
 } from "./styles";
 import { Project } from "../../../data/interfaces";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
 import { useAuth } from "../../../contexts";
+import { Role } from "../../../data/enums";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -29,6 +30,7 @@ export default function ProjectPage() {
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
 
+    const navigate = useNavigate();
     const [page, setPage] = useState(0);
 
     const params = useParams();
@@ -81,7 +83,13 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {!role && <CreateButton>Create Project</CreateButton>}
+                {role === Role.ADMIN && (
+                    <CreateButton
+                        onClick={() => navigate("/editions/" + editionId + "/projects/new")}
+                    >
+                        Create Project
+                    </CreateButton>
+                )}
             </div>
             <OwnProject
                 type="switch"
