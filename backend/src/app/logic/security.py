@@ -1,36 +1,47 @@
+import enum
 from datetime import timedelta, datetime
 
-from fastapi import Depends
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
+import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
 from src.database import models
-import settings
-
-from src.database.database import get_session
+from src.database.crud.users import get_user_by_email
+from src.database.models import User
 
 # Configuration
+
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_HOURS = 24
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
-    """Encode the user data with an expire timestamp to create the token"""
-    to_encode = data.copy()
+@enum.unique
+class TokenType(enum.Enum):
+    """Type of the token, used to check no access token is used to refresh and the reverse."""
+    ACCESS = "access"
+    REFRESH = "refresh"
 
-    if expires_delta is not None:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(hours=24)
 
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
+def create_tokens(user: User) -> tuple[str, str]:
+    """
+    Create an access token and refresh token.
 
-    return encoded_jwt
+    Returns: (access_token, refresh_token)
+    """
+    return (
+        _create_token({"type": TokenType.ACCESS.value, "sub": str(user.user_id)}, settings.ACCESS_TOKEN_EXPIRE_M),
+        _create_token({"type": TokenType.REFRESH.value, "sub": str(user.user_id)}, settings.REFRESH_TOKEN_EXPIRE_M)
+    )
+
+
+def _create_token(data: dict, expires_delta: int) -> str:
+    """Encode the user data with an expiry timestamp to create the token"""
+    # The 'exp' key here is extremely important. if this key changes expiry will not be checked.
+    data["exp"] = datetime.utcnow() + timedelta(minutes=expires_delta)
+    return jwt.encode(data, settings.SECRET_KEY, algorithm=ALGORITHM)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -43,23 +54,11 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# TODO remove this when the users crud has been implemented
-def get_user_by_email(db: Session, email: str) -> models.User:
-    """Find a user by their email address"""
-    return db.query(models.User).where(models.User.email == email).one()
-
-
-# TODO remove this when the users crud has been implemented
-def get_user_by_id(db: Session, user_id: int) -> models.User:
-    """Find a user by their id"""
-    return db.query(models.User).where(models.User.user_id == user_id).one()
-
-
 def authenticate_user(db: Session, email: str, password: str) -> models.User:
     """Match an email/password combination to a User model"""
     user = get_user_by_email(db, email)
 
-    if not verify_password(password, user.email_auth.pw_hash):
+    if user.email_auth.pw_hash is None or not verify_password(password, user.email_auth.pw_hash):
         raise InvalidCredentialsException()
 
     return user

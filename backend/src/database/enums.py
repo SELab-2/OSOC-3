@@ -15,6 +15,23 @@ class DecisionEnum(enum.Enum):
 
 
 @enum.unique
+class EmailStatusEnum(enum.IntEnum):
+    """Enum for the status attached to an email sent to a student"""
+    # Nothing happened (undecided/screening)
+    APPLIED = 0
+    # We're looking for a project (maybe)
+    AWAITING_PROJECT = 1
+    # Can participate (yes)
+    APPROVED = 2
+    # Student signed the contract
+    CONTRACT_CONFIRMED = 3
+    # Student indicated they don't want to participate anymore
+    CONTRACT_DECLINED = 4
+    # We've rejected the student ourselves (no)
+    REJECTED = 5
+
+
+@enum.unique
 class RoleEnum(enum.Enum):
     """Enum for the different roles a user can have"""
     ADMIN = 0

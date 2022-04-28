@@ -4,7 +4,14 @@ import logoO2 from "../../images/letters/osoc_red_o.svg";
 import logoC from "../../images/letters/osoc_c.svg";
 import "./OSOCLetters.css";
 
-function OSOCLetters() {
+/**
+ * Animated OSOC-letters, inspired by the ones found
+ * on the [OSOC website](https://osoc.be/).
+ *
+ * _Note: This component is currently not in use because the positioning
+ * of the letters causes issues. We have given priority to other parts of the application._
+ */
+export default function OSOCLetters() {
     return (
         <div className="osoc-letters">
             <img src={logoO1} alt="logoO1" className="osoc-logo-O1" />
@@ -14,5 +21,3 @@ function OSOCLetters() {
         </div>
     );
 }
-
-export default OSOCLetters;

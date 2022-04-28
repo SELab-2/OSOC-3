@@ -13,11 +13,11 @@ from __future__ import annotations
 
 from uuid import uuid4, UUID
 
-from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table
+from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table, UniqueConstraint
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy_utils import UUIDType  # type: ignore
 
-from src.database.enums import DecisionEnum, QuestionEnum
+from src.database.enums import DecisionEnum, EmailStatusEnum, QuestionEnum
 
 Base = declarative_base()
 
@@ -28,6 +28,7 @@ class AuthEmail(Base):
 
     email_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
     pw_hash = Column(Text, nullable=False)
 
     user: User = relationship("User", back_populates="email_auth", uselist=False)
@@ -39,6 +40,7 @@ class AuthGitHub(Base):
 
     gh_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False)
 
@@ -49,6 +51,7 @@ class AuthGoogle(Base):
 
     google_auth_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    email = Column(Text, unique=True, nullable=False)
 
     user: User = relationship("User", back_populates="google_auth", uselist=False)
 
@@ -74,7 +77,7 @@ class DecisionEmail(Base):
 
     email_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
-    decision = Column(Enum(DecisionEnum), nullable=False)
+    decision = Column(Enum(EmailStatusEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
     student: Student = relationship("Student", back_populates="emails", uselist=False)
@@ -85,6 +88,7 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
+    name = Column(Text, unique=True, nullable=False)
     year = Column(Integer, unique=True, nullable=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
@@ -216,7 +220,7 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student")
+    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
@@ -273,6 +277,9 @@ student_skills = Table(
 class Suggestion(Base):
     """A suggestion left by a coach about a student"""
     __tablename__ = "suggestions"
+    __table_args__=(
+        UniqueConstraint('coach_id', 'student_id', name='unique_coach_student_suggestion'),
+    )
 
     suggestion_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
@@ -288,9 +295,8 @@ class User(Base):
     """Users of the tool (only admins & coaches)"""
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id: int = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    email = Column(Text, unique=True, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)

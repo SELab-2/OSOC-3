@@ -3,7 +3,6 @@ from typing import Any
 from environs import Env
 import enum
 
-
 env = Env()
 
 # Read the .env file
@@ -26,12 +25,17 @@ DB_HOST: str = env.str("DB_HOST", "0.0.0.0")
 DB_PORT: int = env.int("DB_PORT", 3306)
 # Option to change te database used. Default False is Mariadb.
 DB_USE_SQLITE: bool = env.bool("DB_USE_SQLITE", False)
+# Option to change the pagination size for all endpoints that have pagination.
+DB_PAGE_SIZE: int = env.int("DB_PAGE_SIZE", 25)
 
 """JWT token key"""
 SECRET_KEY: str = env.str("SECRET_KEY", "4d16a9cc83d74144322e893c879b5f639088c15dc1606b11226abbd7e97f5ee5")
+ACCESS_TOKEN_EXPIRE_M: int = env.int("ACCESS_TOKEN_EXPIRE_M", 5)
+REFRESH_TOKEN_EXPIRE_M: int = env.int("REFRESH_TOKEN_EXPIRE_M", 2880)
 
 """Frontend"""
 FRONTEND_URL: str = env.str("FRONTEND_URL", "http://localhost:3000")
+
 
 @enum.unique
 class FormMapping(enum.Enum):
@@ -41,7 +45,7 @@ class FormMapping(enum.Enum):
     PREFERRED_NAME = "question_3jlya9"
     EMAIL = "question_nW8NOQ"
     PHONE_NUMBER = "question_mea6qo"
-    #CV = "question_wa26Qy"
+    # CV = "question_wa26Qy"
     STUDENT_COACH = "question_wz7qEE"
 
     UNKNOWN = None  # Returned when no specific question can be matched

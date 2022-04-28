@@ -9,10 +9,9 @@ from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
 
-
 def test_create_request(database_session: Session):
     """Tests if a normal request can be created"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -34,7 +33,7 @@ def test_create_request(database_session: Session):
 
 def test_duplicate_user(database_session: Session):
     """Tests if there is a duplicate, it's not created in the database"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link1: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -45,14 +44,38 @@ def test_duplicate_user(database_session: Session):
                   pw="wachtwoord1", uuid=invite_link1.uuid)
     nu2 = NewUser(name="user2", email="email@email.com",
                   pw="wachtwoord2", uuid=invite_link2.uuid)
-    create_request(database_session, nu1, edition)
-    with pytest.raises(FailedToAddNewUserException):
+
+    # These two have to be nested transactions because they share the same database_session,
+    # and otherwise the second one rolls the first one back
+    # Making them nested transactions creates a savepoint so only that part is rolled back
+    with database_session.begin_nested():
+        create_request(database_session, nu1, edition)
+
+    with pytest.raises(FailedToAddNewUserException), database_session.begin_nested():
         create_request(database_session, nu2, edition)
+
+    # Verify that second user wasn't added
+    # the first addition was successful, the second wasn't
+    users = database_session.query(User).all()
+    assert len(users) == 1
+    assert users[0].name == nu1.name
+
+    emails = database_session.query(AuthEmail).all()
+    assert len(emails) == 1
+    assert emails[0].user == users[0]
+
+    requests = database_session.query(CoachRequest).all()
+    assert len(requests) == 1
+    assert requests[0].user == users[0]
+
+    # Verify that the link wasn't removed
+    links = database_session.query(InviteLink).all()
+    assert len(links) == 1
 
 
 def test_use_same_uuid_multiple_times(database_session: Session):
     """Tests that you can't use the same UUID multiple times"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")
@@ -68,7 +91,7 @@ def test_use_same_uuid_multiple_times(database_session: Session):
 
 def test_not_a_correct_email(database_session: Session):
     """Tests when the email is not a correct email adress, it's get the right error"""
-    edition = Edition(year=2022)
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
     with pytest.raises(ValueError):

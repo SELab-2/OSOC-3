@@ -1,18 +1,17 @@
-from src.app.schemas.webhooks import CamelCaseModel
+from src.app.schemas.users import User
+from src.app.schemas.utils import BaseModel
 
 
-class Token(CamelCaseModel):
-    """Token generated after login"""
+class UserData(User):
+    """User information that can be passed to frontend"""
+    editions: list[str] = []
+
+
+class Token(BaseModel):
+    """Token generated after login
+    Also contains data about the User to set permissions in frontend
+    """
     access_token: str
+    refresh_token: str
     token_type: str
-
-    class Config:
-        allow_population_by_field_name = True
-
-
-class User(CamelCaseModel):
-    """The fields used to find a user in the DB"""
-    user_id: int
-
-    class Config:
-        allow_population_by_field_name = True
+    user: UserData

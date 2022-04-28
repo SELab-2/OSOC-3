@@ -34,7 +34,7 @@ To be able to login via ssh a sysadmin should add your ssh key to the `authorize
 [frontend] $ echo "<ssh-key>" >> /home/frontend/.ssh/authorized_keys
 ```
 
-See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to generate an ssh key. 
+See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to generate an ssh key.
 
 #### Installing Node and Yarn
 
@@ -112,7 +112,7 @@ Navigate to the frontend folder in the cloned repository and install the depende
 Then create the `.env` file.
 
 ```shell
-[frontend] $ echo "REACT_APP_BASE_URL=https://<your domain>" > .env 
+[frontend] $ echo "REACT_APP_BASE_URL=https://<your domain>" > .env
 ```
 
 Then build the frontend.
@@ -146,7 +146,7 @@ The mariadb version available in the apt repositories (Currently 10.3) is too ou
 [admin] $ sudo apt install mariadb-server
 ```
 
-Once the server is installed **make sure** to run the `mariadb-secure-installation` script. This is **very important!** The database will be insecure if not run. 
+Once the server is installed **make sure** to run the `mariadb-secure-installation` script. This is **very important!** The database will be insecure if not run.
 
 #### Configuring Database
 
@@ -199,8 +199,7 @@ To be able to login via ssh a sysadmin should add your ssh key to the `authorize
 [backend] $ echo "<ssh-key>" >> /home/backend/.ssh/authorized_keys
 ```
 
-See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to generate an ssh key. 
-
+See [Generating SSH Keys](#generating-ssh-keys) for instructions on how to generate an ssh key.
 
 #### Installing Python
 
@@ -283,7 +282,11 @@ We will be installing dependencies in a virtual environment. You can create and 
 [backend] $ . venv-osoc/bin/activate
 ```
 
-To manage dependecies we currently use 2 separate requirements files. Only `requirements.txt` has to be installed. The other one is for development setups. 
+To manage dependecies we currently use poetry. You can install it using the following command.
+
+```shell
+(venv-osoc) [backend] $ pip3 install poetry
+```
 
 Make sure the mariadb libraries are installed.
 
@@ -293,7 +296,7 @@ Make sure the mariadb libraries are installed.
 
 ```shell
 (venv-osoc) [backend] $ cd osoc/backend
-(venv-osoc) [backend] $ pip3 install -r requirements.txt
+(venv-osoc) [backend] $ python3 -m poetry install --no-dev
 ```
 
 #### Configuring the application
@@ -375,11 +378,11 @@ upstream backend {
 server {
 	server_name example.com;
     listen 80
-        	
+
 	location / {
 		root /home/frontend/osoc/frontend/build;
 		index index.html;
-		
+
 		try_files $uri $uri/ =404;
 	}
 

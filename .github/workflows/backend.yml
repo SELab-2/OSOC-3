@@ -1,10 +1,10 @@
 name: Backend CI
 on:
+  pull_request:
   push:
-    paths:
-      - ".github/workflows/backend.yml"
-      - "backend/**"
-      - "!**.md"
+    branches:
+      - master
+      - develop
 
 defaults:
   run:
@@ -12,66 +12,67 @@ defaults:
 
 jobs:
   Dependencies:
-    runs-on: self-hosted
-    container: python:3.10.2-alpine
+    runs-on: ubuntu-latest
+    container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         id: cache
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            ${{ runner.os }}-site-packages-
+            venv-${{ runner.os }}-bullseye-3.10.2-v2
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: apk add gcc musl-dev build-base mariadb-dev libffi-dev
+        run: apt update
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt
+        run: apt install -y build-essential libmariadb-dev
 
       - if: steps.cache.outputs.cache-hit != 'true'
-        run: pip install -r requirements-dev.txt
+        run: pip install -U pip poetry
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python -m poetry export --dev --format requirements.txt --output requirements.txt --without-hashes
+          pip install -r requirements.txt
 
   Test:
     needs: [Dependencies]
-    runs-on: self-hosted
-    container: python:3.10.2-alpine
+    runs-on: ubuntu-latest
+    container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
       - run: python -m pytest
 
   Lint:
     needs: [Test]
-    runs-on: self-hosted
-    container: python:3.10.2-alpine
+    runs-on: ubuntu-latest
+    container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
-      - run: python -m pylint src tests
+      - run: python -m pylint src
 
   Type:
     needs: [Test]
-    runs-on: self-hosted
-    container: python:3.10.2-alpine
+    runs-on: ubuntu-latest
+    container: python:3.10.2-slim-bullseye
     steps:
-      - run: apk add --no-cache tar
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: /usr/local/lib/python3.10/site-packages
-          key: ${{ runner.os }}-site-packages-${{ hashFiles('**/requirements.txt', '**/requirements-dev.txt') }}
+          key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
-      - run: python -m mypy src tests
+      - run: python -m mypy src
