@@ -11,7 +11,7 @@ export default function FooterLinks() {
                     <FooterLink href={`${BASE_URL}/redoc`}>Backend API</FooterLink>
                     <br />
                     {/* This link is always production because we don't host the docs locally */}
-                    <FooterLink href={"https://sel2-3.ugent.be/docs"}>Frontend</FooterLink>
+                    <FooterLink href={"https://sel2-3.ugent.be/typedoc/"}>Frontend</FooterLink>
                     <br />
                     <FooterLink
                         href={
