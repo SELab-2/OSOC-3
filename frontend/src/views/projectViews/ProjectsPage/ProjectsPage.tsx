@@ -81,7 +81,7 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {role === 0 && <CreateButton>Create Project</CreateButton>}
+                {!role && <CreateButton>Create Project</CreateButton>}
             </div>
             <OwnProject
                 type="switch"
