@@ -14,6 +14,7 @@ import {
 import { Project } from "../../../data/interfaces";
 import { useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
+import { useAuth } from "../../../contexts";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -32,6 +33,8 @@ export default function ProjectPage() {
 
     const params = useParams();
     const editionId = params.editionId!;
+
+    const { role } = useAuth();
 
     /**
      * Used to fetch the projects
@@ -78,7 +81,7 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                <CreateButton>Create Project</CreateButton>
+                {role === 0 && <CreateButton>Create Project</CreateButton>}
             </div>
             <OwnProject
                 type="switch"

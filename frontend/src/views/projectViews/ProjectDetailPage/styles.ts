@@ -23,7 +23,7 @@ export const ClientContainer = styled.div`
     display: flex;
     align-items: center;
     color: lightgray;
-    overflow-x: scroll;
+    overflow-x: auto;
 `;
 
 export const Client = styled.h5`
