@@ -30,7 +30,7 @@ export const RemoveButton = styled.button`
 `;
 
 export const ItemName = styled.div`
-    overflow-x: scroll;
+    overflow-x: auto;
     text-overflow: ellipsis;
 `;
 

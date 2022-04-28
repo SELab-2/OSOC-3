@@ -16,7 +16,7 @@ export const TopContainer = styled.div`
 `;
 
 export const SkillName = styled.div`
-    overflow-x: scroll;
+    overflow-x: auto;
     text-overflow: ellipsis;
 `;
 
