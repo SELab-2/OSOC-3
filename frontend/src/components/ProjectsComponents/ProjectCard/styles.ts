@@ -42,7 +42,7 @@ export const ClientContainer = styled.div`
 
 export const Clients = styled.div`
     display: flex;
-    overflow-x: scroll;
+    overflow-x: auto;
 `;
 
 export const Client = styled.h5`
@@ -59,7 +59,7 @@ export const NumberOfStudents = styled.div`
 export const CoachesContainer = styled.div`
     display: flex;
     margin-top: 20px;
-    overflow-x: scroll;
+    overflow-x: auto;
 `;
 
 export const CoachContainer = styled.div`
