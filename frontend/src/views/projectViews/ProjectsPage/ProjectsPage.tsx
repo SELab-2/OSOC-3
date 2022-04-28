@@ -15,6 +15,7 @@ import { Project } from "../../../data/interfaces";
 import { useNavigate, useParams } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroller";
 import { useAuth } from "../../../contexts";
+import { Role } from "../../../data/enums";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -82,7 +83,7 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {!role && (
+                {role === Role.ADMIN && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >

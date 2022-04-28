@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Project } from "../../../data/interfaces";
 import { useAuth } from "../../../contexts";
+import { Role } from "../../../data/enums";
 
 /**
  *
@@ -68,7 +69,7 @@ export default function ProjectCard({
                     <OpenIcon />
                 </Title>
 
-                {!role && (
+                {role === Role.ADMIN && (
                     <Delete onClick={handleShow}>
                         <HiOutlineTrash size={"20px"} />
                     </Delete>
