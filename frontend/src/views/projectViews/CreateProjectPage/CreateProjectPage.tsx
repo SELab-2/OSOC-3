@@ -10,10 +10,12 @@ import {
     CoachInput,
     SkillInput,
     PartnerInput,
-    AddedItems,
+    AddedCoaches,
+    AddedPartners,
     AddedSkills,
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
 import { SkillProject } from "../../../data/interfaces/projects";
+import { User } from "../../../utils/api/users/users";
 
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
@@ -21,7 +23,7 @@ export default function CreateProjectPage() {
 
     // States for coaches
     const [coach, setCoach] = useState("");
-    const [coaches, setCoaches] = useState<string[]>([]);
+    const [coaches, setCoaches] = useState<User[]>([]);
 
     // States for skills
     const [skill, setSkill] = useState("");
@@ -60,7 +62,7 @@ export default function CreateProjectPage() {
                 coaches={coaches}
                 setCoaches={setCoaches}
             />
-            <AddedItems items={coaches} setItems={setCoaches} />
+            <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
 
             <Label>Skills</Label>
             <SkillInput skill={skill} setSkill={setSkill} skills={skills} setSkills={setSkills} />
@@ -73,17 +75,22 @@ export default function CreateProjectPage() {
                 partners={partners}
                 setPartners={setPartners}
             />
-            <AddedItems items={partners} setItems={setPartners} />
+            <AddedPartners items={partners} setItems={setPartners} />
 
             <CreateButton
                 onClick={async () => {
+                    const coachesIds: number[] = [];
+                    coaches.forEach(coachToAdd => {
+                        coachesIds.push(coachToAdd.userId);
+                    });
+
                     const response = await createProject(
                         editionId,
                         name,
                         numberOfStudents!,
                         [],
                         partners,
-                        coaches
+                        coachesIds
                     );
                     if (response) {
                         navigate("/editions/" + editionId + "/projects/");

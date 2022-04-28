@@ -83,8 +83,8 @@ export interface CreateProject {
     /** The partners that belong to this project */
     partners: string[];
 
-    /** The users that will coach this project */
-    coaches: string[];
+    /** The IDs of the users that will coach this project */
+    coaches: number[];
 }
 
 /**

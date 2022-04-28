@@ -50,7 +50,7 @@ export async function createProject(
     numberOfStudents: number,
     skills: string[],
     partners: string[],
-    coaches: string[]
+    coaches: number[]
 ) {
     const payload: CreateProject = {
         name: name,

@@ -1,7 +1,7 @@
 import { TiDeleteOutline } from "react-icons/ti";
 import { AddedItem, ItemName, RemoveButton } from "../styles";
 
-export default function AddedItems({
+export default function AddedPartners({
     items,
     setItems,
 }: {

@@ -13,8 +13,8 @@ export default function Coach({
 }: {
     coach: string;
     setCoach: (coach: string) => void;
-    coaches: string[];
-    setCoaches: (coaches: string[]) => void;
+    coaches: User[];
+    setCoaches: (coaches: User[]) => void;
 }) {
     const [showAlert, setShowAlert] = useState(false);
     const [availableCoaches, setAvailableCoaches] = useState<User[]>([]);
@@ -46,10 +46,16 @@ export default function Coach({
 
             <AddButton
                 onClick={() => {
-                    if (availableCoaches.some(availableCoach => availableCoach.name === coach)) {
-                        if (!coaches.includes(coach)) {
+                    let coachToAdd = null;
+                    availableCoaches.forEach(availableCoach => {
+                        if (availableCoach.name === coach) {
+                            coachToAdd = availableCoach;
+                        }
+                    });
+                    if (coachToAdd) {
+                        if (!coaches.some(presentCoach => presentCoach.name === coach)) {
                             const newCoaches = [...coaches];
-                            newCoaches.push(coach);
+                            newCoaches.push(coachToAdd);
                             setCoaches(newCoaches);
                             setShowAlert(false);
                         }
