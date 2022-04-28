@@ -30,11 +30,12 @@ export default function ProjectPage() {
     const [ownProjects, setOwnProjects] = useState(false);
 
     const navigate = useNavigate();
-    const { role } = useAuth();
     const [page, setPage] = useState(0);
 
     const params = useParams();
     const editionId = params.editionId!;
+
+    const { role } = useAuth();
 
     /**
      * Used to fetch the projects
@@ -81,13 +82,13 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {role === 0 ? (
+                {!role && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >
                         Create Project
                     </CreateButton>
-                ) : null}
+                )}
             </div>
             <OwnProject
                 type="switch"

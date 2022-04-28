@@ -23,6 +23,7 @@ import { deleteProject } from "../../../utils/api/projects";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Project } from "../../../data/interfaces";
+import { useAuth } from "../../../contexts";
 
 /**
  *
@@ -53,6 +54,8 @@ export default function ProjectCard({
     const params = useParams();
     const editionId = params.editionId!;
 
+    const { role } = useAuth();
+
     return (
         <CardContainer>
             <TitleContainer>
@@ -65,9 +68,11 @@ export default function ProjectCard({
                     <OpenIcon />
                 </Title>
 
-                <Delete onClick={handleShow}>
-                    <HiOutlineTrash size={"20px"} />
-                </Delete>
+                {!role && (
+                    <Delete onClick={handleShow}>
+                        <HiOutlineTrash size={"20px"} />
+                    </Delete>
+                )}
 
                 <ConfirmDelete
                     visible={show}
