@@ -60,6 +60,7 @@ export default function Coach({
                             setShowAlert(false);
                         }
                     } else setShowAlert(true);
+                    setCoach("");
                 }}
             >
                 Add coach
