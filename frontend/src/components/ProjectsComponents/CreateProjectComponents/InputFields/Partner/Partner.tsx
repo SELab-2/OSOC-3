@@ -34,7 +34,8 @@ export default function Partner({
                         const newPartners = [...partners];
                         newPartners.push(partner);
                         setPartners(newPartners);
-                    } setPartner("")
+                    }
+                    setPartner("");
                 }}
             >
                 Add partner

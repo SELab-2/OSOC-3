@@ -1,1 +1,1 @@
-export {default} from "./NumberOfStudents"
+export { default } from "./NumberOfStudents";
