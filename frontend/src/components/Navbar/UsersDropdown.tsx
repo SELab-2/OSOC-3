@@ -1,4 +1,3 @@
-import { useAuth } from "../../contexts";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem } from "./styles";
 import { Role } from "../../data/enums";
@@ -7,15 +6,14 @@ import EditionNavLink from "./EditionNavLink";
 
 interface Props {
     currentEdition: string;
+    role: Role | null;
 }
 
 /**
  * NavDropdown that links to the [[AdminsPage]] and [[UsersPage]].
  * This component is only rendered for admins.
  */
-export default function UsersDropdown({ currentEdition }: Props) {
-    const { role } = useAuth();
-
+export default function UsersDropdown({ currentEdition, role }: Props) {
     // Only admins can see the dropdown because coaches can't
     // access these pages anyway
     if (role !== Role.ADMIN) {
