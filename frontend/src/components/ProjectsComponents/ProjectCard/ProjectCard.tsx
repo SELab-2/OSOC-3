@@ -68,9 +68,11 @@ export default function ProjectCard({
                     <OpenIcon />
                 </Title>
 
-                {!role && <Delete onClick={handleShow}>
-                    <HiOutlineTrash size={"20px"} />
-                </Delete>}
+                {!role && (
+                    <Delete onClick={handleShow}>
+                        <HiOutlineTrash size={"20px"} />
+                    </Delete>
+                )}
 
                 <ConfirmDelete
                     visible={show}
