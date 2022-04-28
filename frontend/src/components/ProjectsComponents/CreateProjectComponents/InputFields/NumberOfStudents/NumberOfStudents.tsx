@@ -11,7 +11,7 @@ export default function NumberOfStudents({
         <div>
             <Input
                 type="number"
-                min="0"
+                min="1"
                 value={numberOfStudents}
                 onChange={e => {
                     setNumberOfStudents(e.target.valueAsNumber);

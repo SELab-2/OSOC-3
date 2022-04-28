@@ -23,7 +23,7 @@ import { User } from "../../../utils/api/users/users";
  */
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
-    const [numberOfStudents, setNumberOfStudents] = useState<number>(0);
+    const [numberOfStudents, setNumberOfStudents] = useState<number>(1);
 
     // States for coaches
     const [coach, setCoach] = useState("");
