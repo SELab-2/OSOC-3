@@ -24,14 +24,14 @@ export default function CreateEditionPage() {
 
     async function sendEdition(name: string, year: number): Promise<boolean> {
         const response = await createEdition(name, year);
-        if (response === 201) {
+        if (response.status === 201) {
             const allEditions = await getSortedEditions();
             setEditions(allEditions);
-            setCurrentEdition(name);
+            setCurrentEdition(response.data.name);
             return true;
-        } else if (response === 409) {
+        } else if (response.status === 409) {
             setNameError("Edition name already exists.");
-        } else if (response === 422) {
+        } else if (response.status === 422) {
             setNameError("Invalid edition name.");
         } else {
             setError("Something went wrong.");
