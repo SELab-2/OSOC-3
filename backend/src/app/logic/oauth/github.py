@@ -34,7 +34,7 @@ async def get_github_access_token(http_session: aiohttp.ClientSession, code: str
     return AccessTokenResponse(**token_response_json)
 
 
-async def get_github_email(http_session: aiohttp.ClientSession, access_token: str) -> GitHubProfile:
+async def get_github_profile(http_session: aiohttp.ClientSession, access_token: str) -> GitHubProfile:
     """Get a user's profile info used on GitHub"""
     headers = {
         "Authorization": f"Bearer {access_token}"

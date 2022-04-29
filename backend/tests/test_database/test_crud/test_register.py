@@ -1,8 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.crud.register import create_user, create_coach_request, create_auth_email
-from src.database.models import AuthEmail, CoachRequest, User, Edition
+from src.app.schemas.oauth.github import GitHubProfile
+from src.database.crud.register import create_user, create_coach_request, create_auth_email, create_auth_github
+from src.database.models import AuthEmail, CoachRequest, User, Edition, AuthGitHub
 
 
 async def test_create_user(database_session: AsyncSession):
@@ -39,3 +40,15 @@ async def test_create_auth_email(database_session: AsyncSession):
     assert a[0].user_id == u.user_id
     assert a[0].pw_hash == "wachtwoord"
     assert u.email_auth == a[0]
+
+
+def test_create_auth_github(database_session: Session):
+    """Test creating a GitHub auth entry"""
+    user = create_user(database_session, name="GitHub")
+    profile = GitHubProfile(access_token="token", email="some@test.email", id=1, name="ghn")
+    create_auth_github(database_session, user, profile)
+
+    query = database_session.query(AuthGitHub).where(AuthGitHub.user == user).all()
+
+    assert len(query) == 1
+    assert query[0].user_id == user.user_id

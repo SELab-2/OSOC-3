@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.app.logic.oauth.github import get_github_access_token, get_github_email
+from src.app.logic.oauth.github import get_github_access_token, get_github_profile
 from src.app.logic.register import create_request_email, create_request_github
 from src.app.routers.tags import Tags
 from src.app.schemas.register import EmailRegister, GitHubRegister
@@ -29,5 +29,5 @@ async def register_github(register_data: GitHubRegister, db: AsyncSession = Depe
                           edition: Edition = Depends(get_latest_edition)):
     """Register a new account using GitHub OAuth."""
     access_token_data = await get_github_access_token(http_session, register_data.code)
-    user_email = await get_github_email(http_session, access_token_data.access_token)
+    user_email = await get_github_profile(http_session, access_token_data.access_token)
     await create_request_github(db, user_email, register_data.uuid, edition)

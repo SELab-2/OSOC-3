@@ -129,6 +129,8 @@ filterwarnings = [
 ]
 env = [
     "DB_USE_SQLITE = 1",
+    "GITHUB_CLIENT_ID = 25",
+    "GITHUB_CLIENT_SECRET = secret"
 ]
 
 
