@@ -2,10 +2,10 @@ import { CardsGrid, ProjectsContainer } from "../../views/projectViews/ProjectsP
 import { ProjectCard } from "./index";
 import InfiniteScroll from "react-infinite-scroller";
 import { Project } from "../../data/interfaces";
-import { SpinnerContainer } from "../UsersComponents/Requests/styles";
+import { SpinnerContainer, Error } from "../UsersComponents/Requests/styles";
 import { Spinner } from "react-bootstrap";
 import React from "react";
-import { ProjectTableDiv } from "./styles";
+import { MessageDiv } from "./styles";
 
 /**
  * A table of [[ProjectCard]]s.
@@ -23,33 +23,46 @@ export default function ProjectTable(props: {
     getMoreProjects: (page: number) => void;
     moreProjectsAvailable: boolean;
     removeProject: (project: Project) => void;
+    error: string | undefined;
 }) {
+    if (props.error) {
+        return (
+            <MessageDiv>
+                <Error>{props.error}</Error>
+            </MessageDiv>
+        );
+    } else if (props.gotData && props.projects.length === 0) {
+        return (
+            <MessageDiv>
+                <div>No projects found.</div>
+            </MessageDiv>
+        );
+    }
+
     return (
-        <ProjectTableDiv>
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={props.getMoreProjects}
-                hasMore={props.moreProjectsAvailable}
-                loader={
-                    <SpinnerContainer key={"spinner"}>
-                        <Spinner animation="border" />
-                    </SpinnerContainer>
-                }
-                useWindow={false}
-                initialLoad={true}
-            >
-                <ProjectsContainer>
-                    <CardsGrid>
-                        {props.projects.map((project, _index) => (
-                            <ProjectCard
-                                project={project}
-                                removeProject={props.removeProject}
-                                key={_index}
-                            />
-                        ))}
-                    </CardsGrid>
-                </ProjectsContainer>
-            </InfiniteScroll>
-        </ProjectTableDiv>
+        <InfiniteScroll
+            loadMore={props.getMoreProjects}
+            hasMore={props.moreProjectsAvailable}
+            loader={
+                <SpinnerContainer key={"spinner"}>
+                    <Spinner animation="border" />
+                </SpinnerContainer>
+            }
+            initialLoad={true}
+            useWindow={false}
+            getScrollParent={() => document.getElementById("root")}
+        >
+            <ProjectsContainer>
+                <CardsGrid>
+                    {props.projects.map((project, _index) => (
+                        <ProjectCard
+                            project={project}
+                            removeProject={props.removeProject}
+                            key={_index}
+                        />
+                    ))}
+                </CardsGrid>
+            </ProjectsContainer>
+        </InfiniteScroll>
     );
 }

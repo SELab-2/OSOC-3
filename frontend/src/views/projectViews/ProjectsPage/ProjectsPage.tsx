@@ -15,6 +15,7 @@ export default function ProjectPage() {
     const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
+    const [error, setError] = useState<string | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -31,25 +32,30 @@ export default function ProjectPage() {
      * Used to fetch the projects
      */
     async function callProjects() {
-        console.log("call " + page + " | " + loading);
         if (loading) {
             return;
         }
         setLoading(true);
-        const response = await getProjects(editionId, searchString, ownProjects, page);
-        if (response) {
-            if (response.projects.length === 0) {
-                setMoreProjectsAvailable(false);
-            }
-            console.log("set");
-            if (page === 0) {
-                setProjects(response.projects);
+        try {
+            const response = await getProjects(editionId, searchString, ownProjects, page);
+            if (response) {
+                if (response.projects.length === 0) {
+                    setMoreProjectsAvailable(false);
+                }
+                if (page === 0) {
+                    setProjects(response.projects);
+                } else {
+                    setProjects(projects.concat(response.projects));
+                }
+                setPage(page + 1);
+                setGotProjects(true);
             } else {
-                setProjects(projects.concat(response.projects));
+                setError("Oops, something went wrong...");
             }
-            setPage(page + 1);
+        } catch (exception) {
+            setError("Oops, something went wrong...");
         }
-        setGotProjects(true);
+
         setLoading(false);
     }
 
@@ -103,6 +109,7 @@ export default function ProjectPage() {
                 getMoreProjects={callProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}
+                error={error}
             />
         </div>
     );
