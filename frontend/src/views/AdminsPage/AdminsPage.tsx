@@ -8,61 +8,71 @@ import { User } from "../../utils/api/users/users";
 import { SearchInput } from "../../components/styles";
 
 export default function AdminsPage() {
+    const [allAdmins, setAllAdmins] = useState<User[]>([]);
     const [admins, setAdmins] = useState<User[]>([]);
-    const [gettingData, setGettingData] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
     const [error, setError] = useState("");
-    const [moreAdminsAvailable, setMoreAdminsAvailable] = useState(true);
 
-    async function getData(page: number, filter: string | undefined = undefined) {
-        if (filter === undefined) {
-            filter = searchTerm;
-        }
-        setGettingData(true);
+    async function getData() {
         setError("");
         try {
-            const response = await getAdmins(page, filter);
-            if (response.users.length !== 25) {
-                setMoreAdminsAvailable(false);
+            let adminsAvailable = true;
+            let page = 0;
+            let newAdmins: User[] = [];
+            while (adminsAvailable) {
+                const response = await getAdmins(page, searchTerm);
+                if (page === 0) {
+                    newAdmins = response.users;
+                } else {
+                    newAdmins = newAdmins.concat(response.users);
+                }
+                adminsAvailable = response.users.length !== 0;
+                page += 1;
             }
-            if (page === 0) {
-                setAdmins(response.users);
-            } else {
-                setAdmins(admins.concat(response.users));
-            }
-
             setGotData(true);
-            setGettingData(false);
+            setAdmins(newAdmins);
+            setAllAdmins(newAdmins);
         } catch (exception) {
             setError("Oops, something went wrong...");
-            setGettingData(false);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
-        if (!gotData && !gettingData && !error) {
-            getData(0);
+        if (!gotData && !loading && !error) {
+            setLoading(true);
+            getData();
         }
     });
 
-    function filter(word: string) {
-        setGotData(false);
-        setSearchTerm(word);
-        setAdmins([]);
-        setMoreAdminsAvailable(true);
-        getData(0, word);
-    }
-
-    function adminAdded(user: User) {
+    function addAdmin(user: User) {
+        setAllAdmins(allAdmins.concat([user]));
         if (user.name.includes(searchTerm)) {
             setAdmins([user].concat(admins));
         }
     }
 
+    function removeAdmin(user: User) {
+        setAllAdmins(allAdmins.filter(el => el !== user));
+        setAdmins(admins.filter(el => el !== user));
+    }
+
+    function filter(searchTerm: string) {
+        setSearchTerm(searchTerm);
+        const newAdmins: User[] = [];
+        for (const admin of allAdmins) {
+            if (admin.name.toUpperCase().includes(searchTerm.toUpperCase())) {
+                newAdmins.push(admin);
+            }
+        }
+        setAdmins(newAdmins);
+    }
+
     let list;
     if (admins.length === 0) {
-        if (gettingData) {
+        if (loading) {
             list = (
                 <SpinnerContainer>
                     <Spinner animation="border" />
@@ -77,21 +87,23 @@ export default function AdminsPage() {
         list = (
             <AdminList
                 admins={admins}
-                loading={gettingData}
+                loading={loading}
                 gotData={gotData}
-                refresh={() => getData(0)}
-                getMoreAdmins={getData}
-                moreAdminsAvailable={moreAdminsAvailable}
+                removeAdmin={removeAdmin}
             />
         );
     }
 
     return (
         <AdminsContainer>
-            <SearchInput value={searchTerm} onChange={e => filter(e.target.value)} />
-            <AddAdmin adminAdded={adminAdded} />
+            <SearchInput
+                value={searchTerm}
+                onChange={e => {
+                    filter(e.target.value);
+                }}
+            />
+            <AddAdmin adminAdded={addAdmin} />
             {list}
-            <Error> {error} </Error>
         </AdminsContainer>
     );
 }
