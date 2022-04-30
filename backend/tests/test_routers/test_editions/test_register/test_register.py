@@ -90,12 +90,12 @@ async def test_duplicate_user(database_session: AsyncSession, test_client: Async
     await database_session.commit()
     async with test_client:
         await test_client.post("/editions/ed2022/register/email",
-                         json={"name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
-                               "uuid": str(invite_link1.uuid)})
+                               json={"name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
+                                     "uuid": str(invite_link1.uuid)})
         response = await test_client.post("/editions/ed2022/register/email", json={
                                     "name": "Joske vermeulen", "email": "jw@gmail.com", "pw": "test1",
                                     "uuid": str(invite_link2.uuid)})
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_409_CONFLICT
 
 
 async def test_old_edition(database_session: AsyncSession, test_client: AsyncClient):

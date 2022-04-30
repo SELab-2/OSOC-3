@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +9,7 @@ from src.app.schemas.register import EmailRegister
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
 
 from src.app.logic.register import create_request_email
-from src.app.exceptions.register import FailedToAddNewUserException
+from src.app.exceptions.crud import DuplicateInsertException
 
 
 async def test_create_request(database_session: AsyncSession):
@@ -57,7 +59,7 @@ async def test_duplicate_user(database_session: AsyncSession):
         await create_request_email(database_session, nu1, edition)
 
     async with database_session.begin_nested():
-        with pytest.raises(FailedToAddNewUserException):
+        with pytest.raises(DuplicateInsertException):
             await create_request_email(database_session, nu2, edition)
 
     # Verify that second user wasn't added
@@ -102,5 +104,5 @@ async def test_not_a_correct_email(database_session: AsyncSession):
     database_session.add(edition)
     await database_session.commit()
     with pytest.raises(ValueError):
-        new_user = EmailRegister(name="jos", email="email", pw="wachtwoord")
+        new_user = EmailRegister(name="jos", email="email", pw="wachtwoord", uuid=uuid.uuid4())
         await create_request_email(database_session, new_user, edition)
