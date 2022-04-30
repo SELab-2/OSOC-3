@@ -2,7 +2,6 @@ import enum
 from datetime import timedelta, datetime
 
 import aiohttp
-import sqlalchemy.exc
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession

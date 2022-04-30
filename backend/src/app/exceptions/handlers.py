@@ -7,7 +7,8 @@ from starlette import status
 from .authentication import (
     ExpiredCredentialsException, InvalidCredentialsException,
     MissingPermissionsException, WrongTokenTypeException)
-from .editions import DuplicateInsertException, ReadOnlyEditionException
+from .crud import DuplicateInsertException
+from .editions import ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
 from .register import FailedToAddNewUserException, InvalidGitHubCode
@@ -16,7 +17,11 @@ from .webhooks import WebhookProcessException
 from .util import NotFound
 
 
-def install_handlers(app: FastAPI):  # pylint: disable=R0914
+# Pylint says there are too many local variables because of all the inner functions here
+# however, we can't really change that so we'll just disable the warning because it doesn't make
+# a lot of sense
+# pylint: disable=R0914
+def install_handlers(app: FastAPI):
     """Install all custom exception handlers"""
 
     @app.exception_handler(ExpiredCredentialsException)

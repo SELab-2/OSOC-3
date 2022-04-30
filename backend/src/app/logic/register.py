@@ -3,6 +3,7 @@ from uuid import UUID
 import sqlalchemy.exc
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.app.exceptions.crud import DuplicateInsertException
 from src.app.exceptions.register import FailedToAddNewUserException
 from src.app.logic.security import get_password_hash
 from src.app.schemas.oauth.github import GitHubProfile
@@ -25,6 +26,9 @@ async def create_request_email(db: AsyncSession, new_user: EmailRegister, editio
         await delete_invite_link(db, invite_link, commit=False)
 
         await db.commit()
+    except sqlalchemy.exc.IntegrityError as exception:
+        await db.rollback()
+        raise DuplicateInsertException from exception
     except sqlalchemy.exc.SQLAlchemyError as exception:
         await db.rollback()
         raise FailedToAddNewUserException from exception
@@ -41,6 +45,9 @@ async def create_request_github(db: AsyncSession, profile: GitHubProfile, uuid: 
         await delete_invite_link(db, invite_link, commit=False)
 
         await db.commit()
+    except sqlalchemy.exc.IntegrityError as exception:
+        await db.rollback()
+        raise DuplicateInsertException from exception
     except sqlalchemy.exc.SQLAlchemyError as exception:
         await db.rollback()
         raise FailedToAddNewUserException from exception

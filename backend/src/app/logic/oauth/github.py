@@ -23,7 +23,12 @@ async def get_github_access_token(http_session: aiohttp.ClientSession, code: str
         "code": code
     }
 
-    token_response = await http_session.post("https://github.com/login/oauth/access_token", headers=headers, params=params)
+    token_response = await http_session.post(
+        "https://github.com/login/oauth/access_token",
+        headers=headers,
+        params=params
+    )
+
     token_response_json = await token_response.json()
 
     # For some reason this endpoint responds with a 200 if something is wrong so we have to check
