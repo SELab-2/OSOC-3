@@ -1,5 +1,6 @@
 import uuid
 
+from pydantic import ValidationError
 import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,11 +9,11 @@ from sqlalchemy.exc import NoResultFound
 from src.app.schemas.register import EmailRegister
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
 
-from src.app.logic.register import create_request_email
+from src.app.logic.register import create_request_email, create_request_github
 from src.app.exceptions.crud import DuplicateInsertException
 
 
-async def test_create_request(database_session: AsyncSession):
+async def test_create_request_email(database_session: AsyncSession):
     """Tests if a normal request can be created"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -99,10 +100,17 @@ async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
 
 
 async def test_not_a_correct_email(database_session: AsyncSession):
-    """Tests when the email is not a correct email adress, it's get the right error"""
-    edition = Edition(year=2022, name="ed2022")
+    """Tests when the email is not a correct email address, it gets the right error"""    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     await database_session.commit()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValidationError):
         new_user = EmailRegister(name="jos", email="email", pw="wachtwoord", uuid=uuid.uuid4())
         await create_request_email(database_session, new_user, edition)
+
+
+async def test_create_request_github(database_session: AsyncSession):
+    """Test creating a new request using GitHub OAuth"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    await database_session.commit()
