@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound
 
+from src.app.schemas.oauth.github import GitHubProfile
 from src.app.schemas.register import EmailRegister
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
 
@@ -113,4 +114,42 @@ async def test_create_request_github(database_session: AsyncSession):
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
     await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+    await create_request_github(database_session, profile, invite.uuid, edition)
+
+    users = database_session.query(User).where(User.name == "Name").all()
+
+    assert len(users) == 1
+    assert users[0].github_auth is not None
+    assert users[0].github_auth.github_user_id == 1
+
+
+async def test_create_request_github_duplicate(database_session: AsyncSession):
+    """Test creating a request with an already-existing GitHub user"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+    await create_request_github(database_session, profile, invite.uuid, edition)
+
+    users = database_session.query(User).where(User.name == "Name").all()
+
+    assert len(users) == 1
+
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    # Change everything but re-use the same GitHub userid
+    profile.access_token = "another access token"
+    profile.name = "another name"
+    profile.email = "another@email.address"
+
+    with pytest.raises(DuplicateInsertException):
+        await create_request_github(database_session, profile, invite.uuid, edition)

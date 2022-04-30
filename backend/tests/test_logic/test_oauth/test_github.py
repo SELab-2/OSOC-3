@@ -1,11 +1,14 @@
 from unittest.mock import AsyncMock
 
+import sqlalchemy.exc
 from pydantic import ValidationError
 import pytest
+from sqlalchemy.orm import Session
 
 from src.app.exceptions.register import InvalidGitHubCode
 from src.app.logic.oauth import github as logic
-from src.app.logic.oauth.github import get_github_profile
+from src.app.logic.oauth.github import get_github_profile, get_github_id, get_user_by_github_code
+from src.database.models import User, AuthGitHub
 
 
 async def test_get_github_access_token_valid():
@@ -31,7 +34,7 @@ async def test_get_github_access_token_error():
 
 
 async def test_get_github_access_token_missing_scopes():
-    """Test getting the access token when the user removes some of the required scopes"""
+    """Test getting the access token when the user removes some required scopes"""
     http_session = AsyncMock()
     response = AsyncMock()
     http_session.post.return_value = response
@@ -68,17 +71,17 @@ async def test_get_github_profile_public_email():
 async def test_get_github_profile_no_name_uses_login():
     """Test getting the user's GitHub profile when the name is None"""
     http_session = AsyncMock()
-    first_response = AsyncMock()
+    response = AsyncMock()
 
-    first_response.status = 200
-    first_response.json.return_value = {
+    response.status = 200
+    response.json.return_value = {
         "name": None,
         "email": "my@email.address",
         "login": "login",
         "id": 48
     }
 
-    http_session.get.return_value = first_response
+    http_session.get.return_value = response
 
     profile = await get_github_profile(http_session, "token")
 
@@ -149,3 +152,81 @@ async def test_get_github_profile_no_primary_email():
     # No primary email, this should now default to the first entry in the list
     assert profile.email == "secondary@email.com"
     assert http_session.get.await_count == 2
+
+
+async def test_get_github_id():
+    """Test getting a user's GitHub user id"""
+    http_session = AsyncMock()
+    response = AsyncMock()
+
+    response.status = 200
+    response.json.return_value = {
+        "id": 1
+    }
+
+    http_session.get.return_value = response
+
+    user_id = await get_github_id(http_session, "token")
+    assert user_id == 1
+
+
+async def test_get_user_by_github_code_exists(database_session: Session):
+    """Test getting a user by their GitHub code"""
+    user = User(name="name", admin=True)
+    database_session.add(user)
+    gh_auth = AuthGitHub(access_token="token", email="email", github_user_id=1, user=user)
+    database_session.add(gh_auth)
+    database_session.commit()
+
+    http_session = AsyncMock()
+
+    # Request that gets an access token
+    first_response = AsyncMock()
+    first_response.status = 200
+    first_response.json.return_value = {
+        "access_token": "token",
+        "scope": "read:user,user:email"
+    }
+
+    # Request that gets the user's id
+    second_response = AsyncMock()
+    second_response.status = 200
+    second_response.json.return_value = {
+        "name": "name",
+        "email": "email",
+        "id": 1
+    }
+
+    http_session.post.return_value = first_response
+    http_session.get.return_value = second_response
+
+    found_user = await get_user_by_github_code(http_session, database_session, "some code")
+    assert found_user.user_id == user.user_id
+
+
+async def test_get_user_by_github_code_doesnt_exist(database_session: Session):
+    """Test getting a user by their GitHub code when we don't know the user"""
+    http_session = AsyncMock()
+
+    # Request that gets an access token
+    first_response = AsyncMock()
+    first_response.status = 200
+    first_response.json.return_value = {
+        "access_token": "token",
+        "scope": "read:user,user:email"
+    }
+
+    # Request that gets the user's id
+    second_response = AsyncMock()
+    second_response.status = 200
+    second_response.json.return_value = {
+        "name": "name",
+        "email": "email",
+        "id": 1
+    }
+
+    http_session.post.return_value = first_response
+    http_session.get.return_value = second_response
+
+    with pytest.raises(sqlalchemy.exc.NoResultFound):
+        await get_user_by_github_code(http_session, database_session, "some code")
