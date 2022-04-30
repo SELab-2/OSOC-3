@@ -54,6 +54,40 @@ export interface Projects {
 }
 
 /**
+ * Used to add skills to a project
+ */
+export interface SkillProject {
+    /** The name of the skill */
+    skill: string;
+
+    /** More info about this skill in a specific project */
+    description: string;
+
+    /** Number of positions of this skill in a project */
+    amount: number;
+}
+
+/**
+ * Used when creating a new project
+ */
+export interface CreateProject {
+    /** The name of the new project */
+    name: string;
+
+    /** Number of students the project needs */
+    number_of_students: number;
+
+    /** The required skills for the project */
+    skills: string[];
+
+    /** The partners that belong to this project */
+    partners: string[];
+
+    /** The IDs of the users that will coach this project */
+    coaches: number[];
+}
+
+/**
  * Data about a place in a project
  */
 export interface StudentPlace {
