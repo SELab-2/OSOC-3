@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { UsersPageDiv, UsersHeader } from "./styles";
 import { Coaches } from "../../components/UsersComponents/Coaches";
@@ -13,29 +13,27 @@ import { getCoaches } from "../../utils/api/users/coaches";
 function UsersPage() {
     // Note: The coaches are not in the coaches component because accepting a request needs to refresh the coaches list.
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
-    const [gettingData, setGettingData] = useState(false); // Waiting for data (used for spinner)
+    const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [gotData, setGotData] = useState(false); // Received data
     const [error, setError] = useState(""); // Error message
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
+    const [page, setPage] = useState(0); // The next page to request
 
     const params = useParams();
 
     /**
-     * Request a page from the list of coaches.
-     * An optional filter can be used to filter the username.
-     * If the filter is not used, the string saved in the "searchTerm" state will be used.
-     * @param page The page to load.
-     * @param filter Optional string to filter username.
+     * Request the next page from the list of coaches.
+     * The set searchterm will be used.
      */
-    async function getCoachesData(page: number, filter: string | undefined = undefined) {
-        if (filter === undefined) {
-            filter = searchTerm;
+    async function getCoachesData() {
+        if (loading) {
+            return;
         }
-        setGettingData(true);
+        setLoading(true);
         setError("");
         try {
-            const coachResponse = await getCoaches(params.editionId as string, filter, page);
+            const coachResponse = await getCoaches(params.editionId as string, searchTerm, page);
             if (coachResponse.users.length === 0) {
                 setMoreCoachesAvailable(false);
             }
@@ -44,20 +42,13 @@ function UsersPage() {
             } else {
                 setCoaches(coaches.concat(coachResponse.users));
             }
-
+            setPage(page + 1);
             setGotData(true);
-            setGettingData(false);
         } catch (exception) {
             setError("Oops, something went wrong...");
-            setGettingData(false);
         }
+        setLoading(false);
     }
-
-    useEffect(() => {
-        if (!gotData && !gettingData && !error) {
-            getCoachesData(0);
-        }
-    });
 
     /**
      * Set the searchTerm and request the first page with this filter.
@@ -65,11 +56,10 @@ function UsersPage() {
      * @param searchTerm The string to filter coaches with by username.
      */
     function filterCoachesData(searchTerm: string) {
-        setGotData(false);
         setSearchTerm(searchTerm);
-        setCoaches([]);
-        setMoreCoachesAvailable(true);
-        getCoachesData(0, searchTerm);
+        if (searchTerm === "") {
+            refreshCoaches();
+        }
     }
 
     /**
@@ -77,10 +67,10 @@ function UsersPage() {
      * Used when a new coach is added.
      */
     function refreshCoaches() {
-        setGotData(false);
         setCoaches([]);
+        setPage(0);
         setMoreCoachesAvailable(true);
-        getCoachesData(0);
+        setGotData(false);
     }
 
     /**
@@ -112,7 +102,6 @@ function UsersPage() {
                     edition={params.editionId}
                     coaches={coaches}
                     gotData={gotData}
-                    gettingData={gettingData}
                     error={error}
                     getMoreCoaches={getCoachesData}
                     searchCoaches={filterCoachesData}

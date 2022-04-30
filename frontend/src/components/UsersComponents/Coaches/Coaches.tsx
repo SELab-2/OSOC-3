@@ -1,9 +1,8 @@
 import React from "react";
 import { CoachesTitle, CoachesContainer } from "./styles";
 import { User } from "../../../utils/api/users/users";
-import { Error, SpinnerContainer } from "../Requests/styles";
+import { Error, SearchButton } from "../Requests/styles";
 import { CoachList, AddCoach } from "./CoachesComponents";
-import { Spinner } from "react-bootstrap";
 import { SearchInput } from "../../styles";
 
 /**
@@ -14,7 +13,6 @@ import { SearchInput } from "../../styles";
  * @param props.getMoreCoaches A function to load more coaches.
  * @param props.searchCoaches A function to set the filter for coaches' username.
  * @param props.gotData All data is received.
- * @param props.gettingData Waiting for data.
  * @param props.error An error message.
  * @param props.moreCoachesAvailable More unfetched coaches available.
  * @param props.searchTerm Current filter for coaches' names.
@@ -24,10 +22,9 @@ import { SearchInput } from "../../styles";
 export default function Coaches(props: {
     edition: string;
     coaches: User[];
-    getMoreCoaches: (page: number) => void;
+    getMoreCoaches: () => void;
     searchCoaches: (word: string) => void;
     gotData: boolean;
-    gettingData: boolean;
     error: string;
     moreCoachesAvailable: boolean;
     searchTerm: string;
@@ -35,25 +32,15 @@ export default function Coaches(props: {
     removeCoach: (user: User) => void;
 }) {
     let table;
-    if (props.coaches.length === 0) {
-        if (props.gettingData) {
-            table = (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
-        } else if (props.gotData) {
-            table = <div>No coaches found</div>;
-        } else {
-            table = <Error> {props.error} </Error>;
-        }
+    if (props.error) {
+        table = <Error> {props.error} </Error>;
+    } else if (props.gotData && props.coaches.length === 0) {
+        table = <div>No coaches found</div>;
     } else {
         table = (
             <CoachList
                 coaches={props.coaches}
-                loading={props.gettingData}
                 edition={props.edition}
-                gotData={props.gotData}
                 removeCoach={props.removeCoach}
                 getMoreCoaches={props.getMoreCoaches}
                 moreCoachesAvailable={props.moreCoachesAvailable}
@@ -67,7 +54,11 @@ export default function Coaches(props: {
             <SearchInput
                 value={props.searchTerm}
                 onChange={e => props.searchCoaches(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === "Enter") props.refreshCoaches();
+                }}
             />
+            <SearchButton onClick={props.refreshCoaches}>Search</SearchButton>
             <AddCoach edition={props.edition} refreshCoaches={props.refreshCoaches} />
             {table}
         </CoachesContainer>
