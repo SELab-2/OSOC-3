@@ -4,7 +4,6 @@ import { CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroller";
 import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
