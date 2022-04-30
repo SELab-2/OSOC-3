@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
-from src.app.logic.oauth.github import get_github_access_token, get_github_id
+from src.app.logic.oauth.github import get_user_by_github_code
 from src.database import models
-from src.database.crud.users import get_user_by_email, get_user_by_github_id
+from src.database.crud.users import get_user_by_email
 from src.database.models import User
 
 # Configuration
@@ -68,6 +68,4 @@ def authenticate_user_email(db: AsyncSession, email: str, password: str) -> mode
 
 async def authenticate_user_github(http_session: aiohttp.ClientSession, db: AsyncSession, code: str) -> models.User:
     """Match a GitHub code to a User model"""
-    token_data = await get_github_access_token(http_session, code)
-    github_id = await get_github_id(http_session, token_data.access_token)
-    return get_user_by_github_id(db, github_id)
+    return await get_user_by_github_code(http_session, db, code)

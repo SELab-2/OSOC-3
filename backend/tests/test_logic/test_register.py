@@ -1,17 +1,16 @@
 import uuid
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound
 
+from src.app.exceptions.crud import DuplicateInsertException
+from src.app.logic.register import create_request_email, create_request_github
 from src.app.schemas.oauth.github import GitHubProfile
 from src.app.schemas.register import EmailRegister
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
-
-from src.app.logic.register import create_request_email, create_request_github
-from src.app.exceptions.crud import DuplicateInsertException
 
 
 async def test_create_request_email(database_session: AsyncSession):
@@ -101,7 +100,8 @@ async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
 
 
 async def test_not_a_correct_email(database_session: AsyncSession):
-    """Tests when the email is not a correct email address, it gets the right error"""    edition = Edition(year=2022, name="ed2022")
+    """Tests when the email is not a correct email address, it gets the right error"""
+    edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     await database_session.commit()
     with pytest.raises(ValidationError):

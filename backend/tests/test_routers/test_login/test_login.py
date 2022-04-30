@@ -1,10 +1,11 @@
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from aioresponses import aioresponses
 from starlette import status
 from starlette.testclient import TestClient
 
 from src.app.logic import security
-from src.database.models import AuthEmail, User
+from src.database.models import AuthEmail, AuthGitHub, User
 
 
 async def test_login_non_existing(test_client: AsyncClient):
