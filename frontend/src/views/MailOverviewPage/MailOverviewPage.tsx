@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     getMailOverview,
     StudentEmails,
@@ -36,7 +36,7 @@ export default function MailOverviewPage() {
         studentEmails: [],
     };
     const [table, setTable] = useState(init);
-    const [gotData, setGotData] = useState(false); // Received data
+    const [keyval, setKeyval] = useState(0);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emails available
     const { editionId } = useParams();
 
@@ -50,37 +50,26 @@ export default function MailOverviewPage() {
             if (studentEmails.studentEmails.length === 0) {
                 setMoreEmailsAvailable(false);
             }
-            if (
-                studentEmails.studentEmails.length !== 0 ||
-                (studentEmails.studentEmails.length === 0 && page === 0)
-            ) {
-                if (page === 0) {
-                    setTable(studentEmails);
-                } else {
-                    setTable({
-                        studentEmails: table.studentEmails.concat(studentEmails.studentEmails),
-                    });
-                }
-            }
 
-            setGotData(true);
+            if (page === 0) {
+                setTable(studentEmails);
+            } else {
+                setTable(prevState => ({
+                    studentEmails: [...prevState.studentEmails, ...studentEmails.studentEmails],
+                }));
+            }
         } catch (exception) {
             console.log(exception);
         }
     }
-
-    useEffect(() => {
-        if (!gotData) {
-            updateMailOverview(0);
-        }
-    });
 
     /**
      * update the table with the search term and filters
      */
     function handleDoSearch() {
         setFinalFilters();
-        setGotData(false);
+        // need to update the key of the component to refresh it
+        setKeyval(keyval + 2);
         setMoreEmailsAvailable(true);
         updateMailOverview(0);
     }
@@ -91,7 +80,8 @@ export default function MailOverviewPage() {
      */
     async function handleSetState(eventKey: string | null) {
         await setStateRequest(eventKey, editionId);
-        setGotData(false);
+        // need to update the key of the component to refresh it
+        setKeyval(keyval + 2);
         setMoreEmailsAvailable(true);
         updateMailOverview(0);
     }
@@ -168,7 +158,8 @@ export default function MailOverviewPage() {
             </SearchAndFilterDiv>
             <TableDiv>
                 <InfiniteScroll
-                    pageStart={0}
+                    key={keyval}
+                    pageStart={-1}
                     loadMore={updateMailOverview}
                     initialLoad={true}
                     hasMore={moreEmailsAvailable}

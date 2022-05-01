@@ -71,10 +71,13 @@ export function handleSelectAll(isSelect: boolean, rows: StudentEmail[]) {
  */
 export async function setStateRequest(eventKey: string | null, edition: string | undefined) {
     // post request with selected data
+    console.log(selectedRows);
     await axiosInstance.post(`/editions/${edition}/students/emails`, {
         students_id: selectedRows,
         email_status: eventKey,
     });
+    // remove all selections
+    selectedRows.splice(0, selectedRows.length);
 }
 
 let selectedFilters: EmailType[] = [];
