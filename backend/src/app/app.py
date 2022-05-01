@@ -1,16 +1,12 @@
-from alembic import config
-from alembic import script
-from alembic.runtime import migration
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 import settings
 from src.database.engine import engine
-from src.database.exceptions import PendingMigrationsException
+from src.database.models import Base
 from .exceptions import install_handlers
 from .routers import editions_router, login_router, skills_router
 from .routers.users.users import users_router
-from src.database.models import Base
 
 # Main application
 app = FastAPI(
