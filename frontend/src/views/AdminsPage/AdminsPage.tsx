@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AdminsContainer } from "./styles";
 import { getAdmins } from "../../utils/api/users/admins";
 import { Error, SpinnerContainer } from "../../components/UsersComponents/Requests/styles";
@@ -15,7 +15,7 @@ export default function AdminsPage() {
     const [gotData, setGotData] = useState(false);
     const [error, setError] = useState("");
 
-    async function getData() {
+    const getData = useCallback(async () => {
         setError("");
         try {
             let adminsAvailable = true;
@@ -38,14 +38,14 @@ export default function AdminsPage() {
             setError("Oops, something went wrong...");
         }
         setLoading(false);
-    }
+    }, [searchTerm]);
 
     useEffect(() => {
         if (!gotData && !loading && !error) {
             setLoading(true);
             getData();
         }
-    });
+    }, [gotData, loading, error, getData]);
 
     function addAdmin(user: User) {
         setAllAdmins(allAdmins.concat([user]));
