@@ -22,12 +22,7 @@ def create_project(db: Session, edition: Edition, input_project: InputProject) -
         # Create the project
         project = crud.create_project(db, edition, input_project, partners, commit=False)
 
-        # Create the project roles
-        # for input_project_role in input_project.project_roles:
-        #     projects_students_crud.create_project_role(db, project, input_project_role)
-
         # Save the changes to the database
-
         db.commit()
 
         return project
@@ -40,10 +35,12 @@ def create_project(db: Session, edition: Edition, input_project: InputProject) -
 def patch_project(db: Session, project: Project, input_project: InputProject) -> Project:
     """Make changes to a project"""
     try:
+        # Fetch or create all partners
         partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
 
         crud.patch_project(db, project, input_project, partners, commit=False)
 
+        # Save the changes to the database
         db.commit()
 
         return project

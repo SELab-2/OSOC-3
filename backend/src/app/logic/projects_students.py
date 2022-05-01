@@ -33,4 +33,4 @@ def change_project_role_suggestion(
         argumentation: InputArgumentation):
     """Change the role of the student in the project"""
     pr_suggestion = crud.get_pr_suggestion_for_pr_by_student(db, project_role, student)
-    return crud.update_pr_suggestion(db, pr_suggestion, updater, argumentation)
+    crud.update_pr_suggestion(db, pr_suggestion, updater, argumentation)

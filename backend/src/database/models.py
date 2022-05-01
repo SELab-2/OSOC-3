@@ -165,8 +165,8 @@ class ProjectRole(Base):
     __tablename__ = "project_roles"
     project_role_id = Column(Integer, primary_key=True)
 
-    project_id = Column(Integer, ForeignKey("projects.project_id"), primary_key=True)
-    skill_id = Column(Integer, ForeignKey("skills.skill_id"), primary_key=True)
+    project_id = Column(Integer, ForeignKey("projects.project_id"))
+    skill_id = Column(Integer, ForeignKey("skills.skill_id"))
     description = Column(Text, nullable=True)
     slots = Column(Integer, nullable=False, default=0)
 

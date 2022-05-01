@@ -25,12 +25,38 @@ class Partner(CamelCaseModel):
         orm_mode = True
 
 
+class Student(CamelCaseModel):
+    """Represents a Partner from the database"""
+    student_id: int
+    first_name: str
+    last_name: str
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
+class ProjectRoleSuggestion(CamelCaseModel):
+    """Represents a ProjectRole from the database"""
+    project_role_suggestion_id: int
+    argumentation: str | None
+    drafter: User
+    student: Student
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
 class ProjectRole(CamelCaseModel):
     """Represents a ProjectRole from the database"""
+    project_role_id: int
     project_id: int
     description: str | None
     skill: Skill
     slots: int
+
+    suggestions: list[ProjectRoleSuggestion]
 
     class Config:
         """Set to ORM mode"""

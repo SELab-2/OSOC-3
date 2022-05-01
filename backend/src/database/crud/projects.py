@@ -91,9 +91,9 @@ def get_project_role(db: Session, project_role_id: int) -> ProjectRole:
     return db.query(ProjectRole).where(ProjectRole.project_role_id == project_role_id).one()
 
 
-def get_project_roles_for_project(db: Session, project_id: int) -> list[ProjectRole]:
+def get_project_roles_for_project(db: Session, project: Project) -> list[ProjectRole]:
     """Get the project roles associated with a project"""
-    return db.query(ProjectRole).where(ProjectRole.project_id == project_id).all()
+    return db.query(ProjectRole).where(ProjectRole.project == project).all()
 
 
 def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:

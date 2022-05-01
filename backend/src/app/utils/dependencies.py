@@ -157,4 +157,4 @@ def get_project_role(
     project_role = crud_projects.get_project_role(db, project_role_id)
     if project_role.project != project:
         raise NotFound()
-    return project
+    return project_role
