@@ -28,7 +28,12 @@ def get_projects_for_edition_page(db: Session, edition: Edition,
     return projects
 
 
-def create_project(db: Session, edition: Edition, input_project: InputProject, partners: list[Partner]) -> Project:
+def create_project(
+        db: Session,
+        edition: Edition,
+        input_project: InputProject,
+        partners: list[Partner],
+        commit: bool = True) -> Project:
     """
     Add a project to the database
     If there are partner names that are not already in the database, add them
@@ -43,7 +48,9 @@ def create_project(db: Session, edition: Edition, input_project: InputProject, p
     )
 
     db.add(project)
-    db.commit()
+
+    if commit:
+        db.commit()
 
     return project
 
@@ -59,7 +66,12 @@ def delete_project(db: Session, project: Project):
     db.commit()
 
 
-def patch_project(db: Session, project: Project, input_project: InputProject, partners: list[Partner]):
+def patch_project(
+        db: Session,
+        project: Project,
+        input_project: InputProject,
+        partners: list[Partner],
+        commit: bool = True):
     """
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
@@ -71,7 +83,8 @@ def patch_project(db: Session, project: Project, input_project: InputProject, pa
     project.coaches = coaches
     project.partners = partners
 
-    db.commit()
+    if commit:
+        db.commit()
 
 
 def get_project_role(db: Session, project_role_id: int) -> ProjectRole:

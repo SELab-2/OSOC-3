@@ -229,7 +229,7 @@ class Student(Base):
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
+    project_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
     questions: list[Question] = relationship("Question", back_populates="student", cascade="all, delete-orphan")
@@ -308,7 +308,7 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False,
                                                cascade="all, delete-orphan")
-    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter",
+    drafted_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="drafter",
                                                     cascade="all, delete-orphan")
     editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
     projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")

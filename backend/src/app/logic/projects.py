@@ -15,41 +15,42 @@ def get_project_list(db: Session, edition: Edition, search_params: QueryParamsPr
 
 def create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
     """Create a new project"""
-    transaction = db.begin_nested()
-
     try:
         # Fetch or create all partners
-        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners)
+        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
 
         # Create the project
-        project = crud.create_project(db, edition, input_project, partners)
+        project = crud.create_project(db, edition, input_project, partners, commit=False)
 
         # Create the project roles
         # for input_project_role in input_project.project_roles:
         #     projects_students_crud.create_project_role(db, project, input_project_role)
 
         # Save the changes to the database
-        transaction.commit()
+
+        db.commit()
 
         return project
-    finally:
+    except Exception as ex:
         # When an error occurs undo al database changes
-        transaction.rollback()
+        db.rollback()
+        raise ex
 
 
 def patch_project(db: Session, project: Project, input_project: InputProject) -> Project:
     """Make changes to a project"""
-    transaction = db.begin_nested()
-
     try:
-        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners)
+        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
 
-        crud.patch_project(db, project, input_project, partners)
+        crud.patch_project(db, project, input_project, partners, commit=False)
+
+        db.commit()
 
         return project
-    finally:
+    except Exception as ex:
         # When an error occurs undo al database changes
-        transaction.rollback()
+        db.rollback()
+        raise ex
 
 
 def delete_project(db: Session, project: Project):

@@ -41,7 +41,7 @@ class Project(CamelCaseModel):
     """Represents a Project from the database to return when a GET request happens"""
     project_id: int
     name: str
-    number_of_students: int
+    # number_of_students: int
 
     coaches: list[User]
     partners: list[Partner]
