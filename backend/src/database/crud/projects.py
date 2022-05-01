@@ -16,8 +16,11 @@ def get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
     return _get_projects_for_edition_query(db, edition).all()
 
 
-def get_projects_for_edition_page(db: Session, edition: Edition,
-                                  search_params: QueryParamsProjects, user: User) -> list[Project]:
+def get_projects_for_edition_page(
+        db: Session,
+        edition: Edition,
+        search_params: QueryParamsProjects,
+        user: User) -> list[Project]:
     """Returns a paginated list of all projects from a certain edition from the database"""
     query = _get_projects_for_edition_query(db, edition).where(
         Project.name.contains(search_params.name))
