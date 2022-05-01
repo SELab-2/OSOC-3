@@ -43,7 +43,10 @@ async def startup():
     """
     alembic_config: config.Config = config.Config('alembic.ini')
     alembic_script: script.ScriptDirectory = script.ScriptDirectory.from_config(alembic_config)
-    with engine.begin() as conn:
-        context: migration.MigrationContext = migration.MigrationContext.configure(conn)
-        if context.get_current_revision() != alembic_script.get_current_head():
+    async with engine.begin() as conn:
+        revision: str = await conn.run_sync(
+            lambda sync_conn: migration.MigrationContext.configure(sync_conn).get_current_revision()
+        )
+        alembic_head: str = alembic_script.get_current_head()
+        if revision != alembic_head:
             raise PendingMigrationsException('Pending migrations')

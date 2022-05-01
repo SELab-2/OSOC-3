@@ -1,9 +1,9 @@
 from typing import Generator
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
-def get_session() -> Generator[Session, None, None]:
+def get_session() -> Generator[AsyncSession, None, None]:
     """FastAPI dependency to inject a database session into a route instead of using an import
     Allows the tests to replace it with another database session (not hard coding the session)
     """

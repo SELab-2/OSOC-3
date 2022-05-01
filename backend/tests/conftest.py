@@ -4,7 +4,7 @@ from typing import Generator
 import pytest
 from alembic import command
 from alembic import config
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.testclient import TestClient
 
 from src.app import app
@@ -27,34 +27,34 @@ def tables():
 
 
 @pytest.fixture
-def database_session(tables: None) -> Generator[Session, None, None]:
+async def database_session(tables: None) -> Generator[AsyncSession, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
     """
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = Session(bind=connection)
+    connection = await engine.connect()
+    transaction = await connection.begin()
+    session = AsyncSession(bind=connection)
 
     yield session
 
     # Clean up connections & rollback transactions
-    session.close()
+    await session.close()
 
     # Transactions can be invalidated when an exception is raised
     # which causes warnings when running the tests
     # Check if a transaction is still valid before rolling back
     if transaction.is_valid:
-        transaction.rollback()
+        await transaction.rollback()
 
-    connection.close()
+    await connection.close()
 
 
 @pytest.fixture
-def test_client(database_session: Session) -> TestClient:
+def test_client(database_session: AsyncSession) -> TestClient:
     """Fixture to create a testing version of our main application"""
 
-    def override_get_session() -> Generator[Session, None, None]:
+    def override_get_session() -> Generator[AsyncSession, None, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead
         """
@@ -66,10 +66,10 @@ def test_client(database_session: Session) -> TestClient:
 
 
 @pytest.fixture
-def auth_client(database_session: Session) -> AuthClient:
+def auth_client(database_session: AsyncSession) -> AuthClient:
     """Fixture to get a TestClient that handles authentication"""
 
-    def override_get_session() -> Generator[Session, None, None]:
+    def override_get_session() -> Generator[AsyncSession, None, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead
         """

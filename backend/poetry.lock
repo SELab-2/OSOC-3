@@ -41,6 +41,17 @@ python-versions = ">=3.6"
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "aiosqlite"
+version = "0.17.0"
+description = "asyncio bridge to the standard sqlite3 module"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+typing_extensions = ">=3.7.2"
+
+[[package]]
 name = "alembic"
 version = "1.7.6"
 description = "A database migration tool for SQLAlchemy."
@@ -102,6 +113,14 @@ description = "Timeout context manager for asyncio programs"
 category = "dev"
 optional = false
 python-versions = ">=3.6"
+
+[[package]]
+name = "asyncmy"
+version = "0.2.5"
+description = "A fast asyncio MySQL driver"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "atomicwrites"
@@ -976,7 +995,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "4f2da7ee048bb112e4adf250924984875d074ee1da4e373d9b157cf1000a008f"
+content-hash = "4402a9e984b5ba948d80e8979d506633e48e1bc4e3125819781cfb1f5b540713"
 
 [metadata.files]
 aiohttp = [
@@ -1061,6 +1080,10 @@ aiosignal = [
     {file = "aiosignal-1.2.0-py3-none-any.whl", hash = "sha256:26e62109036cd181df6e6ad646f91f0dcfd05fe16d0cb924138ff2ab75d64e3a"},
     {file = "aiosignal-1.2.0.tar.gz", hash = "sha256:78ed67db6c7b7ced4f98e495e572106d5c432a93e1ddd1bf475e1dc05f5b7df2"},
 ]
+aiosqlite = [
+    {file = "aiosqlite-0.17.0-py3-none-any.whl", hash = "sha256:6c49dc6d3405929b1d08eeccc72306d3677503cc5e5e43771efc1e00232e8231"},
+    {file = "aiosqlite-0.17.0.tar.gz", hash = "sha256:f0e6acc24bc4864149267ac82fb46dfb3be4455f99fe21df82609cc6e6baee51"},
+]
 alembic = [
     {file = "alembic-1.7.6-py3-none-any.whl", hash = "sha256:ad842f2c3ab5c5d4861232730779c05e33db4ba880a08b85eb505e87c01095bc"},
     {file = "alembic-1.7.6.tar.gz", hash = "sha256:6c0c05e9768a896d804387e20b299880fe01bc56484246b0dffe8075d6d3d847"},
@@ -1080,6 +1103,21 @@ astroid = [
 async-timeout = [
     {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
     {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
+]
+asyncmy = [
+    {file = "asyncmy-0.2.5-cp310-cp310-macosx_10_16_x86_64.whl", hash = "sha256:f176b55c82d3bdb10f0ecb3a518a54777f3d247e00f06add138f63df4edc0e3d"},
+    {file = "asyncmy-0.2.5-cp310-cp310-manylinux_2_31_x86_64.whl", hash = "sha256:f404d351d4f9fc741cdb8b49da8278e63a8551be6ccd03b514c2c0828500633d"},
+    {file = "asyncmy-0.2.5-cp310-cp310-win_amd64.whl", hash = "sha256:9824184d180753d23101b1d9fdc7955783b08fbc6f3cc88d6acce7ff019c0eaf"},
+    {file = "asyncmy-0.2.5-cp37-cp37m-macosx_10_16_x86_64.whl", hash = "sha256:02add8063bd00762a469dcb9915563f66520ffda598851a957443b1012182f43"},
+    {file = "asyncmy-0.2.5-cp37-cp37m-manylinux_2_31_x86_64.whl", hash = "sha256:a341d8a22d9a1f3236a81f17836002291567aa7d878ab75b37ed9bf4ce401290"},
+    {file = "asyncmy-0.2.5-cp37-cp37m-win_amd64.whl", hash = "sha256:2dc25f0bb723a71445d5c5b46ab2ae71c9dd3123fea9eae1bee4c36af5eda2bc"},
+    {file = "asyncmy-0.2.5-cp38-cp38-macosx_10_16_x86_64.whl", hash = "sha256:e184e701fa153dd456f6b351136c0a7a7524b8f5959f7f4b47848efe434a9c7d"},
+    {file = "asyncmy-0.2.5-cp38-cp38-manylinux_2_31_x86_64.whl", hash = "sha256:2275cc0036fa39f888c0770173ffb8ed16b89eecf2e380499275bfa6bf4ee088"},
+    {file = "asyncmy-0.2.5-cp38-cp38-win_amd64.whl", hash = "sha256:527ccc24a9bd76d565f1024f4a50ee6fd92cac518e6d884281ad61ffc424e7cd"},
+    {file = "asyncmy-0.2.5-cp39-cp39-macosx_10_16_x86_64.whl", hash = "sha256:6606e296dc161d71629f1163c3c82dda97431e25ee7240b6b7f139c2c35cff94"},
+    {file = "asyncmy-0.2.5-cp39-cp39-manylinux_2_31_x86_64.whl", hash = "sha256:61ed1b9e69dafe476f02c20962b8ee4ec5ba130b760bdf504015fcb80bbe6787"},
+    {file = "asyncmy-0.2.5-cp39-cp39-win_amd64.whl", hash = "sha256:f5dcc1a29d608cc5270f37328253032c554321b85bcf5653f1affa01f185c29c"},
+    {file = "asyncmy-0.2.5.tar.gz", hash = "sha256:cf3ef3d1ada385d231f23fffcbf1fe040bae8575b187746633fbef6e7cff2844"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},

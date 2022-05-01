@@ -44,6 +44,12 @@ sqlalchemy-utils = "0.38.2"
 # Uvicorn: ASGI web server implementation
 uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
 
+# AioSQLite: async connector for SQLite
+aiosqlite = "^0.17.0"
+
+# Asyncmy: async connector for MariaDB
+asyncmy = "^0.2.5"
+
 [tool.poetry.dev-dependencies]
 # Aioresponses: mocking library for aiohttp requests
 aioresponses = "^0.7.3"
