@@ -288,6 +288,7 @@ student_skills = Table(
 class Suggestion(Base):
     """A suggestion left by a coach about a student"""
     __tablename__ = "suggestions"
+    __table_args__ = (UniqueConstraint('student_id', 'coach_id'),)
 
     suggestion_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
