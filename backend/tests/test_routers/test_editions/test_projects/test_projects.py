@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from settings import DB_PAGE_SIZE
-from src.database.models import Edition, Project, User, Skill, Student, Partner
+from src.database.models import Edition, Project, User, Partner
 from tests.utils.authorization import AuthClient
 
 
