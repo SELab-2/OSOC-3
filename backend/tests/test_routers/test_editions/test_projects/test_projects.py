@@ -132,6 +132,7 @@ def test_create_project_non_existing_coach(database_session: Session, auth_clien
     endpoint = f"/editions/{edition.name}/projects/"
     print(database_session.query(Edition).all())
 
+    database_session.begin_nested()
     response = auth_client.post(endpoint, json={
         "name": "test",
         "partners": ["ugent"],
@@ -139,31 +140,28 @@ def test_create_project_non_existing_coach(database_session: Session, auth_clien
     })
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    print(database_session.query(Edition).all())
-
     response = auth_client.get(f"/editions/{edition.name}/projects/")
-    print(response.json())
     assert len(response.json()['projects']) == 0
 
 
-def test_create_project_no_name(database_with_data: Session, auth_client: AuthClient):
+def test_create_project_no_name(database_session: Session, auth_client: AuthClient):
     """Tests creating a project that has no name"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
     auth_client.admin()
-    response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-    assert len(json['projects']) == 3
-    response = \
-        auth_client.post("/editions/ed2022/projects/",
-                         # project has no name
-                         json={
-                             "number_of_students": 5,
-                             "skills": [], "partners": [], "coaches": []})
+
+    database_session.begin_nested()
+    response = auth_client.post("/editions/ed2022/projects/", json={
+        "partners": [],
+        "coaches": []
+    })
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-    assert len(json['projects']) == 3
+    assert len(response.json()['projects']) == 0
 
 
 def test_patch_project(database_with_data: Session, auth_client: AuthClient):
