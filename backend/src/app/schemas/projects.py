@@ -78,17 +78,6 @@ class Project(CamelCaseModel):
         orm_mode = True
 
 
-class Student(CamelCaseModel):
-    """Represents a Student to use in ConflictStudent"""
-    student_id: int
-    first_name: str
-    last_name: str
-
-    class Config:
-        """Config Class"""
-        orm_mode = True
-
-
 class ConflictProject(CamelCaseModel):
     """A project to be used in ConflictStudent"""
     project_id: int

@@ -1,67 +1,9 @@
-import pytest
 from sqlalchemy.orm import Session
 from starlette import status
 
 from settings import DB_PAGE_SIZE
-from src.database.models import Edition, Project, User, Skill, ProjectRole, Student, Partner
+from src.database.models import Edition, Project, User, Skill, Student, Partner
 from tests.utils.authorization import AuthClient
-
-
-@pytest.fixture
-def database_with_data(database_session: Session) -> Session:
-    """fixture for adding data to the database"""
-    edition: Edition = Edition(year=2022, name="ed2022")
-    database_session.add(edition)
-    project1 = Project(name="project1", edition=edition, number_of_students=2)
-    project2 = Project(name="project2", edition=edition, number_of_students=3)
-    project3 = Project(name="super nice project", edition=edition, number_of_students=3)
-    database_session.add(project1)
-    database_session.add(project2)
-    database_session.add(project3)
-    user: User = User(name="coach1")
-    database_session.add(user)
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    database_session.add(skill1)
-    database_session.add(skill2)
-    database_session.add(skill3)
-    student01: Student = Student(first_name="Jos", last_name="Vermeulen", preferred_name="Joske",
-                                 email_address="josvermeulen@mail.com", phone_number="0487/86.24.45", alumni=True,
-                                 wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3])
-    student02: Student = Student(first_name="Isabella", last_name="Christensen", preferred_name="Isabella",
-                                 email_address="isabella.christensen@example.com", phone_number="98389723", alumni=True,
-                                 wants_to_be_student_coach=True, edition=edition, skills=[skill2])
-    project_role1: ProjectRole = ProjectRole(
-        student=student01, project=project1, skill=skill1, drafter=user, argumentation="argmunet")
-    project_role2: ProjectRole = ProjectRole(
-        student=student01, project=project2, skill=skill3, drafter=user, argumentation="argmunet")
-    project_role3: ProjectRole = ProjectRole(
-        student=student02, project=project1, skill=skill1, drafter=user, argumentation="argmunet")
-    database_session.add(project_role1)
-    database_session.add(project_role2)
-    database_session.add(project_role3)
-    database_session.commit()
-
-    return database_session
-
-
-@pytest.fixture
-def current_edition(database_with_data: Session) -> Edition:
-    """fixture to get the latest edition"""
-    return database_with_data.query(Edition).all()[-1]
-
-
-def test_get_projects(database_with_data: Session, auth_client: AuthClient):
-    """Tests get all projects"""
-    auth_client.admin()
-    response = auth_client.get("/editions/ed2022/projects")
-    json = response.json()
-
-    assert len(json['projects']) == 3
-    assert json['projects'][0]['name'] == "project1"
-    assert json['projects'][1]['name'] == "project2"
-    assert json['projects'][2]['name'] == "super nice project"
 
 
 def test_get_projects_paginated(database_session: Session, auth_client: AuthClient):
@@ -70,7 +12,7 @@ def test_get_projects_paginated(database_session: Session, auth_client: AuthClie
     database_session.add(edition)
 
     for i in range(round(DB_PAGE_SIZE * 1.5)):
-        database_session.add(Project(name=f"Project {i}", edition=edition, number_of_students=5))
+        database_session.add(Project(name=f"Project {i}", edition=edition))
     database_session.commit()
 
     auth_client.admin()
@@ -83,120 +25,125 @@ def test_get_projects_paginated(database_session: Session, auth_client: AuthClie
     assert len(response.json()['projects']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
-def test_get_project(database_with_data: Session, auth_client: AuthClient):
+def test_get_project(database_session: Session, auth_client: AuthClient):
     """Tests get a specific project"""
-    auth_client.admin()
-    response = auth_client.get("/editions/ed2022/projects/1")
+    edition: Edition = Edition(year=2022, name="ed2022")
+    project: Project = Project(edition=edition, name="project 1")
+    database_session.add(project)
+    database_session.commit()
+
+    auth_client.coach(edition)
+    response = auth_client.get(f"/editions/{edition.name}/projects/{project.project_id}")
     assert response.status_code == status.HTTP_200_OK
     json = response.json()
-    assert json['name'] == 'project1'
+    assert json['projectId'] == project.project_id
+    assert json['name'] == project.name
+    assert len(json['coaches']) == 0
+    assert len(json['partners']) == 0
+    assert len(json['projectRoles']) == 0
 
 
-def test_delete_project(database_with_data: Session, auth_client: AuthClient):
+def test_delete_project(database_session: Session, auth_client: AuthClient):
     """Tests delete a project"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    project: Project = Project(edition=edition, name="project 1")
+    database_session.add(project)
+    database_session.commit()
+
     auth_client.admin()
-    response = auth_client.get("/editions/ed2022/projects/1")
+    endpoint = f"/editions/{edition.name}/projects/{project.project_id}"
+
+    response = auth_client.get(endpoint)
     assert response.status_code == status.HTTP_200_OK
-    response = auth_client.delete("/editions/ed2022/projects/1")
+    response = auth_client.delete(endpoint)
     assert response.status_code == status.HTTP_204_NO_CONTENT
-    response = auth_client.get("/editions/ed2022/projects/1")
+    response = auth_client.get(endpoint)
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_delete_ghost_project(database_with_data: Session, auth_client: AuthClient):
+def test_delete_project_not_found(database_session: Session, auth_client: AuthClient):
     """Tests delete a project that doesn't exist"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
     auth_client.admin()
-    response = auth_client.get("/editions/ed2022/projects/400")
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    response = auth_client.delete("/editions/ed2022/projects/400")
+    response = auth_client.delete(f"/editions/{edition.name}/projects/400")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_create_project(database_with_data: Session, auth_client: AuthClient):
+def test_create_project(database_session: Session, auth_client: AuthClient):
     """Tests creating a project"""
-    auth_client.admin()
-    response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-    assert len(json['projects']) == 3
-    assert len(database_with_data.query(Partner).all()) == 0
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.commit()
 
-    response = \
-        auth_client.post("/editions/ed2022/projects/",
-                         json={"name": "test",
-                               "number_of_students": 5,
-                               "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
+    auth_client.admin()
+
+    response = auth_client.post("/editions/ed2022/projects/", json={
+        "name": "test",
+        "partners": ["ugent"],
+        "coaches": [user.user_id]
+    })
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json()['name'] == 'test'
-    assert response.json()["partners"][0]["name"] == "ugent"
-
-    assert len(database_with_data.query(Partner).all()) == 1
-
-    response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-
-    assert len(json['projects']) == 4
-    assert json['projects'][3]['name'] == "test"
+    json: dict = response.json()
+    assert "projectId" in json
+    assert json["name"] == "test"
+    assert json["partners"][0]["name"] == "ugent"
+    assert json["coaches"][0]["name"] == user.name
+    assert len(json["projectRoles"]) == 0
 
 
-def test_create_project_same_partner(database_with_data: Session, auth_client: AuthClient):
+def test_create_project_same_partner(database_session: Session, auth_client: AuthClient):
     """Tests that creating a project doesn't create a partner if the partner already exists"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.commit()
+
+    assert len(database_session.query(Partner).all()) == 0
+
     auth_client.admin()
-    assert len(database_with_data.query(Partner).all()) == 0
 
-    auth_client.post("/editions/ed2022/projects/",
-                     json={"name": "test1",
-                           "number_of_students": 2,
-                           "skills": [1, 2], "partners": ["ugent"], "coaches": [1]})
-    auth_client.post("/editions/ed2022/projects/",
-                     json={"name": "test2",
-                           "number_of_students": 2,
-                           "skills": [1, 2], "partners": ["ugent"], "coaches": [1]})
-    assert len(database_with_data.query(Partner).all()) == 1
-
-
-def test_create_project_non_existing_skills(database_with_data: Session, auth_client: AuthClient):
-    """Tests creating a project with non-existing skills"""
-    auth_client.admin()
-    response = auth_client.get('/editions/ed2022/projects')
-
-    json = response.json()
-    assert len(json['projects']) == 3
-
-    assert len(database_with_data.query(Skill).where(
-        Skill.skill_id == 100).all()) == 0
-
-    response = auth_client.post("/editions/ed2022/projects/",
-                                json={"name": "test1",
-                                      "number_of_students": 1,
-                                      "skills": [100], "partners": ["ugent"], "coaches": [1]})
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-    assert len(json['projects']) == 3
+    auth_client.post(f"/editions/{edition.name}/projects/", json={
+        "name": "test",
+        "partners": ["ugent"],
+        "coaches": [user.user_id]
+    })
+    auth_client.post(f"/editions/{edition.name}/projects/", json={
+        "name": "test",
+        "partners": ["ugent"],
+        "coaches": [user.user_id]
+    })
+    assert len(database_session.query(Partner).all()) == 1
 
 
-def test_create_project_non_existing_coach(database_with_data: Session, auth_client: AuthClient):
+def test_create_project_non_existing_coach(database_session: Session, auth_client: AuthClient):
     """Tests creating a project with a coach that doesn't exist"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    database_session.commit()
+
     auth_client.admin()
-    response = auth_client.get('/editions/ed2022/projects')
+    endpoint = f"/editions/{edition.name}/projects/"
+    print(database_session.query(Edition).all())
 
-    json = response.json()
-    assert len(json['projects']) == 3
-
-    assert len(database_with_data.query(Student).where(
-        Student.edition_id == 10).all()) == 0
-
-    response = auth_client.post("/editions/ed2022/projects/",
-                                json={"name": "test2",
-                                      "number_of_students": 1,
-                                      "skills": [100], "partners": ["ugent"], "coaches": [10]})
+    response = auth_client.post(endpoint, json={
+        "name": "test",
+        "partners": ["ugent"],
+        "coaches": [0]
+    })
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    response = auth_client.get('/editions/ed2022/projects')
-    json = response.json()
-    assert len(json['projects']) == 3
+    print(database_session.query(Edition).all())
+
+    response = auth_client.get(f"/editions/{edition.name}/projects/")
+    print(response.json())
+    assert len(response.json()['projects']) == 0
 
 
 def test_create_project_no_name(database_with_data: Session, auth_client: AuthClient):
@@ -323,9 +270,9 @@ def test_search_project_coach(database_with_data: Session, auth_client: AuthClie
     auth_client.admin()
     user: User = database_with_data.query(User).where(User.name == "Pytest Admin").one()
     auth_client.post("/editions/ed2022/projects/",
-                         json={"name": "test",
-                               "number_of_students": 2,
-                               "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [user.user_id]})
+                     json={"name": "test",
+                           "number_of_students": 2,
+                           "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [user.user_id]})
     response = auth_client.get("/editions/ed2022/projects/?coach=true")
     print(response.json())
     assert len(response.json()["projects"]) == 1

@@ -21,9 +21,11 @@ projects_router.include_router(project_students_router, prefix="/{project_id}/ro
 
 
 @projects_router.get("/", response_model=ProjectList)
-async def get_projects(db: Session = Depends(get_session), edition: Edition = Depends(get_edition),
-                       search_params: QueryParamsProjects = Depends(QueryParamsProjects),
-                       user: User = Depends(require_coach)):
+async def get_projects(
+        db: Session = Depends(get_session),
+        edition: Edition = Depends(get_edition),
+        search_params: QueryParamsProjects = Depends(QueryParamsProjects),
+        user: User = Depends(require_coach)):
     """Get a list of all projects."""
     return logic.get_project_list(db, edition, search_params, user)
 
