@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../data/interfaces";
 
-import { getProject, patchProject } from "../../../utils/api/projects";
+import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
 import {
     GoBack,
     ProjectContainer,
@@ -13,6 +13,7 @@ import {
     TitleContainer,
     Save,
     Cancel,
+    Delete,
 } from "./styles";
 
 import { BiArrowBack } from "react-icons/bi";
@@ -26,6 +27,10 @@ import {
     CoachesContainer,
     CoachText,
 } from "../../../components/ProjectsComponents/ProjectCard/styles";
+import { Role } from "../../../data/enums/role";
+import { useAuth } from "../../../contexts";
+import { HiOutlineTrash } from "react-icons/hi";
+import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -41,9 +46,23 @@ export default function ProjectDetailPage() {
 
     const navigate = useNavigate();
 
+    const { role } = useAuth();
+
     const [students, setStudents] = useState<StudentPlace[]>([]);
 
     const [editing, setEditing] = useState(false);
+
+    // Used for the confirm screen.
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    // What to do when deleting a project.
+    const handleDelete = () => {
+        deleteProject(project!.editionName, project!.projectId);
+        setShow(false);
+        navigate("/editions/" + editionId + "/projects/");
+    };
 
     useEffect(() => {
         async function callProjects(): Promise<void> {
@@ -116,7 +135,19 @@ export default function ProjectDetailPage() {
                             <Cancel onClick={() => setEditing(false)}>Cancel</Cancel>
                         </>
                     )}
+                    {role === Role.ADMIN && (
+                        <Delete onClick={handleShow}>
+                            <HiOutlineTrash size={"20px"} />
+                        </Delete>
+                    )}
                 </TitleContainer>
+
+                <ConfirmDelete
+                    visible={show}
+                    handleConfirm={handleDelete}
+                    handleClose={handleClose}
+                    name={project.name}
+                ></ConfirmDelete>
 
                 <ClientContainer>
                     {project.partners.map((element, _index) => (
