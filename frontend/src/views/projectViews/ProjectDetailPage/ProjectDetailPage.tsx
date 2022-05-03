@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../data/interfaces";
 
-import { getProject } from "../../../utils/api/projects";
+import { getProject, patchProject } from "../../../utils/api/projects";
 import {
     GoBack,
     ProjectContainer,
@@ -39,7 +39,7 @@ export default function ProjectDetailPage() {
     const [students, setStudents] = useState<StudentPlace[]>([]);
 
     useEffect(() => {
-        async function callProjects() {
+        async function callProjects(): Promise<void> {
             if (projectId) {
                 setGotProject(true);
                 const response = await getProject(editionId, projectId);
@@ -66,6 +66,19 @@ export default function ProjectDetailPage() {
         }
     }, [editionId, gotProject, navigate, projectId]);
 
+    async function editProject() {
+        await patchProject(
+            editionId,
+            projectId,
+            "Edited project",
+            project!.numberOfStudents,
+            [],
+            [],
+            []
+        );
+        setGotProject(false);
+    }
+
     if (!project) return null;
 
     return (
@@ -77,6 +90,7 @@ export default function ProjectDetailPage() {
                 </GoBack>
 
                 <Title>{project.name}</Title>
+                <button onClick={editProject}>Edit</button>
 
                 <ClientContainer>
                     {project.partners.map((element, _index) => (
