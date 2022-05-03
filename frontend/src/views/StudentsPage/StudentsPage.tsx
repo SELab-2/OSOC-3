@@ -5,7 +5,7 @@ import {Student} from "../../data/interfaces/students";
 import {useParams} from "react-router-dom";
 
 function StudentsPage() {
-    const params = useParams();
+    const params = useParams()
     const [students, setStudents] = useState<Student[]>([]);
     const [nameFilter, setNameFilter] = useState("");
     const [rolesFilter, setRolesFilter] = useState<number[]>([]);
