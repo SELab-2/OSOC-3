@@ -53,5 +53,5 @@ export const LoadMoreButton = styled.button`
     border: 0px;
     padding: 5px 10px;
     color: white;
-    background-color: gray;
+    background-color: #131329;
 `;

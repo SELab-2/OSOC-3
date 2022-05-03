@@ -10,10 +10,14 @@ import {
     ClientContainer,
     NumberOfStudents,
     Title,
+    TitleContainer,
+    Save,
+    Cancel,
 } from "./styles";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
+import { MdOutlineEditNote } from "react-icons/md";
 
 import { StudentPlace } from "../../../data/interfaces/projects";
 import { StudentPlaceholder } from "../../../components/ProjectsComponents";
@@ -32,11 +36,14 @@ export default function ProjectDetailPage() {
     const editionId = params.editionId!;
 
     const [project, setProject] = useState<Project>();
+    const [editedProject, setEditedProject] = useState<Project>();
     const [gotProject, setGotProject] = useState(false);
 
     const navigate = useNavigate();
 
     const [students, setStudents] = useState<StudentPlace[]>([]);
+
+    const [editing, setEditing] = useState(false);
 
     useEffect(() => {
         async function callProjects(): Promise<void> {
@@ -45,6 +52,7 @@ export default function ProjectDetailPage() {
                 const response = await getProject(editionId, projectId);
                 if (response) {
                     setProject(response);
+                    setEditedProject(response);
 
                     // TODO
                     // Generate student data
@@ -67,19 +75,11 @@ export default function ProjectDetailPage() {
     }, [editionId, gotProject, navigate, projectId]);
 
     async function editProject() {
-        await patchProject(
-            editionId,
-            projectId,
-            "Edited project",
-            project!.numberOfStudents,
-            [],
-            [],
-            []
-        );
+        await patchProject(editionId, projectId, editedProject!.name, 10, [], [], []);
         setGotProject(false);
     }
 
-    if (!project) return null;
+    if (!project || !editedProject) return null;
 
     return (
         <div>
@@ -89,8 +89,34 @@ export default function ProjectDetailPage() {
                     Overview
                 </GoBack>
 
-                <Title>{project.name}</Title>
-                <button onClick={editProject}>Edit</button>
+                <TitleContainer>
+                    {!editing ? (
+                        <Title>{project.name}</Title>
+                    ) : (
+                        <input
+                            value={editedProject.name}
+                            onChange={e => {
+                                const newProject: Project = { ...project, name: e.target.value };
+                                setEditedProject(newProject);
+                            }}
+                        ></input>
+                    )}
+                    {!editing ? (
+                        <MdOutlineEditNote size={"25px"} onClick={() => setEditing(true)} />
+                    ) : (
+                        <>
+                            <Save
+                                onClick={async () => {
+                                    await editProject();
+                                    setEditing(false);
+                                }}
+                            >
+                                Save
+                            </Save>
+                            <Cancel onClick={() => setEditing(false)}>Cancel</Cancel>
+                        </>
+                    )}
+                </TitleContainer>
 
                 <ClientContainer>
                     {project.partners.map((element, _index) => (

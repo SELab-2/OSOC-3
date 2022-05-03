@@ -126,7 +126,7 @@ export default function ProjectPage() {
 
             <LoadSpinner show={loading} />
 
-            {moreProjectsAvailable && (
+            {moreProjectsAvailable && !loading && (
                 <LoadMoreContainer>
                     <LoadMoreButton
                         onClick={() => {
