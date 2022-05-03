@@ -45,7 +45,7 @@ export async function removeStudent(edition: string, studentId: string){
     }
 }
 
-/* export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string){
+export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string){
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions"
         const response = await axiosInstance.post(request, { suggestion: suggestionArg, argumentation: argumentationArg });
@@ -57,4 +57,4 @@ export async function removeStudent(edition: string, studentId: string){
             throw error;
         }
     }
-} */
+}

@@ -14,7 +14,7 @@ function StudentInfoPage() {
     const [currentStudent, setCurrentStudent] = useState<Student>();
     async function callGetStudents() {
         try {
-            const response = await getStudents("OSOC_2022", nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter);
+            const response = await getStudents(params.editionId!, nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter);
             setStudents(response.students);
         } catch (error) {
             console.log(error);
@@ -23,7 +23,7 @@ function StudentInfoPage() {
 
     async function callGetStudent() {
         try {
-            const response = await getStudent("OSOC_2022", params.id!);
+            const response = await getStudent(params.editionId!, params.id!);
             setCurrentStudent(response)
         } catch (error) {
             console.log(error);
