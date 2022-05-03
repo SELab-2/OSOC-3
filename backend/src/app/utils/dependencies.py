@@ -21,9 +21,9 @@ from src.database.database import get_session
 from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project
 
 
-def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
+async def get_edition(edition_name: str, database: AsyncSession = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the name in the path"""
-    return get_edition_by_name(database, edition_name)
+    return await get_edition_by_name(database, edition_name)
 
 
 def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:

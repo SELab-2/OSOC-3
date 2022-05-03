@@ -50,6 +50,9 @@ aiosqlite = "^0.17.0"
 # Asyncmy: async connector for MariaDB
 asyncmy = "^0.2.5"
 
+# Httpx: send async HTTP requests
+httpx = "^0.22.0"
+
 [tool.poetry.dev-dependencies]
 # Aioresponses: mocking library for aiohttp requests
 aioresponses = "^0.7.3"

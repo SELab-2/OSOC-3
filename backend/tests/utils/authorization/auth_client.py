@@ -3,13 +3,13 @@ from typing import Text
 
 from requests import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.testclient import TestClient
+from httpx import AsyncClient
 
 from src.app.logic.security import create_tokens
 from src.database.models import User, Edition
 
 
-class AuthClient(TestClient):
+class AuthClient(AsyncClient):
     """Custom TestClient that handles authentication to make tests more compact"""
     user: User | None = None
     headers: dict[str, str] | None = None
@@ -59,32 +59,32 @@ class AuthClient(TestClient):
         # Add auth headers into dict
         self.headers = {"Authorization": f"Bearer {access_token}"}
 
-    def delete(self, url: Text | None, **kwargs) -> Response:
+    async def delete(self, url: Text | None, **kwargs) -> Response:
         if self.headers is not None:
             kwargs["headers"] = self.headers
 
-        return super().delete(url, **kwargs)
+        return await super().delete(url, **kwargs)
 
-    def get(self, url: Text | None, **kwargs) -> Response:
+    async def get(self, url: Text | None, **kwargs) -> Response:
         if self.headers is not None:
             kwargs["headers"] = self.headers
 
-        return super().get(url, **kwargs)
+        return await super().get(url, **kwargs)
 
-    def patch(self, url: Text | None, **kwargs) -> Response:
+    async def patch(self, url: Text | None, **kwargs) -> Response:
         if self.headers is not None:
             kwargs["headers"] = self.headers
 
-        return super().patch(url, **kwargs)
+        return await super().patch(url, **kwargs)
 
-    def post(self, url: Text | None, **kwargs) -> Response:
+    async def post(self, url: Text | None, **kwargs) -> Response:
         if self.headers is not None:
             kwargs["headers"] = self.headers
 
-        return super().post(url, **kwargs)
+        return await super().post(url, **kwargs)
 
-    def put(self, url: Text | None, **kwargs) -> Response:
+    async def put(self, url: Text | None, **kwargs) -> Response:
         if self.headers is not None:
             kwargs["headers"] = self.headers
 
-        return super().put(url, **kwargs)
+        return await super().put(url, **kwargs)

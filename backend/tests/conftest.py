@@ -78,4 +78,4 @@ def auth_client(database_session: AsyncSession) -> AuthClient:
 
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
-    return AuthClient(database_session, app)
+    return AuthClient(database_session, app=app, base_url="http://test")
