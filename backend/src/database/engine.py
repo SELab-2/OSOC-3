@@ -27,4 +27,5 @@ else:
         database=settings.DB_NAME
     ), pool_pre_ping=True)
 
-DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+# AsyncSession needs expire_on_commit to be False
+DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False)

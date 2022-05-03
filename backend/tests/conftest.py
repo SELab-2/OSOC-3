@@ -34,7 +34,8 @@ async def database_session(tables: None) -> Generator[AsyncSession, None, None]:
     """
     connection = await engine.connect()
     transaction = await connection.begin()
-    session = AsyncSession(bind=connection)
+    # AsyncSession needs expire_on_commit to be False
+    session = AsyncSession(bind=connection, expire_on_commit=False)
 
     yield session
 

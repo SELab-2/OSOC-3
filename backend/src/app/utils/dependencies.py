@@ -2,6 +2,7 @@ import sqlalchemy.exc
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, ExpiredSignatureError, JWTError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 import settings
@@ -46,7 +47,7 @@ def get_latest_edition(edition: Edition = Depends(get_edition), database: Sessio
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
-async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -> User:
+async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:
     """Check which user is making a request by decoding its token, and verifying the token type"""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
@@ -60,7 +61,7 @@ async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -
             raise WrongTokenTypeException()
 
         try:
-            user = get_user_by_id(db, int(user_id))
+            user = await get_user_by_id(db, int(user_id))
         except sqlalchemy.exc.NoResultFound as not_found:
             raise InvalidCredentialsException() from not_found
 
@@ -71,7 +72,7 @@ async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -
         raise InvalidCredentialsException() from jwt_err
 
 
-async def get_user_from_access_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_access_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its access token
     This function is used as a dependency for other functions
     """

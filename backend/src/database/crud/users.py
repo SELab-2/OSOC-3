@@ -1,3 +1,5 @@
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, Query
 
 from src.app.schemas.users import FilterParameters
@@ -184,6 +186,8 @@ def get_user_by_email(db: Session, email: str) -> User:
     return db.query(User).where(User.user_id == auth_email.user_id).one()
 
 
-def get_user_by_id(db: Session, user_id: int) -> User:
+async def get_user_by_id(db: AsyncSession, user_id: int) -> User:
     """Find a user by their id"""
-    return db.query(User).where(User.user_id == user_id).one()
+    query = select(User).where(User.user_id == user_id)
+    result = await db.execute(query)
+    return result.scalars().one()

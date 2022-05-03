@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Text
 
 from requests import Response
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.testclient import TestClient
 
 from src.app.logic.security import create_tokens
@@ -13,9 +13,9 @@ class AuthClient(TestClient):
     """Custom TestClient that handles authentication to make tests more compact"""
     user: User | None = None
     headers: dict[str, str] | None = None
-    session: Session
+    session: AsyncSession
 
-    def __init__(self, session: Session, *args, **kwargs):
+    def __init__(self, session: AsyncSession, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.session = session
@@ -26,16 +26,16 @@ class AuthClient(TestClient):
             "Authorization": "Bearer If I can't scuba, then what has this all been about? What am I working towards?"
         }
 
-    def admin(self):
+    async def admin(self):
         """Sign in as an admin for all future requests"""
         # Create a new user in the db
         admin = User(name="Pytest Admin", admin=True)
         self.session.add(admin)
-        self.session.commit()
+        await self.session.commit()
 
         self.login(admin)
 
-    def coach(self, edition: Edition):
+    async def coach(self, edition: Edition):
         """Sign in as a coach for all future requests
         Assigns the coach to the edition
         """
@@ -45,7 +45,7 @@ class AuthClient(TestClient):
         # Link the coach to the edition
         coach.editions.append(edition)
         self.session.add(coach)
-        self.session.commit()
+        await self.session.commit()
 
         self.login(coach)
 

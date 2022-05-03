@@ -7,7 +7,8 @@ from src.database.models import Edition as EditionModel
 
 async def get_editions_page(db: AsyncSession, page: int) -> EditionList:
     """Get a paginated list of all editions."""
-    return EditionList(editions=crud_editions.get_editions_page(db, page))
+    editions_page = await crud_editions.get_editions_page(db, page)
+    return EditionList(editions=editions_page)
 
 
 async def get_edition_by_name(db: AsyncSession, edition_name: str) -> EditionModel:

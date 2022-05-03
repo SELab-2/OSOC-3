@@ -1,3 +1,4 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -6,7 +7,7 @@ from src.database.models import Edition
 from tests.utils.authorization import AuthClient
 
 
-def test_get_editions(database_session: Session, auth_client: AuthClient):
+async def test_get_editions(database_session: AsyncSession, auth_client: AuthClient):
     """Perform tests on getting editions
 
     Args:
@@ -15,9 +16,9 @@ def test_get_editions(database_session: Session, auth_client: AuthClient):
     """
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
-    database_session.commit()
+    await database_session.commit()
 
-    auth_client.coach(edition)
+    await auth_client.coach(edition)
 
     # Make the get request
     response = auth_client.get("/editions/")
