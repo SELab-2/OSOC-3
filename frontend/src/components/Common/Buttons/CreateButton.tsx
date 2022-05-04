@@ -7,9 +7,9 @@ import { GreenButton } from "./styles";
 /**
  * Green button with a "+"-icon
  */
-export default function CreateButton({ label = "", showIcon = true }: BasicButton) {
+export default function CreateButton({ label = "", showIcon = true, ...props }: BasicButton) {
     return (
-        <GreenButton>
+        <GreenButton {...props}>
             {showIcon && (
                 <FontAwesomeIcon icon={faPlus as IconProp} className={label ? "me-2" : ""} />
             )}

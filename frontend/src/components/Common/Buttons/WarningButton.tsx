@@ -7,9 +7,9 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 /**
  * Red button with a warning triangle icon
  */
-export default function WarningButton({ label = "", showIcon = true }: BasicButton) {
+export default function WarningButton({ label = "", showIcon = true, ...props }: BasicButton) {
     return (
-        <RedButton>
+        <RedButton {...props}>
             {showIcon && (
                 <FontAwesomeIcon
                     icon={faTriangleExclamation as IconProp}
