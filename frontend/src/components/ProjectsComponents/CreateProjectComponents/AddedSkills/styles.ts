@@ -6,7 +6,7 @@ export const SkillContainer = styled.div`
     background-color: #1a1a36;
     padding: 5px 10px;
     width: min-content;
-    max-width: 75%;
+    max-width: 100%;
 `;
 
 export const TopContainer = styled.div`

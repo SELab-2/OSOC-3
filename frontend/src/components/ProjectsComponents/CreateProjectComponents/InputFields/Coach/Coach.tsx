@@ -63,7 +63,7 @@ export default function Coach({
                     setCoach("");
                 }}
             >
-                Add coach
+                Add
             </AddButton>
             <WarningContainer>
                 <BadCoachAlert show={showAlert} setShow={setShowAlert}></BadCoachAlert>

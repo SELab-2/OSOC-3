@@ -43,7 +43,7 @@ export default function Skill({
                     setSkill("");
                 }}
             >
-                Add skill
+                Add
             </AddButton>
         </div>
     );

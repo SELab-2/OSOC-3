@@ -38,7 +38,7 @@ export default function Partner({
                     setPartner("");
                 }}
             >
-                Add partner
+                Add
             </AddButton>
         </div>
     );
