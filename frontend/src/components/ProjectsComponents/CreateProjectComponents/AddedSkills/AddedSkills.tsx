@@ -66,7 +66,7 @@ export default function AddedSkills({
 
                             <AmountInput
                                 type="number"
-                                value={skill.amount}
+                                value={skill.amount.toString()}
                                 placeholder="Amount"
                                 min={1}
                                 onChange={event => {
