@@ -47,7 +47,7 @@ const mockedUsedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useNavigate: () => mockedUsedNavigate,
+    useNavigate: () => (mockedUsedNavigate),
 }));
 
 
@@ -89,7 +89,7 @@ test('enter on password field and login goes trough', async () => {
     const passwordField = screen.getByPlaceholderText("Password");
     userEvent.type(passwordField, "wachtwoord");
     fireEvent.keyPress(passwordField, {key: 'Enter', code: 'Enter', charCode: 13})
-    console.log(mockedUsedNavigate)
+    expect(mockedUsedNavigate).toHaveBeenCalled()
     //screen.debug()
 })
 
