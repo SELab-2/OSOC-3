@@ -56,6 +56,7 @@
         "eslint-plugin-react": "^7.28.0",
         "eslint-plugin-standard": "^5.0.0",
         "jest": "^28.0.2",
+        "jest-mock-axios": "^4.6.1",
         "prettier": "^2.5.1",
         "react-test-renderer": "^18.1.0",
         "typedoc": "^0.22.13"
