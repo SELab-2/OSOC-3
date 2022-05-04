@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     FullName,
     FirstName,
@@ -6,7 +6,7 @@ import {
     LineBreak,
     PreferedName,
     StudentInfoTitle,
-    Suggestion,
+    SuggestionField,
     StudentInformationContainer,
     PersonalInfoField,
     PersonalInfoFieldValue,
@@ -17,18 +17,51 @@ import {
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import {Student} from "../../../data/interfaces/students";
+import {Suggestion} from "../../../data/interfaces/suggestions";
+import {getSuggestions} from "../../../utils/api/suggestions";
+import {useParams} from "react-router-dom";
+import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
 
 interface Props {
     currentStudent: Student;
 }
 
 export default function StudentInformation(props: Props) {
+    const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+    const params = useParams()
+
+    async function callGetSuggestions() {
+        try {
+            const response = await getSuggestions(params.editionId!, params.id!);
+            setSuggestions(response.suggestions);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    function suggestionToText(suggestion: number) {
+        if (suggestion === 0) {
+            return "Undecided"
+        } else if (suggestion === 1) {
+            return "Yes"
+        } else if (suggestion === 2) {
+            return "Maybe"
+        } else if (suggestion === 3) {
+            return "No"
+        }
+    }
+
+    useEffect(() => {
+        callGetSuggestions();
+        console.log("fetched suggestion")
+    }, [params.editionId!, params.id!]);
 
     if (!props.currentStudent) {
         return <div><h1>loading</h1></div>
     } else {
         return (
             <StudentInformationContainer>
+                <RemoveStudentButton />
                 <FullName>
                     <FirstName>{props.currentStudent.firstName}</FirstName>
                     <LastName>{props.currentStudent.lastName}</LastName>
@@ -36,15 +69,9 @@ export default function StudentInformation(props: Props) {
                 <PreferedName>Prefered name: {props.currentStudent.preferredName}</PreferedName>
                 <LineBreak/>
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
-                <Suggestion>
-                    Wow this student is really incredible! We should give her a project!
-                </Suggestion>
-                <Suggestion>
-                    Wow this student is really incredible! We should give her a project!
-                </Suggestion>
-                <Suggestion>
-                    Wow this student is really incredible! We should give her a project!
-                </Suggestion>
+                {suggestions.map(suggestion => (
+                    <SuggestionField key={suggestion.suggestionId}>{suggestionToText(suggestion.suggestion)}: {suggestion.argumentation}</SuggestionField>
+                ))}
                 <LineBreak/>
                 <StudentInfoTitle>Personal information</StudentInfoTitle>
                 <PersonalInfoField>
