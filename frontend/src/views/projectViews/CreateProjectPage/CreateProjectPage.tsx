@@ -97,7 +97,7 @@ export default function CreateProjectPage() {
                         coachIds
                     );
                     if (response) {
-                        navigate("/editions/" + editionId + "/projects/");
+                        navigate("/editions/" + editionId + "/projects/" + response.projectId);
                     } else alert("Something went wrong :(");
                 }}
             >
