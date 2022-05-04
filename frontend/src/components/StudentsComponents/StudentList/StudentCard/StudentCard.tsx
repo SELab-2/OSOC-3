@@ -17,6 +17,7 @@ interface Props {
 }
 
 export default function StudentCard(props: Props) {
+    const params = useParams()
     const navigate = useNavigate();
     const params = useParams()
 
