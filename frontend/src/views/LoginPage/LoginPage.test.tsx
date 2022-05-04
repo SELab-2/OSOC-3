@@ -1,6 +1,7 @@
 import {render, screen, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LoginPage from "./LoginPage";
+import { useNavigate } from "react-router-dom";
 
 import "@testing-library/jest-dom";
 import { configure } from "enzyme";
@@ -19,6 +20,7 @@ const token = {
 configure({ adapter: new Adapter() });
 
 // Mock Axios so the tests never make API calls
+
 jest.mock("axios", () => {
     return {
         create: () => {
@@ -41,9 +43,11 @@ jest.mock("axios", () => {
     };
 });
 
+const mockedUsedNavigate = jest.fn();
+
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useNavigate: () => (jest.fn())
+    useNavigate: () => mockedUsedNavigate,
 }));
 
 
@@ -85,6 +89,7 @@ test('enter on password field and login goes trough', async () => {
     const passwordField = screen.getByPlaceholderText("Password");
     userEvent.type(passwordField, "wachtwoord");
     fireEvent.keyPress(passwordField, {key: 'Enter', code: 'Enter', charCode: 13})
+    console.log(mockedUsedNavigate)
     //screen.debug()
 })
 
