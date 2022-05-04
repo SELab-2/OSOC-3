@@ -5,12 +5,14 @@ import { registerGithub } from "../../../utils/api/register";
 import axios from "axios";
 import PendingPage from "../../PendingPage";
 import { CenterText, PageContainer } from "../../../app.styles";
+import { AlreadyRegistered } from "../../../components/RegisterComponents";
 
 /**
  * Page where users end up after using an OAuth application
  */
 export default function RedirectPage() {
     const [searchParams] = useSearchParams();
+    const [alreadyRegistered, setAlreadyRegistered] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -44,8 +46,12 @@ export default function RedirectPage() {
                 setShowErrorMessage(false);
             } catch (e) {
                 if (axios.isAxiosError(e)) {
-                    setShowErrorMessage(true);
-                    console.log(e.response);
+                    if (e.response && e.response.status === 409) {
+                        setAlreadyRegistered(true);
+                    } else {
+                        setShowErrorMessage(true);
+                        console.log(e.response);
+                    }
                 }
             }
 
@@ -54,6 +60,14 @@ export default function RedirectPage() {
 
         doGithubRegister();
     }, [searchParams]); // searchParams never updates, but it's a state hook so this is required
+
+    if (alreadyRegistered) {
+        return (
+            <PageContainer>
+                <AlreadyRegistered />
+            </PageContainer>
+        );
+    }
 
     if (showErrorMessage) {
         return (

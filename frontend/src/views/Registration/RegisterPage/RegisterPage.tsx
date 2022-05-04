@@ -12,17 +12,21 @@ import {
     SocialButtons,
     InfoText,
     BadInviteLink,
+    AlreadyRegistered,
 } from "../../../components/RegisterComponents";
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
 import { decodeRegistrationLink } from "../../../utils/logic";
 import PendingPage from "../../PendingPage";
+import { useAuth } from "../../../contexts";
+import { PageContainer } from "../../../app.styles";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
  * this renders the [[BadInviteLink]] component instead.
  */
 export default function RegisterPage() {
+    const { isLoggedIn } = useAuth();
     const [validUuid, setValidUuid] = useState(false);
     const [pending, setPending] = useState(false);
     const params = useParams();
@@ -69,6 +73,15 @@ export default function RegisterPage() {
             console.log(error);
             alert("Something went wrong when creating your account");
         }
+    }
+
+    // User is currently logged in, show them a message instead
+    if (isLoggedIn) {
+        return (
+            <PageContainer>
+                <AlreadyRegistered />
+            </PageContainer>
+        );
     }
 
     if (pending) {
