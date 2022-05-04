@@ -45,13 +45,13 @@ export default function CoachSuggestionContainer(props: Props) {
                 </Modal.Header>
                 <Modal.Body>Why are you giving this decision for this student?
                     <Form.Control
-                    type="text"
-                    name="nameFilter"
-                    value={argumentation}
-                    onChange={e => {
-                        setArgumentation(e.target.value);
-                    }}
-                    placeholder="Place your argumentation here..."/>
+                        type="text"
+                        name="nameFilter"
+                        value={argumentation}
+                        onChange={e => {
+                            setArgumentation(e.target.value);
+                        }}
+                        placeholder="Place your argumentation here..."/>
                     * This field isn't required
                 </Modal.Body>
                 <Modal.Footer>
