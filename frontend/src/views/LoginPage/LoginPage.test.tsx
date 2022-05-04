@@ -1,41 +1,50 @@
-import {render, screen, fireEvent} from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import LoginPage from "./LoginPage"
-//import * as MockLogin from "../../utils/api/login_api";
+import {render, screen, fireEvent} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import LoginPage from "./LoginPage";
+
+import "@testing-library/jest-dom";
+import { configure } from "enzyme";
+import Adapter from "enzyme-adapter-react-16";
+
+const token = {
+    data: {
+        access_token: "test",
+        refresh_token: "test",
+        user: { editions: ['ed2022'] }
+    }
+}
+
+
+// Configure Enzyme adapter
+configure({ adapter: new Adapter() });
+
+// Mock Axios so the tests never make API calls
+jest.mock("axios", () => {
+    return {
+        create: () => {
+            return {
+                defaults: {
+                    baseURL: "",
+                },
+                interceptors: {
+                    request: {
+                        use: jest.fn(),
+                    },
+                    response: {
+                        use: jest.fn(),
+                    },
+                },
+                get: () => jest.fn(),
+                post: () => token,
+            };
+        },
+    };
+});
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => (jest.fn())
 }));
-
-//const response = {
-//    "data": ,
-//    "status": 200
-//};
-
-/*
-jest.mock('../../utils/api/login_api', () => ({
-    ...jest.requireActual('../../utils/api/login_api'),
-    _logIn: () => (jest.fn().mockResolvedValue({
-        access_token: "test",
-        refresh_token: "test",
-        user: { editions: ['ed2022'] }
-    } as LoginResponse))
-}));
-*/
-
-//jest.mock("../../utils/api/login", () => {
-//    const token = {
-//        access_token: "test",
-//        refresh_token: "test",
-//        user: {editions: ['ed2022']}
-//    }
-//    console.log(token);
-//    return true;
-//})
-
-
-
 
 
 beforeEach(() => {
@@ -76,5 +85,6 @@ test('enter on password field and login goes trough', async () => {
     const passwordField = screen.getByPlaceholderText("Password");
     userEvent.type(passwordField, "wachtwoord");
     fireEvent.keyPress(passwordField, {key: 'Enter', code: 'Enter', charCode: 13})
+    //screen.debug()
 })
 
