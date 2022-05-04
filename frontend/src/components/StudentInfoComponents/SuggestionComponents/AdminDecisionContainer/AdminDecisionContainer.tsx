@@ -1,19 +1,65 @@
-import React from "react";
-import { Button, Form } from "react-bootstrap";
+import React, {useState} from "react";
+import {Button, Modal} from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
+import { SuggestionButtons, ConfirmButton } from "./styles";
 
 export default function AdminDecisionContainer() {
+    const [show, setShow] = useState(false);
+    const [clickedButtonText, setClickedButtonText] = useState("")
+    function handleClose(){
+        setShow(false)
+        setClickedButtonText("")
+    }
+    function handleShow(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        setShow(true);
+    }
+
+    function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        const button: HTMLButtonElement = event.currentTarget;
+        setClickedButtonText(button.innerText)
+    }
+
     return (
         <div>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Definitive decision on student</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Click on one of the buttons to mark your decision
+                    <SuggestionButtons>
+                        <ConfirmButton value={0} variant="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                            Yes
+                        </ConfirmButton>
+                        <ConfirmButton value={1} variant="warning" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                            Maybe
+                        </ConfirmButton>
+                        <ConfirmButton value={2} variant="danger" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                            No
+                        </ConfirmButton>
+                    </SuggestionButtons>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <div>
+                        { clickedButtonText? (
+                            <Button variant="primary" onClick={handleClose}>
+                                Confirm {clickedButtonText}?
+                            </Button>
+                        ) : (
+                            <Button variant="primary" onClick={handleClose} disabled={true}>
+                                Confirm
+                            </Button>
+                        )}
+                    </div>
+                </Modal.Footer>
+            </Modal>
             <h4>Definitive decision by admin</h4>
             <DefinitiveDecisionContainer>
-                <Form.Select aria-label="Default select example">
-                    <option>Open this select menu</option>
-                    <option value={0}>Yes</option>
-                    <option value={1}>Maybe</option>
-                    <option value={2}>No</option>
-                </Form.Select>
-                <Button variant="success" size="lg">
+                <Button onClick={(e) => handleShow(e)} variant="success" size="lg">
                     Confirm
                 </Button>
             </DefinitiveDecisionContainer>
