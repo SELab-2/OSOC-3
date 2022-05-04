@@ -15,6 +15,11 @@ export const TopContainer = styled.div`
     justify-content: space-between;
 `;
 
+export const TopLeftContainer = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 export const SkillName = styled.div`
     overflow-x: auto;
     text-overflow: ellipsis;

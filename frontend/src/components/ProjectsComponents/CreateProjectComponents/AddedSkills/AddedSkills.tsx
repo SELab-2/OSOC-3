@@ -7,6 +7,7 @@ import {
     Delete,
     TopContainer,
     SkillName,
+    TopLeftContainer,
 } from "./styles";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from "react";
@@ -38,7 +39,8 @@ export default function AddedSkills({
     ) {
         const newList = skills.map((item, otherIndex) => {
             if (index === otherIndex) {
-                if (amount && !isNaN(event.target.valueAsNumber)) {
+                if (amount) {
+                    if (event.target.valueAsNumber < 1) return item;
                     return {
                         ...item,
                         amount: event.target.valueAsNumber,
@@ -59,17 +61,19 @@ export default function AddedSkills({
             {skills.map((skill, index) => (
                 <SkillContainer key={index}>
                     <TopContainer>
-                        <SkillName>{skill.skill}</SkillName>
+                        <TopLeftContainer>
+                            <SkillName>{skill.skill}</SkillName>
 
-                        <AmountInput
-                            type="number"
-                            value={skill.amount}
-                            placeholder="Amount"
-                            min={1}
-                            onChange={event => {
-                                updateSkills(event, index, true);
-                            }}
-                        />
+                            <AmountInput
+                                type="number"
+                                value={skill.amount}
+                                placeholder="Amount"
+                                min={1}
+                                onChange={event => {
+                                    updateSkills(event, index, true);
+                                }}
+                            />
+                        </TopLeftContainer>
                         <Delete
                             onClick={() => {
                                 const newSkills = [...skills];
