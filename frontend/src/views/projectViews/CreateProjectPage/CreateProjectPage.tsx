@@ -5,7 +5,7 @@ import {
     CenterContainer,
     Center,
     CancelButton,
-    CenterTitle
+    CenterTitle,
 } from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
@@ -98,6 +98,16 @@ export default function CreateProjectPage() {
                     </CancelButton>
                     <CreateButton
                         onClick={async () => {
+                            if (name === "") {
+                                alert("Project name must be filled in");
+                                return;
+                            }
+
+                            if (isNaN(numberOfStudents)) {
+                                alert("Number of students must be filled in");
+                                return;
+                            }
+
                             const coachIds: number[] = [];
                             coaches.forEach(coachToAdd => {
                                 coachIds.push(coachToAdd.userId);
