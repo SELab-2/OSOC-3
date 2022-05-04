@@ -36,7 +36,7 @@ export default function ProjectPage() {
     const params = useParams();
     const editionId = params.editionId!;
 
-    const { role } = useAuth();
+    const { role, editions } = useAuth();
 
     /**
      * Used to fetch the projects
@@ -83,7 +83,7 @@ export default function ProjectPage() {
                     }}
                 />
                 <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {role === Role.ADMIN && (
+                {role === Role.ADMIN && editionId === editions[0] && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >
