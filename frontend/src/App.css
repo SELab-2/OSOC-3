@@ -1,8 +1,15 @@
 :root {
+    /* OSOC colours */
     --osoc_blue: #131329;
     --osoc_orange: #fcb70f;
     --osoc_red: #f14a3b;
     --osoc_green: #44dba4;
+    /* Darkened OSOC colours, used for hovering, etc */
+    --osoc_blue_darkened: #0e0e1e;
+    --osoc_orange_darkened: #c58c02;
+    --osoc_red_darkened: #d21f0f;
+    --osoc_green_darkened: #22b47f;
+    /* General site colours */
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
     --background_color: #272741;
