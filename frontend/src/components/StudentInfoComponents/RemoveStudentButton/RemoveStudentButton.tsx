@@ -10,7 +10,7 @@ export default function RemoveStudentButton() {
 
     function handleRemoveStudent() {
         removeStudent(params.editionId!, params.id!)
-        navigate(`/editions/2022/students/`)
+        navigate(`/editions/${params.editionId}/students/`)
     }
 
     return (

@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const StudentRemoveButton = styled.button`
-    position: absolute;
     width: 150px;
     height: 35px;
     right: 5%;

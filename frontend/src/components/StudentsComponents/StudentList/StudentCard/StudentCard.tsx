@@ -4,16 +4,11 @@ import {
     CardStudentInfo,
     CardVerticalContainer,
     CardHorizontalContainer,
-    CardSuggestionBar,
     CardStudentName,
-    CardAmountSuggestions,
-    AllSuggestions,
-    SuggestionSignYes,
-    SuggestionSignMaybe,
-    SuggestionSignNo
 } from "./styles";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {NrSuggestions} from "../../../../data/interfaces/students";
+import SuggestionProgressBar from "../SuggestionProgressBar";
 
 interface Props {
     firstName: string;
@@ -22,32 +17,19 @@ interface Props {
 }
 
 export default function StudentCard(props: Props) {
+    const params = useParams()
     const navigate = useNavigate();
 
     return (
         <>
-            <CardStudent onClick={() => navigate(`/editions/2022/students/${props.studentId}`)}>
+            <CardStudent onClick={() => navigate(`/editions/${params.editionId}/students/${props.studentId}`)}>
                 {/* <CardConfirmColorBlock /> */}
                 <CardStudentInfo>
                     <CardVerticalContainer>
                         <CardHorizontalContainer>
                             <CardStudentName>{props.firstName}</CardStudentName>
-                            <AllSuggestions>
-                                <SuggestionSignYes>V</SuggestionSignYes>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.yes}
-                                </CardAmountSuggestions>
-                                <SuggestionSignMaybe>?</SuggestionSignMaybe>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.maybe}
-                                </CardAmountSuggestions>
-                                <SuggestionSignNo>X</SuggestionSignNo>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.no}
-                                </CardAmountSuggestions>
-                            </AllSuggestions>
                         </CardHorizontalContainer>
-                        <CardSuggestionBar />
+                        <SuggestionProgressBar nrOfSuggestions={props.nrOfSuggestions}/>
                     </CardVerticalContainer>
                 </CardStudentInfo>
             </CardStudent>

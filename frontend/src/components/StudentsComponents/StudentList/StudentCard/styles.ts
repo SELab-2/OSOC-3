@@ -21,14 +21,6 @@ export const CardConfirmColorBlock = styled.div`
     z-index: 1;
 `;
 
-export const CardSuggestionBar = styled.div`
-    height: 2px;
-    width: 90%;
-    background: var(--osoc_green);
-    margin-left: 5%;
-    margin-bottom: 15px;
-`;
-
 export const CardStudentInfo = styled.div`
     display: flex;
     width: 100%;

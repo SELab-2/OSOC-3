@@ -25,7 +25,7 @@ export const StudentInfoTitle = styled.h4`
     color: var(--osoc_orange);
 `;
 
-export const Suggestion = styled.p`
+export const SuggestionField = styled.p`
     font-size: 20px;
 `;
 
