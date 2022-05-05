@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Collapsible from "react-collapsible";
-import { RequestsContainer, Error, RequestListContainer, SearchButton } from "./styles";
+import { RequestsContainer, Error, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
 import { SearchInput } from "../../styles";
@@ -12,6 +12,7 @@ import { SearchInput } from "../../styles";
  * @param props.refreshCoaches A function which will be called when a new coach is added
  */
 export default function Requests(props: { edition: string; refreshCoaches: () => void }) {
+    const [allRequests, setAllRequests] = useState<Request[]>([]);
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
     const [loading, setLoading] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
@@ -19,6 +20,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     const [open, setOpen] = useState(false); // Collapsible is open
     const [error, setError] = useState(""); // Error message
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
+    const [allRequestsFetched, setAllRequestsFetched] = useState(false);
     const [page, setPage] = useState(0); // The next page which needs to be fetched
 
     /**
@@ -30,6 +32,11 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     function removeRequest(accepted: boolean, request: Request) {
         setRequests(
             requests.filter(object => {
+                return object !== request;
+            })
+        );
+        setAllRequests(
+            allRequests.filter(object => {
                 return object !== request;
             })
         );
@@ -46,6 +53,17 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         if (loading) {
             return;
         }
+
+        if (allRequestsFetched) {
+            setRequests(
+                allRequests.filter(request =>
+                    request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
+                )
+            );
+            setMoreRequestsAvailable(false);
+            return;
+        }
+
         setLoading(true);
         setError("");
         try {
@@ -58,6 +76,18 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
             } else {
                 setRequests(requests.concat(response.requests));
             }
+
+            if (searchTerm === "") {
+                if (response.requests.length === 0) {
+                    setAllRequestsFetched(true);
+                }
+                if (page === 0) {
+                    setAllRequests(response.requests);
+                } else {
+                    setAllRequests(allRequests.concat(response.requests));
+                }
+            }
+
             setPage(page + 1);
             setGotData(true);
         } catch (exception) {
@@ -66,14 +96,12 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         setLoading(false);
     }
 
-    /**
-     * Delete all found request and reset searching
-     */
-    function refresh() {
-        setRequests([]);
+    function filter(searchTerm: string) {
         setPage(0);
-        setMoreRequestsAvailable(true);
         setGotData(false);
+        setMoreRequestsAvailable(true);
+        setSearchTerm(searchTerm);
+        setRequests([]);
     }
 
     let list;
@@ -102,16 +130,9 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 <SearchInput
                     value={searchTerm}
                     onChange={e => {
-                        setSearchTerm(e.target.value);
-                        if (e.target.value === "") {
-                            refresh();
-                        }
-                    }}
-                    onKeyDown={e => {
-                        if (e.key === "Enter") refresh();
+                        filter(e.target.value);
                     }}
                 />
-                <SearchButton onClick={refresh}>Search</SearchButton>
                 <RequestListContainer>{list}</RequestListContainer>
             </Collapsible>
         </RequestsContainer>
