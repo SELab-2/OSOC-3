@@ -20,7 +20,7 @@ export default function ProjectTable(props: {
     projects: Project[];
     loading: boolean;
     gotData: boolean;
-    getMoreProjects: (page: number) => void;
+    getMoreProjects: () => void;
     moreProjectsAvailable: boolean;
     removeProject: (project: Project) => void;
     error: string | undefined;

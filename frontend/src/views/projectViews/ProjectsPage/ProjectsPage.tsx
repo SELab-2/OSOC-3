@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { CreateButton, SearchButton, SearchField, OwnProject } from "./styles";
+import { CreateButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,10 +12,12 @@ import { Role } from "../../../data/enums";
  * You can filter on your own projects or filter on project name.
  */
 export default function ProjectPage() {
+    const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
+    const [allProjectsFetched, setAllProjectsFetched] = useState(false);
     const [error, setError] = useState<string | undefined>(undefined);
 
     // Keep track of the set filters
@@ -33,10 +35,21 @@ export default function ProjectPage() {
     /**
      * Used to fetch the projects
      */
-    async function callProjects() {
+    async function loadProjects() {
         if (loading) {
             return;
         }
+
+        if (allProjectsFetched) {
+            setProjects(
+                allProjects.filter(project =>
+                    project.name.toUpperCase().includes(searchString.toUpperCase())
+                )
+            );
+            setMoreProjectsAvailable(false);
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await getProjects(editionId, searchString, ownProjects, page);
@@ -49,6 +62,18 @@ export default function ProjectPage() {
                 } else {
                     setProjects(projects.concat(response.projects));
                 }
+
+                if (searchString === "") {
+                    if (response.projects.length === 0) {
+                        setAllProjectsFetched(true);
+                    }
+                    if (page === 0) {
+                        setAllProjects(response.projects);
+                    } else {
+                        setAllProjects(allProjects.concat(response.projects));
+                    }
+                }
+
                 setPage(page + 1);
                 setGotProjects(true);
             } else {
@@ -60,10 +85,14 @@ export default function ProjectPage() {
         setLoading(false);
     }
 
-    async function refreshProjects() {
+    /**
+     * Reset fetched projects
+     */
+    function refreshProjects() {
         setProjects([]);
         setPage(0);
         setMoreProjectsAvailable(true);
+        setAllProjectsFetched(false);
         setGotProjects(false);
     }
 
@@ -79,18 +108,28 @@ export default function ProjectPage() {
         );
     }
 
+    /**
+     * Filter the projects by name
+     * @param searchTerm
+     */
+    function filter(searchTerm: string) {
+        setPage(0);
+        setGotProjects(false);
+        setMoreProjectsAvailable(true);
+        setSearchString(searchTerm);
+        setProjects([]);
+    }
+
     return (
         <div>
             <div>
                 <SearchField
                     value={searchString}
-                    onChange={e => setSearchString(e.target.value)}
-                    placeholder="project name"
-                    onKeyDown={e => {
-                        if (e.key === "Enter") refreshProjects();
+                    onChange={e => {
+                        filter(e.target.value);
                     }}
+                    placeholder="project name"
                 />
-                <SearchButton onClick={refreshProjects}>Search</SearchButton>
                 {role === Role.ADMIN && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
@@ -113,7 +152,7 @@ export default function ProjectPage() {
                 projects={projects}
                 loading={loading}
                 gotData={gotProjects}
-                getMoreProjects={callProjects}
+                getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}
                 error={error}
