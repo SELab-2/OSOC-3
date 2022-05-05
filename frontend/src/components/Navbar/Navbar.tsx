@@ -10,13 +10,14 @@ import UsersDropdown from "./UsersDropdown";
 import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
 import EditionNavLink from "./EditionNavLink";
+import StudentsDropdown from "./StudentsDropdown";
 
 /**
  * Navbar component displayed at the top of the screen.
  * If the user is not signed in, this is hidden automatically.
  */
 export default function Navbar() {
-    const { isLoggedIn, editions } = useAuth();
+    const { isLoggedIn, editions, role } = useAuth();
     /**
      * Important: DO NOT MOVE THIS LINE UNDERNEATH THE RETURN!
      * Placing an early return above a React hook (in this case, useLocation) causes
@@ -68,11 +69,9 @@ export default function Navbar() {
                         <LinkContainer to={`/editions/${currentEdition}/projects`}>
                             <Nav.Link>Projects</Nav.Link>
                         </LinkContainer>
-                        <LinkContainer to={`/editions/${currentEdition}/students`}>
-                            <Nav.Link>Students</Nav.Link>
-                        </LinkContainer>
                     </EditionNavLink>
-                    <UsersDropdown currentEdition={currentEdition} />
+                    <StudentsDropdown isLoggedIn={isLoggedIn} currentEdition={currentEdition} />
+                    <UsersDropdown currentEdition={currentEdition} role={role} />
                     <LogoutButton />
                 </Nav>
             </BSNavbar.Collapse>

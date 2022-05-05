@@ -45,6 +45,9 @@ sqlalchemy-utils = "0.38.2"
 uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
 
 [tool.poetry.dev-dependencies]
+# Aioresponses: mocking library for aiohttp requests
+aioresponses = "^0.7.3"
+
 # Coverage: generate code coverage reports
 coverage = { "version" = "6.3.1", extras = ["toml"] }
 
@@ -63,6 +66,9 @@ pylint-pytest = "1.1.2"
 # Pytest: Python testing framework
 # (more advanced than the built-in unittest module)
 pytest = "7.0.1"
+
+# Pytest-asyncio: plugin for pytest to support async tests & fixtures
+pytest-asyncio = "^0.18.3"
 
 # Pytest-cov: coverage plugin for pytest
 pytest-cov = "3.0.0"
@@ -104,6 +110,7 @@ extension-pkg-whitelist = "pydantic"
 max-line-length = 120
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*The distutils package is deprecated:DeprecationWarning",
 ]

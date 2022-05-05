@@ -1,6 +1,6 @@
 import { axiosInstance } from "./api";
 import { Edition } from "../../data/interfaces";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 interface EditionsResponse {
     editions: Edition[];
@@ -38,14 +38,13 @@ export async function deleteEdition(name: string): Promise<number> {
 /**
  * Create a new edition with the given name and year
  */
-export async function createEdition(name: string, year: number): Promise<number> {
+export async function createEdition(name: string, year: number): Promise<AxiosResponse> {
     const payload: EditionFields = { name: name, year: year };
     try {
-        const response = await axiosInstance.post("/editions/", payload);
-        return response.status;
+        return await axiosInstance.post("/editions/", payload);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response !== undefined) {
-            return error.response.status;
+            return error.response;
         } else {
             throw error;
         }

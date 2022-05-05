@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, ContentWrapper } from "./app.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+
 import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
@@ -9,6 +10,8 @@ import {
     LoginPage,
     PendingPage,
     ProjectsPage,
+    ProjectDetailPage,
+    CreateProjectPage,
     RegisterPage,
     StudentsPage,
     UsersPage,
@@ -68,11 +71,14 @@ export default function Router() {
                                         <Route path="projects" element={<Outlet />}>
                                             <Route path={""} element={<ProjectsPage />} />
                                             <Route path={"new"} element={<AdminRoute />}>
-                                                {/* TODO create project page */}
-                                                <Route path={""} element={<div />} />
+                                                {/* create project page */}
+                                                <Route path={""} element={<CreateProjectPage />} />
                                             </Route>
-                                            {/* TODO project page */}
-                                            <Route path={":id"} element={<div />} />
+                                            {/* project page */}
+                                            <Route
+                                                path={":projectId"}
+                                                element={<ProjectDetailPage />}
+                                            />
                                         </Route>
 
                                         {/* Students routes */}
