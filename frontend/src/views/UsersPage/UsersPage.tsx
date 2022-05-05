@@ -12,11 +12,13 @@ import { getCoaches } from "../../utils/api/users/coaches";
  */
 function UsersPage() {
     // Note: The coaches are not in the coaches component because accepting a request needs to refresh the coaches list.
+    const [allCoaches, setAllCoaches] = useState<User[]>([]);
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [gotData, setGotData] = useState(false); // Received data
     const [error, setError] = useState(""); // Error message
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
+    const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
 
@@ -30,18 +32,41 @@ function UsersPage() {
         if (loading) {
             return;
         }
+
+        if (allCoachesFetched) {
+            setCoaches(
+                allCoaches.filter(coach =>
+                    coach.name.toUpperCase().includes(searchTerm.toUpperCase())
+                )
+            );
+            setMoreCoachesAvailable(false);
+            return;
+        }
+
         setLoading(true);
         setError("");
         try {
-            const coachResponse = await getCoaches(params.editionId as string, searchTerm, page);
-            if (coachResponse.users.length === 0) {
+            const response = await getCoaches(params.editionId as string, searchTerm, page);
+            if (response.users.length === 0) {
                 setMoreCoachesAvailable(false);
             }
             if (page === 0) {
-                setCoaches(coachResponse.users);
+                setCoaches(response.users);
             } else {
-                setCoaches(coaches.concat(coachResponse.users));
+                setCoaches(coaches.concat(response.users));
             }
+
+            if (searchTerm === "") {
+                if (response.users.length === 0) {
+                    setAllCoachesFetched(true);
+                }
+                if (page === 0) {
+                    setAllCoaches(response.users);
+                } else {
+                    setAllCoaches(allCoaches.concat(response.users));
+                }
+            }
+
             setPage(page + 1);
             setGotData(true);
         } catch (exception) {
@@ -56,10 +81,11 @@ function UsersPage() {
      * @param searchTerm The string to filter coaches with by username.
      */
     function filterCoachesData(searchTerm: string) {
+        setPage(0);
+        setGotData(false);
+        setMoreCoachesAvailable(true);
         setSearchTerm(searchTerm);
-        if (searchTerm === "") {
-            refreshCoaches();
-        }
+        setCoaches([]);
     }
 
     /**
@@ -69,8 +95,9 @@ function UsersPage() {
     function refreshCoaches() {
         setCoaches([]);
         setPage(0);
-        setMoreCoachesAvailable(true);
+        setAllCoachesFetched(false);
         setGotData(false);
+        setMoreCoachesAvailable(true);
     }
 
     /**

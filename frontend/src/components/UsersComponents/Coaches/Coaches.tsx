@@ -1,7 +1,7 @@
 import React from "react";
 import { CoachesTitle, CoachesContainer } from "./styles";
 import { User } from "../../../utils/api/users/users";
-import { Error, SearchButton } from "../Requests/styles";
+import { Error } from "../Requests/styles";
 import { CoachList, AddCoach } from "./CoachesComponents";
 import { SearchInput } from "../../styles";
 
@@ -54,11 +54,7 @@ export default function Coaches(props: {
             <SearchInput
                 value={props.searchTerm}
                 onChange={e => props.searchCoaches(e.target.value)}
-                onKeyDown={e => {
-                    if (e.key === "Enter") props.refreshCoaches();
-                }}
             />
-            <SearchButton onClick={props.refreshCoaches}>Search</SearchButton>
             <AddCoach edition={props.edition} refreshCoaches={props.refreshCoaches} />
             {table}
         </CoachesContainer>
