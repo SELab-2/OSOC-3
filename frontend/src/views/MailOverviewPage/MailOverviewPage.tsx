@@ -1,89 +1,101 @@
 import React, { useState } from "react";
-import {
-    getMailOverview,
-    StudentEmails,
-    handleSelect,
-    handleSelectAll,
-    setStateRequest,
-    handleFilterSelect,
-    handleSetSearch,
-    setFinalFilters,
-} from "../../utils/api/mail_overview";
+import { getMailOverview, setStateRequest, StudentEmail } from "../../utils/api/mail_overview";
 import BootstrapTable from "react-bootstrap-table-next";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
 import InfiniteScroll from "react-infinite-scroller";
 import { Multiselect } from "multiselect-react-dropdown";
-import {
-    TableDiv,
-    DropDownButtonDiv,
-    SearchDiv,
-    FilterDiv,
-    SearchAndFilterDiv,
-    ButtonDiv,
-} from "./styles";
+import { TableDiv, DropDownButtonDiv, SearchDiv, FilterDiv, SearchAndFilterDiv } from "./styles";
 import { EmailType } from "../../data/enums";
+import { SpinnerContainer, Error } from "../../components/UsersComponents/Requests/styles";
 import { useParams } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 
 /**
  * Page that shows the email status of all students, with the possibility to change the status
  */
 export default function MailOverviewPage() {
-    const init: StudentEmails = {
-        studentEmails: [],
-    };
-    const [table, setTable] = useState(init);
-    const [keyval, setKeyval] = useState(0);
+    const [emails, setEmails] = useState<StudentEmail[]>([]);
+    const [gotEmails, setGotEmails] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emails available
+    const [error, setError] = useState<string | undefined>(undefined);
+    const [page, setPage] = useState(0);
+
+    // Keep track of the set filters
+    const [searhTerm, setSearchTerm] = useState("");
+    const [filters, setFilters] = useState<EmailType[]>([]);
+
+    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
     const { editionId } = useParams();
 
     /**
      * update the table with new values
      * @param page
      */
-    async function updateMailOverview(page: number) {
+    async function updateMailOverview() {
+        if (loading) {
+            return;
+        }
+
+        setLoading(true);
+
         try {
-            const studentEmails = await getMailOverview(editionId, page);
-            if (studentEmails.studentEmails.length === 0) {
+            const response = await getMailOverview(editionId, page, searhTerm, filters);
+
+            if (response.studentEmails.length === 0) {
                 setMoreEmailsAvailable(false);
             }
-
             if (page === 0) {
-                setTable(studentEmails);
+                setEmails(response.studentEmails);
             } else {
-                setTable(prevState => ({
-                    studentEmails: [...prevState.studentEmails, ...studentEmails.studentEmails],
-                }));
+                setEmails(emails.concat(response.studentEmails));
             }
+
+            setPage(page + 1);
+            setGotEmails(true);
         } catch (exception) {
-            console.log(exception);
+            setError("Oops, something went wrong...");
+        }
+        setLoading(false);
+    }
+
+    function searchName(newSearchTerm: string) {
+        setPage(0);
+        setGotEmails(false);
+        setMoreEmailsAvailable(true);
+        setSearchTerm(newSearchTerm);
+        setEmails([]);
+    }
+
+    function changeFilter(newFilter: EmailType[]) {
+        setPage(0);
+        setGotEmails(false);
+        setMoreEmailsAvailable(true);
+        setFilters(newFilter);
+        setEmails([]);
+    }
+
+    /**
+     * Keeps the selectedRows list up-to-date when a student is selected/unselected in the table
+     * @param row
+     * @param isSelect
+     */
+    function selectNewRow(row: StudentEmail, isSelect: boolean) {
+        if (isSelect) {
+            setSelectedRows(selectedRows.concat(row.student.studentId));
+        } else {
+            setSelectedRows(selectedRows.filter(item => item !== row.student.studentId));
         }
     }
 
-    /**
-     * update the table with the search term and filters
-     */
-    function handleDoSearch() {
-        setFinalFilters();
-        // need to update the key of the component to refresh it
-        setKeyval(keyval + 2);
-        setMoreEmailsAvailable(true);
-        updateMailOverview(0);
-    }
-
-    /**
-     * handle selecting a new email state
-     * @param eventKey
-     */
-    async function handleSetState(eventKey: string | null) {
-        await setStateRequest(eventKey, editionId);
-        // need to update the key of the component to refresh it
-        setKeyval(keyval + 2);
-        setMoreEmailsAvailable(true);
-        updateMailOverview(0);
+    function selectAll(isSelect: boolean, rows: StudentEmail[]) {
+        for (const row of rows) {
+            selectNewRow(row, isSelect);
+        }
     }
 
     const columns = [
@@ -111,6 +123,46 @@ export default function MailOverviewPage() {
         },
     ];
 
+    let table;
+    if (error) {
+        table = <Error>{error}</Error>;
+    } else if (gotEmails && emails.length === 0) {
+        table = <div>No emails found.</div>;
+    } else {
+        table = (
+            <TableDiv>
+                <InfiniteScroll
+                    loadMore={updateMailOverview}
+                    hasMore={moreEmailsAvailable}
+                    loader={
+                        <SpinnerContainer key={"spinner"}>
+                            <Spinner animation="border" />
+                        </SpinnerContainer>
+                    }
+                    initialLoad={true}
+                    useWindow={false}
+                    getScrollParent={() => document.getElementById("root")}
+                >
+                    <BootstrapTable
+                        keyField="student.studentId"
+                        data={emails}
+                        columns={columns}
+                        striped
+                        hover
+                        bordered
+                        selectRow={{
+                            mode: "checkbox",
+                            onSelect: selectNewRow,
+                            onSelectAll: selectAll,
+                        }}
+                    />
+                </InfiniteScroll>
+            </TableDiv>
+        );
+    }
+
+    // TODO: Change state
+
     return (
         <>
             <DropDownButtonDiv>
@@ -118,10 +170,15 @@ export default function MailOverviewPage() {
                     id="dropdown-setstate-button"
                     title="Set state of selected students"
                     menuVariant="dark"
-                    onSelect={handleSetState}
                 >
                     {Object.values(EmailType).map((type, index) => (
-                        <Dropdown.Item eventKey={index.toString()} key={type}>
+                        <Dropdown.Item
+                            eventKey={index.toString()}
+                            key={type}
+                            onClick={() =>
+                                setStateRequest(index.toString(), editionId, selectedRows)
+                            }
+                        >
                             {type}
                         </Dropdown.Item>
                     ))}
@@ -133,11 +190,8 @@ export default function MailOverviewPage() {
                         <FormControl
                             placeholder="Search a student"
                             aria-label="Username"
-                            onChange={handleSetSearch}
-                            onKeyPress={event => {
-                                if (event.key === "Enter") {
-                                    return handleDoSearch();
-                                }
+                            onChange={e => {
+                                searchName(e.target.value);
                             }}
                         />
                     </InputGroup>
@@ -147,38 +201,13 @@ export default function MailOverviewPage() {
                         placeholder="Filter on Email State"
                         showArrow={true}
                         isObject={false}
-                        onRemove={handleFilterSelect}
-                        onSelect={handleFilterSelect}
+                        onRemove={changeFilter}
+                        onSelect={changeFilter}
                         options={Object.values(EmailType)}
                     />
                 </FilterDiv>
-                <ButtonDiv>
-                    <Button onClick={handleDoSearch}>Search</Button>
-                </ButtonDiv>
             </SearchAndFilterDiv>
-            <TableDiv>
-                <InfiniteScroll
-                    key={keyval}
-                    pageStart={-1}
-                    loadMore={updateMailOverview}
-                    initialLoad={true}
-                    hasMore={moreEmailsAvailable}
-                >
-                    <BootstrapTable
-                        keyField="student.studentId"
-                        data={table.studentEmails}
-                        columns={columns}
-                        striped
-                        hover
-                        bordered
-                        selectRow={{
-                            mode: "checkbox",
-                            onSelect: handleSelect,
-                            onSelectAll: handleSelectAll,
-                        }}
-                    />
-                </InfiniteScroll>
-            </TableDiv>
+            {table}
         </>
     );
 }
