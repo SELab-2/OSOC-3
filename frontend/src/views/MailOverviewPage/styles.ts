@@ -38,4 +38,16 @@ export const SearchAndFilterDiv = styled.div`
     width: fit-content;
 `;
 
-export const EmailsTable = styled(Table)``;
+export const EmailsTable = styled(Table)`
+    // TODO: Make all tables uniform
+`;
+
+export const CenterDiv = styled.div`
+    width: 100%;
+    margin: auto;
+`;
+
+export const MessageDiv = styled.div`
+    width: fit-content;
+    margin: auto;
+`;

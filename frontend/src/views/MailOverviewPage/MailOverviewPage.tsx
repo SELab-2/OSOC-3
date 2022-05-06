@@ -14,6 +14,8 @@ import {
     FilterDiv,
     SearchAndFilterDiv,
     EmailsTable,
+    CenterDiv,
+    MessageDiv,
 } from "./styles";
 import { EmailType } from "../../data/enums";
 import { SpinnerContainer, Error } from "../../components/UsersComponents/Requests/styles";
@@ -38,7 +40,7 @@ export default function MailOverviewPage() {
     const [allSelected, setAllSelected] = useState(false);
 
     // Keep track of the set filters
-    const [searhTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState<EmailType[]>([]);
 
     const { editionId } = useParams();
@@ -54,8 +56,7 @@ export default function MailOverviewPage() {
         setLoading(true);
 
         try {
-            const response = await getMailOverview(editionId, page, searhTerm, filters);
-
+            const response = await getMailOverview(editionId, page, searchTerm, filters);
             if (response.studentEmails.length === 0) {
                 setMoreEmailsAvailable(false);
             }
@@ -80,7 +81,6 @@ export default function MailOverviewPage() {
                     )
                 );
             }
-
             setPage(page + 1);
             setGotEmails(true);
         } catch (exception) {
@@ -155,9 +155,17 @@ export default function MailOverviewPage() {
 
     let table;
     if (error) {
-        table = <Error>{error}</Error>;
+        table = (
+            <CenterDiv>
+                <Error>{error}</Error>
+            </CenterDiv>
+        );
     } else if (gotEmails && emailRows.length === 0) {
-        table = <div>No emails found.</div>;
+        table = (
+            <CenterDiv>
+                <MessageDiv>No emails found.</MessageDiv>
+            </CenterDiv>
+        );
     } else {
         table = (
             <TableDiv>
