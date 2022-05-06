@@ -28,13 +28,12 @@ export default function MailOverviewPage() {
     const [searhTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState<EmailType[]>([]);
 
-    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+    const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
 
     const { editionId } = useParams();
 
     /**
      * update the table with new values
-     * @param page
      */
     async function updateMailOverview() {
         if (loading) {
@@ -63,20 +62,21 @@ export default function MailOverviewPage() {
         setLoading(false);
     }
 
-    function searchName(newSearchTerm: string) {
+    function refresh() {
         setPage(0);
         setGotEmails(false);
         setMoreEmailsAvailable(true);
-        setSearchTerm(newSearchTerm);
         setEmails([]);
     }
 
+    function searchName(newSearchTerm: string) {
+        setSearchTerm(newSearchTerm);
+        refresh();
+    }
+
     function changeFilter(newFilter: EmailType[]) {
-        setPage(0);
-        setGotEmails(false);
-        setMoreEmailsAvailable(true);
         setFilters(newFilter);
-        setEmails([]);
+        refresh();
     }
 
     /**
@@ -84,17 +84,28 @@ export default function MailOverviewPage() {
      * @param row
      * @param isSelect
      */
-    function selectNewRow(row: StudentEmail, isSelect: boolean) {
+    function selectNewStudent(row: StudentEmail, isSelect: boolean) {
         if (isSelect) {
-            setSelectedRows(selectedRows.concat(row.student.studentId));
+            setSelectedStudents(selectedStudents.concat(row.student.studentId));
         } else {
-            setSelectedRows(selectedRows.filter(item => item !== row.student.studentId));
+            setSelectedStudents(selectedStudents.filter(item => item !== row.student.studentId));
         }
     }
 
     function selectAll(isSelect: boolean, rows: StudentEmail[]) {
         for (const row of rows) {
-            selectNewRow(row, isSelect);
+            selectNewStudent(row, isSelect);
+        }
+    }
+
+    async function changeState(eventKey: string) {
+        try {
+            await setStateRequest(eventKey, editionId, selectedStudents);
+            setSelectedStudents([]);
+            alert("Successful changed");
+            refresh();
+        } catch {
+            alert("Failed to change state");
         }
     }
 
@@ -152,7 +163,7 @@ export default function MailOverviewPage() {
                         bordered
                         selectRow={{
                             mode: "checkbox",
-                            onSelect: selectNewRow,
+                            onSelect: selectNewStudent,
                             onSelectAll: selectAll,
                         }}
                     />
@@ -160,8 +171,6 @@ export default function MailOverviewPage() {
             </TableDiv>
         );
     }
-
-    // TODO: Change state
 
     return (
         <>
@@ -175,9 +184,7 @@ export default function MailOverviewPage() {
                         <Dropdown.Item
                             eventKey={index.toString()}
                             key={type}
-                            onClick={() =>
-                                setStateRequest(index.toString(), editionId, selectedRows)
-                            }
+                            onClick={() => changeState(index.toString())}
                         >
                             {type}
                         </Dropdown.Item>

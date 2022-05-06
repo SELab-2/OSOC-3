@@ -40,20 +40,15 @@ export async function getMailOverview(
 /**
  * Updates the Email state of the currently selected students in the table to the selected state
  * from the dropdown menu
- * @param eventKey
- * @param edition
  */
 export async function setStateRequest(
-    eventKey: string | null,
+    eventKey: string,
     edition: string | undefined,
-    selectedRows: number[]
+    selectedStudents: number[]
 ) {
     // post request with selected data
-    console.log(selectedRows);
     await axiosInstance.post(`/editions/${edition}/students/emails`, {
-        students_id: selectedRows,
+        students_id: selectedStudents,
         email_status: eventKey,
     });
-    // remove all selections
-    selectedRows.splice(0, selectedRows.length);
 }
