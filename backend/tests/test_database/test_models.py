@@ -1,9 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import models
 
 
-def test_user_coach_request(database_session: Session):
+def test_user_coach_request(database_session: AsyncSession):
     """Test sending a coach request"""
     edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -32,7 +32,7 @@ def test_user_coach_request(database_session: Session):
     assert req.user_id == user.user_id
 
 
-def test_project_partners(database_session: Session):
+def test_project_partners(database_session: AsyncSession):
     """Test adding a partner to a project"""
     project = models.Project(name="project")
     database_session.add(project)

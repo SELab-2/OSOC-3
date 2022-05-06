@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.crud.projects_students import (
     remove_student_project, add_student_project, change_project_role)
@@ -8,7 +8,7 @@ from src.database.models import Edition, Project, User, Skill, ProjectRole, Stud
 
 
 @pytest.fixture
-def database_with_data(database_session: Session) -> Session:
+def database_with_data(database_session: AsyncSession) -> Session:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)

@@ -1,10 +1,10 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.crud.register import create_user, create_coach_request, create_auth_email
 from src.database.models import AuthEmail, CoachRequest, User, Edition
 
 
-def test_create_user(database_session: Session):
+def test_create_user(database_session: AsyncSession):
     """Tests for creating a user"""
     create_user(database_session, "jos")
 
@@ -13,7 +13,7 @@ def test_create_user(database_session: Session):
     assert a[0].name == "jos"
 
 
-def test_react_coach_request(database_session: Session):
+def test_react_coach_request(database_session: AsyncSession):
     """Tests for creating a coach request"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -27,7 +27,7 @@ def test_react_coach_request(database_session: Session):
     assert u.coach_request == a[0]
 
 
-def test_create_auth_email(database_session: Session):
+def test_create_auth_email(database_session: AsyncSession):
     """Tests for creating a auth email"""
     u = create_user(database_session, "jos")
     create_auth_email(database_session, u, "wachtwoord", "mail@email.com")

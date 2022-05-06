@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound
 
 from src.app.schemas.register import NewUser
@@ -9,7 +9,7 @@ from src.app.logic.register import create_request
 from src.app.exceptions.register import FailedToAddNewUserException
 
 
-def test_create_request(database_session: Session):
+def test_create_request(database_session: AsyncSession):
     """Tests if a normal request can be created"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -31,7 +31,7 @@ def test_create_request(database_session: Session):
     assert len(auth_email) == 1
 
 
-def test_duplicate_user(database_session: Session):
+def test_duplicate_user(database_session: AsyncSession):
     """Tests if there is a duplicate, it's not created in the database"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -73,7 +73,7 @@ def test_duplicate_user(database_session: Session):
     assert len(links) == 1
 
 
-def test_use_same_uuid_multiple_times(database_session: Session):
+def test_use_same_uuid_multiple_times(database_session: AsyncSession):
     """Tests that you can't use the same UUID multiple times"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -89,7 +89,7 @@ def test_use_same_uuid_multiple_times(database_session: Session):
         create_request(database_session, new_user2, edition)
 
 
-def test_not_a_correct_email(database_session: Session):
+def test_not_a_correct_email(database_session: AsyncSession):
     """Tests when the email is not a correct email adress, it's get the right error"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)

@@ -1,6 +1,6 @@
 import datetime
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from settings import DB_PAGE_SIZE
 from src.database.enums import DecisionEnum, EmailStatusEnum
@@ -10,7 +10,7 @@ from tests.utils.authorization import AuthClient
 
 
 @pytest.fixture
-def database_with_data(database_session: Session) -> Session:
+def database_with_data(database_session: AsyncSession) -> Session:
     """A fixture to fill the database with fake data that can easly be used when testing"""
 
     # Editions

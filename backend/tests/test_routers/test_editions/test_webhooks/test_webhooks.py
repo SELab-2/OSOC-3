@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.database.models import Edition, WebhookURL, Student
@@ -12,7 +12,7 @@ from .data import create_webhook_event, WEBHOOK_EVENT_BAD_FORMAT, WEBHOOK_MISSIN
 
 
 @pytest.fixture
-def edition(database_session: Session) -> Edition:
+def edition(database_session: AsyncSession) -> Edition:
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     database_session.commit()
@@ -20,7 +20,7 @@ def edition(database_session: Session) -> Edition:
 
 
 @pytest.fixture
-def webhook(edition: Edition, database_session: Session) -> WebhookURL:
+def webhook(edition: Edition, database_session: AsyncSession) -> WebhookURL:
     webhook = WebhookURL(edition=edition)
     database_session.add(webhook)
     database_session.commit()
@@ -41,7 +41,7 @@ def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edition):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_webhook(test_client: TestClient, webhook: WebhookURL, database_session: Session):
+def test_webhook(test_client: TestClient, webhook: WebhookURL, database_session: AsyncSession):
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
         first_name="Bob",
@@ -114,7 +114,7 @@ def test_webhook_missing_question(test_client: TestClient, webhook: WebhookURL, 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_new_webhook_old_edition(database_session: Session, auth_client: AuthClient, edition: Edition):
+def test_new_webhook_old_edition(database_session: AsyncSession, auth_client: AuthClient, edition: Edition):
     database_session.add(Edition(year=2023, name="ed2023"))
     database_session.commit()
 

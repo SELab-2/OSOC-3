@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -13,7 +13,7 @@ from src.database.enums import DecisionEnum
 
 
 @pytest.fixture
-def database_with_data(database_session: Session):
+def database_with_data(database_session: AsyncSession):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
     edition: Edition = Edition(year=2022, name="ed22")

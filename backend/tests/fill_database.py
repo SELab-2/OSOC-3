@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import (User, AuthEmail, Skill, Student,
                                 Edition, CoachRequest, DecisionEmail, InviteLink, Partner,

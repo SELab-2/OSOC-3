@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database.crud.users as users_crud
 from settings import DB_PAGE_SIZE
@@ -9,7 +9,7 @@ from src.database.models import user_editions, CoachRequest
 
 
 @pytest.fixture
-def data(database_session: Session) -> dict[str, str]:
+def data(database_session: AsyncSession) -> dict[str, str]:
     """Fill database with dummy data"""
 
     # Create users
@@ -47,7 +47,7 @@ def data(database_session: Session) -> dict[str, str]:
             }
 
 
-def test_get_all_users(database_session: Session, data: dict[str, int]):
+def test_get_all_users(database_session: AsyncSession, data: dict[str, int]):
     """Test get request for users"""
 
     # get all users
@@ -58,7 +58,7 @@ def test_get_all_users(database_session: Session, data: dict[str, int]):
     assert data["user2"] in user_ids
 
 
-def test_get_all_users_paginated(database_session: Session):
+def test_get_all_users_paginated(database_session: AsyncSession):
     for i in range(round(DB_PAGE_SIZE * 1.5)):
         database_session.add(models.User(name=f"User {i}", admin=False))
     database_session.commit()
@@ -69,7 +69,7 @@ def test_get_all_users_paginated(database_session: Session):
     ) - DB_PAGE_SIZE
 
 
-def test_get_all_users_paginated_filter_name(database_session: Session):
+def test_get_all_users_paginated_filter_name(database_session: AsyncSession):
     count = 0
     for i in range(round(DB_PAGE_SIZE * 1.5)):
         database_session.add(models.User(name=f"User {i}", admin=False))
@@ -83,7 +83,7 @@ def test_get_all_users_paginated_filter_name(database_session: Session):
             DB_PAGE_SIZE * 1.5), 0)
 
 
-def test_get_all_admins(database_session: Session, data: dict[str, str]):
+def test_get_all_admins(database_session: AsyncSession, data: dict[str, str]):
     """Test get request for admins"""
 
     # get all admins
@@ -92,7 +92,7 @@ def test_get_all_admins(database_session: Session, data: dict[str, str]):
     assert data["user1"] == users[0].user_id
 
 
-def test_get_all_admins_paginated(database_session: Session):
+def test_get_all_admins_paginated(database_session: AsyncSession):
     admins = []
     for i in range(round(DB_PAGE_SIZE * 3)):
         user = models.User(name=f"User {i}", admin=i % 2 == 0)
@@ -111,7 +111,7 @@ def test_get_all_admins_paginated(database_session: Session):
            min(count - DB_PAGE_SIZE, DB_PAGE_SIZE)
 
 
-def test_get_all_non_admins_paginated(database_session: Session):
+def test_get_all_non_admins_paginated(database_session: AsyncSession):
     non_admins = []
     for i in range(round(DB_PAGE_SIZE * 3)):
         user = models.User(name=f"User {i}", admin=i % 2 == 0)
@@ -130,7 +130,7 @@ def test_get_all_non_admins_paginated(database_session: Session):
            min(count - DB_PAGE_SIZE, DB_PAGE_SIZE)
 
 
-def test_get_all_admins_paginated_filter_name(database_session: Session):
+def test_get_all_admins_paginated_filter_name(database_session: AsyncSession):
     count = 0
     for i in range(round(DB_PAGE_SIZE * 1.5)):
         database_session.add(models.User(name=f"User {i}", admin=i % 2 == 0))
@@ -146,7 +146,7 @@ def test_get_all_admins_paginated_filter_name(database_session: Session):
             DB_PAGE_SIZE * 1.5), 0)
 
 
-def test_get_user_edition_names_empty(database_session: Session):
+def test_get_user_edition_names_empty(database_session: AsyncSession):
     """Test getting all editions from a user when there are none"""
     user = models.User(name="test")
     database_session.add(user)
@@ -157,7 +157,7 @@ def test_get_user_edition_names_empty(database_session: Session):
     assert len(editions) == 0
 
 
-def test_get_user_edition_names_admin(database_session: Session):
+def test_get_user_edition_names_admin(database_session: AsyncSession):
     """Test getting all editions for an admin"""
     user = models.User(name="test", admin=True)
     database_session.add(user)
@@ -171,7 +171,7 @@ def test_get_user_edition_names_admin(database_session: Session):
     assert len(editions) == 1
 
 
-def test_get_user_edition_names_coach(database_session: Session):
+def test_get_user_edition_names_coach(database_session: AsyncSession):
     """Test getting all editions for a coach when they aren't empty"""
     user = models.User(name="test")
     database_session.add(user)
@@ -194,7 +194,7 @@ def test_get_user_edition_names_coach(database_session: Session):
     assert editions == [edition.name]
 
 
-def test_get_all_users_from_edition(database_session: Session, data: dict[str, str]):
+def test_get_all_users_from_edition(database_session: AsyncSession, data: dict[str, str]):
     """Test get request for users of a given edition"""
 
     # get all users from edition
@@ -209,7 +209,7 @@ def test_get_all_users_from_edition(database_session: Session, data: dict[str, s
     assert data["user2"] == users[0].user_id
 
 
-def test_get_all_users_for_edition_paginated(database_session: Session):
+def test_get_all_users_for_edition_paginated(database_session: AsyncSession):
     edition_1 = models.Edition(year=2022, name="ed2022")
     edition_2 = models.Edition(year=2023, name="ed2023")
     database_session.add(edition_1)
@@ -242,7 +242,7 @@ def test_get_all_users_for_edition_paginated(database_session: Session):
     ) - DB_PAGE_SIZE
 
 
-def test_get_all_users_for_edition_paginated_filter_name(database_session: Session):
+def test_get_all_users_for_edition_paginated_filter_name(database_session: AsyncSession):
     edition_1 = models.Edition(year=2022, name="ed2022")
     edition_2 = models.Edition(year=2023, name="ed2023")
     database_session.add(edition_1)
@@ -278,7 +278,7 @@ def test_get_all_users_for_edition_paginated_filter_name(database_session: Sessi
            max(count - DB_PAGE_SIZE, 0)
 
 
-def test_get_all_users_excluded_edition_paginated(database_session: Session):
+def test_get_all_users_excluded_edition_paginated(database_session: AsyncSession):
     edition_a = models.Edition(year=2022, name="edA")
     edition_b = models.Edition(year=2023, name="edB")
     database_session.add(edition_a)
@@ -316,7 +316,7 @@ def test_get_all_users_excluded_edition_paginated(database_session: Session):
            round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
-def test_get_all_users_excluded_edition_paginated_filter_name(database_session: Session):
+def test_get_all_users_excluded_edition_paginated_filter_name(database_session: AsyncSession):
     edition_a = models.Edition(year=2022, name="edA")
     edition_b = models.Edition(year=2023, name="edB")
     database_session.add(edition_a)
@@ -357,7 +357,7 @@ def test_get_all_users_excluded_edition_paginated_filter_name(database_session: 
            max(count - DB_PAGE_SIZE, 0)
 
 
-def test_get_all_users_for_edition_excluded_edition_paginated(database_session: Session):
+def test_get_all_users_for_edition_excluded_edition_paginated(database_session: AsyncSession):
     edition_a = models.Edition(year=2022, name="edA")
     edition_b = models.Edition(year=2023, name="edB")
     database_session.add(edition_a)
@@ -391,7 +391,7 @@ def test_get_all_users_for_edition_excluded_edition_paginated(database_session: 
         assert user in correct_users
 
 
-def test_edit_admin_status(database_session: Session):
+def test_edit_admin_status(database_session: AsyncSession):
     """Test changing the admin status of a user"""
 
     # Create user
@@ -406,7 +406,7 @@ def test_edit_admin_status(database_session: Session):
     assert not user.admin
 
 
-def test_add_coach(database_session: Session):
+def test_add_coach(database_session: AsyncSession):
     """Test adding a user as coach"""
 
     # Create user
@@ -425,7 +425,7 @@ def test_add_coach(database_session: Session):
     assert coach.edition_id == edition.edition_id
 
 
-def test_remove_coach(database_session: Session):
+def test_remove_coach(database_session: AsyncSession):
     """Test removing a user as coach"""
 
     # Create user
@@ -450,7 +450,7 @@ def test_remove_coach(database_session: Session):
     assert len(database_session.query(user_editions).all()) == 1
 
 
-def test_remove_coach_all_editions(database_session: Session):
+def test_remove_coach_all_editions(database_session: AsyncSession):
     """Test removing a user as coach from all editions"""
 
     # Create user
@@ -481,7 +481,7 @@ def test_remove_coach_all_editions(database_session: Session):
     assert len(database_session.query(user_editions).all()) == 1
 
 
-def test_get_all_requests(database_session: Session):
+def test_get_all_requests(database_session: AsyncSession):
     """Test get request for all userrequests"""
     # Create user
     user1 = models.User(name="user1")
@@ -514,7 +514,7 @@ def test_get_all_requests(database_session: Session):
     assert user2 in users
 
 
-def test_get_requests_paginated(database_session: Session):
+def test_get_requests_paginated(database_session: AsyncSession):
     edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
 
@@ -530,7 +530,7 @@ def test_get_requests_paginated(database_session: Session):
     ) - DB_PAGE_SIZE
 
 
-def test_get_requests_paginated_filter_user_name(database_session: Session):
+def test_get_requests_paginated_filter_user_name(database_session: AsyncSession):
     edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
 
@@ -549,7 +549,7 @@ def test_get_requests_paginated_filter_user_name(database_session: Session):
            max(count - DB_PAGE_SIZE, 0)
 
 
-def test_get_all_requests_from_edition(database_session: Session):
+def test_get_all_requests_from_edition(database_session: AsyncSession):
     """Test get request for all userrequests of a given edition"""
 
     # Create user
@@ -583,7 +583,7 @@ def test_get_all_requests_from_edition(database_session: Session):
     assert requests[0].user == user2
 
 
-def test_get_requests_for_edition_paginated(database_session: Session):
+def test_get_requests_for_edition_paginated(database_session: AsyncSession):
     edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
 
@@ -599,7 +599,7 @@ def test_get_requests_for_edition_paginated(database_session: Session):
     ) - DB_PAGE_SIZE
 
 
-def test_get_requests_for_edition_paginated_filter_user_name(database_session: Session):
+def test_get_requests_for_edition_paginated_filter_user_name(database_session: AsyncSession):
     edition = models.Edition(year=2022, name="ed2022")
     database_session.add(edition)
 
@@ -618,7 +618,7 @@ def test_get_requests_for_edition_paginated_filter_user_name(database_session: S
            max(count - DB_PAGE_SIZE, 0)
 
 
-def test_accept_request(database_session: Session):
+def test_accept_request(database_session: AsyncSession):
     """Test accepting a coach request"""
 
     # Create user
@@ -645,7 +645,7 @@ def test_accept_request(database_session: Session):
     assert user1.editions[0].edition_id == edition1.edition_id
 
 
-def test_reject_request_new_user(database_session: Session):
+def test_reject_request_new_user(database_session: AsyncSession):
     """Test rejecting a coach request"""
 
     # Create user
@@ -668,7 +668,7 @@ def test_reject_request_new_user(database_session: Session):
     assert len(requests) == 0
 
 
-def test_remove_request_if_exists_exists(database_session: Session):
+def test_remove_request_if_exists_exists(database_session: AsyncSession):
     """Test deleting a request when it exists"""
     user = models.User(name="user1")
     database_session.add(user)
@@ -689,7 +689,7 @@ def test_remove_request_if_exists_exists(database_session: Session):
     assert database_session.query(CoachRequest).count() == 0
 
 
-def test_remove_request_if_not_exists(database_session: Session):
+def test_remove_request_if_not_exists(database_session: AsyncSession):
     """Test deleting a request when it doesn't exist"""
     user = models.User(name="user1")
     database_session.add(user)

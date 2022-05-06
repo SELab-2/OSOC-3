@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from settings import DB_PAGE_SIZE
@@ -8,7 +8,7 @@ from tests.utils.authorization import AuthClient
 
 
 @pytest.fixture
-def database_with_data(database_session: Session) -> Session:
+def database_with_data(database_session: AsyncSession) -> Session:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -64,7 +64,7 @@ def test_get_projects(database_with_data: Session, auth_client: AuthClient):
     assert json['projects'][2]['name'] == "super nice project"
 
 
-def test_get_projects_paginated(database_session: Session, auth_client: AuthClient):
+def test_get_projects_paginated(database_session: AsyncSession, auth_client: AuthClient):
     """test get all projects paginated"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -273,7 +273,7 @@ def test_patch_project_non_existing_coach(database_with_data: Session, auth_clie
     assert 10 not in json["coaches"]
 
 
-def test_patch_wrong_project(database_session: Session, auth_client: AuthClient):
+def test_patch_wrong_project(database_session: AsyncSession, auth_client: AuthClient):
     """Tests patching with wrong project info"""
     auth_client.admin()
     database_session.add(Edition(year=2022, name="ed2022"))

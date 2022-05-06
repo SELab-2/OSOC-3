@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.testclient import TestClient
 
@@ -16,7 +16,7 @@ def test_login_non_existing(test_client: TestClient):
     assert test_client.post("/login/token", data=form).status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_login_existing(database_session: Session, test_client: TestClient):
+def test_login_existing(database_session: AsyncSession, test_client: TestClient):
     """Test logging in with an existing account"""
     email = "test@ema.il"
     password = "password"
@@ -41,7 +41,7 @@ def test_login_existing(database_session: Session, test_client: TestClient):
     assert test_client.post("/login/token", data=form).status_code == status.HTTP_200_OK
 
 
-def test_login_existing_wrong_credentials(database_session: Session, test_client: TestClient):
+def test_login_existing_wrong_credentials(database_session: AsyncSession, test_client: TestClient):
     """Test logging in with existing, but wrong credentials"""
     email = "test@ema.il"
     password = "password"

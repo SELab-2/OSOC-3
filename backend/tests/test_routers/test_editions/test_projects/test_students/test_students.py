@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.database.models import Edition, Project, User, Skill, ProjectRole, Student
@@ -8,7 +8,7 @@ from tests.utils.authorization import AuthClient
 
 
 @pytest.fixture
-def database_with_data(database_session: Session) -> Session:
+def database_with_data(database_session: AsyncSession) -> Session:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -137,7 +137,7 @@ def test_add_student_to_ghost_project(database_with_data: Session, current_editi
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_add_incomplete_data_student_project(database_session: Session, auth_client: AuthClient):
+def test_add_incomplete_data_student_project(database_session: AsyncSession, auth_client: AuthClient):
     """Tests adding a student with incomplete data"""
 
     edition = Edition(year=2022, name="ed2022")
@@ -277,7 +277,7 @@ def test_delete_student_project(database_with_data: Session, current_edition: Ed
     assert len(json['projects'][0]['projectRoles']) == 2
 
 
-def test_delete_student_project_empty(database_session: Session, auth_client: AuthClient):
+def test_delete_student_project_empty(database_session: AsyncSession, auth_client: AuthClient):
     """Tests deleting a student from a project that isn't assigned"""
 
     edition = Edition(year=2022, name="ed2022")

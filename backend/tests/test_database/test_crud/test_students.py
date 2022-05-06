@@ -1,6 +1,6 @@
 import datetime
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.exc import NoResultFound
 from src.database.models import Student, User, Edition, Skill, DecisionEmail
 from src.database.enums import DecisionEnum, EmailStatusEnum
@@ -11,7 +11,7 @@ from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
 
 @pytest.fixture
-def database_with_data(database_session: Session):
+def database_with_data(database_session: AsyncSession):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
     edition: Edition = Edition(year=2022, name="ed22")

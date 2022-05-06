@@ -1,12 +1,12 @@
 from json import dumps
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.database.models import Skill
 from tests.utils.authorization import AuthClient
 
 
-def test_get_skills(database_session: Session, auth_client: AuthClient):
+def test_get_skills(database_session: AsyncSession, auth_client: AuthClient):
     """Performe tests on getting skills
 
     Args:
@@ -27,7 +27,7 @@ def test_get_skills(database_session: Session, auth_client: AuthClient):
     assert response["skills"][0]["description"] == "Must know react"
 
 
-def test_create_skill(database_session: Session, auth_client: AuthClient):
+def test_create_skill(database_session: AsyncSession, auth_client: AuthClient):
     """Performe tests on creating skills
 
     Args:
@@ -43,7 +43,7 @@ def test_create_skill(database_session: Session, auth_client: AuthClient):
     assert auth_client.get("/skills/").json()["skills"][0]["description"] == "must know react"
 
 
-def test_delete_skill(database_session: Session, auth_client: AuthClient):
+def test_delete_skill(database_session: AsyncSession, auth_client: AuthClient):
     """Performe tests on deleting skills
 
     Args:
@@ -61,7 +61,7 @@ def test_delete_skill(database_session: Session, auth_client: AuthClient):
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
-def test_delete_skill_non_existing(database_session: Session, auth_client: AuthClient):
+def test_delete_skill_non_existing(database_session: AsyncSession, auth_client: AuthClient):
     """Delete a skill that doesn't exist"""
     auth_client.admin()
 

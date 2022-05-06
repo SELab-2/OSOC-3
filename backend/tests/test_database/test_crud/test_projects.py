@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from settings import DB_PAGE_SIZE
 from src.app.schemas.projects import InputProject, QueryParamsProjects
@@ -9,7 +9,7 @@ from src.database.models import Edition, Partner, Project, User, Skill, ProjectR
 
 
 @pytest.fixture
-def database_with_data(database_session: Session) -> Session:
+def database_with_data(database_session: AsyncSession) -> Session:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -54,7 +54,7 @@ def current_edition(database_with_data: Session) -> Edition:
     return database_with_data.query(Edition).all()[-1]
 
 
-def test_get_all_projects_empty(database_session: Session):
+def test_get_all_projects_empty(database_session: AsyncSession):
     """test get all projects but there are none"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -71,7 +71,7 @@ def test_get_all_projects(database_with_data: Session, current_edition: Edition)
     assert len(projects) == 3
 
 
-def test_get_all_projects_pagination(database_session: Session):
+def test_get_all_projects_pagination(database_session: AsyncSession):
     """test get all projects paginated"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
