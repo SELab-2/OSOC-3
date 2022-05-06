@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from pydantic import BaseModel
 
 from src.app.schemas.utils import CamelCaseModel
@@ -59,6 +60,13 @@ class Project(CamelCaseModel):
     skills: list[Skill]
     partners: list[Partner]
     project_roles: list[ProjectRole]
+
+    # @classmethod
+    # async def from_orm(cls, obj):
+    #     async with engine.begin() as conn:
+    #         model = await conn.run_sync(
+    #             lambda sync_conn: super().from_orm(obj))
+    #     return model
 
     class Config:
         """Set to ORM mode"""
