@@ -1,10 +1,11 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.schemas.skills import SkillBase
 from src.database.models import Skill
 
 
-def get_skills(db: Session) -> list[Skill]:
+async def get_skills(db: AsyncSession) -> list[Skill]:
     """Get a list of all the base skills that can be added to a student or project.
 
     Args:
@@ -13,15 +14,15 @@ def get_skills(db: Session) -> list[Skill]:
     Returns:
         SkillList: an object with a list of all the skills.
     """
-    return db.query(Skill).all()
+    return (await db.execute(select(Skill))).scalars().all()
 
 
-def get_skills_by_ids(db: Session, skill_ids) -> list[Skill]:
+async def get_skills_by_ids(db: AsyncSession, skill_ids) -> list[Skill]:
     """Get all skills from list of skill ids"""
-    return db.query(Skill).where(Skill.skill_id.in_(skill_ids)).all()
+    return (await db.execute(select(Skill).where(Skill.skill_id.in_(skill_ids)))).scalars().all()
 
 
-def create_skill(db: Session, skill: SkillBase) -> Skill:
+async def create_skill(db: AsyncSession, skill: SkillBase) -> Skill:
     """Add a new skill into the database.
 
     Args:
@@ -33,12 +34,12 @@ def create_skill(db: Session, skill: SkillBase) -> Skill:
     """
     new_skill: Skill = Skill(name=skill.name, description=skill.description)
     db.add(new_skill)
-    db.commit()
-    db.refresh(new_skill)
+    await db.commit()
+    await db.refresh(new_skill)
     return new_skill
 
 
-def delete_skill(db: Session, skill_id: int):
+async def delete_skill(db: AsyncSession, skill_id: int):
     """Delete an existing skill.
 
     Args:
@@ -46,5 +47,5 @@ def delete_skill(db: Session, skill_id: int):
         skill_id (int): the id of the skill
     """
     skill_to_delete = db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.delete(skill_to_delete)
-    db.commit()
+    await db.delete(skill_to_delete)
+    await db.commit()

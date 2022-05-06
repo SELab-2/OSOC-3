@@ -3,7 +3,6 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 import settings
 import src.database.crud.projects as crud_projects
@@ -26,19 +25,19 @@ async def get_edition(edition_name: str, database: AsyncSession = Depends(get_se
     return await get_edition_by_name(database, edition_name)
 
 
-def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
+async def get_student(student_id: int, database: AsyncSession = Depends(get_session)) -> Student:
     """Get the student from the database, given the id in the path"""
-    return get_student_by_id(database, student_id)
+    return await get_student_by_id(database, student_id)
 
 
-def get_suggestion(suggestion_id: int, database: Session = Depends(get_session)) -> Suggestion:
+async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
-    return get_suggestion_by_id(database, suggestion_id)
+    return await get_suggestion_by_id(database, suggestion_id)
 
 
-def get_latest_edition(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)) -> Edition:
+async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) -> Edition:
     """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
-    latest = latest_edition(database)
+    latest = await latest_edition(database)
     if edition != latest:
         raise ReadOnlyEditionException
     return latest
@@ -72,14 +71,15 @@ async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: s
         raise InvalidCredentialsException() from jwt_err
 
 
-async def get_user_from_access_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_access_token(db: AsyncSession = Depends(get_session),
+                                     token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its access token
     This function is used as a dependency for other functions
     """
     return await _get_user_from_token(TokenType.ACCESS, db, token)
 
 
-async def get_user_from_refresh_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_refresh_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its refresh token
     This function is used as a dependency for other functions
     """
@@ -129,11 +129,11 @@ async def require_coach(edition: Edition = Depends(get_edition),
     return user
 
 
-def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> InviteLink:
+async def get_invite_link(invite_uuid: str, db: AsyncSession = Depends(get_session)) -> InviteLink:
     """Get an invite link from the database, given the id in the path"""
-    return get_invite_link_by_uuid(db, invite_uuid)
+    return await get_invite_link_by_uuid(db, invite_uuid)
 
 
-def get_project(project_id: int, db: Session = Depends(get_session)) -> Project:
+async def get_project(project_id: int, db: AsyncSession = Depends(get_session)) -> Project:
     """Get a project from het database, given the id in the path"""
-    return crud_projects.get_project(db, project_id)
+    return await crud_projects.get_project(db, project_id)

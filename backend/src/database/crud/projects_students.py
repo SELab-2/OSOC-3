@@ -1,49 +1,53 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import Project, ProjectRole, Skill, User, Student
 
 
-def remove_student_project(db: Session, project: Project, student_id: int):
+async def remove_student_project(db: AsyncSession, project: Project, student_id: int):
     """Remove a student from a project in the database"""
-    proj_role = db.query(ProjectRole).where(
-        ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
-    db.delete(proj_role)
-    db.commit()
+    query = select(ProjectRole).where(ProjectRole.student_id == student_id).where(ProjectRole.project == project)
+    result = await db.execute(query)
+    proj_role = result.scalars().one()
+    await db.delete(proj_role)
+    await db.commit()
 
 
-def add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+async def add_student_project(db: AsyncSession, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Add a student to a project in the database"""
 
     # check if all parameters exist in the database
-    db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.query(User).where(User.user_id == drafter_id).one()
-    db.query(Student).where(Student.student_id == student_id).one()
+    (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalars().one()
+    (await db.execute(select(User).where(User.user_id == drafter_id))).one()
+    (await db.execute(select(Student).where(Student.student_id == student_id))).one()
 
     proj_role = ProjectRole(student_id=student_id, project_id=project.project_id, skill_id=skill_id,
                             drafter_id=drafter_id)
     db.add(proj_role)
-    db.commit()
+    await db.commit()
 
 
-def change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+async def change_project_role(db: AsyncSession, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Change the role of a student in a project and update the drafter"""
 
     # check if all parameters exist in the database
-    db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.query(User).where(User.user_id == drafter_id).one()
-    db.query(Student).where(Student.student_id == student_id).one()
+    (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalars().one()
+    (await db.execute(select(User).where(User.user_id == drafter_id))).one()
+    (await db.execute(select(Student).where(Student.student_id == student_id))).one()
 
     proj_role = db.query(ProjectRole).where(
         ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
     proj_role.drafter_id = drafter_id
     proj_role.skill_id = skill_id
-    db.commit()
+    await db.commit()
 
 
-def confirm_project_role(db: Session, project: Project, student_id: int):
+async def confirm_project_role(db: AsyncSession, project: Project, student_id: int):
     """Confirm a project role"""
-    proj_role = db.query(ProjectRole).where(ProjectRole.student_id == student_id) \
-        .where(ProjectRole.project == project).one()
+    query = select(ProjectRole).where(ProjectRole.student_id == student_id) \
+        .where(ProjectRole.project == project)
+    result = await db.execute(query)
+    proj_role = result.scalars().one()
 
     proj_role.definitive = True
-    db.commit()
+    await db.commit()

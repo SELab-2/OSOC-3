@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
@@ -7,29 +7,31 @@ from src.app.schemas.projects import (
 from src.database.models import Edition, Project, User
 
 
-def get_project_list(db: Session, edition: Edition, search_params: QueryParamsProjects, user: User) -> ProjectList:
+async def get_project_list(db: AsyncSession, edition: Edition, search_params: QueryParamsProjects,
+                           user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
-    return ProjectList(projects=crud.get_projects_for_edition_page(db, edition, search_params, user))
+    proj_page = await crud.get_projects_for_edition_page(db, edition, search_params, user)
+    return ProjectList(projects=proj_page)
 
 
-def create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
+async def create_project(db: AsyncSession, edition: Edition, input_project: InputProject) -> Project:
     """Create a new project"""
-    return crud.add_project(db, edition, input_project)
+    return await crud.add_project(db, edition, input_project)
 
 
-def delete_project(db: Session, project_id: int):
+async def delete_project(db: AsyncSession, project_id: int):
     """Delete a project"""
-    crud.delete_project(db, project_id)
+    await crud.delete_project(db, project_id)
 
 
-def patch_project(db: Session, project_id: int, input_project: InputProject):
+async def patch_project(db: AsyncSession, project_id: int, input_project: InputProject):
     """Make changes to a project"""
-    crud.patch_project(db, project_id, input_project)
+    await crud.patch_project(db, project_id, input_project)
 
 
-def get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
+async def get_conflicts(db: AsyncSession, edition: Edition) -> ConflictStudentList:
     """Returns a list of all students together with the projects they are causing a conflict for"""
-    conflicts = crud.get_conflict_students(db, edition)
+    conflicts = await crud.get_conflict_students(db, edition)
     conflicts_model = []
     for student, projects in conflicts:
         conflicts_model.append(ConflictStudent(student=student, projects=projects))

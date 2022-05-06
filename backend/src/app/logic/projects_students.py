@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select, func
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.app.logic.projects as logic_projects
 import src.database.crud.projects_students as crud
@@ -7,62 +8,71 @@ from src.app.schemas.projects import ConflictStudentList
 from src.database.models import Project, ProjectRole, Student, Skill
 
 
-def remove_student_project(db: Session, project: Project, student_id: int):
+async def remove_student_project(db: AsyncSession, project: Project, student_id: int):
     """Remove a student from a project"""
-    crud.remove_student_project(db, project, student_id)
+    await crud.remove_student_project(db, project, student_id)
 
 
-def add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+async def add_student_project(db: AsyncSession, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Add a student to a project"""
     # check this project-skill combination does not exist yet
-    if db.query(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project) \
-            .count() > 0:
+    subquery = select(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project)\
+        .subquery()
+    count = (await db.execute(select(func.count()).select_from(subquery))).scalar_one()
+    if count > 0:
         raise FailedToAddProjectRoleException
     # check that the student has the skill
-    student = db.query(Student).where(Student.student_id == student_id).one()
-    skill = db.query(Skill).where(Skill.skill_id == skill_id).one()
+    student = (await db.execute(select(Student).where(Student.student_id == student_id))).scalar_one()
+    skill = (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalar_one()
     if skill not in student.skills:
         raise FailedToAddProjectRoleException
     # check that the student has not been confirmed in another project yet
-    if db.query(ProjectRole).where(ProjectRole.student == student).where(ProjectRole.definitive.is_(True)).count() > 0:
+    subquery_proj_definitive = select(ProjectRole).where(ProjectRole.student == student)\
+        .where(ProjectRole.definitive.is_(True)).subquery()
+    count_proj_definitive = (await db.execute(select(func.count()).select_from(subquery_proj_definitive))).scalar_one()
+    if count_proj_definitive > 0:
         raise FailedToAddProjectRoleException
     # check that the project requires the skill
-    project = db.query(Project).where(Project.project_id == project.project_id).one()
+    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).scalar_one()
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 
-    crud.add_student_project(db, project, student_id, skill_id, drafter_id)
+    await crud.add_student_project(db, project, student_id, skill_id, drafter_id)
 
 
-def change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
+async def change_project_role(db: AsyncSession, project: Project, student_id: int, skill_id: int, drafter_id: int):
     """Change the role of the student in the project"""
     # check this project-skill combination does not exist yet
-    if db.query(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project) \
-            .count() > 0:
+    subquery = select(ProjectRole).where(ProjectRole.skill_id == skill_id).where(ProjectRole.project == project) \
+        .subquery()
+    count = (await db.execute(select(func.count()).select_from(subquery))).scalar_one()
+    if count > 0:
         raise FailedToAddProjectRoleException
     # check that the student has the skill
-    student = db.query(Student).where(Student.student_id == student_id).one()
-    skill = db.query(Skill).where(Skill.skill_id == skill_id).one()
+    student = (await db.execute(select(Student).where(Student.student_id == student_id))).scalar_one()
+    skill = (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalar_one()
     if skill not in student.skills:
         raise FailedToAddProjectRoleException
     # check that the student has not been confirmed in another project yet
-    if db.query(ProjectRole).where(ProjectRole.student == student).where(
-            ProjectRole.definitive.is_(True)).count() > 0:
+    subquery_proj_definitive = select(ProjectRole).where(ProjectRole.student == student) \
+        .where(ProjectRole.definitive.is_(True)).subquery()
+    count_proj_definitive = (await db.execute(select(func.count()).select_from(subquery_proj_definitive))).scalar_one()
+    if count_proj_definitive > 0:
         raise FailedToAddProjectRoleException
     # check that the project requires the skill
-    project = db.query(Project).where(Project.project_id == project.project_id).one()
+    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).scalar_one()
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 
-    crud.change_project_role(db, project, student_id, skill_id, drafter_id)
+    await crud.change_project_role(db, project, student_id, skill_id, drafter_id)
 
 
-def confirm_project_role(db: Session, project: Project, student_id: int):
+async def confirm_project_role(db: AsyncSession, project: Project, student_id: int):
     """Definitively bind this student to the project"""
     # check if there are any conflicts concerning this student
-    conflict_list: ConflictStudentList = logic_projects.get_conflicts(db, project.edition)
+    conflict_list: ConflictStudentList = await logic_projects.get_conflicts(db, project.edition)
     for conflict in conflict_list.conflict_students:
         if conflict.student.student_id == student_id:
             raise StudentInConflictException
 
-    crud.confirm_project_role(db, project, student_id)
+    await crud.confirm_project_role(db, project, student_id)

@@ -1,6 +1,5 @@
-from sqlalchemy import exc, func, select
+from sqlalchemy import exc, func, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from sqlalchemy.sql import Select
 
 from src.app.exceptions.editions import DuplicateInsertException
@@ -19,13 +18,13 @@ async def get_edition_by_name(db: AsyncSession, edition_name: str) -> Edition:
     Returns:
         Edition: an edition if found else an exception is raised
     """
-    query = select(Edition).where(Edition.name == edition_name)
+    query = select(Edition).where(Edition.name == edition_name).order_by(desc(Edition.edition_id))
     result = await db.execute(query)
     return result.scalars().one()
 
 
 def _get_editions_query() -> Select:
-    return select(Edition)
+    return select(Edition).order_by(desc(Edition.edition_id))
 
 
 async def get_editions(db: AsyncSession) -> list[Edition]:

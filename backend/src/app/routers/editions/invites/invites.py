@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.responses import Response
 
@@ -14,30 +14,30 @@ invites_router = APIRouter(prefix="/invites", tags=[Tags.INVITES])
 
 
 @invites_router.get("/", response_model=InvitesLinkList, dependencies=[Depends(require_admin)])
-async def get_invites(db: Session = Depends(get_session), edition: Edition = Depends(get_edition), page: int = 0):
+async def get_invites(db: AsyncSession = Depends(get_session), edition: Edition = Depends(get_edition), page: int = 0):
     """
     Get a list of all pending invitation links.
     """
-    return get_pending_invites_page(db, edition, page)
+    return await get_pending_invites_page(db, edition, page)
 
 
 @invites_router.post("/", status_code=status.HTTP_201_CREATED, response_model=NewInviteLink,
                      dependencies=[Depends(require_admin)])
-async def create_invite(email: EmailAddress, db: Session = Depends(get_session),
+async def create_invite(email: EmailAddress, db: AsyncSession = Depends(get_session),
                         edition: Edition = Depends(get_latest_edition)):
     """
     Create a new invitation link for the current edition.
     """
-    return create_mailto_link(db, edition, email)
+    return await create_mailto_link(db, edition, email)
 
 
 @invites_router.delete("/{invite_uuid}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                        dependencies=[Depends(require_admin), Depends(get_edition)])
-async def delete_invite(invite_link: InviteLinkDB = Depends(get_invite_link), db: Session = Depends(get_session)):
+async def delete_invite(invite_link: InviteLinkDB = Depends(get_invite_link), db: AsyncSession = Depends(get_session)):
     """
     Delete an existing invitation link manually so that it can't be used anymore.
     """
-    delete_invite_link(db, invite_link)
+    await delete_invite_link(db, invite_link)
 
 
 @invites_router.get("/{invite_uuid}", response_model=InviteLinkModel, dependencies=[Depends(get_edition)])
