@@ -1,5 +1,4 @@
 import { SkillProject } from "../../../../data/interfaces/projects";
-import { Input } from "../styles";
 import {
     AmountInput,
     SkillContainer,
@@ -8,6 +7,7 @@ import {
     TopContainer,
     SkillName,
     TopLeftContainer,
+    DescriptionInput,
 } from "./styles";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from "react";
@@ -86,7 +86,7 @@ export default function AddedSkills({
                     </TopContainer>
 
                     <DescriptionContainer>
-                        <Input
+                        <DescriptionInput
                             type="text"
                             value={skill.description}
                             placeholder="Description"
