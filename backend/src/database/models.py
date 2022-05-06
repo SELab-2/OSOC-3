@@ -130,11 +130,11 @@ class Project(Base):
     number_of_students = Column(Integer, nullable=False, default=0)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition: Edition = relationship("Edition", back_populates="projects", uselist=False)
-    coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects")
-    skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
-    partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project")
+    edition: Edition = relationship("Edition", back_populates="projects", uselist=False, lazy="joined")
+    coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects", lazy="joined")
+    skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects", lazy="joined")
+    partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects", lazy="joined")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project", lazy="joined", cascade="save-update, merge, delete, delete-orphan")
 
 
 project_coaches = Table(

@@ -61,13 +61,6 @@ class Project(CamelCaseModel):
     partners: list[Partner]
     project_roles: list[ProjectRole]
 
-    # @classmethod
-    # async def from_orm(cls, obj):
-    #     async with engine.begin() as conn:
-    #         model = await conn.run_sync(
-    #             lambda sync_conn: super().from_orm(obj))
-    #     return model
-
     class Config:
         """Set to ORM mode"""
         orm_mode = True

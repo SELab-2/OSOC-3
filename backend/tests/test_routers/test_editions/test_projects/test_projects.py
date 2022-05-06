@@ -122,17 +122,17 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
     """Tests creating a project"""
     await auth_client.admin()
     async with auth_client:
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
         assert len(json['projects']) == 3
-        assert len(database_with_data.query(Partner).all()) == 0
+        assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 0
 
         response = \
             await auth_client.post("/editions/ed2022/projects/",
                                    json={"name": "test",
                                          "number_of_students": 5,
                                          "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
-
+        print(response.json())
         assert response.status_code == status.HTTP_201_CREATED
         assert response.json()['name'] == 'test'
         assert response.json()["partners"][0]["name"] == "ugent"
@@ -167,13 +167,13 @@ async def test_create_project_non_existing_skills(database_with_data: AsyncSessi
     """Tests creating a project with non-existing skills"""
     await auth_client.admin()
     async with auth_client:
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
 
         json = response.json()
         assert len(json['projects']) == 3
 
-        assert len(database_with_data.query(Skill).where(
-            Skill.skill_id == 100).all()) == 0
+        assert len((await database_with_data.execute(select(Skill).where(
+            Skill.skill_id == 100))).scalars().all()) == 0
 
         response = await auth_client.post("/editions/ed2022/projects/",
                                           json={"name": "test1",
@@ -181,7 +181,7 @@ async def test_create_project_non_existing_skills(database_with_data: AsyncSessi
                                                 "skills": [100], "partners": ["ugent"], "coaches": [1]})
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
         assert len(json['projects']) == 3
 
@@ -190,13 +190,13 @@ async def test_create_project_non_existing_coach(database_with_data: AsyncSessio
     """Tests creating a project with a coach that doesn't exist"""
     await auth_client.admin()
     async with auth_client:
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
 
         json = response.json()
         assert len(json['projects']) == 3
 
-        assert len(database_with_data.query(Student).where(
-            Student.edition_id == 10).all()) == 0
+        assert len((await database_with_data.execute(select(Student).where(
+            Student.edition_id == 10))).scalars().all()) == 0
 
         response = await auth_client.post("/editions/ed2022/projects/",
                                           json={"name": "test2",
@@ -204,7 +204,7 @@ async def test_create_project_non_existing_coach(database_with_data: AsyncSessio
                                                 "skills": [100], "partners": ["ugent"], "coaches": [10]})
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
         assert len(json['projects']) == 3
 
@@ -225,7 +225,7 @@ async def test_create_project_no_name(database_with_data: AsyncSession, auth_cli
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
         assert len(json['projects']) == 3
 
@@ -234,7 +234,7 @@ async def test_patch_project(database_with_data: AsyncSession, auth_client: Auth
     """Tests patching a project"""
     await auth_client.admin()
     async with auth_client:
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
 
         assert len(json['projects']) == 3
@@ -245,7 +245,7 @@ async def test_patch_project(database_with_data: AsyncSession, auth_client: Auth
                                                  "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
 
         assert len(json['projects']) == 3
@@ -302,7 +302,7 @@ async def test_patch_wrong_project(database_session: AsyncSession, auth_client: 
                                           "skills": [], "partners": [], "coaches": []})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-        response2 = await auth_client.get('/editions/ed2022/projects')
+        response2 = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response2.json()
 
         assert len(json['projects']) == 1

@@ -5,18 +5,11 @@ from src.app.schemas.projects import (
     ProjectList, ConflictStudentList, InputProject, ConflictStudent, QueryParamsProjects
 )
 from src.database.models import Edition, Project, User
-from src.app.schemas.projects import Project as ProjectScheme
-
 
 async def get_project_list(db: AsyncSession, edition: Edition, search_params: QueryParamsProjects,
                            user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
     proj_page = await crud.get_projects_for_edition_page(db, edition, search_params, user)
-    # fix to convert from database model to pydantic model
-    new_proj_page = []
-    for proj in proj_page:
-        new_proj_page.append(await db.run_sync(
-            lambda sync_conn: ProjectScheme.from_orm(proj)))
 
     return ProjectList(projects=proj_page)
 

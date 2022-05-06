@@ -26,7 +26,7 @@ async def get_projects_for_edition_page(db: AsyncSession, edition: Edition,
     if search_params.coach:
         query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
     result = await db.execute(paginate(query, search_params.page))
-    projects: list[Project] = result.scalars().all()
+    projects: list[Project] = result.unique().scalars().all()
 
     return projects
 
@@ -54,6 +54,7 @@ async def add_project(db: AsyncSession, edition: Edition, input_project: InputPr
     coaches_obj = [await _get_coach_by_id(db, coach)
                    for coach in input_project.coaches]
     partners_obj = []
+
     for partner in input_project.partners:
         try:
             query = select(Partner).where(Partner.name == partner)
@@ -64,10 +65,10 @@ async def add_project(db: AsyncSession, edition: Edition, input_project: InputPr
             db.add(partner_obj)
             partners_obj.append(partner_obj)
     project = Project(name=input_project.name, number_of_students=input_project.number_of_students,
-                      edition_id=edition.edition_id, skills=skills_obj, coaches=coaches_obj, partners=partners_obj)
-
+                         edition_id=edition.edition_id, skills=skills_obj, coaches=coaches_obj, partners=partners_obj)
     db.add(project)
     await db.commit()
+    print(project)
     return project
 
 
@@ -75,7 +76,7 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
     """Query a specific project from the database through its ID"""
     query = select(Project).where(Project.project_id == project_id)
     result = await db.execute(query)
-    return result.scalars().one()
+    return result.unique().scalars().one()
 
 
 async def delete_project(db: AsyncSession, project_id: int):
@@ -96,7 +97,7 @@ async def patch_project(db: AsyncSession, project_id: int, input_project: InputP
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
     """
-    project = get_project(db, project_id)
+    project = await get_project(db, project_id)
 
     skills_obj = [await _get_skill_by_id(db, skill)
                   for skill in input_project.skills]
@@ -113,6 +114,7 @@ async def patch_project(db: AsyncSession, project_id: int, input_project: InputP
             db.add(partner_obj)
             partners_obj.append(partner_obj)
 
+    print(input_project.name)
     project.name = input_project.name
     project.number_of_students = input_project.number_of_students
     project.skills = skills_obj
