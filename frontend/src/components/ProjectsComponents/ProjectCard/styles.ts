@@ -70,6 +70,7 @@ export const CoachContainer = styled.div`
     padding: 7.5px 15px;
     width: fit-content;
     max-width: 20vw;
+    display: flex;
 `;
 
 export const CoachText = styled.div`

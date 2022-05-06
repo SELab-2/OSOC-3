@@ -7,7 +7,7 @@ export const ProjectContainer = styled.div`
 export const GoBack = styled.div`
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     max-width: max-content;
 
     :hover {
@@ -18,6 +18,7 @@ export const GoBack = styled.div`
 export const TitleContainer = styled.div`
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 `;
 
 export const Title = styled.h2`
@@ -26,9 +27,23 @@ export const Title = styled.h2`
     margin-right: 10px;
 `;
 
+export const TitleInput = styled.input`
+    padding: 5px 10px;
+    background-color: #131329;
+    color: white;
+    border: none;
+    border-radius: 5px;
+`;
+
+export const Edit = styled.div`
+    :hover {
+        cursor: pointer;
+    }
+`;
+
 export const Save = styled.button`
-    padding: 2px 10px;
-    max-height: 30px;
+    padding: 5px 10px;
+    max-height: 35px;
     background-color: #44dba4;
     color: white;
     border: none;
@@ -37,8 +52,8 @@ export const Save = styled.button`
 `;
 
 export const Cancel = styled.button`
-    padding: 2px 10px;
-    max-height: 30px;
+    padding: 5px 10px;
+    max-height: 35px;
     background-color: #131329;
     color: white;
     border: none;
@@ -57,19 +72,34 @@ export const Delete = styled.button`
     align-items: center;
 `;
 
-export const ClientContainer = styled.div`
+export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;
     color: lightgray;
     overflow-x: auto;
 `;
 
+export const ClientContainer = styled.div`
+    display: flex;
+    margin-right: 2%;
+`;
+
 export const Client = styled.h5`
-    margin-right: 1%;
+    width: max-content;
+    margin-bottom: 0;
+    margin-right: 0;
 `;
 
 export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
+`;
+
+export const AddButton = styled.button`
+    padding: 0 10px;
+    background-color: #00bfff;
+    color: white;
+    border: none;
+    margin-right: 10px;
+    border-radius: 5px;
 `;

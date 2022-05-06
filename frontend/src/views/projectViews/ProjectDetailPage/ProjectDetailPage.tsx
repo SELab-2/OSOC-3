@@ -7,18 +7,23 @@ import {
     GoBack,
     ProjectContainer,
     Client,
-    ClientContainer,
+    ClientsContainer,
     NumberOfStudents,
     Title,
     TitleContainer,
     Save,
     Cancel,
     Delete,
+    TitleInput,
+    AddButton,
+    Edit,
+    ClientContainer,
 } from "./styles";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import { MdOutlineEditNote } from "react-icons/md";
+import { TiDeleteOutline } from "react-icons/ti";
 
 import { StudentPlace } from "../../../data/interfaces/projects";
 import { StudentPlaceholder } from "../../../components/ProjectsComponents";
@@ -31,6 +36,7 @@ import { Role } from "../../../data/enums/role";
 import { useAuth } from "../../../contexts";
 import { HiOutlineTrash } from "react-icons/hi";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
+import { RemoveButton } from "../CreateProjectPage/styles";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -112,16 +118,18 @@ export default function ProjectDetailPage() {
                     {!editing ? (
                         <Title>{project.name}</Title>
                     ) : (
-                        <input
+                        <TitleInput
                             value={editedProject.name}
                             onChange={e => {
                                 const newProject: Project = { ...project, name: e.target.value };
                                 setEditedProject(newProject);
                             }}
-                        ></input>
+                        />
                     )}
                     {!editing ? (
-                        <MdOutlineEditNote size={"25px"} onClick={() => setEditing(true)} />
+                        <Edit>
+                            <MdOutlineEditNote size={"30px"} onClick={() => setEditing(true)} />
+                        </Edit>
                     ) : (
                         <>
                             <Save
@@ -132,7 +140,14 @@ export default function ProjectDetailPage() {
                             >
                                 Save
                             </Save>
-                            <Cancel onClick={() => setEditing(false)}>Cancel</Cancel>
+                            <Cancel
+                                onClick={() => {
+                                    setEditing(false);
+                                    setEditedProject(project);
+                                }}
+                            >
+                                Cancel
+                            </Cancel>
                         </>
                     )}
                     {role === Role.ADMIN && (
@@ -149,22 +164,36 @@ export default function ProjectDetailPage() {
                     name={project.name}
                 ></ConfirmDelete>
 
-                <ClientContainer>
+                <ClientsContainer>
                     {project.partners.map((element, _index) => (
-                        <Client key={_index}>{element.name}</Client>
+                        <ClientContainer>
+                            <Client key={_index}>{element.name}</Client>
+                            {editing && (
+                                <RemoveButton onClick={() => {}}>
+                                    <TiDeleteOutline size={"20px"} />
+                                </RemoveButton>
+                            )}
+                        </ClientContainer>
                     ))}
+                    {editing && <AddButton>Add Partner</AddButton>}
                     <NumberOfStudents>
                         {project.numberOfStudents}
                         <BsPersonFill />
                     </NumberOfStudents>
-                </ClientContainer>
+                </ClientsContainer>
 
                 <CoachesContainer>
                     {project.coaches.map((element, _index) => (
                         <CoachContainer key={_index}>
                             <CoachText>{element.name}</CoachText>
+                            {editing && (
+                                <RemoveButton onClick={() => {}}>
+                                    <TiDeleteOutline size={"20px"} />
+                                </RemoveButton>
+                            )}
                         </CoachContainer>
                     ))}
+                    {editing && <AddButton>Add Coach</AddButton>}
                 </CoachesContainer>
 
                 <div>
