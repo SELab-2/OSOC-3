@@ -146,27 +146,29 @@ async def test_create_edition_coach(database_session: AsyncSession, auth_client:
     await database_session.commit()
 
     await auth_client.coach(edition)
-
-    assert auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"}).status_code == status.HTTP_403_FORBIDDEN
+    async with auth_client:
+        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 async def test_create_edition_existing_year(database_session: AsyncSession, auth_client: AuthClient):
     """Test that creating an edition for a year that already exists throws an error"""
     await auth_client.admin()
 
-    response = auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
-    assert response.status_code == status.HTTP_201_CREATED
-
-    # Try to make an edition in the same year
-    response = auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
-    assert response.status_code == status.HTTP_409_CONFLICT
+    async with auth_client:
+        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        assert response.status_code == status.HTTP_201_CREATED
+        # Try to make an edition in the same year
+        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        assert response.status_code == status.HTTP_409_CONFLICT
 
 
 async def test_create_edition_malformed(database_session: AsyncSession, auth_client: AuthClient):
     await auth_client.admin()
 
-    response = auth_client.post("/editions/", json={"year": 2023, "name": "Life is fun"})
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    async with auth_client:
+        response = await auth_client.post("/editions/", json={"year": 2023, "name": "Life is fun"})
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 async def test_delete_edition_admin(database_session: AsyncSession, auth_client: AuthClient):
@@ -182,9 +184,10 @@ async def test_delete_edition_admin(database_session: AsyncSession, auth_client:
     database_session.add(edition)
     await database_session.commit()
 
-    # Make the delete request
-    response = auth_client.delete(f"/editions/{edition.name}")
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    async with auth_client:
+        # Make the delete request
+        response = await auth_client.delete(f"/editions/{edition.name}")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
 async def test_delete_edition_unauthorized(database_session: AsyncSession, auth_client: AuthClient):
@@ -193,8 +196,9 @@ async def test_delete_edition_unauthorized(database_session: AsyncSession, auth_
     database_session.add(edition)
     await database_session.commit()
 
-    # Make the delete request
-    assert auth_client.delete(f"/editions/{edition.name}").status_code == status.HTTP_401_UNAUTHORIZED
+    async with auth_client:
+        # Make the delete request
+        assert (await auth_client.delete(f"/editions/{edition.name}")).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_delete_edition_coach(database_session: AsyncSession, auth_client: AuthClient):
@@ -205,16 +209,18 @@ async def test_delete_edition_coach(database_session: AsyncSession, auth_client:
 
     await auth_client.coach(edition)
 
-    # Make the delete request
-    assert auth_client.delete(f"/editions/{edition.name}").status_code == status.HTTP_403_FORBIDDEN
+    async with auth_client:
+        # Make the delete request
+        assert (await auth_client.delete(f"/editions/{edition.name}")).status_code == status.HTTP_403_FORBIDDEN
 
 
 async def test_delete_edition_non_existing(database_session: AsyncSession, auth_client: AuthClient):
     """Delete an edition that doesn't exist"""
     await auth_client.admin()
 
-    response = auth_client.delete("/edition/doesnotexist")
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    async with auth_client:
+        response = await auth_client.delete("/edition/doesnotexist")
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_get_editions_limited_permission(database_session: AsyncSession, auth_client: AuthClient):
@@ -227,8 +233,9 @@ async def test_get_editions_limited_permission(database_session: AsyncSession, a
 
     await auth_client.coach(edition)
 
-    # Make the get request
-    response = auth_client.get("/editions/")
+    async with auth_client:
+        # Make the get request
+        response = await auth_client.get("/editions/")
 
     assert response.status_code == status.HTTP_200_OK
     response = response.json()
@@ -248,6 +255,7 @@ async def test_get_edition_by_name_coach_not_assigned(database_session: AsyncSes
 
     await auth_client.coach(edition)
 
-    # Make the get request
-    response = auth_client.get(f"/editions/{edition2.name}")
+    async with auth_client:
+        # Make the get request
+        response = await auth_client.get(f"/editions/{edition2.name}")
     assert response.status_code == status.HTTP_403_FORBIDDEN
