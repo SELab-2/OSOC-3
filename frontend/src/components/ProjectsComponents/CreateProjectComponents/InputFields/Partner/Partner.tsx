@@ -18,6 +18,9 @@ export default function Partner({
             <Input
                 value={partner}
                 onChange={e => setPartner(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === "Enter") addPartner();
+                }}
                 list="partners"
                 placeholder="Partner"
             />
@@ -28,18 +31,16 @@ export default function Partner({
                 })}
             </datalist>
 
-            <AddButton
-                onClick={() => {
-                    if (!partners.includes(partner) && partner.length > 0) {
-                        const newPartners = [...partners];
-                        newPartners.push(partner);
-                        setPartners(newPartners);
-                    }
-                    setPartner("");
-                }}
-            >
-                Add
-            </AddButton>
+            <AddButton onClick={addPartner}>Add</AddButton>
         </div>
     );
+
+    function addPartner() {
+        if (!partners.includes(partner) && partner.length > 0) {
+            const newPartners = [...partners];
+            newPartners.push(partner);
+            setPartners(newPartners);
+        }
+        setPartner("");
+    }
 }
