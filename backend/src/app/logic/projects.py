@@ -56,14 +56,17 @@ def delete_project(db: Session, project: Project):
 
 
 def get_project_roles(db: Session, project: Project) -> list[ProjectRole]:
+    """Get project roles for a project"""
     return crud.get_project_roles_for_project(db, project)
 
 
 def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
+    """Create a project role"""
     return crud.create_project_role(db, project, input_project_role)
 
 
 def patch_project_role(db: Session, project_role_id: int, input_project_role: InputProjectRole) -> ProjectRole:
+    """Update a project role"""
     return crud.patch_project_role(db, project_role_id, input_project_role)
 
 

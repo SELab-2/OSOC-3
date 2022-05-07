@@ -21,8 +21,7 @@ def add_student_project(
     pr_suggestion = crud.get_optional_pr_suggestion_for_pr_by_student(db, project_role, student)
     if pr_suggestion is None:
         return crud.create_pr_suggestion(db, project_role, student, drafter, argumentation)
-    else:
-        raise DuplicateInsertException()
+    raise DuplicateInsertException()
 
 
 def change_project_role_suggestion(

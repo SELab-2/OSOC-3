@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session, Query
-from sqlalchemy.sql.expression import func
 
 import src.database.crud.skills as skills_crud
 from src.app.schemas.projects import InputProject, InputProjectRole, QueryParamsProjects
@@ -92,6 +91,7 @@ def patch_project(
 
 
 def get_project_role(db: Session, project_role_id: int) -> ProjectRole:
+    """Get a project role by id"""
     return db.query(ProjectRole).where(ProjectRole.project_role_id == project_role_id).one()
 
 

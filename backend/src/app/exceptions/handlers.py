@@ -16,7 +16,7 @@ from .webhooks import WebhookProcessException
 from .util import NotFound
 
 
-def install_handlers(app: FastAPI):
+def install_handlers(app: FastAPI):  # pylint: disable=R0914
     """Install all custom exception handlers"""
 
     @app.exception_handler(ExpiredCredentialsException)
@@ -114,6 +114,7 @@ def install_handlers(app: FastAPI):
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={'message': 'You used the wrong token to access this resource.'}
         )
+
     @app.exception_handler(ReadOnlyEditionException)
     def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
         return JSONResponse(

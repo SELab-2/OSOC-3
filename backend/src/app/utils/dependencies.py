@@ -31,7 +31,6 @@ def get_edition(edition_name: str, database: Session = Depends(get_session)) -> 
 
 def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
     """Get the student from the database, given the id in the path"""
-    # TODO: check user in edition!
     return get_student_by_id(database, student_id)
 
 
