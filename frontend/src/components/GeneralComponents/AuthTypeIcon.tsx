@@ -1,5 +1,5 @@
 import { HiOutlineMail } from "react-icons/hi";
-import { AiFillGithub, AiFillGoogleCircle, AiOutlineQuestionCircle } from "react-icons/ai";
+import { AiFillGithub, AiOutlineQuestionCircle } from "react-icons/ai";
 import { AuthType } from "../../data/enums";
 
 /**
@@ -11,8 +11,6 @@ export default function AuthTypeIcon(props: { type: AuthType }) {
             return <HiOutlineMail />;
         case AuthType.GitHub:
             return <AiFillGithub />;
-        case AuthType.Google:
-            return <AiFillGoogleCircle />;
     }
     return <AiOutlineQuestionCircle />;
 }

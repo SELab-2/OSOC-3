@@ -4,5 +4,4 @@
 export enum AuthType {
     Email = "email",
     GitHub = "github",
-    Google = "google",
 }

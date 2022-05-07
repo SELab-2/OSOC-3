@@ -22,5 +22,5 @@ export const RegisterButton = styled.button`
     background: var(--osoc_green);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
 `;

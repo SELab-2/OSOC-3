@@ -7,6 +7,6 @@ export const Input = styled.input`
     margin-bottom: 10px;
     text-align: center;
     font-size: 20px;
-    border-radius: 10px;
+    border-radius: 5px;
     border-width: 0;
 `;
