@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session, Query
+from sqlalchemy.sql.expression import func
 
 import src.database.crud.skills as skills_crud
 from src.app.schemas.projects import InputProject, InputProjectRole, QueryParamsProjects
@@ -131,24 +132,11 @@ def patch_project_role(
     return project_role
 
 
-def get_conflict_students(db: Session, edition: Edition) -> list[tuple[Student, list[Project]]]:
+def get_conflict_students(db: Session, edition: Edition) -> list[Student]:
     """
-    Query all students that are causing conflicts for a certain edition
-    Return a ConflictStudent for each student that causes a conflict
-    This class contains a student together with all projects they are causing a conflict for
+    Return an overview of the students that are assigned to multiple projects
     """
-    students = db.query(Student).where(Student.edition == edition).all()
-    conflict_students = []
-    projs = []
-    for student in students:
-        if len(student.project_roles) > 1:
-            proj_ids = db.query(ProjectRole.project_id).where(
-                ProjectRole.student_id == student.student_id).all()
-            for proj_id in proj_ids:
-                proj_id = proj_id[0]
-                proj = db.query(Project).where(
-                    Project.project_id == proj_id).one()
-                projs.append(proj)
-            conflict_student = (student, projs)
-            conflict_students.append(conflict_student)
-    return conflict_students
+    return [
+        s for s in db.query(Student).where(Student.edition == edition).all()
+        if len(s.pr_suggestions) > 1
+    ]

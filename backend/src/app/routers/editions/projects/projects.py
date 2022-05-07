@@ -88,7 +88,14 @@ async def get_conflicts(db: Session = Depends(get_session), edition: Edition = D
     Get a list of all projects with conflicts, and the users that
     are causing those conflicts.
     """
-    return logic.get_conflicts(db, edition)
+    print('oi')
+    try:
+        a = logic.get_conflicts(db, edition)
+        print(a)
+        return a
+    except Exception as e:
+        print(e)
+        raise e
 
 
 @projects_router.get(

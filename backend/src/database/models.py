@@ -190,7 +190,7 @@ class ProjectRoleSuggestion(Base):
     )
 
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)
-    student: Student | None = relationship("Student", back_populates="project_roles", uselist=False)
+    student: Student | None = relationship("Student", back_populates="pr_suggestions", uselist=False)
 
     drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
     drafter: User | None = relationship("User", back_populates="drafted_roles", uselist=False)
@@ -230,7 +230,7 @@ class Student(Base):
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
-    project_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="student")
+    pr_suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="student")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
     questions: list[Question] = relationship("Question", back_populates="student", cascade="all, delete-orphan")

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from settings import DB_PAGE_SIZE
 from src.app.schemas.projects import InputProject, QueryParamsProjects
 import src.database.crud.projects as crud
-from src.database.models import Edition, Partner, Project, User, Skill, ProjectRole, Student
+from src.database.models import Edition, Partner, Project, User, Skill, ProjectRole, Student, ProjectRoleSuggestion
 
 
 @pytest.fixture
@@ -227,12 +227,58 @@ def test_patch_project(database_session: Session):
     assert project.coaches[0].user_id == new_user.user_id
 
 
-def test_get_conflict_students(database_with_data: Session, current_edition: Edition):
+def test_get_conflict_students(database_session: Session):
     """test if the right ConflictStudent is given"""
-    conflicts: list[(Student, list[Project])] = crud.get_conflict_students(
-        database_with_data, current_edition)
+    edition: Edition = Edition(year=2022, name="ed2022")
+    skill: Skill = Skill(name="skill 1")
+    student: Student = Student(
+        first_name="Jos",
+        last_name="Vermeulen",
+        preferred_name="Joske",
+        email_address="josvermeulen@mail.com",
+        phone_number="0487/86.24.45",
+        alumni=True,
+        wants_to_be_student_coach=True,
+        edition=edition
+    )
+
+    database_session.add(Student(
+        first_name="Jos2",
+        last_name="Vermeulen",
+        preferred_name="Joske",
+        email_address="josvermeulen@gmail.com",
+        phone_number="0487/86.24.46",
+        alumni=True,
+        wants_to_be_student_coach=True,
+        edition=edition
+    ))
+
+    database_session.add(ProjectRoleSuggestion(
+        student=student,
+        project_role=ProjectRole(
+            skill=skill,
+            slots=1,
+            project=Project(
+                name="project 1",
+                edition=edition
+            )
+        )
+    ))
+
+    database_session.add(ProjectRoleSuggestion(
+        student=student,
+        project_role=ProjectRole(
+            skill=skill,
+            slots=1,
+            project=Project(
+                name="project 2",
+                edition=edition
+            )
+        )
+    ))
+    database_session.commit()
+
+    conflicts: list[Student] = crud.get_conflict_students(database_session, edition)
     assert len(conflicts) == 1
-    assert conflicts[0][0].student_id == 1
-    assert len(conflicts[0][1]) == 2
-    assert conflicts[0][1][0].project_id == 1
-    assert conflicts[0][1][1].project_id == 2
+    assert conflicts[0].student_id == student.student_id
+    assert len(conflicts[0].pr_suggestions) == 2

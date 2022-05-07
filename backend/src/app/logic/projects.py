@@ -69,9 +69,5 @@ def patch_project_role(db: Session, project_role_id: int, input_project_role: In
 
 def get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
     """Returns a list of all students together with the projects they are causing a conflict for"""
-    conflicts = crud.get_conflict_students(db, edition)
-    conflicts_model = []
-    for student, projects in conflicts:
-        conflicts_model.append(ConflictStudent(student=student, projects=projects))
-
-    return ConflictStudentList(conflict_students=conflicts_model)
+    print(crud.get_conflict_students(db, edition))
+    return ConflictStudentList(conflict_students=crud.get_conflict_students(db, edition))

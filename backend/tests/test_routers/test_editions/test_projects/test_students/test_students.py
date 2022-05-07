@@ -268,14 +268,64 @@ def test_delete_pr_suggestion_non_existing_pr_suggestion(database_session: Sessi
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_get_conflicts(database_session: Session, current_edition: Edition, auth_client: AuthClient):
+def test_get_conflicts(database_session: Session, auth_client: AuthClient):
     """Test getting the conflicts"""
-    auth_client.coach(current_edition)
-    response = auth_client.get("/editions/ed2022/projects/conflicts")
+    edition: Edition = Edition(year=2022, name="ed2022")
+    skill: Skill = Skill(name="skill 1")
+    student: Student = Student(
+        first_name="Jos",
+        last_name="Vermeulen",
+        preferred_name="Joske",
+        email_address="josvermeulen@mail.com",
+        phone_number="0487/86.24.45",
+        alumni=True,
+        wants_to_be_student_coach=True,
+        edition=edition
+    )
+
+    database_session.add(Student(
+        first_name="Jos2",
+        last_name="Vermeulen",
+        preferred_name="Joske",
+        email_address="josvermeulen@gmail.com",
+        phone_number="0487/86.24.46",
+        alumni=True,
+        wants_to_be_student_coach=True,
+        edition=edition
+    ))
+
+    database_session.add(ProjectRoleSuggestion(
+        student=student,
+        project_role=ProjectRole(
+            skill=skill,
+            slots=1,
+            project=Project(
+                name="project 1",
+                edition=edition
+            )
+        )
+    ))
+
+    database_session.add(ProjectRoleSuggestion(
+        student=student,
+        project_role=ProjectRole(
+            skill=skill,
+            slots=1,
+            project=Project(
+                name="project 2",
+                edition=edition
+            )
+        )
+    ))
+    database_session.commit()
+
+    auth_client.coach(edition)
+    response = auth_client.get(f"/editions/{edition.name}/projects/conflicts")
     json = response.json()
+    print(json)
     assert len(json['conflictStudents']) == 1
-    assert json['conflictStudents'][0]['student']['studentId'] == 1
-    assert len(json['conflictStudents'][0]['projects']) == 2
+    assert json['conflictStudents'][0]['studentId'] == student.student_id
+    assert len(json['conflictStudents'][0]['prSuggestions']) == 2
 
 
 def test_add_student_project_already_confirmed(database_session: Session, current_edition: Edition,
