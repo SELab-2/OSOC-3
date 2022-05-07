@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from starlette import status
 
-from src.database.models import Edition, Project, User, Skill, ProjectRole, Student, ProjectRoleSuggestion
+from src.database.models import Edition, Project, Skill, ProjectRole, Student, ProjectRoleSuggestion
 from tests.utils.authorization import AuthClient
 
 
@@ -326,39 +326,3 @@ def test_get_conflicts(database_session: Session, auth_client: AuthClient):
     assert len(json['conflictStudents']) == 1
     assert json['conflictStudents'][0]['studentId'] == student.student_id
     assert len(json['conflictStudents'][0]['prSuggestions']) == 2
-
-
-def test_add_student_project_already_confirmed(database_session: Session, current_edition: Edition,
-                                               auth_client: AuthClient):
-    """A project_role can't be created if the student involved has already been confirmed elsewhere"""
-    auth_client.coach(current_edition)
-
-    resp = auth_client.post("/editions/ed2022/projects/1/students/4", json={"skill_id": 3})
-
-    assert resp.status_code == status.HTTP_400_BAD_REQUEST
-
-
-def test_confirm_project_role(database_session: Session, auth_client: AuthClient):
-    """Confirm a project role for a student without conflicts"""
-    auth_client.admin()
-    resp = auth_client.post(
-        "/editions/ed2022/projects/1/students/3", json={"skill_id": 3})
-
-    assert resp.status_code == status.HTTP_201_CREATED
-
-    response2 = auth_client.post(
-        "/editions/ed2022/projects/1/students/3/confirm")
-
-    assert response2.status_code == status.HTTP_204_NO_CONTENT
-    pr = database_session.query(ProjectRole).where(ProjectRole.student_id == 3) \
-        .where(ProjectRole.project_id == 1).one()
-    assert pr.definitive is True
-
-
-def test_confirm_project_role_conflict(database_session: Session, auth_client: AuthClient):
-    """A student who is part of a conflict can't have their project_role confirmed"""
-    auth_client.admin()
-    response2 = auth_client.post(
-        "/editions/ed2022/projects/1/students/1/confirm")
-
-    assert response2.status_code == status.HTTP_409_CONFLICT

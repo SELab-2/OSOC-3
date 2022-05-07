@@ -6,12 +6,12 @@ from starlette.responses import Response
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import (
-    ProjectList, Project, InputProject, ConflictStudentList, InputProjectRole,
+    InputProjectRole,
     ProjectRole as ProjectRoleSchema)
-from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
 from src.app.schemas.projects import (
     ProjectList, Project, InputProject, ConflictStudentList, QueryParamsProjects
 )
+from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
 from src.database.database import get_session
 from src.database.models import Edition, Project as ProjectModel, User
 from .students import project_students_router
@@ -42,6 +42,15 @@ async def create_project(
         edition: Edition = Depends(get_latest_edition)):
     """Create a new project"""
     return logic.create_project(db, edition, input_project)
+
+
+@projects_router.get("/conflicts", response_model=ConflictStudentList, dependencies=[Depends(require_coach)])
+async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
+    """
+    Get a list of all projects with conflicts, and the users that
+    are causing those conflicts.
+    """
+    return logic.get_conflicts(db, edition)
 
 
 @projects_router.delete(
@@ -80,22 +89,6 @@ async def patch_project(
     Update a project, changing some fields.
     """
     logic.patch_project(db, project, input_project)
-
-
-@projects_router.get("/conflicts", response_model=ConflictStudentList, dependencies=[Depends(require_coach)])
-async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
-    """
-    Get a list of all projects with conflicts, and the users that
-    are causing those conflicts.
-    """
-    print('oi')
-    try:
-        a = logic.get_conflicts(db, edition)
-        print(a)
-        return a
-    except Exception as e:
-        print(e)
-        raise e
 
 
 @projects_router.get(

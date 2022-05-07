@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import src.app.logic.partners as partners_logic
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
-    ProjectList, ConflictStudentList, InputProject, ConflictStudent, InputProjectRole, QueryParamsProjects
+    ProjectList, ConflictStudentList, InputProject, InputProjectRole, QueryParamsProjects
 )
 from src.database.models import Edition, Project, ProjectRole, User
 
@@ -69,5 +69,4 @@ def patch_project_role(db: Session, project_role_id: int, input_project_role: In
 
 def get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
     """Returns a list of all students together with the projects they are causing a conflict for"""
-    print(crud.get_conflict_students(db, edition))
     return ConflictStudentList(conflict_students=crud.get_conflict_students(db, edition))

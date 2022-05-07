@@ -116,7 +116,8 @@ class ConflictRoleSuggestion(CamelCaseModel):
 class ConflictStudent(CamelCaseModel):
     """A student together with the projects they are causing a conflict for"""
     student_id: int
-    name: str
+    first_name: str
+    last_name: str
     pr_suggestions: list[ConflictRoleSuggestion]
 
     class Config:
