@@ -21,7 +21,7 @@ from src.database.crud.students import get_student_by_id
 from src.database.crud.suggestions import get_suggestion_by_id
 from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
-from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project
+from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project, ProjectRole
 
 
 def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
@@ -152,7 +152,7 @@ def get_project(
 def get_project_role(
         project_role_id: int,
         project: Project = Depends(get_project),
-        db: Session = Depends(get_session)) -> Project:
+        db: Session = Depends(get_session)) -> ProjectRole:
     """Get a project from het database, given the id in the path"""
     project_role = crud_projects.get_project_role(db, project_role_id)
     if project_role.project != project:

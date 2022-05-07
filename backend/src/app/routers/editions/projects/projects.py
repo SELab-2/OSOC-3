@@ -96,7 +96,7 @@ async def patch_project(
     response_model=list[ProjectRoleSchema],
     dependencies=[Depends(require_coach), Depends(get_latest_edition)]
 )
-async def get_project_roles(project: Project = Depends(get_project), db: Session = Depends(get_session)):
+async def get_project_roles(project: ProjectModel = Depends(get_project), db: Session = Depends(get_session)):
     """List all project roles for a project"""
     return logic.get_project_roles(db, project)
 
@@ -108,7 +108,7 @@ async def get_project_roles(project: Project = Depends(get_project), db: Session
 )
 async def post_project_role(
         input_project_role: InputProjectRole,
-        project: Project = Depends(get_project),
+        project: ProjectModel = Depends(get_project),
         db: Session = Depends(get_session)):
     """Create a new project role"""
     return logic.create_project_role(db, project, input_project_role)

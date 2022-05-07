@@ -65,7 +65,7 @@ def install_handlers(app: FastAPI):
         )
 
     @app.exception_handler(NotFound)
-    def sqlalchemy_exc_no_result_found(_request: Request, _exception: NotFound):
+    def not_found(_request: Request, _exception: NotFound):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={'message': 'Not Found'}

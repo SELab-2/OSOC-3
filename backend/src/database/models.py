@@ -11,6 +11,7 @@ together
 """
 from __future__ import annotations
 
+from typing import Optional
 from uuid import uuid4, UUID
 
 from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table, UniqueConstraint
@@ -190,10 +191,10 @@ class ProjectRoleSuggestion(Base):
     )
 
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)
-    student: Student | None = relationship("Student", back_populates="pr_suggestions", uselist=False)
+    student: Optional[Student] = relationship("Student", back_populates="pr_suggestions", uselist=False)
 
     drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
-    drafter: User | None = relationship("User", back_populates="drafted_roles", uselist=False)
+    drafter: Optional[User] = relationship("User", back_populates="drafted_roles", uselist=False)
 
 
 class Skill(Base):
@@ -297,7 +298,7 @@ class Suggestion(Base):
     argumentation = Column(Text, nullable=True)
 
     student: Student = relationship("Student", back_populates="suggestions", uselist=False)
-    coach: User | None = relationship("User", back_populates="suggestions", uselist=False)
+    coach: Optional[User] = relationship("User", back_populates="suggestions", uselist=False)
 
 
 class User(Base):
