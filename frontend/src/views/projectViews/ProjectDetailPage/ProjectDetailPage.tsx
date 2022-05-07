@@ -9,20 +9,12 @@ import {
     Client,
     ClientsContainer,
     NumberOfStudents,
-    Title,
-    TitleContainer,
-    Save,
-    Cancel,
-    Delete,
-    TitleInput,
     AddButton,
-    Edit,
     ClientContainer,
 } from "./styles";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
-import { MdOutlineEditNote } from "react-icons/md";
 import { TiDeleteOutline } from "react-icons/ti";
 
 import { StudentPlace } from "../../../data/interfaces/projects";
@@ -32,11 +24,10 @@ import {
     CoachesContainer,
     CoachText,
 } from "../../../components/ProjectsComponents/ProjectCard/styles";
-import { Role } from "../../../data/enums/role";
 import { useAuth } from "../../../contexts";
-import { HiOutlineTrash } from "react-icons/hi";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import { RemoveButton } from "../CreateProjectPage/styles";
+import { TitleAndEdit } from "../../../components/ProjectDetailComponents";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -114,48 +105,16 @@ export default function ProjectDetailPage() {
                     Overview
                 </GoBack>
 
-                <TitleContainer>
-                    {!editing ? (
-                        <Title>{project.name}</Title>
-                    ) : (
-                        <TitleInput
-                            value={editedProject.name}
-                            onChange={e => {
-                                const newProject: Project = { ...project, name: e.target.value };
-                                setEditedProject(newProject);
-                            }}
-                        />
-                    )}
-                    {!editing ? (
-                        <Edit>
-                            <MdOutlineEditNote size={"30px"} onClick={() => setEditing(true)} />
-                        </Edit>
-                    ) : (
-                        <>
-                            <Save
-                                onClick={async () => {
-                                    await editProject();
-                                    setEditing(false);
-                                }}
-                            >
-                                Save
-                            </Save>
-                            <Cancel
-                                onClick={() => {
-                                    setEditing(false);
-                                    setEditedProject(project);
-                                }}
-                            >
-                                Cancel
-                            </Cancel>
-                        </>
-                    )}
-                    {role === Role.ADMIN && (
-                        <Delete onClick={handleShow}>
-                            <HiOutlineTrash size={"20px"} />
-                        </Delete>
-                    )}
-                </TitleContainer>
+                <TitleAndEdit
+                    editing={editing}
+                    project={project}
+                    editedProject={editedProject}
+                    setEditedProject={setEditedProject}
+                    setEditing={setEditing}
+                    editProject={editProject}
+                    role={role!}
+                    handleShow={handleShow}
+                />
 
                 <ConfirmDelete
                     visible={show}
