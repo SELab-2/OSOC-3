@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
+import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -137,6 +138,7 @@ export default function ProjectPage() {
                         Create Project
                     </CreateButton>
                 )}
+                <ConflictsButton editionId={editionId} />
             </div>
             <OwnProject
                 type="switch"
