@@ -132,7 +132,6 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
                                    json={"name": "test",
                                          "number_of_students": 5,
                                          "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
-        print(response.json())
         assert response.status_code == status.HTTP_201_CREATED
         assert response.json()['name'] == 'test'
         assert response.json()["partners"][0]["name"] == "ugent"

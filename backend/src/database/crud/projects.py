@@ -15,7 +15,11 @@ def _get_projects_for_edition_query(edition: Edition) -> Select:
 async def get_projects_for_edition(db: AsyncSession, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
     result = await db.execute(_get_projects_for_edition_query(edition))
-    return result.scalars().all()
+    projects: list[Project] = result.scalars().all()
+    for project in projects:
+        await db.refresh(project, attribute_names=["project_roles"])
+
+    return projects
 
 
 async def get_projects_for_edition_page(db: AsyncSession, edition: Edition,
@@ -24,11 +28,12 @@ async def get_projects_for_edition_page(db: AsyncSession, edition: Edition,
     query = _get_projects_for_edition_query(edition).where(
         Project.name.contains(search_params.name))
     if search_params.coach:
-        print("called")
         query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
-        print("after")
     result = await db.execute(paginate(query, search_params.page))
     projects: list[Project] = result.unique().scalars().all()
+    # projects need refreshing
+    for project in projects:
+        await db.refresh(project, attribute_names=["project_roles"])
 
     return projects
 
@@ -79,7 +84,10 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
     """Query a specific project from the database through its ID"""
     query = select(Project).where(Project.project_id == project_id)
     result = await db.execute(query)
-    return result.unique().scalars().one()
+    project = result.unique().scalars().one()
+    # refresh to see updated relations
+    await db.refresh(project)
+    return project
 
 
 async def delete_project(db: AsyncSession, project_id: int):
@@ -127,7 +135,7 @@ async def get_conflict_students(db: AsyncSession, edition: Edition) -> list[tupl
     """
     query = select(Student).where(Student.edition == edition)
     result = await db.execute(query)
-    students = result.scalars().all()
+    students = result.unique().scalars().all()
 
     conflict_students = []
     projs = []
@@ -137,9 +145,10 @@ async def get_conflict_students(db: AsyncSession, edition: Edition) -> list[tupl
                                                .where(ProjectRole.student_id == student.student_id))
             proj_ids = result_proj_ids.scalars().all()
             for proj_id in proj_ids:
-                proj_id = proj_id[0]
+                print(proj_id)
+                #proj_id = proj_id[0]
                 result_proj = await db.execute(select(Project).where(Project.project_id == proj_id))
-                proj = result_proj.scalars().one()
+                proj = result_proj.unique().scalars().one()
                 projs.append(proj)
             conflict_student = (student, projs)
             conflict_students.append(conflict_student)

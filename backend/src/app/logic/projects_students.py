@@ -22,7 +22,7 @@ async def add_student_project(db: AsyncSession, project: Project, student_id: in
     if count > 0:
         raise FailedToAddProjectRoleException
     # check that the student has the skill
-    student = (await db.execute(select(Student).where(Student.student_id == student_id))).scalar_one()
+    student = (await db.execute(select(Student).where(Student.student_id == student_id))).unique().scalar_one()
     skill = (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalar_one()
     if skill not in student.skills:
         raise FailedToAddProjectRoleException
@@ -33,7 +33,7 @@ async def add_student_project(db: AsyncSession, project: Project, student_id: in
     if count_proj_definitive > 0:
         raise FailedToAddProjectRoleException
     # check that the project requires the skill
-    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).scalar_one()
+    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).unique().scalar_one()
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 
@@ -49,7 +49,7 @@ async def change_project_role(db: AsyncSession, project: Project, student_id: in
     if count > 0:
         raise FailedToAddProjectRoleException
     # check that the student has the skill
-    student = (await db.execute(select(Student).where(Student.student_id == student_id))).scalar_one()
+    student = (await db.execute(select(Student).where(Student.student_id == student_id))).unique().scalar_one()
     skill = (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalar_one()
     if skill not in student.skills:
         raise FailedToAddProjectRoleException
@@ -60,7 +60,7 @@ async def change_project_role(db: AsyncSession, project: Project, student_id: in
     if count_proj_definitive > 0:
         raise FailedToAddProjectRoleException
     # check that the project requires the skill
-    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).scalar_one()
+    project = (await db.execute(select(Project).where(Project.project_id == project.project_id))).unique().scalar_one()
     if skill not in project.skills:
         raise FailedToAddProjectRoleException
 

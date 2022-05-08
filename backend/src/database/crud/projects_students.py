@@ -18,8 +18,8 @@ async def add_student_project(db: AsyncSession, project: Project, student_id: in
 
     # check if all parameters exist in the database
     (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalars().one()
-    (await db.execute(select(User).where(User.user_id == drafter_id))).one()
-    (await db.execute(select(Student).where(Student.student_id == student_id))).one()
+    (await db.execute(select(User).where(User.user_id == drafter_id))).unique().one()
+    (await db.execute(select(Student).where(Student.student_id == student_id))).unique().one()
 
     proj_role = ProjectRole(student_id=student_id, project_id=project.project_id, skill_id=skill_id,
                             drafter_id=drafter_id)
@@ -32,11 +32,11 @@ async def change_project_role(db: AsyncSession, project: Project, student_id: in
 
     # check if all parameters exist in the database
     (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalars().one()
-    (await db.execute(select(User).where(User.user_id == drafter_id))).one()
-    (await db.execute(select(Student).where(Student.student_id == student_id))).one()
+    (await db.execute(select(User).where(User.user_id == drafter_id))).unique().one()
+    (await db.execute(select(Student).where(Student.student_id == student_id))).unique().one()
 
-    proj_role = db.query(ProjectRole).where(
-        ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
+    proj_role = (await db.execute(select(ProjectRole).where(
+        ProjectRole.student_id == student_id).where(ProjectRole.project == project))).scalar_one()
     proj_role.drafter_id = drafter_id
     proj_role.skill_id = skill_id
     await db.commit()
