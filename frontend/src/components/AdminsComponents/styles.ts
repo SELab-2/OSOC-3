@@ -5,7 +5,11 @@ export const Warning = styled.div`
     color: var(--osoc_red);
 `;
 
-export const AdminsTable = styled(Table)``;
+export const AdminsTable = styled(Table)`
+    min-width: fit-content;
+    width: 45em;
+    max-width: 100%;
+`;
 
 export const ModalContentConfirm = styled.div`
     border: 3px solid var(--osoc_green);
@@ -21,4 +25,8 @@ export const AddAdminButton = styled(Button).attrs({
     size: "sm",
 })`
     float: right;
+`;
+
+export const EmailDiv = styled.div`
+    overflow: auto;
 `;

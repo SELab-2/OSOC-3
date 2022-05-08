@@ -1,7 +1,7 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
-import { AddAdminButton, ModalContentConfirm, Warning } from "./styles";
+import { AddAdminButton, EmailDiv, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import { Error } from "../UsersComponents/Requests/styles";
@@ -163,7 +163,9 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 );
                             }}
                         />
-                        <EmailAndAuth user={selected} />
+                        <EmailDiv>
+                            <EmailAndAuth user={selected} />
+                        </EmailDiv>
                         <AddWarning name={selected?.name} />
                     </Modal.Body>
                     <Modal.Footer>
