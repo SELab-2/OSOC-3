@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Project } from "../../../data/interfaces";
+import { Project, CreateProject as EditProject } from "../../../data/interfaces";
 
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
 import {
@@ -28,6 +28,7 @@ import { useAuth } from "../../../contexts";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import { RemoveButton } from "../CreateProjectPage/styles";
 import { TitleAndEdit } from "../../../components/ProjectDetailComponents";
+import projectToEditProject from "../../../utils/logic/project";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -38,7 +39,7 @@ export default function ProjectDetailPage() {
     const editionId = params.editionId!;
 
     const [project, setProject] = useState<Project>();
-    const [editedProject, setEditedProject] = useState<Project>();
+    const [editedProject, setEditedProject] = useState<EditProject>();
     const [gotProject, setGotProject] = useState(false);
 
     const navigate = useNavigate();
@@ -68,7 +69,7 @@ export default function ProjectDetailPage() {
                 const response = await getProject(editionId, projectId);
                 if (response) {
                     setProject(response);
-                    setEditedProject(response);
+                    setEditedProject(projectToEditProject(response));
 
                     // TODO
                     // Generate student data
@@ -91,7 +92,15 @@ export default function ProjectDetailPage() {
     }, [editionId, gotProject, navigate, projectId]);
 
     async function editProject() {
-        await patchProject(editionId, projectId, editedProject!.name, 10, [], [], []);
+        await patchProject(
+            editionId,
+            projectId,
+            editedProject!.name,
+            editedProject!.number_of_students,
+            [], // TODO Skills
+            editedProject!.partners,
+            editedProject!.coaches
+        );
         setGotProject(false);
     }
 
