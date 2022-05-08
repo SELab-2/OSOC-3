@@ -137,9 +137,9 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
         assert response.json()['name'] == 'test'
         assert response.json()["partners"][0]["name"] == "ugent"
 
-        assert len(database_with_data.query(Partner).all()) == 1
+        assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 1
 
-        response = await auth_client.get('/editions/ed2022/projects')
+        response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
 
         assert len(json['projects']) == 4
@@ -336,13 +336,14 @@ async def test_search_project_name(database_with_data: AsyncSession, auth_client
 async def test_search_project_coach(database_with_data: AsyncSession, auth_client: AuthClient):
     """test search project on coach"""
     await auth_client.admin()
-    user: User = (await database_with_data.execute(select(User).where(User.name == "Pytest Admin"))).scalar_one()
+    user: User = (await database_with_data.execute(select(User).where(User.name == "Pytest Admin"))).unique().scalar_one()
     async with auth_client:
-        await auth_client.post("/editions/ed2022/projects/",
-                               json={"name": "test",
-                                     "number_of_students": 2,
-                                     "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [user.user_id]})
-        response = await auth_client.get("/editions/ed2022/projects/?coach=true")
+        postresponse = await auth_client.post("/editions/ed2022/projects/",
+                                              json={"name": "test",
+                                                    "number_of_students": 2,
+                                                    "skills": [1, 1, 1, 1, 1], "partners": ["ugent"],
+                                                    "coaches": [user.user_id]})
+        response = await auth_client.get("/editions/ed2022/projects/?coach=true", follow_redirects=True)
         assert len(response.json()["projects"]) == 1
         assert response.json()["projects"][0]["name"] == "test"
         assert response.json()["projects"][0]["coaches"][0]["userId"] == user.user_id

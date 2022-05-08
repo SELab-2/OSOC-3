@@ -6,6 +6,7 @@ from src.app.schemas.projects import (
 )
 from src.database.models import Edition, Project, User
 
+
 async def get_project_list(db: AsyncSession, edition: Edition, search_params: QueryParamsProjects,
                            user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""

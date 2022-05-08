@@ -198,4 +198,4 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> User:
     """Find a user by their id"""
     query = select(User).where(User.user_id == user_id)
     result = await db.execute(query)
-    return result.scalars().one()
+    return result.unique().scalars().one()

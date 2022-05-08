@@ -24,7 +24,9 @@ async def get_projects_for_edition_page(db: AsyncSession, edition: Edition,
     query = _get_projects_for_edition_query(edition).where(
         Project.name.contains(search_params.name))
     if search_params.coach:
+        print("called")
         query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
+        print("after")
     result = await db.execute(paginate(query, search_params.page))
     projects: list[Project] = result.unique().scalars().all()
 
@@ -40,7 +42,7 @@ async def _get_skill_by_id(db_skill: AsyncSession, skill_id: int) -> Skill:
 async def _get_coach_by_id(db_coach: AsyncSession, coach_id: int) -> User:
     query_coach = select(User).where(User.user_id == coach_id)
     result_coach = await db_coach.execute(query_coach)
-    return result_coach.scalars().one()
+    return result_coach.unique().scalars().one()
 
 
 async def add_project(db: AsyncSession, edition: Edition, input_project: InputProject) -> Project:
@@ -68,7 +70,8 @@ async def add_project(db: AsyncSession, edition: Edition, input_project: InputPr
                          edition_id=edition.edition_id, skills=skills_obj, coaches=coaches_obj, partners=partners_obj)
     db.add(project)
     await db.commit()
-    print(project)
+    # query the new project in order to update the relation values (needed for async operation to work correctly)
+    (await db.execute(select(Project).where(Project.project_id == project.project_id))).unique().scalars().one()
     return project
 
 
@@ -81,12 +84,6 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
 
 async def delete_project(db: AsyncSession, project_id: int):
     """Delete a specific project from the database"""
-    query = select(ProjectRole).where(ProjectRole.project_id == project_id)
-    result = await db.execute(query)
-    proj_roles = result.scalars().all()
-    for proj_role in proj_roles:
-        await db.delete(proj_role)
-
     project = await get_project(db, project_id)
     await db.delete(project)
     await db.commit()
@@ -114,7 +111,6 @@ async def patch_project(db: AsyncSession, project_id: int, input_project: InputP
             db.add(partner_obj)
             partners_obj.append(partner_obj)
 
-    print(input_project.name)
     project.name = input_project.name
     project.number_of_students = input_project.number_of_students
     project.skills = skills_obj

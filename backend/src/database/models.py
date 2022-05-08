@@ -299,16 +299,16 @@ class User(Base):
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
-    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
-    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
+    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False, lazy="joined")
+    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter", lazy="joined")
+    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches", lazy="joined")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches", lazy="joined")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", lazy="joined")
 
     # Authentication methods
-    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False)
-    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False)
-    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False)
+    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False, lazy="joined")
+    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False, lazy="joined")
+    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False, lazy="joined")
 
 
 user_editions = Table(
