@@ -50,6 +50,10 @@ jobs:
           key: venv-${{ runner.os }}-bullseye-3.10.2-v2-${{ hashFiles('**/poetry.lock') }}
 
       - run: python -m pytest --cov=src --cov-report=xml
+      - name: Code Coverage
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV }}
 
   Lint:
     needs: [Test]
