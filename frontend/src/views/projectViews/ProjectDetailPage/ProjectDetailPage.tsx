@@ -39,7 +39,7 @@ export default function ProjectDetailPage() {
     const editionId = params.editionId!;
 
     const [project, setProject] = useState<Project>();
-    const [editedProject, setEditedProject] = useState<EditProject>();
+    const [editedProject, setEditedProject] = useState<Project>();
     const [gotProject, setGotProject] = useState(false);
 
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ export default function ProjectDetailPage() {
                 const response = await getProject(editionId, projectId);
                 if (response) {
                     setProject(response);
-                    setEditedProject(projectToEditProject(response));
+                    setEditedProject(response);
 
                     // TODO
                     // Generate student data
@@ -92,14 +92,15 @@ export default function ProjectDetailPage() {
     }, [editionId, gotProject, navigate, projectId]);
 
     async function editProject() {
+        const newProject: EditProject = projectToEditProject(editedProject!);
         await patchProject(
             editionId,
             projectId,
-            editedProject!.name,
-            editedProject!.number_of_students,
+            newProject!.name,
+            newProject!.number_of_students,
             [], // TODO Skills
-            editedProject!.partners,
-            editedProject!.coaches
+            newProject!.partners,
+            newProject!.coaches
         );
         setGotProject(false);
     }
@@ -133,11 +134,21 @@ export default function ProjectDetailPage() {
                 ></ConfirmDelete>
 
                 <ClientsContainer>
-                    {project.partners.map((element, _index) => (
+                    {editedProject.partners.map((element, _index) => (
                         <ClientContainer>
                             <Client key={_index}>{element.name}</Client>
                             {editing && (
-                                <RemoveButton onClick={() => {}}>
+                                <RemoveButton
+                                    onClick={() => {
+                                        const newPartners = [...project.partners];
+                                        newPartners.splice(_index, 1);
+                                        const newProject: Project = {
+                                            ...project,
+                                            partners: newPartners,
+                                        };
+                                        setEditedProject(newProject);
+                                    }}
+                                >
                                     <TiDeleteOutline size={"20px"} />
                                 </RemoveButton>
                             )}
@@ -151,11 +162,21 @@ export default function ProjectDetailPage() {
                 </ClientsContainer>
 
                 <CoachesContainer>
-                    {project.coaches.map((element, _index) => (
+                    {editedProject.coaches.map((element, _index) => (
                         <CoachContainer key={_index}>
                             <CoachText>{element.name}</CoachText>
                             {editing && (
-                                <RemoveButton onClick={() => {}}>
+                                <RemoveButton
+                                    onClick={() => {
+                                        const newCoaches = [...project.coaches];
+                                        newCoaches.splice(_index, 1);
+                                        const newProject: Project = {
+                                            ...project,
+                                            coaches: newCoaches,
+                                        };
+                                        setEditedProject(newProject);
+                                    }}
+                                >
                                     <TiDeleteOutline size={"20px"} />
                                 </RemoveButton>
                             )}

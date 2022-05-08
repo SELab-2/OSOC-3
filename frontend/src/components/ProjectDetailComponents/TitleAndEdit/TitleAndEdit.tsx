@@ -4,8 +4,7 @@ import { Title, TitleContainer, Save, Cancel, Delete, TitleInput, Edit } from ".
 import { MdOutlineEditNote } from "react-icons/md";
 import { HiOutlineTrash } from "react-icons/hi";
 import { Role } from "../../../data/enums/role";
-import { Project, CreateProject as EditProject } from "../../../data/interfaces/projects";
-import projectToEditProject from "../../../utils/logic/project";
+import { Project } from "../../../data/interfaces/projects";
 
 export default function TitleAndEdit({
     editing,
@@ -19,8 +18,8 @@ export default function TitleAndEdit({
 }: {
     editing: boolean;
     project: Project;
-    editedProject: EditProject;
-    setEditedProject: (project: EditProject) => void;
+    editedProject: Project;
+    setEditedProject: (project: Project) => void;
     setEditing: (editing: boolean) => void;
     editProject: () => void;
     role: Role;
@@ -35,7 +34,7 @@ export default function TitleAndEdit({
                     value={editedProject.name}
                     onChange={e => {
                         const newProject: Project = { ...project, name: e.target.value };
-                        setEditedProject(projectToEditProject(newProject));
+                        setEditedProject(newProject);
                     }}
                 />
             )}
@@ -56,7 +55,7 @@ export default function TitleAndEdit({
                     <Cancel
                         onClick={() => {
                             setEditing(false);
-                            setEditedProject(projectToEditProject(project));
+                            setEditedProject(project);
                         }}
                     >
                         Cancel
