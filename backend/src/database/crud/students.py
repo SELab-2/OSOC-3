@@ -14,7 +14,7 @@ async def get_student_by_id(db: AsyncSession, student_id: int) -> Student:
     """Get a student by id"""
     query = select(Student).where(Student.student_id == student_id)
     result = await db.execute(query)
-    return result.scalar_one()
+    return result.unique().scalars().one()
 
 
 async def set_definitive_decision_on_student(db: AsyncSession, student: Student, decision: DecisionEnum) -> None:
