@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 import src.app.logic.partners as partners_logic
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
-    ProjectList, ConflictStudentList, InputProject, InputProjectRole, QueryParamsProjects
+    ProjectList, ConflictStudentList, InputProject, InputProjectRole, QueryParamsProjects,
+    ProjectRoleResponseList
 )
 from src.database.models import Edition, Project, ProjectRole, User
 
@@ -55,9 +56,9 @@ def delete_project(db: Session, project: Project):
     crud.delete_project(db, project)
 
 
-def get_project_roles(db: Session, project: Project) -> list[ProjectRole]:
+def get_project_roles(db: Session, project: Project) -> ProjectRoleResponseList:
     """Get project roles for a project"""
-    return crud.get_project_roles_for_project(db, project)
+    return ProjectRoleResponseList(project_roles=crud.get_project_roles_for_project(db, project))
 
 
 def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:

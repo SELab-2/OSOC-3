@@ -7,7 +7,7 @@ import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import (
     InputProjectRole,
-    ProjectRole as ProjectRoleSchema)
+    ProjectRole as ProjectRoleSchema, ProjectRoleResponseList)
 from src.app.schemas.projects import (
     ProjectList, Project, InputProject, ConflictStudentList, QueryParamsProjects
 )
@@ -93,7 +93,7 @@ async def patch_project(
 
 @projects_router.get(
     "/{project_id}/roles",
-    response_model=list[ProjectRoleSchema],
+    response_model=ProjectRoleResponseList,
     dependencies=[Depends(require_coach), Depends(get_latest_edition)]
 )
 async def get_project_roles(project: ProjectModel = Depends(get_project), db: Session = Depends(get_session)):

@@ -63,6 +63,14 @@ class ProjectRole(CamelCaseModel):
         orm_mode = True
 
 
+class ProjectRoleResponseList(CamelCaseModel):
+    project_roles: list[ProjectRole]
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
 class Project(CamelCaseModel):
     """Represents a Project from the database to return when a GET request happens"""
     project_id: int
