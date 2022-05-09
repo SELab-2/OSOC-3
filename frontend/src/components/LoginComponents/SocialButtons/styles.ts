@@ -10,6 +10,3 @@ export const Socials = styled.div`
     min-width: 230px;
     height: fit-content;
 `;
-export const GoogleLoginContainer = styled.div`
-    margin-bottom: 15px;
-`;
