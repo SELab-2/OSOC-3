@@ -15,5 +15,5 @@ def create_partner(db: Session, name: str, commit: bool = True) -> Partner:
 
 
 def get_optional_partner_by_name(db: Session, name: str) -> Partner | None:
-    """Returns a list of all projects from a certain edition from the database"""
+    """Returns an optional partner given a name"""
     return db.query(Partner).where(Partner.name == name).one_or_none()
