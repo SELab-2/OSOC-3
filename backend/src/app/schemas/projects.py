@@ -64,6 +64,7 @@ class ProjectRole(CamelCaseModel):
 
 
 class ProjectRoleResponseList(CamelCaseModel):
+    """Response list containing project roles"""
     project_roles: list[ProjectRole]
 
     class Config:
