@@ -36,7 +36,7 @@ async def remove_student_from_project(
     "/{student_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
-    dependencies=[Depends(get_latest_edition), Depends(get_project_role)]
+    dependencies=[Depends(get_latest_edition)]
 )
 async def change_project_role(
         argumentation: InputArgumentation,
