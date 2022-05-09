@@ -191,7 +191,7 @@ async def remove_request_if_exists(db: AsyncSession, user_id: int, edition_name:
 async def get_user_by_email(db: AsyncSession, email: str) -> User:
     """Find a user by their email address"""
     auth_email = (await db.execute(select(AuthEmail).where(AuthEmail.email == email))).scalar_one()
-    return (await db.execute(select(User).where(User.user_id == auth_email.user_id))).scalar_one()
+    return (await db.execute(select(User).where(User.user_id == auth_email.user_id))).unique().scalar_one()
 
 
 async def get_user_by_id(db: AsyncSession, user_id: int) -> User:
