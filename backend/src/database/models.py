@@ -67,8 +67,8 @@ class CoachRequest(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"), nullable=False)
 
-    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False)
-    user: User = relationship("User", back_populates="coach_request", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False, lazy="joined")
+    user: User = relationship("User", back_populates="coach_request", uselist=False, lazy="joined")
 
 
 class DecisionEmail(Base):
