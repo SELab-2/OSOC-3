@@ -6,8 +6,6 @@ export async function getStudents(edition: string, nameFilter: string, rolesFilt
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/students/?first_name=" + nameFilter + "&alumni=" + alumniFilter + "&student_coach=" + studentCoachVolunteerFilter);
         const students = response.data as Students;
-        console.log("get students")
-        console.log(students)
         return students;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -23,8 +21,6 @@ export async function getStudent(edition: string, studentId: string){
         const request = "/editions/" + edition + "/students/" + studentId.toString()
         const response = await axiosInstance.get(request);
         const student = response.data.student as Student;
-        console.log("get student")
-        console.log(student)
         return student;
     } catch (error) {
         if (axios.isAxiosError(error)) {
