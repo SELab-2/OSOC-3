@@ -38,13 +38,6 @@ async def startup():
     """
     Check if all migrations have been executed. If not refuse to start the app.
     """
-    #alembic_config: config.Config = config.Config('alembic.ini')
-    #alembic_script: script.ScriptDirectory = script.ScriptDirectory.from_config(alembic_config)
-    #async with engine.begin() as conn:
-    #    revision: str = await conn.run_sync(
-    #        lambda sync_conn: migration.MigrationContext.configure(sync_conn).get_current_revision()
-    #    )
-    #    alembic_head: str = alembic_script.get_current_head()
-    #    if revision != alembic_head:
-    #        raise PendingMigrationsException('Pending migrations')
-    Base.metadata.create_all(bind=engine)
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

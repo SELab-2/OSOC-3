@@ -1,7 +1,9 @@
 """Pytest configuration file with fixtures"""
+import asyncio
 from typing import AsyncGenerator
 
 import pytest
+import pytest_asyncio
 from alembic import command
 from alembic import config
 from httpx import AsyncClient
@@ -25,15 +27,23 @@ from tests.utils.authorization import AuthClient
 #     yield
 #     command.downgrade(alembic_config, 'base')
 
+@pytest.fixture(scope="session")
+def event_loop():
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
 
 @pytest.fixture(scope="session")
-def tables():
+async def tables():
     """
     Fixture to initialize a database before the tests
     """
-    Base.metadata.create_all(bind=engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
+@pytest.fixture
 async def database_session(tables) -> AsyncGenerator[AsyncSession, None]:
     """
     Fixture to create a session for every test, and rollback
