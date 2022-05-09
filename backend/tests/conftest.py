@@ -28,7 +28,7 @@ def tables():
 
 
 @pytest.fixture
-async def database_session(tables: None) -> Generator[AsyncSession, None, None]:
+async def database_session(tables) -> Generator[AsyncSession, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
