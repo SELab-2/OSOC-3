@@ -49,14 +49,14 @@ async def get_students(db: AsyncSession, edition: Edition,
     for skill in skills:
         query = query.where(Student.skills.contains(skill))
 
-    return (await db.execute(paginate(query, commons.page))).scalars().all()
+    return (await db.execute(paginate(query, commons.page))).unique().scalars().all()
 
 
 async def get_emails(db: AsyncSession, student: Student) -> list[DecisionEmail]:
     """Get all emails send to a student"""
     query = select(DecisionEmail).where(DecisionEmail.student_id == student.student_id)
     result = await db.execute(query)
-    return result.scalars().all()
+    return result.unique().scalars().all()
 
 
 async def create_email(db: AsyncSession, student: Student, email_status: EmailStatusEnum) -> DecisionEmail:
@@ -85,4 +85,4 @@ async def get_last_emails_of_students(db: AsyncSession, edition: Edition, common
         emails = emails.where(DecisionEmail.decision.in_(commons.email_status))
 
     emails = emails.order_by(DecisionEmail.student_id)
-    return (await db.execute(paginate(emails, commons.page))).scalars().all()
+    return (await db.execute(paginate(emails, commons.page))).unique().scalars().all()

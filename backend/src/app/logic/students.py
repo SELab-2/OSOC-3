@@ -30,8 +30,7 @@ async def remove_student(db: AsyncSession, student: Student) -> None:
 async def get_students_search(db: AsyncSession, edition: Edition, commons: CommonQueryParams) -> ReturnStudentList:
     """return all students"""
     if commons.skill_ids:
-        # TODO: make skills async
-        skills: list[Skill] = get_skills_by_ids(db, commons.skill_ids)
+        skills: list[Skill] = await get_skills_by_ids(db, commons.skill_ids)
         if len(skills) != len(commons.skill_ids):
             return ReturnStudentList(students=[])
     else:
@@ -52,11 +51,11 @@ async def get_students_search(db: AsyncSession, edition: Edition, commons: Commo
             wants_to_be_student_coach=student.wants_to_be_student_coach,
             edition_id=student.edition_id,
             skills=student.skills))
-        nr_of_yes_suggestions = len(get_suggestions_of_student_by_type(
+        nr_of_yes_suggestions = len(await get_suggestions_of_student_by_type(
             db, student.student_id, DecisionEnum.YES))
-        nr_of_no_suggestions = len(get_suggestions_of_student_by_type(
+        nr_of_no_suggestions = len(await get_suggestions_of_student_by_type(
             db, student.student_id, DecisionEnum.NO))
-        nr_of_maybe_suggestions = len(get_suggestions_of_student_by_type(
+        nr_of_maybe_suggestions = len(await get_suggestions_of_student_by_type(
             db, student.student_id, DecisionEnum.MAYBE))
         students[-1].nr_of_suggestions = SuggestionsModel(
             yes=nr_of_yes_suggestions, no=nr_of_no_suggestions, maybe=nr_of_maybe_suggestions)

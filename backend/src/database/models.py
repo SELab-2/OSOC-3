@@ -80,7 +80,7 @@ class DecisionEmail(Base):
     decision = Column(Enum(EmailStatusEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
-    student: Student = relationship("Student", back_populates="emails", uselist=False)
+    student: Student = relationship("Student", back_populates="emails", uselist=False, lazy="joined")
 
 
 class Edition(Base):
