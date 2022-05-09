@@ -54,7 +54,8 @@ async def remove_coach_all_editions(db: AsyncSession, user_id: int):
     await users_crud.remove_coach_all_editions(db, user_id)
 
 
-async def get_request_list(db: AsyncSession, edition_name: str | None, user_name: str | None, page: int) -> UserRequestsResponse:
+async def get_request_list(db: AsyncSession, edition_name: str | None, user_name: str | None, page: int) \
+        -> UserRequestsResponse:
     """
     Query the database for a list of all user requests
     and wrap the result in a pydantic model

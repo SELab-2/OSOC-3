@@ -1,12 +1,11 @@
 """Pytest configuration file with fixtures"""
-from typing import Generator
+from typing import AsyncGenerator
 
 import pytest
 from alembic import command
 from alembic import config
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.testclient import TestClient
 
 from src.app import app
 from src.database.database import get_session
@@ -28,7 +27,7 @@ def tables():
 
 
 @pytest.fixture
-async def database_session(tables) -> Generator[AsyncSession, None, None]:
+async def database_session(tables) -> AsyncGenerator[AsyncSession, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db
@@ -56,7 +55,7 @@ async def database_session(tables) -> Generator[AsyncSession, None, None]:
 def test_client(database_session: AsyncSession) -> AsyncClient:
     """Fixture to create a testing version of our main application"""
 
-    def override_get_session() -> Generator[AsyncSession, None, None]:
+    def override_get_session() -> AsyncGenerator[AsyncSession, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead
         """
@@ -71,7 +70,7 @@ def test_client(database_session: AsyncSession) -> AsyncClient:
 def auth_client(database_session: AsyncSession) -> AuthClient:
     """Fixture to get a TestClient that handles authentication"""
 
-    def override_get_session() -> Generator[AsyncSession, None, None]:
+    def override_get_session() -> AsyncGenerator[AsyncSession, None]:
         """Inner function to override the Session used in the app
         A session provided by a fixture will be used instead
         """

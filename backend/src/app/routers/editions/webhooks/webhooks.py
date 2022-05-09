@@ -26,7 +26,8 @@ async def new(edition: Edition = Depends(get_latest_edition), database: AsyncSes
 
 
 @webhooks_router.post("/{uuid}", dependencies=[Depends(valid_uuid)], status_code=status.HTTP_201_CREATED)
-async def webhook(data: WebhookEvent, edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)):
+async def webhook(data: WebhookEvent, edition: Edition = Depends(get_edition),
+                  database: AsyncSession = Depends(get_session)):
     """Receive a webhook event, This is triggered by Tally"""
     try:
         await process_webhook(edition, data, database)

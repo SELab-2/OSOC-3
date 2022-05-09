@@ -18,7 +18,8 @@ login_router = APIRouter(prefix="/login", tags=[Tags.LOGIN])
 
 
 @login_router.post("/token", response_model=Token)
-async def login_for_access_token(db: AsyncSession = Depends(get_session), form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(db: AsyncSession = Depends(get_session),
+                                 form_data: OAuth2PasswordRequestForm = Depends()):
     """Called when logging in, generates an access token to use in other functions"""
     try:
         user = await authenticate_user(db, form_data.username, form_data.password)
@@ -31,7 +32,8 @@ async def login_for_access_token(db: AsyncSession = Depends(get_session), form_d
 
 
 @login_router.post("/refresh", response_model=Token)
-async def refresh_access_token(db: AsyncSession = Depends(get_session), user: User = Depends(get_user_from_refresh_token)):
+async def refresh_access_token(db: AsyncSession = Depends(get_session),
+                               user: User = Depends(get_user_from_refresh_token)):
     """
     Return a new access & refresh token using on the old refresh token
 

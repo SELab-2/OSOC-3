@@ -41,7 +41,8 @@ async def get_pending_invites_for_edition_page(db: AsyncSession, edition: Editio
     return result.scalars().all()
 
 
-async def get_optional_invite_link_by_edition_and_email(db: AsyncSession, edition: Edition, email: str) -> InviteLink | None:
+async def get_optional_invite_link_by_edition_and_email(db: AsyncSession, edition: Edition, email: str) \
+        -> InviteLink | None:
     """Return an optional invite link by edition and target_email"""
     query = select(InviteLink)\
         .where(InviteLink.edition == edition)\

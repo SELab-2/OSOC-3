@@ -157,14 +157,16 @@ async def get_requests_for_edition_page(
     Get all userrequests from a given edition
     """
     edition = await get_edition_by_name(db, edition_name)
-    return (await db.execute(paginate(_get_requests_for_edition_query(edition, user_name), page))).unique().scalars().all()
+    return \
+        (await db.execute(paginate(_get_requests_for_edition_query(edition, user_name), page))).unique().scalars().all()
 
 
 async def accept_request(db: AsyncSession, request_id: int):
     """
     Remove request and add user as coach
     """
-    request = (await db.execute(select(CoachRequest).where(CoachRequest.request_id == request_id))).unique().scalar_one()
+    request = \
+        (await db.execute(select(CoachRequest).where(CoachRequest.request_id == request_id))).unique().scalar_one()
     edition = (await db.execute(select(Edition).where(Edition.edition_id == request.edition_id))).scalar_one()
     await add_coach(db, request.user_id, edition.name)
     await db.execute(delete(CoachRequest).where(CoachRequest.request_id == request_id))

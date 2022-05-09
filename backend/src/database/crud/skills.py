@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.schemas.skills import SkillBase
@@ -46,6 +46,6 @@ async def delete_skill(db: AsyncSession, skill_id: int):
         db (Session): connection with the database.
         skill_id (int): the id of the skill
     """
-    skill_to_delete = db.query(Skill).where(Skill.skill_id == skill_id).one()
-    await db.delete(skill_to_delete)
+    skill_to_delete = delete(Skill).where(Skill.skill_id == skill_id)
+    await db.execute(skill_to_delete)
     await db.commit()

@@ -35,7 +35,8 @@ async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(ge
     return await get_suggestion_by_id(database, suggestion_id)
 
 
-async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) -> Edition:
+async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
+        -> Edition:
     """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
     latest = await latest_edition(database)
     if edition != latest:
@@ -79,7 +80,8 @@ async def get_user_from_access_token(db: AsyncSession = Depends(get_session),
     return await _get_user_from_token(TokenType.ACCESS, db, token)
 
 
-async def get_user_from_refresh_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_refresh_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) \
+        -> User:
     """Check which user is making a request by decoding its refresh token
     This function is used as a dependency for other functions
     """

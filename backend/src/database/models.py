@@ -133,8 +133,11 @@ class Project(Base):
     edition: Edition = relationship("Edition", back_populates="projects", uselist=False, lazy="joined")
     coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects", lazy="joined")
     skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects", lazy="joined")
-    partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects", lazy="joined")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project", lazy="joined", cascade="save-update, merge, delete, delete-orphan")
+    partners: list[Partner] = \
+        relationship("Partner", secondary="project_partners", back_populates="projects", lazy="joined")
+    project_roles: list[ProjectRole] = \
+        relationship("ProjectRole", back_populates="project", lazy="joined",
+                     cascade="save-update, merge, delete, delete-orphan")
 
 
 project_coaches = Table(
@@ -220,7 +223,8 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan", lazy="joined")
+    emails: list[DecisionEmail] = \
+        relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan", lazy="joined")
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student", lazy="joined")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="joined")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", lazy="joined")
@@ -301,8 +305,10 @@ class User(Base):
 
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False, lazy="joined")
     drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter", lazy="joined")
-    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches", lazy="joined")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches", lazy="joined")
+    editions: list[Edition] = \
+        relationship("Edition", secondary="user_editions", back_populates="coaches", lazy="joined")
+    projects: list[Project] = \
+        relationship("Project", secondary="project_coaches", back_populates="coaches", lazy="joined")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", lazy="joined")
 
     # Authentication methods
