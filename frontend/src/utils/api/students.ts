@@ -8,7 +8,7 @@ export async function getStudents(
     rolesFilter: number[],
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean
-) : Promise<Students> {
+): Promise<Students> {
     try {
         const response = await axiosInstance.get(
             "/editions/" +
@@ -60,10 +60,19 @@ export async function removeStudent(edition: string, studentId: string): Promise
     }
 }
 
-export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string): Promise<number>{
+export async function makeSuggestion(
+    edition: string,
+    studentId: string,
+    suggestionArg: number,
+    argumentationArg: string
+): Promise<number> {
     try {
-        const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions"
-        await axiosInstance.post(request, { suggestion: suggestionArg, argumentation: argumentationArg });
+        const request =
+            "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions";
+        await axiosInstance.post(request, {
+            suggestion: suggestionArg,
+            argumentation: argumentationArg,
+        });
         return 201;
     } catch (error) {
         if (axios.isAxiosError(error)) {
