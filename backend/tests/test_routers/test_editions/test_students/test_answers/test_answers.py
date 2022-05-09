@@ -61,16 +61,3 @@ async def test_get_answers(database_with_data: AsyncSession, auth_client: AuthCl
         response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
         print(response)
     assert False
-
-async def test_get_projects(database_with_data: AsyncSession, auth_client: AuthClient):
-    """Tests get all projects"""
-    await auth_client.admin()
-    async with auth_client:
-        response = await auth_client.get("/editions/ed2022/projects", follow_redirects=True)
-        print(f"response: {response}")
-        json = response.json()
-        print(f"json: {json}")
-        assert len(json['projects']) == 3
-        assert json['projects'][0]['name'] == "project1"
-        assert json['projects'][1]['name'] == "project2"
-        assert json['projects'][2]['name'] == "super nice project"
