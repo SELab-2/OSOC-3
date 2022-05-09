@@ -4,6 +4,7 @@ from typing import Generator
 import pytest
 from alembic import command
 from alembic import config
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.testclient import TestClient
 
@@ -52,7 +53,7 @@ async def database_session(tables: None) -> Generator[AsyncSession, None, None]:
 
 
 @pytest.fixture
-def test_client(database_session: AsyncSession) -> TestClient:
+def test_client(database_session: AsyncSession) -> AsyncClient:
     """Fixture to create a testing version of our main application"""
 
     def override_get_session() -> Generator[AsyncSession, None, None]:
@@ -63,7 +64,7 @@ def test_client(database_session: AsyncSession) -> TestClient:
 
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
-    return TestClient(app)
+    return AsyncClient(app=app, base_url="http://test")
 
 
 @pytest.fixture
