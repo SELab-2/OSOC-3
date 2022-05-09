@@ -8,7 +8,7 @@ export async function getStudents(
     rolesFilter: number[],
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean
-) {
+) : Promise<Students> {
     try {
         const response = await axiosInstance.get(
             "/editions/" +
@@ -31,7 +31,7 @@ export async function getStudents(
     }
 }
 
-export async function getStudent(edition: string, studentId: string) {
+export async function getStudent(edition: string, studentId: string): Promise<Student> {
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
         const response = await axiosInstance.get(request);
@@ -46,28 +46,28 @@ export async function getStudent(edition: string, studentId: string) {
     }
 }
 
-export async function removeStudent(edition: string, studentId: string) {
+export async function removeStudent(edition: string, studentId: string): Promise<number> {
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
         await axiosInstance.delete(request);
-        return true;
+        return 201;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return 422;
         } else {
             throw error;
         }
     }
 }
 
-export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string){
+export async function makeSuggestion(edition: string, studentId: string, suggestionArg: number, argumentationArg: string): Promise<number>{
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions"
-        const response = await axiosInstance.post(request, { suggestion: suggestionArg, argumentation: argumentationArg });
-        return response.status === 201;
+        await axiosInstance.post(request, { suggestion: suggestionArg, argumentation: argumentationArg });
+        return 201;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return 422;
         } else {
             throw error;
         }
