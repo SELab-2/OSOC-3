@@ -287,8 +287,8 @@ class Suggestion(Base):
     suggestion = Column(Enum(DecisionEnum), nullable=False, default=DecisionEnum.UNDECIDED)
     argumentation = Column(Text, nullable=True)
 
-    student: Student = relationship("Student", back_populates="suggestions", uselist=False)
-    coach: User = relationship("User", back_populates="suggestions", uselist=False)
+    student: Student = relationship("Student", back_populates="suggestions", uselist=False, lazy="joined")
+    coach: User = relationship("User", back_populates="suggestions", uselist=False, lazy="joined")
 
 
 class User(Base):

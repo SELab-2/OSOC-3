@@ -21,7 +21,7 @@ async def get_suggestions_of_student(db: AsyncSession, student_id: int | None) -
     """Give all suggestions of a student"""
     query = select(Suggestion).where(Suggestion.student_id == student_id)
     result = await db.execute(query)
-    return result.scalars().all()
+    return result.unique().scalars().all()
 
 
 async def get_own_suggestion(db: AsyncSession, student_id: int | None, user_id: int | None) -> Suggestion | None:
@@ -33,13 +33,13 @@ async def get_own_suggestion(db: AsyncSession, student_id: int | None, user_id: 
     query = select(Suggestion).where(Suggestion.student_id == student_id).where(
         Suggestion.coach_id == user_id)
     result = await db.execute(query)
-    return result.scalar_one_or_none()
+    return result.unique().scalar_one_or_none()
 
 
 async def get_suggestion_by_id(db: AsyncSession, suggestion_id: int) -> Suggestion:
     """Give a suggestion based on the ID"""
     result = await db.execute(select(Suggestion).where(Suggestion.suggestion_id == suggestion_id))
-    return result.scalar_one()
+    return result.unique().scalar_one()
 
 
 async def delete_suggestion(db: AsyncSession, suggestion: Suggestion) -> None:
@@ -62,4 +62,4 @@ async def get_suggestions_of_student_by_type(db: AsyncSession, student_id: int |
     query = select(Suggestion).where(Suggestion.student_id == student_id)\
         .where(Suggestion.suggestion == type_suggestion)
     result = await db.execute(query)
-    return result.scalars().all()
+    return result.unique().scalars().all()
