@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -130,7 +131,7 @@ export default function ProjectPage() {
                     }}
                     placeholder="project name"
                 />
-                
+
                 {role === Role.ADMIN && editionId === editions[0] && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
