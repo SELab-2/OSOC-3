@@ -17,10 +17,6 @@ There are different ways to log in, depending on the way in which you have regis
 
 1. Click the "Log in" button with the GitHub logo.
 
-### Google
-
-1. Click the "Log in" button with the Google logo.
-
 ## Admins
 
 This section is for admins. It contains all features to manage users. A user is someone who uses the tool (this does not include students). A user can be coach of one or more editions. He can only see data and work (making suggestions...) on these editions. A user can be admin of the tool. An admin can see/edit/delete all data from all editions and manage other users. This role is only for fully trusted people. An admin doesn't need to be coach from an edition to participate in the selection process.
@@ -44,7 +40,7 @@ At the top middle of the page, you find a dropdown labeled **Requests**. When yo
 
 Note: the list only contains requests from the current selected edition. Each edition has its own requests.
 
-The list can be filtered by name. Each row of the table contains the name and email address of a person. The email contains an icon indicating whether the person registered via email, GitHub or Google. Next to each row there are two buttons to accept or reject the person. When a person is accepted, he will automatically be added as coach to the current edition.
+The list can be filtered by name. Each row of the table contains the name and email address of a person. The email contains an icon indicating whether the person registered via email, GitHub. Next to each row there are two buttons to accept or reject the person. When a person is accepted, he will automatically be added as coach to the current edition.
 
 #### Coaches
 

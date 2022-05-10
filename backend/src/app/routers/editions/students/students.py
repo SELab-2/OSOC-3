@@ -20,7 +20,7 @@ students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
 
 
-@students_router.get("/", dependencies=[Depends(require_auth)], response_model=ReturnStudentList)
+@students_router.get("", dependencies=[Depends(require_auth)], response_model=ReturnStudentList)
 async def get_students(db: Session = Depends(get_session),
                        commons: CommonQueryParams = Depends(CommonQueryParams),
                        edition: Edition = Depends(get_edition)):

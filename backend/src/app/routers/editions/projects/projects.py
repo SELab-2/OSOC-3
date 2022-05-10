@@ -16,7 +16,7 @@ projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
 projects_router.include_router(project_students_router, prefix="/{project_id}")
 
 
-@projects_router.get("/", response_model=ProjectList)
+@projects_router.get("", response_model=ProjectList)
 async def get_projects(db: Session = Depends(get_session), edition: Edition = Depends(get_edition),
                        search_params: QueryParamsProjects = Depends(QueryParamsProjects),
                        user: User = Depends(require_coach)):
@@ -26,7 +26,7 @@ async def get_projects(db: Session = Depends(get_session), edition: Edition = De
     return logic.get_project_list(db, edition, search_params, user)
 
 
-@projects_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Project,
+@projects_router.post("", status_code=status.HTTP_201_CREATED, response_model=Project,
                       dependencies=[Depends(require_admin)])
 async def create_project(input_project: InputProject,
                          db: Session = Depends(get_session), edition: Edition = Depends(get_latest_edition)):
