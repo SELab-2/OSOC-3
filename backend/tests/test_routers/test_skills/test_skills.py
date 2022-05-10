@@ -37,7 +37,7 @@ def test_create_skill(database_session: Session, auth_client: AuthClient):
     auth_client.admin()
 
     # Make the post request
-    response = auth_client.post("/skills/", data=dumps({"name": "Backend", "description": "must know react"}))
+    response = auth_client.post("/skills", data=dumps({"name": "Backend", "description": "must know react"}))
     assert response.status_code == status.HTTP_201_CREATED
     assert auth_client.get("/skills/").json()["skills"][0]["name"] == "Backend"
     assert auth_client.get("/skills/").json()["skills"][0]["description"] == "must know react"
