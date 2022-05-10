@@ -9,7 +9,6 @@ import {
     Client,
     ClientsContainer,
     NumberOfStudents,
-    AddButton,
     ClientContainer,
 } from "./styles";
 
@@ -27,7 +26,11 @@ import {
 import { useAuth } from "../../../contexts";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import { RemoveButton } from "../CreateProjectPage/styles";
-import { TitleAndEdit } from "../../../components/ProjectDetailComponents";
+import {
+    CoachInput,
+    PartnerInput,
+    TitleAndEdit,
+} from "../../../components/ProjectDetailComponents";
 import projectToEditProject from "../../../utils/logic/project";
 
 /**
@@ -135,12 +138,12 @@ export default function ProjectDetailPage() {
 
                 <ClientsContainer>
                     {editedProject.partners.map((element, _index) => (
-                        <ClientContainer>
-                            <Client key={_index}>{element.name}</Client>
+                        <ClientContainer key={_index}>
+                            <Client>{element.name}</Client>
                             {editing && (
                                 <RemoveButton
                                     onClick={() => {
-                                        const newPartners = [...project.partners];
+                                        const newPartners = [...editedProject.partners];
                                         newPartners.splice(_index, 1);
                                         const newProject: Project = {
                                             ...project,
@@ -154,7 +157,9 @@ export default function ProjectDetailPage() {
                             )}
                         </ClientContainer>
                     ))}
-                    {editing && <AddButton>Add Partner</AddButton>}
+                    {editing && (
+                        <PartnerInput project={editedProject!} setProject={setEditedProject} />
+                    )}
                     <NumberOfStudents>
                         {project.numberOfStudents}
                         <BsPersonFill />
@@ -165,10 +170,13 @@ export default function ProjectDetailPage() {
                     {editedProject.coaches.map((element, _index) => (
                         <CoachContainer key={_index}>
                             <CoachText>{element.name}</CoachText>
+                            {_index}
                             {editing && (
                                 <RemoveButton
                                     onClick={() => {
-                                        const newCoaches = [...project.coaches];
+                                        const newCoaches = [...editedProject.coaches];
+                                        console.log(_index);
+
                                         newCoaches.splice(_index, 1);
                                         const newProject: Project = {
                                             ...project,
@@ -182,7 +190,9 @@ export default function ProjectDetailPage() {
                             )}
                         </CoachContainer>
                     ))}
-                    {editing && <AddButton>Add Coach</AddButton>}
+                    {editing && (
+                        <CoachInput project={editedProject!} setProject={setEditedProject} />
+                    )}
                 </CoachesContainer>
 
                 <div>

@@ -37,12 +37,3 @@ export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
 `;
-
-export const AddButton = styled.button`
-    padding: 0 10px;
-    background-color: #00bfff;
-    color: white;
-    border: none;
-    margin-right: 10px;
-    border-radius: 5px;
-`;

@@ -35,7 +35,7 @@ export const OpenIcon = styled(BsArrowUpRightSquare)`
 
 export const ClientContainer = styled.div`
     display: flex;
-    align-items: top;
+    align-items: center;
     justify-content: space-between;
     color: lightgray;
 `;
@@ -58,6 +58,7 @@ export const NumberOfStudents = styled.div`
 
 export const CoachesContainer = styled.div`
     display: flex;
+    align-items: center;
     margin-top: 20px;
     overflow-x: auto;
 `;
