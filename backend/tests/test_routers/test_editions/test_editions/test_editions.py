@@ -108,10 +108,10 @@ def test_create_edition_admin(database_session: Session, auth_client: AuthClient
     auth_client.admin()
 
     # Verify that editions doesn't exist yet
-    assert auth_client.get("/editions/ed2022/").status_code == status.HTTP_404_NOT_FOUND
+    assert auth_client.get("/editions/ed2022").status_code == status.HTTP_404_NOT_FOUND
 
     # Make the post request
-    response = auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+    response = auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
     assert response.status_code == status.HTTP_201_CREATED
     assert auth_client.get("/editions/").json()["editions"][0]["year"] == 2022
     assert auth_client.get("/editions/").json()["editions"][0]["editionId"] == 1
@@ -121,7 +121,7 @@ def test_create_edition_admin(database_session: Session, auth_client: AuthClient
 
 def test_create_edition_unauthorized(database_session: Session, auth_client: AuthClient):
     """Test creating an edition without any credentials"""
-    assert auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"}).status_code == status.HTTP_401_UNAUTHORIZED
+    assert auth_client.post("/editions", json={"year": 2022, "name": "ed2022"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 def test_create_edition_coach(database_session: Session, auth_client: AuthClient):
@@ -132,25 +132,25 @@ def test_create_edition_coach(database_session: Session, auth_client: AuthClient
 
     auth_client.coach(edition)
 
-    assert auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"}).status_code == status.HTTP_403_FORBIDDEN
+    assert auth_client.post("/editions", json={"year": 2022, "name": "ed2022"}).status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_create_edition_existing_year(database_session: Session, auth_client: AuthClient):
     """Test that creating an edition for a year that already exists throws an error"""
     auth_client.admin()
 
-    response = auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+    response = auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
     assert response.status_code == status.HTTP_201_CREATED
 
     # Try to make an edition in the same year
-    response = auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+    response = auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
 def test_create_edition_malformed(database_session: Session, auth_client: AuthClient):
     auth_client.admin()
 
-    response = auth_client.post("/editions/", json={"year": 2023, "name": "Life is fun"})
+    response = auth_client.post("/editions", json={"year": 2023, "name": "Life is fun"})
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
