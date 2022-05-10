@@ -130,7 +130,7 @@ export default function ProjectPage() {
                     }}
                     placeholder="project name"
                 />
-                <SearchButton onClick={refreshProjects}>Search</SearchButton>
+                
                 {role === Role.ADMIN && editionId === editions[0] && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
