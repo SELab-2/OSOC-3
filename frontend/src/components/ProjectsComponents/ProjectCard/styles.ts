@@ -92,3 +92,9 @@ export const Delete = styled.button`
 `;
 
 export const PopUp = styled(Modal)``;
+
+export const ProjectRoleContainer = styled.div`
+    margin: 10px;
+    background-color: #1a1a36;
+    padding: 10px;
+`;

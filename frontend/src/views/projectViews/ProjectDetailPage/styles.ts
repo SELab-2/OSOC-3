@@ -1,7 +1,15 @@
 import styled from "styled-components";
 
+export const ProjectPageContainer = styled.div`
+    display: flex;
+    height: 90vh;
+`;
+
 export const ProjectContainer = styled.div`
+    width: 100%;
     margin: 20px;
+    border: 5px;
+    overflow: auto;
 `;
 
 export const GoBack = styled.div`
@@ -36,4 +44,16 @@ export const Client = styled.h5`
 export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
+`;
+
+export const Suggestions = styled.div`
+    min-height: 10vh;
+`;
+
+export const SuggestionContainer = styled.div`
+    margin: 10px;
+    background-color: #1a1a28;
+    padding: 10px;
+    max-width: 25%;
+    overflow: auto;
 `;
