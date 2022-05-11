@@ -7,6 +7,8 @@ export const Input = styled.input`
     color: white;
     border: none;
     border-radius: 5px;
+    width: 15%;
+    min-width: 100px;
 `;
 
 export const AddButton = styled.button`

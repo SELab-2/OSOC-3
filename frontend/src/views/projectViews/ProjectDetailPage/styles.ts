@@ -30,16 +30,6 @@ export const ClientsContainer = styled.div`
     overflow-x: auto;
 `;
 
-export const ClientContainer = styled.div`
-    display: flex;
-    margin-right: 2%;
-`;
-
-export const Client = styled.h5`
-    width: max-content;
-    margin-bottom: 0;
-    margin-right: 0;
-`;
 
 export const NumberOfStudents = styled.div`
     display: flex;

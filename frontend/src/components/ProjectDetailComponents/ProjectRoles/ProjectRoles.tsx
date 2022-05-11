@@ -1,6 +1,6 @@
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { ProjectRoleContainer, SuggestionContainer, Suggestions } from "./styles";
-export function ProjectRoles({
+export default function ProjectRoles({
     projectRoles,
 }: {
     projectRoles: {

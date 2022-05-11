@@ -1,41 +1,35 @@
-import { ProjectRoles } from "./../../../components/ProjectDetailComponents/ProjectRoles/ProjectRoles";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+
 import { Project, CreateProject as EditProject } from "../../../data/interfaces";
 
+import projectToEditProject from "../../../utils/logic/project";
+
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import {
-    GoBack,
-    ProjectContainer,
-    Client,
-    ClientsContainer,
-    NumberOfStudents,
-    ClientContainer,
-    ProjectPageContainer,
-} from "./styles";
+import { getStudent } from "../../../utils/api/students";
+
+import { useAuth } from "../../../contexts";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
-import { TiDeleteOutline } from "react-icons/ti";
 
 import {
-    CoachContainer,
-    CoachesContainer,
-    CoachText,
-} from "../../../components/ProjectsComponents/ProjectCard/styles";
-import { useAuth } from "../../../contexts";
+    GoBack,
+    ProjectContainer,
+    ClientsContainer,
+    NumberOfStudents,
+    ProjectPageContainer,
+} from "./styles";
+
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
-import { RemoveButton } from "../CreateProjectPage/styles";
 import {
-    CoachInput,
-    PartnerInput,
     TitleAndEdit,
     StudentList,
+    ProjectRoles,
+    ProjectCoaches,
+    ProjectPartners,
 } from "../../../components/ProjectDetailComponents";
-import projectToEditProject from "../../../utils/logic/project";
-
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { getStudent } from "../../../utils/api/students";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -136,63 +130,24 @@ export default function ProjectDetailPage() {
                     ></ConfirmDelete>
 
                     <ClientsContainer>
-                        {editedProject.partners.map((element, _index) => (
-                            <ClientContainer key={_index}>
-                                <Client>{element.name}</Client>
-                                {editing && (
-                                    <RemoveButton
-                                        onClick={() => {
-                                            const newPartners = [...editedProject.partners];
-                                            newPartners.splice(_index, 1);
-                                            const newProject: Project = {
-                                                ...project,
-                                                partners: newPartners,
-                                            };
-                                            setEditedProject(newProject);
-                                        }}
-                                    >
-                                        <TiDeleteOutline size={"20px"} />
-                                    </RemoveButton>
-                                )}
-                            </ClientContainer>
-                        ))}
-                        {editing && (
-                            <PartnerInput project={editedProject!} setProject={setEditedProject} />
-                        )}
+                        <ProjectPartners
+                            project={project}
+                            editedProject={editedProject}
+                            setEditedProject={setEditedProject}
+                            editing={editing}
+                        />
                         <NumberOfStudents>
                             {project.numberOfStudents}
                             <BsPersonFill />
                         </NumberOfStudents>
                     </ClientsContainer>
 
-                    <CoachesContainer>
-                        {editedProject.coaches.map((element, _index) => (
-                            <CoachContainer key={_index}>
-                                <CoachText>{element.name}</CoachText>
-                                {_index}
-                                {editing && (
-                                    <RemoveButton
-                                        onClick={() => {
-                                            const newCoaches = [...editedProject.coaches];
-                                            console.log(_index);
-
-                                            newCoaches.splice(_index, 1);
-                                            const newProject: Project = {
-                                                ...project,
-                                                coaches: newCoaches,
-                                            };
-                                            setEditedProject(newProject);
-                                        }}
-                                    >
-                                        <TiDeleteOutline size={"20px"} />
-                                    </RemoveButton>
-                                )}
-                            </CoachContainer>
-                        ))}
-                        {editing && (
-                            <CoachInput project={editedProject!} setProject={setEditedProject} />
-                        )}
-                    </CoachesContainer>
+                    <ProjectCoaches
+                        project={project}
+                        editedProject={editedProject}
+                        setEditedProject={setEditedProject}
+                        editing={editing}
+                    />
 
                     <ProjectRoles projectRoles={projectRoles} />
                 </ProjectContainer>
