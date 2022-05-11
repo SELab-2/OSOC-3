@@ -82,7 +82,7 @@ def test_create_project(database_session: Session, auth_client: AuthClient):
 
     auth_client.admin()
 
-    response = auth_client.post("/editions/ed2022/projects/", json={
+    response = auth_client.post("/editions/ed2022/projects", json={
         "name": "test",
         "partners": ["ugent"],
         "coaches": [user.user_id]
@@ -153,7 +153,7 @@ def test_create_project_no_name(database_session: Session, auth_client: AuthClie
     auth_client.admin()
 
     database_session.begin_nested()
-    response = auth_client.post(f"/editions/{edition.name}/projects/", json={
+    response = auth_client.post(f"/editions/{edition.name}/projects", json={
         "partners": [],
         "coaches": []
     })
@@ -249,7 +249,7 @@ def test_create_project_old_edition(database_session: Session, auth_client: Auth
 
     auth_client.admin()
 
-    response = auth_client.post(f"/editions/{edition_22.name}/projects/", json={
+    response = auth_client.post(f"/editions/{edition_22.name}/projects", json={
         "name": "test",
         "partners": ["ugent"],
         "coaches": []
@@ -265,7 +265,7 @@ def test_search_project_name(database_session: Session, auth_client: AuthClient)
     database_session.commit()
 
     auth_client.coach(edition)
-    response = auth_client.get(f"/editions/{edition.name}/projects/?name=1")
+    response = auth_client.get(f"/editions/{edition.name}/projects?name=1")
     assert len(response.json()["projects"]) == 1
     assert response.json()["projects"][0]["name"] == "project 1"
 

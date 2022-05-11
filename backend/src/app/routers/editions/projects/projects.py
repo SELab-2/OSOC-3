@@ -20,7 +20,7 @@ projects_router = APIRouter(prefix="/projects", tags=[Tags.PROJECTS])
 projects_router.include_router(project_students_router, prefix="/{project_id}/roles/{project_role_id}")
 
 
-@projects_router.get("/", response_model=ProjectList)
+@projects_router.get("", response_model=ProjectList)
 async def get_projects(
         db: Session = Depends(get_session),
         edition: Edition = Depends(get_edition),
@@ -31,7 +31,7 @@ async def get_projects(
 
 
 @projects_router.post(
-    "/",
+    "",
     status_code=status.HTTP_201_CREATED,
     response_model=Project,
     dependencies=[Depends(require_admin)]

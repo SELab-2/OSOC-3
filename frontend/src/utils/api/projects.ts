@@ -20,7 +20,7 @@ export async function getProjects(
         const response = await axiosInstance.get(
             "/editions/" +
                 edition +
-                "/projects/?name=" +
+                "/projects?name=" +
                 name +
                 "&coach=" +
                 ownProjects.toString() +

@@ -1,30 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { ProjectCard, LoadSpinner } from "../../../components/ProjectsComponents";
-import {
-    CardsGrid,
-    CreateButton,
-    SearchButton,
-    SearchField,
-    OwnProject,
-    ProjectsContainer,
-    LoadMoreContainer,
-    LoadMoreButton,
-} from "./styles";
+import { CreateButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
+import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroller";
 import { useAuth } from "../../../contexts";
+
 import { Role } from "../../../data/enums";
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
  */
 export default function ProjectPage() {
+    const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
+    const [allProjectsFetched, setAllProjectsFetched] = useState(false);
+    const [error, setError] = useState<string | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -36,54 +31,108 @@ export default function ProjectPage() {
     const params = useParams();
     const editionId = params.editionId!;
 
-    const { role } = useAuth();
+    const { role, editions } = useAuth();
 
     /**
      * Used to fetch the projects
      */
-    async function callProjects(newPage: number) {
-        if (loading) return;
-        setLoading(true);
-        const response = await getProjects(editionId, searchString, ownProjects, newPage);
-        setGotProjects(true);
+    async function loadProjects() {
+        if (loading) {
+            return;
+        }
 
-        if (response) {
-            if (response.projects.length === 0) {
-                setMoreProjectsAvailable(false);
-            } else {
+        if (allProjectsFetched) {
+            setProjects(
+                allProjects.filter(project =>
+                    project.name.toUpperCase().includes(searchString.toUpperCase())
+                )
+            );
+            setMoreProjectsAvailable(false);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await getProjects(editionId, searchString, ownProjects, page);
+            if (response) {
+                if (response.projects.length === 0) {
+                    setMoreProjectsAvailable(false);
+                }
+                if (page === 0) {
+                    setProjects(response.projects);
+                } else {
+                    setProjects(projects.concat(response.projects));
+                }
+
+                if (searchString === "") {
+                    if (response.projects.length === 0) {
+                        setAllProjectsFetched(true);
+                    }
+                    if (page === 0) {
+                        setAllProjects(response.projects);
+                    } else {
+                        setAllProjects(allProjects.concat(response.projects));
+                    }
+                }
+
                 setPage(page + 1);
-                setProjects(projects.concat(response.projects));
+                setGotProjects(true);
+            } else {
+                setError("Oops, something went wrong...");
             }
+        } catch (exception) {
+            setError("Oops, something went wrong...");
         }
         setLoading(false);
     }
 
-    async function refreshProjects() {
+    /**
+     * Reset fetched projects
+     */
+    function refreshProjects() {
         setProjects([]);
         setPage(0);
         setMoreProjectsAvailable(true);
+        setAllProjectsFetched(false);
         setGotProjects(false);
     }
 
-    useEffect(() => {
-        if (moreProjectsAvailable && !gotProjects) {
-            callProjects(0);
-        }
-    });
+    /**
+     * Remove a project in local list.
+     * @param project The project to remove.
+     */
+    function removeProject(project: Project) {
+        setProjects(
+            projects.filter(object => {
+                return object !== project;
+            })
+        );
+    }
+
+    /**
+     * Filter the projects by name
+     * @param searchTerm
+     */
+    function filter(searchTerm: string) {
+        setPage(0);
+        setGotProjects(false);
+        setMoreProjectsAvailable(true);
+        setSearchString(searchTerm);
+        setProjects([]);
+    }
 
     return (
         <div>
             <div>
                 <SearchField
                     value={searchString}
-                    onChange={e => setSearchString(e.target.value)}
-                    placeholder="project name"
-                    onKeyDown={e => {
-                        if (e.key === "Enter") refreshProjects();
+                    onChange={e => {
+                        filter(e.target.value);
                     }}
+                    placeholder="project name"
                 />
-                <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {role === Role.ADMIN && (
+
+                {role === Role.ADMIN && editionId === editions[0] && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >
@@ -101,44 +150,15 @@ export default function ProjectPage() {
                     refreshProjects();
                 }}
             />
-
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={(newPage: number) => {
-                    console.log("loading more" + newPage);
-                }}
-                hasMore={moreProjectsAvailable}
-                useWindow={false}
-                initialLoad={true}
-            >
-                <ProjectsContainer>
-                    <CardsGrid>
-                        {projects.map((project, _index) => (
-                            <ProjectCard
-                                project={project}
-                                refreshProjects={refreshProjects}
-                                key={_index}
-                            />
-                        ))}
-                    </CardsGrid>
-                </ProjectsContainer>
-            </InfiniteScroll>
-
-            <LoadSpinner show={loading} />
-
-            {moreProjectsAvailable && (
-                <LoadMoreContainer>
-                    <LoadMoreButton
-                        onClick={() => {
-                            if (moreProjectsAvailable) {
-                                callProjects(page);
-                            }
-                        }}
-                    >
-                        Load more projects
-                    </LoadMoreButton>
-                </LoadMoreContainer>
-            )}
+            <ProjectTable
+                projects={projects}
+                loading={loading}
+                gotData={gotProjects}
+                getMoreProjects={loadProjects}
+                moreProjectsAvailable={moreProjectsAvailable}
+                removeProject={removeProject}
+                error={error}
+            />
         </div>
     );
 }
