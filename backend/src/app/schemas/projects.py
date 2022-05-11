@@ -40,8 +40,8 @@ class ProjectRoleSuggestion(CamelCaseModel):
     """Represents a ProjectRole from the database"""
     project_role_suggestion_id: int
     argumentation: str | None
-    drafter: User
-    student: Student
+    drafter: User | None
+    student: Student | None
 
     class Config:
         """Set to ORM mode"""

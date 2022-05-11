@@ -17,7 +17,7 @@ class Suggestion(CamelCaseModel):
     """
 
     suggestion_id: int
-    coach: User
+    coach: User | None
     suggestion: DecisionEnum
     argumentation: str
 
