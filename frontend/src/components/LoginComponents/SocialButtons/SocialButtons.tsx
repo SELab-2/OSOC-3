@@ -18,7 +18,7 @@ export default function SocialButtons() {
     return (
         <SocialsContainer>
             <Socials>
-                <GithubLoginButton onClick={callGitHubLogIn}/>
+                <GithubLoginButton onClick={callGitHubLogIn} />
             </Socials>
         </SocialsContainer>
     );
