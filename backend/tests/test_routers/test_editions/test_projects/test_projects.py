@@ -109,12 +109,12 @@ def test_create_project_same_partner(database_session: Session, auth_client: Aut
 
     auth_client.admin()
 
-    auth_client.post(f"/editions/{edition.name}/projects/", json={
+    auth_client.post(f"/editions/{edition.name}/projects", json={
         "name": "test",
         "partners": ["ugent"],
         "coaches": [user.user_id]
     })
-    auth_client.post(f"/editions/{edition.name}/projects/", json={
+    auth_client.post(f"/editions/{edition.name}/projects", json={
         "name": "test",
         "partners": ["ugent"],
         "coaches": [user.user_id]
@@ -129,8 +129,7 @@ def test_create_project_non_existing_coach(database_session: Session, auth_clien
     database_session.commit()
 
     auth_client.admin()
-    endpoint = f"/editions/{edition.name}/projects/"
-    print(database_session.query(Edition).all())
+    endpoint = f"/editions/{edition.name}/projects"
 
     database_session.begin_nested()
     response = auth_client.post(endpoint, json={
