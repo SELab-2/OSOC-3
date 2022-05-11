@@ -118,7 +118,8 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: list[Project] = relationship("Project", secondary="project_partners", back_populates="partners")
+    projects: list[Project] = relationship("Project", secondary="project_partners",
+                                           back_populates="partners", lazy="joined")
 
 
 class Project(Base):

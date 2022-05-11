@@ -125,7 +125,7 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
         response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
         assert len(json['projects']) == 3
-        assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 0
+        assert len((await database_with_data.execute(select(Partner))).unique().scalars().all()) == 0
 
         response = \
             await auth_client.post("/editions/ed2022/projects/",
@@ -136,7 +136,7 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
         assert response.json()['name'] == 'test'
         assert response.json()["partners"][0]["name"] == "ugent"
 
-        assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 1
+        assert len((await database_with_data.execute(select(Partner))).unique().scalars().all()) == 1
 
         response = await auth_client.get('/editions/ed2022/projects', follow_redirects=True)
         json = response.json()
@@ -148,7 +148,7 @@ async def test_create_project(database_with_data: AsyncSession, auth_client: Aut
 async def test_create_project_same_partner(database_with_data: AsyncSession, auth_client: AuthClient):
     """Tests that creating a project doesn't create a partner if the partner already exists"""
     await auth_client.admin()
-    assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 0
+    assert len((await database_with_data.execute(select(Partner))).unique().scalars().all()) == 0
 
     async with auth_client:
         await auth_client.post("/editions/ed2022/projects/",
@@ -159,7 +159,7 @@ async def test_create_project_same_partner(database_with_data: AsyncSession, aut
                                json={"name": "test2",
                                      "number_of_students": 2,
                                      "skills": [1, 2], "partners": ["ugent"], "coaches": [1]})
-        assert len((await database_with_data.execute(select(Partner))).scalars().all()) == 1
+        assert len((await database_with_data.execute(select(Partner))).unique().scalars().all()) == 1
 
 
 async def test_create_project_non_existing_skills(database_with_data: AsyncSession, auth_client: AuthClient):

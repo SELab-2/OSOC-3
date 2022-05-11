@@ -66,7 +66,7 @@ async def add_project(db: AsyncSession, edition: Edition, input_project: InputPr
         try:
             query = select(Partner).where(Partner.name == partner)
             result = await db.execute(query)
-            partners_obj.append(result.scalars().one())
+            partners_obj.append(result.unique().scalars().one())
         except NoResultFound:
             partner_obj = Partner(name=partner)
             db.add(partner_obj)
