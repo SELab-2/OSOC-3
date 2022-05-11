@@ -42,11 +42,15 @@ export default function AdminList(props: {
                     <th>Remove</th>
                 </tr>
             </thead>
-        <tbody>
-            {props.admins.map(admin => (
-                <AdminListItem key={admin.userId} admin={admin} removeAdmin={props.removeAdmin} />
-            ))}
-        </tbody>
+            <tbody>
+                {props.admins.map(admin => (
+                    <AdminListItem
+                        key={admin.userId}
+                        admin={admin}
+                        removeAdmin={props.removeAdmin}
+                    />
+                ))}
+            </tbody>
         </AdminsTable>
     );
 }
