@@ -15,8 +15,7 @@ export default function ProjectRoles({
         <div>
             {projectRoles.map((projectRole, _index) => (
                 <ProjectRoleContainer key={_index}>
-                    {projectRole.skill}
-                    <br></br>
+                    <h4>{projectRole.skill}</h4>
                     {projectRole.suggestions.length.toString() +
                         " / " +
                         projectRole.slots.toString()}

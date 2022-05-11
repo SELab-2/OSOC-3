@@ -1,5 +1,14 @@
 import React from "react";
-import { Title, TitleContainer, Save, Cancel, Delete, TitleInput, Edit } from "./styles";
+import {
+    Title,
+    TitleContainer,
+    Save,
+    Cancel,
+    Delete,
+    TitleInput,
+    Edit,
+    EditDeleteContainer,
+} from "./styles";
 
 import { MdOutlineEditNote } from "react-icons/md";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -38,34 +47,36 @@ export default function TitleAndEdit({
                     }}
                 />
             )}
-            {!editing ? (
-                <Edit>
-                    <MdOutlineEditNote size={"30px"} onClick={() => setEditing(true)} />
-                </Edit>
-            ) : (
-                <>
-                    <Save
-                        onClick={async () => {
-                            await editProject();
-                            setEditing(false);
-                        }}
-                    >
-                        Save
-                    </Save>
-                    <Cancel
-                        onClick={() => {
-                            setEditing(false);
-                            setEditedProject(project);
-                        }}
-                    >
-                        Cancel
-                    </Cancel>
-                </>
-            )}
             {role === Role.ADMIN && (
-                <Delete onClick={handleShow}>
-                    <HiOutlineTrash size={"20px"} />
-                </Delete>
+                <EditDeleteContainer>
+                    {!editing ? (
+                        <Edit>
+                            <MdOutlineEditNote size={"30px"} onClick={() => setEditing(true)} />
+                        </Edit>
+                    ) : (
+                        <>
+                            <Save
+                                onClick={async () => {
+                                    await editProject();
+                                    setEditing(false);
+                                }}
+                            >
+                                Save
+                            </Save>
+                            <Cancel
+                                onClick={() => {
+                                    setEditing(false);
+                                    setEditedProject(project);
+                                }}
+                            >
+                                Cancel
+                            </Cancel>
+                        </>
+                    )}
+                    <Delete onClick={handleShow}>
+                        <HiOutlineTrash size={"20px"} />
+                    </Delete>
+                </EditDeleteContainer>
             )}
         </TitleContainer>
     );

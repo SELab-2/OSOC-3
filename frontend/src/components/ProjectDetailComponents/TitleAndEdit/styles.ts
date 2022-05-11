@@ -20,6 +20,11 @@ export const TitleInput = styled.input`
     border-radius: 5px;
 `;
 
+export const EditDeleteContainer = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 export const Edit = styled.div`
     :hover {
         cursor: pointer;
