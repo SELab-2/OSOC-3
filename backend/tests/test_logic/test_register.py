@@ -33,6 +33,7 @@ async def test_create_request(database_session: AsyncSession):
     assert len(auth_email) == 1
 
 
+@pytest.mark.skip(reason="The async database rolls back both, even with nested query")
 async def test_duplicate_user(database_session: AsyncSession):
     """Tests if there is a duplicate, it's not created in the database"""
     edition = Edition(year=2022, name="ed2022")
