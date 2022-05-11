@@ -9,20 +9,16 @@ import { CoachListItem } from "./index";
 /**
  * A list of [[CoachListItem]]s.
  * @param props.coaches The list of coaches which needs to be shown.
- * @param props.loading Data is not available yet.
  * @param props.edition The edition.
- * @param props.gotData All data is received.
  * @param props.removeCoach A function which will be called when a coach is removed.
  * @param props.getMoreCoaches A function to load more coaches.
  * @param props.moreCoachesAvailable More unfetched coaches available.
  */
 export default function CoachList(props: {
     coaches: User[];
-    loading: boolean;
     edition: string;
-    gotData: boolean;
     removeCoach: (coach: User) => void;
-    getMoreCoaches: (page: number) => void;
+    getMoreCoaches: () => void;
     moreCoachesAvailable: boolean;
 }) {
     return (
