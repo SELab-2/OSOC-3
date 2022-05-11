@@ -41,17 +41,3 @@ export const OwnProject = styled(Form.Check)`
 export const ProjectsContainer = styled.div`
     overflow: auto;
 `;
-
-export const LoadMoreContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    margin: 20px;
-`;
-
-export const LoadMoreButton = styled.button`
-    border-radius: 5px;
-    border: 0px;
-    padding: 5px 10px;
-    color: white;
-    background-color: #131329;
-`;

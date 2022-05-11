@@ -83,3 +83,10 @@ export const Error = styled.div`
 export const RequestListContainer = styled.div`
     height: 400px;
 `;
+
+export const SearchButton = styled(Button)`
+    margin-left: 10px;
+    color: white;
+    font-size: 15px;
+    height: 33px;
+`;
