@@ -7,12 +7,18 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 /**
  * Red button with a garbage can icon
  */
-export default function DeleteButton({ label = "", showIcon = true, ...props }: BasicButton) {
+export default function DeleteButton({
+    label = "",
+    showIcon = true,
+    children,
+    ...props
+}: BasicButton) {
     return (
         <RedButton {...props}>
             {showIcon && (
                 <FontAwesomeIcon icon={faTrashCan as IconProp} className={label ? "me-2" : ""} />
             )}
+            {children}
             {label}
         </RedButton>
     );

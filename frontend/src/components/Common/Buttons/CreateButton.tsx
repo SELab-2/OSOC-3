@@ -6,13 +6,20 @@ import { GreenButton } from "./styles";
 
 /**
  * Green button with a "+"-icon
+ * Changes to orange on hover because the OSOC-site does this too
  */
-export default function CreateButton({ label = "", showIcon = true, ...props }: BasicButton) {
+export default function CreateButton({
+    label = "",
+    showIcon = true,
+    children,
+    ...props
+}: BasicButton) {
     return (
         <GreenButton {...props}>
             {showIcon && (
                 <FontAwesomeIcon icon={faPlus as IconProp} className={label ? "me-2" : ""} />
             )}
+            {children}
             {label}
         </GreenButton>
     );
