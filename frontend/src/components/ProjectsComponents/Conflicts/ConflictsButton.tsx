@@ -30,7 +30,7 @@ export default function ConflictsButton(props: { editionId: string }) {
     if (show) {
         return (
             <SidePanel variant="dark" show={show} onHide={handleClose} placement="end">
-                <Offcanvas.Header closeButton>
+                <Offcanvas.Header closeButton closeVariant="white">
                     <Offcanvas.Title>
                         <h2>Resolve Conflicts</h2>
                     </Offcanvas.Title>
@@ -63,5 +63,17 @@ export default function ConflictsButton(props: { editionId: string }) {
             </SidePanel>
         );
     }
-    return <ConButton onClick={handleShow}>{`Conflicts (${conflicts.length})`}</ConButton>;
+
+    let text;
+    if (conflicts.length === 0) {
+        text = "No conflicts";
+    } else {
+        text = `Conflicts (${conflicts.length})`;
+    }
+
+    return (
+        <ConButton onClick={handleShow} disabled={conflicts.length === 0}>
+            {text}
+        </ConButton>
+    );
 }
