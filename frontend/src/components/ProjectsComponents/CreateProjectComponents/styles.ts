@@ -7,6 +7,8 @@ export const Input = styled.input`
     color: white;
     border: none;
     border-radius: 5px;
+    width: 35vw;
+    min-width: 300px;
 `;
 
 export const AddButton = styled.button`
@@ -23,7 +25,7 @@ export const RemoveButton = styled.button`
     background-color: #f14a3b;
     color: white;
     border: none;
-    margin-left: 10px;
+    margin-left: auto;
     border-radius: 1px;
     display: flex;
     align-items: center;
@@ -39,10 +41,12 @@ export const AddedItem = styled.div`
     margin-left: 0;
     padding: 5px;
     background-color: #1a1a36;
-    width: fit-content;
-    max-width: 75%;
+    width: 35vw;
+    max-width: 50%;
     border-radius: 5px;
     display: flex;
+    align-content: space-around;
+    overflow: auto;
 `;
 
 export const WarningContainer = styled.div`

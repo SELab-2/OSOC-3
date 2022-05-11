@@ -54,7 +54,6 @@ export async function getUsersExcludeEdition(
         const response = await axiosInstance.get(
             `/users/?page=${page}&exclude_edition=${edition}&name=${name}`
         );
-        console.log(response.data);
         return response.data as UsersList;
     }
     const response = await axiosInstance.get(`/users/?exclude_edition=${edition}&page=${page}`);

@@ -1,7 +1,12 @@
 import styled from "styled-components";
 
+export const CenterContainer = styled.div`
+    width: 100%;
+`;
+
 export const CreateProjectContainer = styled.div`
-    margin: 20px;
+    width: fit-content;
+    margin: 20px auto;
 `;
 
 export const Input = styled.input`
@@ -33,12 +38,33 @@ export const RemoveButton = styled.button`
     align-items: center;
 `;
 
+export const Center = styled.div`
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 15px auto;
+    width: fit-content;
+`;
+
+export const CenterTitle = styled.div`
+    margin: 5px auto;
+    width: fit-content;
+`;
+
 export const CreateButton = styled.button`
     padding: 5px 10px;
     background-color: #44dba4;
     color: white;
     border: none;
-    margin-top: 30px;
+    border-radius: 5px;
+`;
+
+export const CancelButton = styled.button`
+    padding: 5px 10px;
+    margin-right: 5px;
+    background-color: #131329;
+    color: white;
+    border: none;
     border-radius: 5px;
 `;
 

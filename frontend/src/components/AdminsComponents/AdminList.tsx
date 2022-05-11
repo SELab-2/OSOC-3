@@ -10,16 +10,14 @@ import { AdminListItem } from "./index";
  * @param props.admins List of all users who are admin.
  * @param props.loading Data is being fetched.
  * @param props.gotData Data is received.
- * @param props.refresh Function which will be called after deleting an admin.
+ * @param props.removeAdmin Function which will be called after deleting an admin.
  * @constructor
  */
 export default function AdminList(props: {
     admins: User[];
     loading: boolean;
     gotData: boolean;
-    refresh: () => void;
-    getMoreAdmins: (page: number) => void;
-    moreAdminsAvailable: boolean;
+    removeAdmin: (user: User) => void;
 }) {
     if (props.loading) {
         return (
@@ -44,11 +42,11 @@ export default function AdminList(props: {
                     <th>Remove</th>
                 </tr>
             </thead>
-            <tbody>
-                {props.admins.map(admin => (
-                    <AdminListItem key={admin.userId} admin={admin} refresh={props.refresh} />
-                ))}
-            </tbody>
+        <tbody>
+            {props.admins.map(admin => (
+                <AdminListItem key={admin.userId} admin={admin} removeAdmin={props.removeAdmin} />
+            ))}
+        </tbody>
         </AdminsTable>
     );
 }
