@@ -22,17 +22,14 @@ async def get_skills_by_ids(db: AsyncSession, skill_ids) -> list[Skill]:
     return (await db.execute(select(Skill).where(Skill.skill_id.in_(skill_ids)))).scalars().all()
 
 
+async def get_skill_by_id(db: AsyncSession, skill_id: int) -> Skill:
+    """Get a skill for a id"""
+    return (await db.execute(select(Skill).where(Skill.skill_id == skill_id))).scalar_one()
+
+
 async def create_skill(db: AsyncSession, skill: SkillBase) -> Skill:
-    """Add a new skill into the database.
-
-    Args:
-        db (Session): connection with the database.
-        skill (SkillBase): has all the fields needed to add a skill.
-
-    Returns:
-        Skill: returns the new skill.
-    """
-    new_skill: Skill = Skill(name=skill.name, description=skill.description)
+    """Add a new skill into the database."""
+    new_skill: Skill = Skill(name=skill.name)
     db.add(new_skill)
     await db.commit()
     await db.refresh(new_skill)
@@ -40,12 +37,6 @@ async def create_skill(db: AsyncSession, skill: SkillBase) -> Skill:
 
 
 async def delete_skill(db: AsyncSession, skill_id: int):
-    """Delete an existing skill.
-
-    Args:
-        db (Session): connection with the database.
-        skill_id (int): the id of the skill
-    """
-    skill_to_delete = delete(Skill).where(Skill.skill_id == skill_id)
-    await db.execute(skill_to_delete)
+    """Delete an existing skill."""
+    await db.execute(delete(Skill).where(Skill.skill_id == skill_id))
     await db.commit()

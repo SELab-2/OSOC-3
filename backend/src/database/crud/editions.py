@@ -66,8 +66,7 @@ async def delete_edition(db: AsyncSession, edition_name: str):
         db (Session): connection with the database.
         edition_name (str): the primary key of the edition that needs to be deleted
     """
-    edition_to_delete = await get_edition_by_name(db, edition_name)
-    await db.delete(edition_to_delete)
+    await db.delete(await get_edition_by_name(db, edition_name))
     await db.commit()
 
 

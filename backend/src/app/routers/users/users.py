@@ -14,7 +14,7 @@ from src.database.models import User as UserDB
 users_router = APIRouter(prefix="/users", tags=[Tags.USERS])
 
 
-@users_router.get("/", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
+@users_router.get("", response_model=UsersListResponse, dependencies=[Depends(require_admin)])
 async def get_users(
         params: FilterParameters = Depends(),
         db: AsyncSession = Depends(get_session)):

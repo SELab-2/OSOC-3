@@ -3,10 +3,12 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.app.schemas.students import NewDecision
 from src.database.crud.skills import get_skills_by_ids
-from src.database.crud.students import (get_last_emails_of_students, get_student_by_id,
-                                        set_definitive_decision_on_student,
-                                        delete_student, get_students, get_emails,
-                                        create_email)
+from src.database.crud.students import (
+    get_last_emails_of_students, get_student_by_id,
+    set_definitive_decision_on_student,
+    delete_student, get_students, get_emails,
+    create_email
+)
 from src.database.crud.suggestions import get_suggestions_of_student_by_type
 from src.database.enums import DecisionEnum
 from src.database.models import Edition, Student, Skill, DecisionEmail

@@ -7,9 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import settings
 import src.database.crud.projects as crud_projects
 from src.app.exceptions.authentication import (
-    ExpiredCredentialsException, InvalidCredentialsException,
-    MissingPermissionsException, WrongTokenTypeException)
+    ExpiredCredentialsException,
+    InvalidCredentialsException,
+    MissingPermissionsException,
+    WrongTokenTypeException
+)
 from src.app.exceptions.editions import ReadOnlyEditionException
+from src.app.exceptions.util import NotFound
 from src.app.logic.security import ALGORITHM, TokenType
 from src.database.crud.editions import get_edition_by_name, latest_edition
 from src.database.crud.invites import get_invite_link_by_uuid
@@ -17,7 +21,7 @@ from src.database.crud.students import get_student_by_id
 from src.database.crud.suggestions import get_suggestion_by_id
 from src.database.crud.users import get_user_by_id
 from src.database.database import get_session
-from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project
+from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project, ProjectRole
 
 
 async def get_edition(edition_name: str, database: AsyncSession = Depends(get_session)) -> Edition:
@@ -136,6 +140,23 @@ async def get_invite_link(invite_uuid: str, db: AsyncSession = Depends(get_sessi
     return await get_invite_link_by_uuid(db, invite_uuid)
 
 
-async def get_project(project_id: int, db: AsyncSession = Depends(get_session)) -> Project:
+async def get_project(
+        project_id: int,
+        db: AsyncSession = Depends(get_session),
+        edition: Edition = Depends(get_edition)) -> Project:
     """Get a project from het database, given the id in the path"""
-    return await crud_projects.get_project(db, project_id)
+    project = await crud_projects.get_project(db, project_id)
+    if project.edition != edition:
+        raise NotFound()
+    return project
+
+
+async def get_project_role(
+        project_role_id: int,
+        project: Project = Depends(get_project),
+        db: AsyncSession = Depends(get_session)) -> ProjectRole:
+    """Get a project from het database, given the id in the path"""
+    project_role = await crud_projects.get_project_role(db, project_role_id)
+    if project_role.project != project:
+        raise NotFound()
+    return project_role

@@ -13,7 +13,7 @@ from src.database.models import Edition, InviteLink as InviteLinkDB
 invites_router = APIRouter(prefix="/invites", tags=[Tags.INVITES])
 
 
-@invites_router.get("/", response_model=InvitesLinkList, dependencies=[Depends(require_admin)])
+@invites_router.get("", response_model=InvitesLinkList, dependencies=[Depends(require_admin)])
 async def get_invites(db: AsyncSession = Depends(get_session), edition: Edition = Depends(get_edition), page: int = 0):
     """
     Get a list of all pending invitation links.
@@ -21,7 +21,7 @@ async def get_invites(db: AsyncSession = Depends(get_session), edition: Edition 
     return await get_pending_invites_page(db, edition, page)
 
 
-@invites_router.post("/", status_code=status.HTTP_201_CREATED, response_model=NewInviteLink,
+@invites_router.post("", status_code=status.HTTP_201_CREATED, response_model=NewInviteLink,
                      dependencies=[Depends(require_admin)])
 async def create_invite(email: EmailAddress, db: AsyncSession = Depends(get_session),
                         edition: Edition = Depends(get_latest_edition)):

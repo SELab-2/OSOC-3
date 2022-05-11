@@ -122,7 +122,7 @@ async def test_create_edition_admin(database_session: AsyncSession, auth_client:
         response = await auth_client.get("/editions/ed2022")
         assert response.status_code == status.HTTP_404_NOT_FOUND
         # Make the post request
-        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        response = await auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
         assert response.status_code == status.HTTP_201_CREATED
         response = await auth_client.get("/editions/")
         assert response.json()["editions"][0]["year"] == 2022
@@ -135,7 +135,7 @@ async def test_create_edition_admin(database_session: AsyncSession, auth_client:
 async def test_create_edition_unauthorized(database_session: AsyncSession, auth_client: AuthClient):
     """Test creating an edition without any credentials"""
     async with auth_client:
-        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        response = await auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -156,10 +156,10 @@ async def test_create_edition_existing_year(database_session: AsyncSession, auth
     await auth_client.admin()
 
     async with auth_client:
-        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        response = await auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
         assert response.status_code == status.HTTP_201_CREATED
         # Try to make an edition in the same year
-        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        response = await auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
         assert response.status_code == status.HTTP_409_CONFLICT
 
 
@@ -167,7 +167,7 @@ async def test_create_edition_malformed(database_session: AsyncSession, auth_cli
     await auth_client.admin()
 
     async with auth_client:
-        response = await auth_client.post("/editions/", json={"year": 2023, "name": "Life is fun"})
+        response = await auth_client.post("/editions", json={"year": 2023, "name": "Life is fun"})
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 

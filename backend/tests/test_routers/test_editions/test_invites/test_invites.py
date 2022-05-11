@@ -69,7 +69,7 @@ async def test_create_invite_valid(database_session: AsyncSession, auth_client: 
 
     async with auth_client:
         # Create POST request
-        response = await auth_client.post("/editions/ed2022/invites/", content=dumps({"email": "test@ema.il"}))
+        response = await auth_client.post("/editions/ed2022/invites", content=dumps({"email": "test@ema.il"}))
         assert response.status_code == status.HTTP_201_CREATED
         json = response.json()
         assert "mailTo" in json
@@ -77,7 +77,7 @@ async def test_create_invite_valid(database_session: AsyncSession, auth_client: 
         assert "inviteLink" in json
 
         # New entry made in database
-        json = (await auth_client.get("/editions/ed2022/invites/")).json()
+        json = (await auth_client.get("/editions/ed2022/invites")).json()
         assert len(json["inviteLinks"]) == 1
         new_uuid = json["inviteLinks"][0]["uuid"]
         assert (await auth_client.get(f"/editions/ed2022/invites/{new_uuid}")).status_code == status.HTTP_200_OK
@@ -92,11 +92,11 @@ async def test_create_invite_invalid(database_session: AsyncSession, auth_client
 
     async with auth_client:
         # Invalid POST will send invalid status code
-        response = await auth_client.post("/editions/ed2022/invites/", content=dumps({"email": "invalid field"}), follow_redirects=True)
+        response = await auth_client.post("/editions/ed2022/invites", content=dumps({"email": "invalid field"}), follow_redirects=True)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
         # Verify that no new entry was made after the error
-        assert len((await auth_client.get("/editions/ed2022/invites/", follow_redirects=True)).json()["inviteLinks"]) == 0
+        assert len((await auth_client.get("/editions/ed2022/invites", follow_redirects=True)).json()["inviteLinks"]) == 0
 
 
 async def test_delete_invite_invalid(database_session: AsyncSession, auth_client: AuthClient):
@@ -193,5 +193,5 @@ async def test_create_invite_valid_old_edition(database_session: AsyncSession, a
 
     async with auth_client:
         # Create POST request
-        response = await auth_client.post("/editions/ed2022/invites/", content=dumps({"email": "test@ema.il"}))
+        response = await auth_client.post("/editions/ed2022/invites", content=dumps({"email": "test@ema.il"}))
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

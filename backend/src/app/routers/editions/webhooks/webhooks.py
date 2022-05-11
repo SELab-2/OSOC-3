@@ -18,7 +18,7 @@ async def valid_uuid(uuid: str, database: AsyncSession = Depends(get_session)):
     await get_webhook(database, uuid)
 
 
-@webhooks_router.post("/", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
+@webhooks_router.post("", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
                       dependencies=[Depends(require_admin)])
 async def new(edition: Edition = Depends(get_latest_edition), database: AsyncSession = Depends(get_session)):
     """Create a new webhook for an edition"""
