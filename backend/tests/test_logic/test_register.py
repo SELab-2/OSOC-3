@@ -1,12 +1,14 @@
 import uuid
+from unittest.mock import patch
 
 import pytest
 from pydantic import ValidationError
+from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import NoResultFound
 
 from src.app.exceptions.crud import DuplicateInsertException
+from src.app.exceptions.register import FailedToAddNewUserException
 from src.app.logic.register import create_request_email, create_request_github
 from src.app.schemas.oauth.github import GitHubProfile
 from src.app.schemas.register import EmailRegister
@@ -82,6 +84,24 @@ async def test_duplicate_user(database_session: AsyncSession):
     assert len(links) == 1
 
 
+async def test_email_exception_doesnt_add(database_session: AsyncSession):
+    """Test that if another exception is raised, we handle it correctly"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite_link: InviteLink = InviteLink(
+        edition=edition, target_email="jw@gmail.com")
+    database_session.add(invite_link)
+    await database_session.commit()
+    nu = EmailRegister(name="user", email="email@email.com",
+                       pw="wachtwoord", uuid=invite_link.uuid)
+
+    with patch("src.app.logic.register.create_auth_email", side_effect=SQLAlchemyError("mocked")):
+        with pytest.raises(FailedToAddNewUserException):
+            await create_request_email(database_session, nu, edition)
+
+    assert len(database_session.query(CoachRequest).all()) == 0
+
+
 async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
     """Tests that you can't use the same UUID multiple times"""
     edition = Edition(year=2022, name="ed2022")
@@ -153,3 +173,20 @@ async def test_create_request_github_duplicate(database_session: AsyncSession):
 
     with pytest.raises(DuplicateInsertException):
         await create_request_github(database_session, profile, invite.uuid, edition)
+
+
+async def test_github_exception_doesnt_add(database_session: AsyncSession):
+    """Test that if another exception is raised, we handle it correctly"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+
+    with patch("src.app.logic.register.create_auth_github", side_effect=SQLAlchemyError("mocked")):
+        with pytest.raises(FailedToAddNewUserException):
+            await create_request_github(database_session, profile, invite.uuid, edition)
+
+        assert len(database_session.query(CoachRequest).all()) == 0
