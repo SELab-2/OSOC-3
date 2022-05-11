@@ -89,7 +89,9 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
         setLoading(false);
         if (success) {
             props.adminAdded(user);
-            handleClose();
+            setSearchTerm("");
+            getData(0, "");
+            setSelected(undefined);
         }
     }
 

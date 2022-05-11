@@ -1,10 +1,11 @@
 import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users";
-import React, { useState } from "react";
+import { useState, createRef } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { Error } from "../../Requests/styles";
 import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../GeneralComponents/MenuItem";
 import { StyledMenuItem } from "../../../GeneralComponents/styles";
 import { EmailAndAuth } from "../../../GeneralComponents";
@@ -23,6 +24,8 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+
+    const ref = createRef<Typeahead>();
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
@@ -75,7 +78,10 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
         setLoading(false);
         if (success) {
             props.refreshCoaches();
-            handleClose();
+            setSearchTerm("");
+            getData(0, "");
+            setSelected(undefined);
+            ref.current?.clear(); // Not clearing
         }
     }
 
@@ -101,7 +107,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     return (
         <>
             <AddAdminButton variant="primary" onClick={handleShow}>
-                Add coach
+                Add coach to current edition
             </AddAdminButton>
 
             <Modal show={show} onHide={handleClose}>
@@ -118,6 +124,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                             minLength={1}
                             onSearch={filterData}
                             options={users}
+                            ref={ref}
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
