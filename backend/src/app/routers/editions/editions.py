@@ -33,15 +33,7 @@ for router in child_routers:
 
 @editions_router.get("", response_model=EditionList, tags=[Tags.EDITIONS])
 async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
-    """Get a paginated list of all editions.
-    Args:
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-        user (User, optional): the current logged in user. Defaults to Depends(require_auth).
-        page (int): the page to return.
-
-    Returns:
-        EditionList: an object with a list of all the editions.
-    """
+    """Get a paginated list of all editions."""
     if user.admin:
         return logic_editions.get_editions_page(db, page)
 
@@ -51,41 +43,19 @@ async def get_editions(db: Session = Depends(get_session), user: User = Depends(
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
                      dependencies=[Depends(require_coach)])
 async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
-    """Get a specific edition.
-
-    Args:
-        edition_name (str): the name of the edition that you want to get.
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-        user (User, optional): the current logged in user. Defaults to Depends(get_current_active_user).
-
-    Returns:
-        Edition: an edition.
-    """
+    """Get a specific edition."""
     return logic_editions.get_edition_by_name(db, edition_name)
 
 
 @editions_router.post("", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
                       dependencies=[Depends(require_admin)])
 async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
-    """ Create a new edition.
-
-    Args:
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-
-    Returns:
-        Edition: the newly made edition object.
-    """
+    """ Create a new edition."""
     return logic_editions.create_edition(db, edition)
 
 
 @editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
                         dependencies=[Depends(require_admin)])
 async def delete_edition(edition_name: str, db: Session = Depends(get_session)):
-    """Delete an existing edition.
-
-    Args:
-        edition_name (str): the name of the edition that needs to be deleted, if found.
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-
-    """
+    """Delete an existing edition."""
     logic_editions.delete_edition(db, edition_name)

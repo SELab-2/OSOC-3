@@ -19,12 +19,12 @@ def database_with_data(database_session: Session) -> Session:
     database_session.commit()
 
     # Skill
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    skill4: Skill = Skill(name="skill4", description="something about skill4")
-    skill5: Skill = Skill(name="skill5", description="something about skill5")
-    skill6: Skill = Skill(name="skill6", description="something about skill6")
+    skill1: Skill = Skill(name="skill1")
+    skill2: Skill = Skill(name="skill2")
+    skill3: Skill = Skill(name="skill3")
+    skill4: Skill = Skill(name="skill4")
+    skill5: Skill = Skill(name="skill5")
+    skill6: Skill = Skill(name="skill6")
     database_session.add(skill1)
     database_session.add(skill2)
     database_session.add(skill3)
