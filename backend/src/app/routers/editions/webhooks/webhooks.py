@@ -18,7 +18,7 @@ def valid_uuid(uuid: str, database: Session = Depends(get_session)):
     get_webhook(database, uuid)
 
 
-@webhooks_router.post("/", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
+@webhooks_router.post("", response_model=WebhookUrlResponse, status_code=status.HTTP_201_CREATED,
                       dependencies=[Depends(require_admin)])
 def new(edition: Edition = Depends(get_latest_edition), database: Session = Depends(get_session)):
     """Create a new webhook for an edition"""

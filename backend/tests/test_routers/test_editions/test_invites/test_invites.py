@@ -67,7 +67,7 @@ def test_create_invite_valid(database_session: Session, auth_client: AuthClient)
     database_session.commit()
 
     # Create POST request
-    response = auth_client.post("/editions/ed2022/invites/", data=dumps({"email": "test@ema.il"}))
+    response = auth_client.post("/editions/ed2022/invites", data=dumps({"email": "test@ema.il"}))
     assert response.status_code == status.HTTP_201_CREATED
     json = response.json()
     assert "mailTo" in json
@@ -75,7 +75,7 @@ def test_create_invite_valid(database_session: Session, auth_client: AuthClient)
     assert "inviteLink" in json
 
     # New entry made in database
-    json = auth_client.get("/editions/ed2022/invites/").json()
+    json = auth_client.get("/editions/ed2022/invites").json()
     assert len(json["inviteLinks"]) == 1
     new_uuid = json["inviteLinks"][0]["uuid"]
     assert auth_client.get(f"/editions/ed2022/invites/{new_uuid}/").status_code == status.HTTP_200_OK
@@ -89,11 +89,11 @@ def test_create_invite_invalid(database_session: Session, auth_client: AuthClien
     database_session.commit()
 
     # Invalid POST will send invalid status code
-    response = auth_client.post("/editions/ed2022/invites/", data=dumps({"email": "invalid field"}))
+    response = auth_client.post("/editions/ed2022/invites", data=dumps({"email": "invalid field"}))
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     # Verify that no new entry was made after the error
-    assert len(auth_client.get("/editions/ed2022/invites/").json()["inviteLinks"]) == 0
+    assert len(auth_client.get("/editions/ed2022/invites").json()["inviteLinks"]) == 0
 
 
 def test_delete_invite_invalid(database_session: Session, auth_client: AuthClient):
@@ -184,5 +184,5 @@ def test_create_invite_valid_old_edition(database_session: Session, auth_client:
     database_session.commit()
 
     # Create POST request
-    response = auth_client.post("/editions/ed2022/invites/", data=dumps({"email": "test@ema.il"}))
+    response = auth_client.post("/editions/ed2022/invites", data=dumps({"email": "test@ema.il"}))
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

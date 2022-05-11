@@ -31,7 +31,7 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_name}")
 
 
-@editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS])
+@editions_router.get("", response_model=EditionList, tags=[Tags.EDITIONS])
 async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
     """Get a paginated list of all editions.
     Args:
@@ -64,7 +64,7 @@ async def get_edition_by_name(edition_name: str, db: Session = Depends(get_sessi
     return logic_editions.get_edition_by_name(db, edition_name)
 
 
-@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
+@editions_router.post("", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
                       dependencies=[Depends(require_admin)])
 async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
     """ Create a new edition.

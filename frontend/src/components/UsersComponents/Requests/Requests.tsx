@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Collapsible from "react-collapsible";
-import { RequestsContainer, Error, SpinnerContainer, RequestListContainer } from "./styles";
+import { RequestsContainer, Error, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
-import { Spinner } from "react-bootstrap";
 import { SearchInput } from "../../styles";
 
 /**
@@ -13,13 +12,16 @@ import { SearchInput } from "../../styles";
  * @param props.refreshCoaches A function which will be called when a new coach is added
  */
 export default function Requests(props: { edition: string; refreshCoaches: () => void }) {
+    const [allRequests, setAllRequests] = useState<Request[]>([]);
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
-    const [gettingRequests, setGettingRequests] = useState(false); // Waiting for data
+    const [loading, setLoading] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
     const [gotData, setGotData] = useState(false); // Received data
     const [open, setOpen] = useState(false); // Collapsible is open
     const [error, setError] = useState(""); // Error message
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
+    const [allRequestsFetched, setAllRequestsFetched] = useState(false);
+    const [page, setPage] = useState(0); // The next page which needs to be fetched
 
     /**
      * Remove a request from the list of requests (Request is accepter or rejected).
@@ -33,26 +35,39 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 return object !== request;
             })
         );
+        setAllRequests(
+            allRequests.filter(object => {
+                return object !== request;
+            })
+        );
         if (accepted) {
             props.refreshCoaches();
         }
     }
 
     /**
-     * Request a page from the list of requests.
-     * An optional filter can be used to filter the username.
-     * If the filter is not used, the string saved in the "searchTerm" state will be used.
-     * @param page The page to load.
-     * @param filter Optional string to filter username.
+     * Request the next page from the list of requests.
+     * The set searchterm will be used.
      */
-    async function getData(page: number, filter: string | undefined = undefined) {
-        if (filter === undefined) {
-            filter = searchTerm;
+    async function getData() {
+        if (loading) {
+            return;
         }
-        setGettingRequests(true);
+
+        if (allRequestsFetched) {
+            setRequests(
+                allRequests.filter(request =>
+                    request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
+                )
+            );
+            setMoreRequestsAvailable(false);
+            return;
+        }
+
+        setLoading(true);
         setError("");
         try {
-            const response = await getRequests(props.edition, filter, page);
+            const response = await getRequests(props.edition, searchTerm, page);
             if (response.requests.length === 0) {
                 setMoreRequestsAvailable(false);
             }
@@ -62,46 +77,38 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 setRequests(requests.concat(response.requests));
             }
 
+            if (searchTerm === "") {
+                if (response.requests.length === 0) {
+                    setAllRequestsFetched(true);
+                }
+                if (page === 0) {
+                    setAllRequests(response.requests);
+                } else {
+                    setAllRequests(allRequests.concat(response.requests));
+                }
+            }
+
+            setPage(page + 1);
             setGotData(true);
-            setGettingRequests(false);
         } catch (exception) {
             setError("Oops, something went wrong...");
-            setGettingRequests(false);
         }
+        setLoading(false);
     }
 
-    useEffect(() => {
-        if (!gotData && !gettingRequests && !error) {
-            getData(0);
-        }
-    });
-
-    /**
-     * Set the searchTerm and request the first page with this filter.
-     * The current list of requests will be resetted.
-     * @param searchTerm The string to filter coaches with by username.
-     */
-    function filterRequests(searchTerm: string) {
+    function filter(searchTerm: string) {
+        setPage(0);
         setGotData(false);
+        setMoreRequestsAvailable(true);
         setSearchTerm(searchTerm);
         setRequests([]);
-        setMoreRequestsAvailable(true);
-        getData(0, searchTerm);
     }
 
     let list;
-    if (requests.length === 0) {
-        if (gettingRequests) {
-            list = (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
-        } else if (gotData) {
-            list = <div>No requests found</div>;
-        } else {
-            list = <Error>{error}</Error>;
-        }
+    if (error) {
+        list = <Error>{error}</Error>;
+    } else if (gotData && requests.length === 0) {
+        list = <div>No requests found</div>;
     } else {
         list = (
             <RequestList
@@ -120,7 +127,12 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                <SearchInput value={searchTerm} onChange={e => filterRequests(e.target.value)} />
+                <SearchInput
+                    value={searchTerm}
+                    onChange={e => {
+                        filter(e.target.value);
+                    }}
+                />
                 <RequestListContainer>{list}</RequestListContainer>
             </Collapsible>
         </RequestsContainer>

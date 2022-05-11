@@ -121,7 +121,7 @@ def test_create_project(database_with_data: Session, auth_client: AuthClient):
     assert len(database_with_data.query(Partner).all()) == 0
 
     response = \
-        auth_client.post("/editions/ed2022/projects/",
+        auth_client.post("/editions/ed2022/projects",
                          json={"name": "test",
                                "number_of_students": 5,
                                "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
@@ -144,11 +144,11 @@ def test_create_project_same_partner(database_with_data: Session, auth_client: A
     auth_client.admin()
     assert len(database_with_data.query(Partner).all()) == 0
 
-    auth_client.post("/editions/ed2022/projects/",
+    auth_client.post("/editions/ed2022/projects",
                      json={"name": "test1",
                            "number_of_students": 2,
                            "skills": [1, 2], "partners": ["ugent"], "coaches": [1]})
-    auth_client.post("/editions/ed2022/projects/",
+    auth_client.post("/editions/ed2022/projects",
                      json={"name": "test2",
                            "number_of_students": 2,
                            "skills": [1, 2], "partners": ["ugent"], "coaches": [1]})
@@ -166,7 +166,7 @@ def test_create_project_non_existing_skills(database_with_data: Session, auth_cl
     assert len(database_with_data.query(Skill).where(
         Skill.skill_id == 100).all()) == 0
 
-    response = auth_client.post("/editions/ed2022/projects/",
+    response = auth_client.post("/editions/ed2022/projects",
                                 json={"name": "test1",
                                       "number_of_students": 1,
                                       "skills": [100], "partners": ["ugent"], "coaches": [1]})
@@ -188,7 +188,7 @@ def test_create_project_non_existing_coach(database_with_data: Session, auth_cli
     assert len(database_with_data.query(Student).where(
         Student.edition_id == 10).all()) == 0
 
-    response = auth_client.post("/editions/ed2022/projects/",
+    response = auth_client.post("/editions/ed2022/projects",
                                 json={"name": "test2",
                                       "number_of_students": 1,
                                       "skills": [100], "partners": ["ugent"], "coaches": [10]})
@@ -206,7 +206,7 @@ def test_create_project_no_name(database_with_data: Session, auth_client: AuthCl
     json = response.json()
     assert len(json['projects']) == 3
     response = \
-        auth_client.post("/editions/ed2022/projects/",
+        auth_client.post("/editions/ed2022/projects",
                          # project has no name
                          json={
                              "number_of_students": 5,
@@ -302,7 +302,7 @@ def test_create_project_old_edition(database_with_data: Session, auth_client: Au
     database_with_data.commit()
 
     response = \
-        auth_client.post("/editions/ed2022/projects/",
+        auth_client.post("/editions/ed2022/projects",
                          json={"name": "test",
                                "number_of_students": 5,
                                "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [1]})
@@ -313,7 +313,7 @@ def test_create_project_old_edition(database_with_data: Session, auth_client: Au
 def test_search_project_name(database_with_data: Session, auth_client: AuthClient):
     """test search project on name"""
     auth_client.admin()
-    response = auth_client.get("/editions/ed2022/projects/?name=super")
+    response = auth_client.get("/editions/ed2022/projects?name=super")
     assert len(response.json()["projects"]) == 1
     assert response.json()["projects"][0]["name"] == "super nice project"
 
@@ -322,11 +322,11 @@ def test_search_project_coach(database_with_data: Session, auth_client: AuthClie
     """test search project on coach"""
     auth_client.admin()
     user: User = database_with_data.query(User).where(User.name == "Pytest Admin").one()
-    auth_client.post("/editions/ed2022/projects/",
+    auth_client.post("/editions/ed2022/projects",
                          json={"name": "test",
                                "number_of_students": 2,
                                "skills": [1, 1, 1, 1, 1], "partners": ["ugent"], "coaches": [user.user_id]})
-    response = auth_client.get("/editions/ed2022/projects/?coach=true")
+    response = auth_client.get("/editions/ed2022/projects?coach=true")
     print(response.json())
     assert len(response.json()["projects"]) == 1
     assert response.json()["projects"][0]["name"] == "test"
