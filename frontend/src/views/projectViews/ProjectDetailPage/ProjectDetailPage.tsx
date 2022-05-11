@@ -1,3 +1,4 @@
+import { ProjectRoles } from "./../../../components/ProjectDetailComponents/ProjectRoles/ProjectRoles";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Project, CreateProject as EditProject } from "../../../data/interfaces";
@@ -11,20 +12,16 @@ import {
     NumberOfStudents,
     ClientContainer,
     ProjectPageContainer,
-    SuggestionContainer,
-    Suggestions,
 } from "./styles";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import { TiDeleteOutline } from "react-icons/ti";
 
-import { StudentPlace } from "../../../data/interfaces/projects";
 import {
     CoachContainer,
     CoachesContainer,
     CoachText,
-    ProjectRoleContainer,
 } from "../../../components/ProjectsComponents/ProjectCard/styles";
 import { useAuth } from "../../../contexts";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
@@ -37,7 +34,7 @@ import {
 } from "../../../components/ProjectDetailComponents";
 import projectToEditProject from "../../../utils/logic/project";
 
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { getStudent } from "../../../utils/api/students";
 
 /**
@@ -73,7 +70,7 @@ export default function ProjectDetailPage() {
     };
 
     const [projectRoles, setProjectRoles] = useState([
-        { skill: "Frontend", slots: 5, suggestions: [{ name: "Tom" }] },
+        { skill: "Frontend", slots: 5, suggestions: [{ name: "Jef" }] },
         { skill: "Backend", slots: 5, suggestions: [] },
     ]);
 
@@ -85,19 +82,6 @@ export default function ProjectDetailPage() {
                 if (response) {
                     setProject(response);
                     setEditedProject(response);
-
-                    // TODO
-                    // Generate student data
-                    const studentsTemplate: StudentPlace[] = [];
-                    for (let i = 0; i < response.numberOfStudents; i++) {
-                        const student: StudentPlace = {
-                            available: i % 2 === 0,
-                            name: i % 2 === 0 ? undefined : "Tom",
-                            skill: "Frontend",
-                        };
-                        studentsTemplate.push(student);
-                    }
-                    // setStudents(studentsTemplate);
                 } else navigate("/404-not-found");
             }
         }
@@ -210,44 +194,7 @@ export default function ProjectDetailPage() {
                         )}
                     </CoachesContainer>
 
-                    <div>
-                        {projectRoles.map((projectRole, _index) => (
-                            <ProjectRoleContainer key={_index}>
-                                {projectRole.skill}
-                                <br></br>
-                                {projectRole.suggestions.length.toString() +
-                                    " / " +
-                                    projectRole.slots.toString()}
-                                <Droppable droppableId={projectRole.skill}>
-                                    {(provided, snapshot) => (
-                                        <Suggestions
-                                            ref={provided.innerRef}
-                                            {...provided.droppableProps}
-                                        >
-                                            {projectRole.suggestions.map((sug, _index2) => (
-                                                <Draggable
-                                                    draggableId={sug.name}
-                                                    index={_index2}
-                                                    key={_index2}
-                                                >
-                                                    {(provided, snapshot) => (
-                                                        <SuggestionContainer
-                                                            ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                        >
-                                                            {sug.name}
-                                                        </SuggestionContainer>
-                                                    )}
-                                                </Draggable>
-                                            ))}
-                                            {provided.placeholder}
-                                        </Suggestions>
-                                    )}
-                                </Droppable>
-                            </ProjectRoleContainer>
-                        ))}
-                    </div>
+                    <ProjectRoles projectRoles={projectRoles} />
                 </ProjectContainer>
             </ProjectPageContainer>
         </DragDropContext>
@@ -274,7 +221,7 @@ export default function ProjectDetailPage() {
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.skill === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.push({ name: student.lastName });
+                    newSuggestions.splice(destination.index, 0, { name: student.lastName });
                     return { ...projectRole, suggestions: newSuggestions };
                 } else return projectRole;
             });
@@ -283,7 +230,7 @@ export default function ProjectDetailPage() {
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.skill === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.push({ name: result.draggableId });
+                    newSuggestions.splice(destination.index, 0, { name: result.draggableId });
                     return { ...projectRole, suggestions: newSuggestions };
                 } else if (projectRole.skill === source.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];

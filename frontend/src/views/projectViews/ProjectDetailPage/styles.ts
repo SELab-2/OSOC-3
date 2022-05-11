@@ -45,15 +45,3 @@ export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
 `;
-
-export const Suggestions = styled.div`
-    min-height: 10vh;
-`;
-
-export const SuggestionContainer = styled.div`
-    margin: 10px;
-    background-color: #1a1a28;
-    padding: 10px;
-    max-width: 25%;
-    overflow: auto;
-`;
