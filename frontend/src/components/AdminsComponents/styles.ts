@@ -9,6 +9,11 @@ export const AdminsTable = styled(Table)`
     min-width: fit-content;
     width: 45em;
     max-width: 100%;
+    margin-top: 10px;
+`;
+
+export const AdminsTableDiv = styled.div`
+    overflow: auto;
 `;
 
 export const ModalContentConfirm = styled.div`
