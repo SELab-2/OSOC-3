@@ -35,7 +35,7 @@ export default function AdminList(props: {
 
     return (
         <AdminsTableDiv>
-            <AdminsTable variant="dark">
+            <AdminsTable>
                 <thead>
                     <tr>
                         <th>Name</th>
