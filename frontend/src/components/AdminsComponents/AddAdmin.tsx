@@ -1,5 +1,5 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
-import React, { useState } from "react";
+import { useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
 import { AddAdminButton, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
