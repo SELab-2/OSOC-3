@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
     FullName,
     FirstName,
@@ -14,12 +14,13 @@ import {
     RolesField,
     RolesValues,
     Role,
+    NameAndRemoveButtonContainer,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
-import {Student} from "../../../data/interfaces/students";
-import {Suggestion} from "../../../data/interfaces/suggestions";
-import {getSuggestions} from "../../../utils/api/suggestions";
-import {useParams} from "react-router-dom";
+import { Student } from "../../../data/interfaces/students";
+import { Suggestion } from "../../../data/interfaces/suggestions";
+import { getSuggestions } from "../../../utils/api/suggestions";
+import { useParams } from "react-router-dom";
 import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
 
 interface Props {
@@ -28,7 +29,7 @@ interface Props {
 
 export default function StudentInformation(props: Props) {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-    const params = useParams()
+    const params = useParams();
 
     async function callGetSuggestions() {
         try {
@@ -41,56 +42,72 @@ export default function StudentInformation(props: Props) {
 
     function suggestionToText(suggestion: number) {
         if (suggestion === 0) {
-            return "Undecided"
+            return "Undecided";
         } else if (suggestion === 1) {
-            return "Yes"
+            return "Yes";
         } else if (suggestion === 2) {
-            return "Maybe"
+            return "Maybe";
         } else if (suggestion === 3) {
-            return "No"
+            return "No";
         }
     }
 
     useEffect(() => {
         callGetSuggestions();
-        console.log("fetched suggestion")
+        console.log("fetched suggestion");
     }, [params.editionId!, params.id!]);
 
     if (!props.currentStudent) {
-        return <div><h1>loading</h1></div>
+        return (
+            <div>
+                <h1>loading</h1>
+            </div>
+        );
     } else {
         return (
             <StudentInformationContainer>
-                <RemoveStudentButton />
-                <FullName>
-                    <FirstName>{props.currentStudent.firstName}</FirstName>
-                    <LastName>{props.currentStudent.lastName}</LastName>
-                </FullName>
+                <NameAndRemoveButtonContainer>
+                    <FullName>
+                        <FirstName>{props.currentStudent.firstName}</FirstName>
+                        <LastName>{props.currentStudent.lastName}</LastName>
+                    </FullName>
+                    <RemoveStudentButton />
+                </NameAndRemoveButtonContainer>
                 <PreferedName>Prefered name: {props.currentStudent.preferredName}</PreferedName>
-                <LineBreak/>
+                <LineBreak />
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
                 {suggestions.map(suggestion => (
-                    <SuggestionField key={suggestion.suggestionId}>{suggestionToText(suggestion.suggestion)}: {suggestion.argumentation}</SuggestionField>
+                    <SuggestionField key={suggestion.suggestionId}>
+                        {suggestionToText(suggestion.suggestion)}: {suggestion.argumentation}
+                    </SuggestionField>
                 ))}
-                <LineBreak/>
+                <LineBreak />
                 <StudentInfoTitle>Personal information</StudentInfoTitle>
                 <PersonalInfoField>
                     <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>{props.currentStudent.emailAddress}</PersonalInfoFieldValue>
+                    <PersonalInfoFieldValue>
+                        {props.currentStudent.emailAddress}
+                    </PersonalInfoFieldValue>
                 </PersonalInfoField>
                 <PersonalInfoField>
                     <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>{props.currentStudent.phoneNumber}</PersonalInfoFieldValue>
+                    <PersonalInfoFieldValue>
+                        {props.currentStudent.phoneNumber}
+                    </PersonalInfoFieldValue>
                 </PersonalInfoField>
                 <PersonalInfoField>
                     <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>{props.currentStudent.alumni? "Yes": "No" }</PersonalInfoFieldValue>
+                    <PersonalInfoFieldValue>
+                        {props.currentStudent.alumni ? "Yes" : "No"}
+                    </PersonalInfoFieldValue>
                 </PersonalInfoField>
                 <PersonalInfoField>
                     <PersonalInfoFieldSubject>Wants to be student coach?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>{props.currentStudent.wantsToBeStudentCoach? "Yes" : "No" }</PersonalInfoFieldValue>
+                    <PersonalInfoFieldValue>
+                        {props.currentStudent.wantsToBeStudentCoach ? "Yes" : "No"}
+                    </PersonalInfoFieldValue>
                 </PersonalInfoField>
-                <LineBreak/>
+                <LineBreak />
                 <StudentInfoTitle>Skills</StudentInfoTitle>
                 <RolesField>
                     Roles:
@@ -100,10 +117,10 @@ export default function StudentInformation(props: Props) {
                         <Role>Communication</Role>
                     </RolesValues>
                 </RolesField>
-                <LineBreak/>
+                <LineBreak />
                 <div>
-                    <CoachSuggestionContainer student={props.currentStudent}/>
-                    <AdminDecisionContainer/>
+                    <CoachSuggestionContainer student={props.currentStudent} />
+                    <AdminDecisionContainer />
                 </div>
             </StudentInformationContainer>
         );

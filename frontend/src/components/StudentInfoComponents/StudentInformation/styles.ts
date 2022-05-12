@@ -63,3 +63,11 @@ export const LineBreak = styled.div`
 export const DefinitiveDecisionContainer = styled.div`
     width: 40%;
 `;
+
+export const NameAndRemoveButtonContainer = styled.div`
+    background: orange;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+`;
