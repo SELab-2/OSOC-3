@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, ContentWrapper } from "./app.styles";
+import { Container, ContentWrapper } from "./App.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import { AdminRoute, Footer, Navbar, PrivateRoute, CurrentEditionRoute } from "./components";
