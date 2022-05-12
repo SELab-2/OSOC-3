@@ -1,20 +1,16 @@
-export interface ConflictProject {
-    projectId: number;
-    name: string;
-}
-
-export interface Student {
-    firstName: string;
-    lastName: string;
-    studentId: number;
+export interface PrSuggestion {
+    projectRole: { project: { name: string; projectId: number } };
+    projectRoleSuggestionId: number;
 }
 
 /**
  * A conflict (student with multiple projects)
  */
 export interface Conflict {
-    student: Student;
-    projects: ConflictProject[];
+    firstName: string;
+    lastName: string;
+    prSuggestions: PrSuggestion[];
+    studentId: number;
 }
 
 /**

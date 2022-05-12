@@ -53,7 +53,7 @@ export default function ConflictsButton(props: { editionId: string }) {
                     <ul>
                         {conflicts.map(conflict => (
                             <ConflictDiv
-                                key={conflict.student.studentId}
+                                key={conflict.studentId}
                                 conflict={conflict}
                                 editionId={props.editionId}
                             />

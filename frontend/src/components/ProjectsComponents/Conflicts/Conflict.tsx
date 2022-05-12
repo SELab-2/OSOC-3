@@ -7,18 +7,16 @@ import { ListLink } from "./styles";
 export default function ConflictDiv(props: { editionId: string; conflict: Conflict }) {
     return (
         <li>
-            <ListLink
-                to={`/editions/${props.editionId}/students/${props.conflict.student.studentId}`}
-            >
-                {`${props.conflict.student.firstName} ${props.conflict.student.lastName}`}
+            <ListLink to={`/editions/${props.editionId}/students/${props.conflict.studentId}`}>
+                {`${props.conflict.firstName} ${props.conflict.lastName}`}
             </ListLink>
             <ul>
-                {props.conflict.projects.map(conflictProject => (
-                    <li key={conflictProject.projectId}>
+                {props.conflict.prSuggestions.map(prSuggestion => (
+                    <li key={prSuggestion.projectRoleSuggestionId}>
                         <ListLink
-                            to={`/editions/${props.editionId}/projects/${conflictProject.projectId}`}
+                            to={`/editions/${props.editionId}/projects/${prSuggestion.projectRole.project.projectId}`}
                         >
-                            {conflictProject.name}
+                            {prSuggestion.projectRole.project.name}
                         </ListLink>
                     </li>
                 ))}
