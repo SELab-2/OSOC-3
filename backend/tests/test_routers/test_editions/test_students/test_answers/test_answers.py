@@ -1,10 +1,10 @@
 import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-#from starlette import status
+from starlette import status
 
-#from settings import DB_PAGE_SIZE
-from src.database.models import Edition, Project, User, Skill, ProjectRole, Student
+from src.database.models import Edition, User, Skill, Student, Question, QuestionAnswer
+from src.database.enums import QuestionEnum
 from tests.utils.authorization import AuthClient
 
 
@@ -13,12 +13,6 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
-    project1 = Project(name="project1", edition=edition, number_of_students=2)
-    project2 = Project(name="project2", edition=edition, number_of_students=3)
-    project3 = Project(name="super nice project", edition=edition, number_of_students=3)
-    database_session.add(project1)
-    database_session.add(project2)
-    database_session.add(project3)
     user: User = User(name="coach1")
     database_session.add(user)
     skill1: Skill = Skill(name="skill1", description="something about skill1")
@@ -35,17 +29,16 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
                                  wants_to_be_student_coach=True, edition=edition, skills=[skill2])
     database_session.add(student01)
     database_session.add(student02)
-    project_role1: ProjectRole = ProjectRole(
-        student=student01, project=project1, skill=skill1, drafter=user, argumentation="argmunet")
-    project_role2: ProjectRole = ProjectRole(
-        student=student01, project=project2, skill=skill3, drafter=user, argumentation="argmunet")
-    project_role3: ProjectRole = ProjectRole(
-        student=student02, project=project1, skill=skill1, drafter=user, argumentation="argmunet")
-    database_session.add(project_role1)
-    database_session.add(project_role2)
-    database_session.add(project_role3)
-    await database_session.commit()
+    question1: Question = Question(
+        type=QuestionEnum.INPUT_EMAIL, question="Email", student=student01, answers=[], files=[])
+    database_session.add(question1)
+    question_answer1: QuestionAnswer = QuestionAnswer(
+        answer="josvermeulen@mail.com", question=question1)
+    database_session.add(question_answer1)
 
+    #aswer1: QuestionAnswer = QuestionAnswer(answer="josvermeulen@mail.com", question=question1)
+    # database_session.add(aswer1)
+    await database_session.commit()
     return database_session
 
 
@@ -55,9 +48,40 @@ async def current_edition(database_with_data: AsyncSession) -> Edition:
     return (await database_with_data.execute(select(Edition))).scalars().all()[-1]
 
 
-async def test_get_answers(database_with_data: AsyncSession, auth_client: AuthClient):
-    """test get answers"""
+async def test_get_answers_not_logged_in(database_with_data: AsyncSession, auth_client: AuthClient):
+    """test get answers when not logged in"""
     async with auth_client:
         response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
-        print(response)
-    assert False
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_get_answers_as_coach(database_with_data: AsyncSession, auth_client: AuthClient, current_edition: Edition):
+    """test get answers when logged in as coach"""
+    await auth_client.coach(current_edition)
+    async with auth_client:
+        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
+        assert response.status_code == status.HTTP_200_OK
+        json = response.json()
+        assert len(json["questions"]) == 1
+        assert QuestionEnum(json["questions"][0]["type"]
+                            ) == QuestionEnum.INPUT_EMAIL
+        assert json["questions"][0]["question"] == "Email"
+        assert len(json["questions"][0]["answers"]) == 1
+        assert json["questions"][0]["answers"][0]["answer"] == "josvermeulen@mail.com"
+        assert len(json["questions"][0]["files"]) == 0
+
+
+async def test_get_answers_as_admin(database_with_data: AsyncSession, auth_client: AuthClient):
+    """test get answers when logged in as admin"""
+    await auth_client.admin()
+    async with auth_client:
+        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
+        assert response.status_code == status.HTTP_200_OK
+        json = response.json()
+        assert len(json["questions"]) == 1
+        assert QuestionEnum(json["questions"][0]["type"]
+                            ) == QuestionEnum.INPUT_EMAIL
+        assert json["questions"][0]["question"] == "Email"
+        assert len(json["questions"][0]["answers"]) == 1
+        assert json["questions"][0]["answers"][0]["answer"] == "josvermeulen@mail.com"
+        assert len(json["questions"][0]["files"]) == 0
