@@ -2,10 +2,8 @@ import styled from "styled-components";
 import { Button, Table } from "react-bootstrap";
 
 export const CoachesContainer = styled.div`
-    min-width: 450px;
-    width: 80%;
-    max-width: 700px;
-    height: 500px;
+    width: 50em;
+    height: fit-content;
     margin: 10px auto auto;
 `;
 
@@ -37,11 +35,15 @@ export const RemoveTd = styled.td`
 
 export const ListDiv = styled.div`
     width: 100%;
-    height: 400px;
+    height: 40em;
     overflow: auto;
     margin-top: 10px;
 `;
 
 export const DialogButton = styled(Button)`
     margin-right: 4px;
+`;
+
+export const EmailDiv = styled.div`
+    overflow: auto;
 `;

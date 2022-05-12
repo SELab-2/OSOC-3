@@ -32,9 +32,8 @@ export const RequestsTable = styled(Table)`
 `;
 
 export const RequestsContainer = styled.div`
-    min-width: 450px;
-    width: 80%;
-    max-width: 700px;
+    width: 50em;
+    height: fit-content;
     margin: 10px auto auto;
 `;
 
@@ -81,12 +80,5 @@ export const Error = styled.div`
 `;
 
 export const RequestListContainer = styled.div`
-    height: 400px;
-`;
-
-export const SearchButton = styled(Button)`
-    margin-left: 10px;
-    color: white;
-    font-size: 15px;
-    height: 33px;
+    height: fit-content;
 `;
