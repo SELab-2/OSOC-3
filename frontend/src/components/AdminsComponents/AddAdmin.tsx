@@ -10,21 +10,6 @@ import UserMenuItem from "../GeneralComponents/MenuItem";
 import { EmailAndAuth } from "../GeneralComponents";
 
 /**
- * Warning that the user will get all persmissions.
- * @param props.name The name of the user.
- */
-function AddWarning(props: { name: string | undefined }) {
-    if (props.name !== undefined) {
-        return (
-            <Warning>
-                Warning: {props.name} will be able to edit/delete all data and manage admin roles.
-            </Warning>
-        );
-    }
-    return null;
-}
-
-/**
  * Button and popup to add an existing user as admin.
  * @param props.users All users which can be added as admin.
  * @param props.refresh A function which is called when a new admin is added.
@@ -107,8 +92,17 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                 }}
                 disabled={selected === undefined}
             >
-                Add {selected?.name} as admin
+                Add admin
             </Button>
+        );
+    }
+
+    let warning;
+    if (selected !== undefined) {
+        warning = (
+            <Warning>
+                Warning: This user will be able to edit/delete all data and manage admin roles.
+            </Warning>
         );
     }
 
@@ -166,7 +160,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                         <EmailDiv>
                             <EmailAndAuth user={selected} />
                         </EmailDiv>
-                        <AddWarning name={selected?.name} />
+                        {warning}
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}

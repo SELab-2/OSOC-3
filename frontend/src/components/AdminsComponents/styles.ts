@@ -30,3 +30,7 @@ export const AddAdminButton = styled(Button).attrs({
 export const EmailDiv = styled.div`
     overflow: auto;
 `;
+
+export const RemoveAdminBody = styled.div`
+    overflow: hidden;
+`;
