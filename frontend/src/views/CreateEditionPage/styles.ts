@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
 export const Error = styled.div`
     color: var(--osoc_red);
@@ -15,10 +15,30 @@ export const CreateEditionDiv = styled.div`
 
 export const FormGroup = styled(Form.Group)`
     margin-top: 20px;
+    .form-control {
+        background-color: #131329;
+        color: white;
+        border: none;
+    }
 `;
 
 export const ButtonDiv = styled.div`
-    margin-top: 20px;
-    margin-bottom: 20px;
-    float: right;
+    margin: 15px auto;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    vertical-align: middle;
+`;
+
+export const CancelButton = styled(Button)`
+    margin-right: 5px;
+    background-color: #131329;
+    color: white;
+    border-color: #131329;
+
+    &:hover {
+        background-color: #131325;
+        color: white;
+        border-color: #131325;
+    }
 `;

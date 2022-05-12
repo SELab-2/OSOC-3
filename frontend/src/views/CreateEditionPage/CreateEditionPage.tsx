@@ -1,10 +1,13 @@
-import { Button, Form, Spinner } from "react-bootstrap";
-import React, { SyntheticEvent, useState } from "react";
+import { Form, Spinner } from "react-bootstrap";
+import { SyntheticEvent, useState } from "react";
 import { createEdition, getSortedEditions } from "../../utils/api/editions";
 import { useNavigate } from "react-router-dom";
-import { CreateEditionDiv, Error, FormGroup, ButtonDiv } from "./styles";
+import { CreateEditionDiv, Error, FormGroup, ButtonDiv, CancelButton } from "./styles";
 import { useAuth } from "../../contexts";
 import { setCurrentEdition } from "../../utils/session-storage";
+import { toast } from "react-toastify";
+import { BiArrowBack } from "react-icons/bi";
+import { CreateButton } from "../../components/Common/Buttons";
 
 /**
  * Page to create a new edition.
@@ -23,18 +26,25 @@ export default function CreateEditionPage() {
     const [loading, setLoading] = useState(false);
 
     async function sendEdition(name: string, year: number): Promise<boolean> {
-        const response = await createEdition(name, year);
+        const response = await toast.promise(createEdition(name, year), {
+            pending: "Creating new edition",
+            error: "Connection issue",
+        });
         if (response.status === 201) {
             const allEditions = await getSortedEditions();
             setEditions(allEditions);
             setCurrentEdition(response.data.name);
+            toast.success("Successfully made new edition");
             return true;
         } else if (response.status === 409) {
             setNameError("Edition name already exists.");
+            toast.warning("Edition name already exists");
         } else if (response.status === 422) {
             setNameError("Invalid edition name.");
+            toast.warning("Invalid edition name");
         } else {
             setError("Something went wrong.");
+            toast.error("Something went wrong");
         }
         return false;
     }
@@ -73,8 +83,12 @@ export default function CreateEditionPage() {
         let success = false;
         if (correct) {
             setLoading(true);
-            success = await sendEdition(name, yearNumber);
-            setLoading(false);
+            try {
+                success = await sendEdition(name, yearNumber);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
         }
 
         if (success) {
@@ -87,11 +101,7 @@ export default function CreateEditionPage() {
     if (loading) {
         submitButton = <Spinner animation="border" />;
     } else {
-        submitButton = (
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        );
+        submitButton = <CreateButton label="Submit" type="submit" />;
     }
 
     return (
@@ -130,7 +140,13 @@ export default function CreateEditionPage() {
                     />
                     <Form.Control.Feedback type="invalid">{yearError}</Form.Control.Feedback>
                 </FormGroup>
-                <ButtonDiv>{submitButton}</ButtonDiv>
+                <ButtonDiv>
+                    <CancelButton onClick={() => navigate("/editions")}>
+                        <BiArrowBack />
+                        Cancel
+                    </CancelButton>
+                    {submitButton}
+                </ButtonDiv>
                 <Error>{error}</Error>
             </Form>
         </CreateEditionDiv>
