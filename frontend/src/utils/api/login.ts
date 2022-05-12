@@ -21,7 +21,7 @@ export async function logIn(
     auth: AuthContextState,
     email: string,
     password: string
-): Promise<boolean> {
+): Promise<number> {
     const payload = new FormData();
     payload.append("username", email);
     payload.append("password", password);
@@ -34,12 +34,11 @@ export async function logIn(
         setRefreshToken(login.refresh_token);
 
         ctxLogIn(login.user, auth);
-
-        return true;
+        return response.status;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             auth.setIsLoggedIn(false);
-            return false;
+            return error.response?.status || 500;
         } else {
             auth.setIsLoggedIn(null);
             throw error;
