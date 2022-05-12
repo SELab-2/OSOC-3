@@ -2,6 +2,7 @@
  * This file contains all interfaces used in projects pages.
  */
 
+import { Skill } from "./skills";
 import { Student } from "./students";
 
 /**
@@ -19,11 +20,6 @@ export interface Coach {
     /** The user's ID */
     userId: number;
     /** The name of the coach */
-    name: string;
-}
-
-export interface Skill {
-    skillId: number;
     name: string;
 }
 

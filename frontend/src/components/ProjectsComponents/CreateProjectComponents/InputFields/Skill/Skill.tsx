@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { SkillProject, Skill } from "../../../../../data/interfaces/projects";
-import { getSkills } from "../../../../../utils/api/projectRoles";
+import { SkillProject } from "../../../../../data/interfaces/projects";
+import { Skill } from "../../../../../data/interfaces/skills";
+import { getSkills } from "../../../../../utils/api/skills";
 import { Input, AddButton } from "../../styles";
 
 export default function SkillInput({
@@ -18,7 +19,7 @@ export default function SkillInput({
 
     useEffect(() => {
         async function callCoaches() {
-            setAvailableSkills((await getSkills()) || []);
+            setAvailableSkills((await getSkills())?.skills || []);
         }
         callCoaches();
     }, []);

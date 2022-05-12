@@ -1,6 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
-import { CreateProjectRole, ProjectRole, Skill } from "../../data/interfaces/projects";
+import { CreateProjectRole, ProjectRole } from "../../data/interfaces/projects";
 
 /**
  * API call to create a ProjectRole.
@@ -32,24 +32,6 @@ export async function createProjectRole(
         const projectRole = response.data as ProjectRole;
 
         return projectRole;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return null;
-        } else {
-            throw error;
-        }
-    }
-}
-
-/**
- * API call to get skills
- * @returns
- */
-export async function getSkills(): Promise<Skill[] | null> {
-    try {
-        const response = await axiosInstance.get("skills");
-        const projects = response.data.skills as Skill[];
-        return projects;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
