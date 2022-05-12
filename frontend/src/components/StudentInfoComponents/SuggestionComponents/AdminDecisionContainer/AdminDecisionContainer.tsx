@@ -3,18 +3,33 @@ import { Button, Modal } from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
 import { SuggestionButtons, ConfirmButton } from "./styles";
 
+/**
+ * Make definitive decision on the current student based on the selected decision value.
+ * Only admins can see this component.
+ */
 export default function AdminDecisionContainer() {
     const [show, setShow] = useState(false);
     const [clickedButtonText, setClickedButtonText] = useState("");
+
+    /**
+     * Close the modal.
+     */
     function handleClose() {
         setShow(false);
         setClickedButtonText("");
     }
+
+    /**
+     * Show the modal.
+     */
     function handleShow(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         setShow(true);
     }
 
+    /**
+     * Make definitive decision on the current student based on the selected decision value.
+     */
     function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         const button: HTMLButtonElement = event.currentTarget;

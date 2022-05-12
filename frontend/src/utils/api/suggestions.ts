@@ -2,6 +2,11 @@ import axios from "axios";
 import { axiosInstance } from "./api";
 import { Suggestions } from "../../data/interfaces/suggestions";
 
+/**
+ * API call to fetch all suggestion on a student.
+ * @param edition The edition name.
+ * @param studentId The ID of the student which suggestions need to be fetched.
+ */
 export async function getSuggestions(edition: string, studentId: string) {
     try {
         const response = await axiosInstance.get(
@@ -17,6 +22,12 @@ export async function getSuggestions(edition: string, studentId: string) {
     }
 }
 
+/**
+ * API call for admins to make a definitive decision on a student.
+ * @param edition The edition name.
+ * @param studentId The ID of the student to make a decision on.
+ * @param confirmValue The decision to give this student.
+ */
 export async function confirmStudent(edition: string, studentId: string, confirmValue: number) {
     try {
         const response = await axiosInstance.put(

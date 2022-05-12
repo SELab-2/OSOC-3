@@ -8,14 +8,24 @@ interface Props {
     student: Student;
 }
 
+/**
+ * Component for functionality of suggestions.
+ * @param props current student
+ */
 export default function CoachSuggestionContainer(props: Props) {
     const params = useParams();
     const [show, setShow] = useState(false);
     const [argumentation, setArgumentation] = useState("");
     const [clickedButtonText, setClickedButtonText] = useState("");
 
+    /**
+     * Close the modal.
+     */
     const handleClose = () => setShow(false);
 
+    /**
+     * Show the modal.
+     */
     function handleShow(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         const button: HTMLButtonElement = event.currentTarget;
@@ -23,6 +33,9 @@ export default function CoachSuggestionContainer(props: Props) {
         setShow(true);
     }
 
+    /**
+     * Make suggestion on the current student based on the selected suggestion value.
+     */
     async function doSuggestion() {
         let suggestionNum: number;
         if (clickedButtonText === "Yes") {

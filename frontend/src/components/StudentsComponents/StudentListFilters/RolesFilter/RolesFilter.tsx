@@ -7,6 +7,11 @@ import {
 } from "../styles";
 import Select from "react-select";
 
+/**
+ * Component that filters the students list based on the current roles selected.
+ * @param rolesFilter
+ * @param setRolesFilter
+ */
 export default function RolesFilter({
     rolesFilter,
     setRolesFilter,

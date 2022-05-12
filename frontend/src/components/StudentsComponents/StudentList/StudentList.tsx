@@ -7,6 +7,10 @@ interface Props {
     students: Student[];
 }
 
+/**
+ * Component that renders the list of students in the sidebar.
+ * @param props the students that need to be rendered.
+ */
 export default function StudentList(props: Props) {
     return (
         <StudentCardsList>

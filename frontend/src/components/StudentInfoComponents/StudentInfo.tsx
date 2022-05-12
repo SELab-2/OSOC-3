@@ -17,6 +17,10 @@ interface Props {
     setStudentCoachVolunteerFilter: (value: boolean) => void;
 }
 
+/**
+ * Component that renders the students list and the information about the currently selected student.
+ * @param props all student, current student and all filters to handle the student information page.
+ */
 export default function StudentInfo(props: Props) {
     return (
         <StudentInfoPageContent>

@@ -16,6 +16,10 @@ interface Props {
     studentId: number;
 }
 
+/**
+ * Card component that will be used to show a student in the students list.
+ * @param props all information about a student.
+ */
 export default function StudentCard(props: Props) {
     const params = useParams();
     const navigate = useNavigate();

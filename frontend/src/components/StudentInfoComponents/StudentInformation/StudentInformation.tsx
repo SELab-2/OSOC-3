@@ -27,10 +27,17 @@ interface Props {
     currentStudent: Student;
 }
 
+/**
+ * Component that renders all information of a student and all buttons to perform actions on this student.
+ * @param props current student whose information needs to be showed.
+ */
 export default function StudentInformation(props: Props) {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const params = useParams();
 
+    /**
+     * Get all the suggestion that were made on this student.
+     */
     async function callGetSuggestions() {
         try {
             const response = await getSuggestions(params.editionId!, params.id!);
@@ -40,6 +47,10 @@ export default function StudentInformation(props: Props) {
         }
     }
 
+    /**
+     * Get the string representation for a suggestion value.
+     * @param suggestion
+     */
     function suggestionToText(suggestion: number) {
         if (suggestion === 0) {
             return "Undecided";
@@ -52,6 +63,9 @@ export default function StudentInformation(props: Props) {
         }
     }
 
+    /**
+     * fetch suggestions whenever an edition id or student id changes.
+     */
     useEffect(() => {
         callGetSuggestions();
     }, [params.editionId!, params.id!]);

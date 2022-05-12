@@ -4,6 +4,9 @@ import { getStudents } from "../../utils/api/students";
 import { Student } from "../../data/interfaces/students";
 import { useParams } from "react-router-dom";
 
+/**
+ * @returns Page where admins and coaches can filter on students.
+ */
 function StudentsPage() {
     const params = useParams();
     const [students, setStudents] = useState<Student[]>([]);
@@ -12,6 +15,9 @@ function StudentsPage() {
     const [alumniFilter, setAlumniFilter] = useState(false);
     const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
 
+    /**
+     * Request all students with selected filters
+     */
     async function callGetStudents() {
         try {
             const response = await getStudents(
@@ -29,6 +35,9 @@ function StudentsPage() {
         }
     }
 
+    /**
+     * fetch students again when a filter changes
+     */
     useEffect(() => {
         callGetStudents();
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);

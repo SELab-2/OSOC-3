@@ -13,7 +13,6 @@ import NameFilter from "./NameFilter/NameFilter";
 import RolesFilter from "./RolesFilter/RolesFilter";
 import "./StudentListFilters.css";
 import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
-import ApplyFilterButton from "./ApplyFilterButton/ApplyFilterButton";
 import { Student } from "../../../data/interfaces/students";
 
 interface Props {
@@ -28,6 +27,10 @@ interface Props {
     setStudentCoachVolunteerFilter: (value: boolean) => void;
 }
 
+/**
+ * Component that shows the sidebar with all the filters and student list.
+ * @param props All students and filters currently selected.
+ */
 export default function StudentListFilters(props: Props) {
     return (
         <StudentListSideMenu>
@@ -48,7 +51,6 @@ export default function StudentListFilters(props: Props) {
                 <Form.Check type="checkbox" label="Only available students" />
             </Form.Group>
             <FilterControls>
-                <ApplyFilterButton />
                 <ResetFiltersButton
                     setNameFilter={props.setNameFilter}
                     setAlumniFilter={props.setAlumniFilter}

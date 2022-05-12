@@ -1,3 +1,10 @@
+/**
+ * This file contains all interfaces used in students pages.
+ */
+
+/**
+ * Data about a student.
+ */
 export interface Student {
     alumni: boolean;
     editionId: number;
@@ -13,11 +20,17 @@ export interface Student {
     wantsToBeStudentCoach: boolean;
 }
 
+/**
+ * Used as a response object for multiple students.
+ */
 export interface Students {
-    /** A list of projects */
+    /** A list of students */
     students: Student[];
 }
 
+/**
+ * Data to represent the amount of suggestions for each suggestion.
+ */
 export interface NrSuggestions {
     yes: number;
     maybe: number;

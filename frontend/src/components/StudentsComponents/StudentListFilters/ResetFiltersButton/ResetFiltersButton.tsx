@@ -7,7 +7,14 @@ interface Props {
     setStudentCoachVolunteerFilter: (studentCoachVolunteer: boolean) => void;
 }
 
+/**
+ * Component that resets all filters.
+ * @param props
+ */
 export default function ResetFiltersButton(props: Props) {
+    /**
+     * Reset all filters to their default value.
+     */
     function resetFilters() {
         props.setNameFilter("");
         props.setAlumniFilter(false);

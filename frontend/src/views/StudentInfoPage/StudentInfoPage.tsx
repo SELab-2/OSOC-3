@@ -4,6 +4,10 @@ import { getStudent, getStudents } from "../../utils/api/students";
 import StudentInfo from "../../components/StudentInfoComponents/StudentInfo";
 import { Student } from "../../data/interfaces/students";
 
+/**
+ * @returns the detailed page of a student. Here you can make a suggestion and admins
+ *          can make definitive decisions on students. You can also remove the currently selected student.
+ */
 function StudentInfoPage() {
     const params = useParams();
     const [students, setStudents] = useState<Student[]>([]);
@@ -12,6 +16,10 @@ function StudentInfoPage() {
     const [alumniFilter, setAlumniFilter] = useState(false);
     const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
     const [currentStudent, setCurrentStudent] = useState<Student>();
+
+    /**
+     * Request all students with selected filters.
+     */
     async function callGetStudents() {
         try {
             const response = await getStudents(
@@ -27,6 +35,9 @@ function StudentInfoPage() {
         }
     }
 
+    /**
+     * Request the currently selected student.
+     */
     async function callGetStudent() {
         try {
             const response = await getStudent(params.editionId!, params.id!);
@@ -36,10 +47,19 @@ function StudentInfoPage() {
         }
     }
 
+    /**
+     * fetch students when a filter changes
+     */
+    useEffect(() => {
+        callGetStudents();
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
+
+    /**
+     * fetch student when the student id changes
+     */
     useEffect(() => {
         callGetStudent();
-        callGetStudents();
-    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, params.id!]);
+    }, [params.id!]);
 
     if (!currentStudent) {
         console.log("no current student");
