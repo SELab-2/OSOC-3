@@ -33,15 +33,13 @@ body {
 
 
 /* All tables */
-.table-striped>tbody>tr:nth-of-type(odd)>* {
-    --bs-table-accent-bg: #1A1A38;
-}
-
-.table-striped>tbody>tr:nth-of-type(odd)>*:hover {
-    --bs-table-accent-bg: #41415E;
-}
-
-.table>:not(caption)>*>* {
-    --bs-table-accent-bg: #0F0F30;
+.table-dark{
+    --bs-table-bg: #0F0F30;
+    --bs-table-background: #0F0F30;
+    --bs-table-striped-bg: #1A1A38;
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: #51516E;
+    --bs-table-active-color: #fff;
     --bs-table-hover-bg: #41415E;
+    --bs-table-hover-color: #fff;
 }
