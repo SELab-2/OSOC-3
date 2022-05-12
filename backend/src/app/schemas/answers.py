@@ -3,7 +3,7 @@ from src.database.enums import QuestionEnum
 
 
 class QuestionAnswer(CamelCaseModel):
-    """test"""
+    """return model of an answer"""
     answer: str
 
     class Config:
@@ -12,7 +12,7 @@ class QuestionAnswer(CamelCaseModel):
 
 
 class QuestionFileAnswer(CamelCaseModel):
-    """test"""
+    """return model of a file answers"""
     file_name: str
     url: str
     mime_type: str
@@ -24,7 +24,7 @@ class QuestionFileAnswer(CamelCaseModel):
 
 
 class Question(CamelCaseModel):
-    """test"""
+    """return model of a question"""
     type: QuestionEnum
     question: str
     answers: list[QuestionAnswer]
@@ -36,7 +36,7 @@ class Question(CamelCaseModel):
 
 
 class Questions(CamelCaseModel):
-    """test"""
+    """return model of questions"""
     questions: list[Question]
 
     class Config:
