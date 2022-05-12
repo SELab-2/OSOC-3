@@ -17,7 +17,7 @@ class Suggestion(CamelCaseModel):
     """
 
     suggestion_id: int
-    coach: User
+    coach: User | None
     suggestion: DecisionEnum
     argumentation: str
 
@@ -42,7 +42,9 @@ class SuggestionResponse(CamelCaseModel):
 
 def suggestion_model_to_schema(suggestion_model: Suggestion_model) -> Suggestion:
     """Create Suggestion Schema from Suggestion Model"""
-    coach: User = user_model_to_schema(suggestion_model.coach)
+    coach: User | None = None
+    if suggestion_model.coach:
+        coach = user_model_to_schema(suggestion_model.coach)
     return Suggestion(suggestion_id=suggestion_model.suggestion_id,
                       coach=coach,
                       suggestion=suggestion_model.suggestion,

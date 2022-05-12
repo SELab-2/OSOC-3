@@ -13,9 +13,10 @@ from .projects import StudentInConflictException, FailedToAddProjectRoleExceptio
 from .register import FailedToAddNewUserException
 from .students_email import FailedToAddNewEmailException
 from .webhooks import WebhookProcessException
+from .util import NotFound
 
 
-def install_handlers(app: FastAPI):
+def install_handlers(app: FastAPI):  # pylint: disable=R0914
     """Install all custom exception handlers"""
 
     @app.exception_handler(ExpiredCredentialsException)
@@ -58,6 +59,13 @@ def install_handlers(app: FastAPI):
 
     @app.exception_handler(sqlalchemy.exc.NoResultFound)
     def sqlalchemy_exc_no_result_found(_request: Request, _exception: sqlalchemy.exc.NoResultFound):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={'message': 'Not Found'}
+        )
+
+    @app.exception_handler(NotFound)
+    def not_found(_request: Request, _exception: NotFound):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={'message': 'Not Found'}
@@ -106,6 +114,7 @@ def install_handlers(app: FastAPI):
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={'message': 'You used the wrong token to access this resource.'}
         )
+
     @app.exception_handler(ReadOnlyEditionException)
     def read_only_edition_exception(_request: Request, _exception: ReadOnlyEditionException):
         return JSONResponse(

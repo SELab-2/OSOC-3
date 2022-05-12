@@ -3,17 +3,17 @@ import { useNavigate } from "react-router-dom";
 
 import { logIn } from "../../utils/api/login";
 
+import CreateButton from "../../components/Common/Buttons/CreateButton";
 import { Email, Password, SocialButtons, WelcomeText } from "../../components/LoginComponents";
 
 import {
     EmailLoginContainer,
-    LoginButton,
     LoginContainer,
     LoginPageContainer,
     NoAccount,
     VerticalDivider,
 } from "./styles";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "../../contexts";
 
 /**
  * Page where users can log in to the application.
@@ -60,7 +60,7 @@ export default function LoginPage() {
                             Don't have an account? Ask an admin for an invite link
                         </NoAccount>
                         <div>
-                            <LoginButton onClick={callLogIn}>Log In</LoginButton>
+                            <CreateButton onClick={callLogIn} label={"Log In"} showIcon={false} />
                         </div>
                     </EmailLoginContainer>
                 </LoginContainer>

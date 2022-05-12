@@ -28,6 +28,7 @@ export const StyledDropdownItem = styled(NavDropdown.Item)`
 `;
 
 export const LogOutText = styled(BSNavbar.Text)`
+    padding: 8px;
     transition: 150ms ease-out;
 
     &:hover {
@@ -35,4 +36,23 @@ export const LogOutText = styled(BSNavbar.Text)`
         color: rgba(255, 255, 255, 75%);
         transition: 150ms ease-in;
     }
+`;
+
+export const LogOutTextHM = styled(BSNavbar.Text)`
+    padding: 8px 0;
+    transition: 150ms ease-out;
+
+    &:hover {
+        cursor: pointer;
+        color: rgba(255, 255, 255, 75%);
+        transition: 150ms ease-in;
+    }
+`;
+
+export const HorizontalSep = styled.hr`
+    margin: 5px 0;
+`;
+
+export const VerticalSep = styled.div`
+    margin: 0 10px;
 `;
