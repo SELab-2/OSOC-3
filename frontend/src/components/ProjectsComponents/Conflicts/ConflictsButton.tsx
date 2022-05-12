@@ -36,13 +36,13 @@ export default function ConflictsButton(props: { editionId: string }) {
                     </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                    <b>The student may be a better fot for a specific team, if they:</b>
+                    <b>The student may be a better fit for a specific team, if they:</b>
                     <ul>
                         <li>are an alumni and the team doesn't have any yet</li>
                         <li>are an alumni on a team with a half-time coach</li>
                         <li>are an alumni and provide skills the coach does not have</li>
                         <li>have pre-existing history with the project in question</li>
-                        <li>enricht the team's diversity</li>
+                        <li>enrich the team's diversity</li>
                         <li>
                             have a skillset that is tough to find in other applicants,
                             <br />
