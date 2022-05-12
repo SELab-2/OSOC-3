@@ -1,4 +1,4 @@
-import { BSNavbar } from "./styles";
+import { BSNavbar, HorizontalSep, VerticalSep } from "./styles";
 import { useAuth } from "../../contexts";
 import Nav from "react-bootstrap/Nav";
 import EditionDropdown from "./EditionDropdown";
@@ -11,7 +11,6 @@ import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
 import EditionNavLink from "./EditionNavLink";
 import StudentsDropdown from "./StudentsDropdown";
-
 /**
  * Navbar component displayed at the top of the screen.
  * If the user is not signed in, this is hidden automatically.
@@ -62,6 +61,8 @@ export default function Navbar() {
             <BSNavbar.Collapse id={"responsive-navbar-nav"}>
                 <Nav className={"ms-auto"}>
                     <EditionDropdown editions={editions} />
+                    <VerticalSep className={"vr d-none d-lg-block"} />
+                    <HorizontalSep className={"d-lg-none"} />
                     <LinkContainer to={"/editions"} className={"link"}>
                         <Nav.Link>Editions</Nav.Link>
                     </LinkContainer>
@@ -72,6 +73,8 @@ export default function Navbar() {
                     </EditionNavLink>
                     <StudentsDropdown isLoggedIn={isLoggedIn} currentEdition={currentEdition} />
                     <UsersDropdown currentEdition={currentEdition} role={role} />
+                    <VerticalSep className={"vr d-none d-lg-block"} />
+                    <HorizontalSep className={"d-lg-none"} />
                     <LogoutButton />
                 </Nav>
             </BSNavbar.Collapse>

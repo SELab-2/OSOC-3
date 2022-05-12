@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from pydantic import BaseModel
 
+from src.app.schemas.skills import Skill
 from src.app.schemas.utils import CamelCaseModel
 
 
@@ -8,17 +9,6 @@ class User(CamelCaseModel):
     """Represents a User from the database"""
     user_id: int
     name: str
-
-    class Config:
-        """Set to ORM mode"""
-        orm_mode = True
-
-
-class Skill(CamelCaseModel):
-    """Represents a Skill from the database"""
-    skill_id: int
-    name: str
-    description: str
 
     class Config:
         """Set to ORM mode"""
@@ -35,14 +25,47 @@ class Partner(CamelCaseModel):
         orm_mode = True
 
 
+class Student(CamelCaseModel):
+    """Represents a Partner from the database"""
+    student_id: int
+    first_name: str
+    last_name: str
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
+class ProjectRoleSuggestion(CamelCaseModel):
+    """Represents a ProjectRole from the database"""
+    project_role_suggestion_id: int
+    argumentation: str | None
+    drafter: User | None
+    student: Student | None
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
 class ProjectRole(CamelCaseModel):
     """Represents a ProjectRole from the database"""
-    student_id: int
+    project_role_id: int
     project_id: int
-    skill_id: int
-    definitive: bool
-    argumentation: str | None
-    drafter_id: int
+    description: str | None
+    skill: Skill
+    slots: int
+
+    suggestions: list[ProjectRoleSuggestion]
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
+
+
+class ProjectRoleResponseList(CamelCaseModel):
+    """Response list containing project roles"""
+    project_roles: list[ProjectRole]
 
     class Config:
         """Set to ORM mode"""
@@ -53,10 +76,8 @@ class Project(CamelCaseModel):
     """Represents a Project from the database to return when a GET request happens"""
     project_id: int
     name: str
-    number_of_students: int
 
     coaches: list[User]
-    skills: list[Skill]
     partners: list[Partner]
     project_roles: list[ProjectRole]
 
@@ -65,15 +86,9 @@ class Project(CamelCaseModel):
         orm_mode = True
 
 
-class Student(CamelCaseModel):
-    """Represents a Student to use in ConflictStudent"""
-    student_id: int
-    first_name: str
-    last_name: str
-
-    class Config:
-        """Config Class"""
-        orm_mode = True
+class ProjectList(CamelCaseModel):
+    """A list of projects"""
+    projects: list[Project]
 
 
 class ConflictProject(CamelCaseModel):
@@ -86,15 +101,32 @@ class ConflictProject(CamelCaseModel):
         orm_mode = True
 
 
-class ProjectList(CamelCaseModel):
-    """A list of projects"""
-    projects: list[Project]
+class ConflictProjectRole(CamelCaseModel):
+    """A project to be used in ConflictStudent"""
+    project_role_id: int
+    project: ConflictProject
+
+    class Config:
+        """Config Class"""
+        orm_mode = True
+
+
+class ConflictRoleSuggestion(CamelCaseModel):
+    """Represents a ProjectRole from the database"""
+    project_role_suggestion_id: int
+    project_role: ConflictProjectRole
+
+    class Config:
+        """Set to ORM mode"""
+        orm_mode = True
 
 
 class ConflictStudent(CamelCaseModel):
     """A student together with the projects they are causing a conflict for"""
-    student: Student
-    projects: list[ConflictProject]
+    student_id: int
+    first_name: str
+    last_name: str
+    pr_suggestions: list[ConflictRoleSuggestion]
 
     class Config:
         """Config Class"""
@@ -106,18 +138,23 @@ class ConflictStudentList(CamelCaseModel):
     conflict_students: list[ConflictStudent]
 
 
+class InputProjectRole(BaseModel):
+    """Used for creating a project role"""
+    skill_id: int
+    description: str | None
+    slots: int
+
+
 class InputProject(BaseModel):
     """Used for passing the details of a project when creating/patching a project"""
     name: str
-    number_of_students: int
-    skills: list[int]
     partners: list[str]
     coaches: list[int]
 
 
-class InputStudentRole(BaseModel):
+class InputArgumentation(BaseModel):
     """Used for creating/patching a student role"""
-    skill_id: int
+    argumentation: str | None
 
 
 @dataclass

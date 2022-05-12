@@ -1,4 +1,4 @@
-import { LogOutText } from "./styles";
+import { LogOutText, LogOutTextHM } from "./styles";
 import { logOut, useAuth } from "../../contexts";
 import { useNavigate } from "react-router-dom";
 
@@ -20,5 +20,14 @@ export default function LogoutButton() {
         navigate("/login");
     }
 
-    return <LogOutText onClick={handleLogout}>Log Out</LogOutText>;
+    return (
+        <>
+            <LogOutText className={"d-none d-lg-block"} onClick={handleLogout}>
+                Log Out
+            </LogOutText>
+            <LogOutTextHM className={"d-lg-none"} onClick={handleLogout}>
+                Log Out
+            </LogOutTextHM>
+        </>
+    );
 }
