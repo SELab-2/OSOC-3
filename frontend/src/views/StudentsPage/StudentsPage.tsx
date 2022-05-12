@@ -40,6 +40,7 @@ function StudentsPage() {
      */
     useEffect(() => {
         callGetStudents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
 
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
     FullName,
@@ -34,10 +35,13 @@ interface Props {
 export default function StudentInformation(props: Props) {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const params = useParams();
+    const editionId = params.editionId;
+    const studentId = params.id;
 
     /**
      * Get all the suggestion that were made on this student.
      */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     async function callGetSuggestions() {
         try {
             const response = await getSuggestions(params.editionId!, params.id!);
@@ -68,7 +72,7 @@ export default function StudentInformation(props: Props) {
      */
     useEffect(() => {
         callGetSuggestions();
-    }, [params.editionId!, params.id!]);
+    }, [editionId, studentId]);
 
     if (!props.currentStudent) {
         return (

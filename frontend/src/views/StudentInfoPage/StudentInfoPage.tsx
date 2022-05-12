@@ -10,6 +10,7 @@ import { Student } from "../../data/interfaces/students";
  */
 function StudentInfoPage() {
     const params = useParams();
+    const studentId = params.id;
     const [students, setStudents] = useState<Student[]>([]);
     const [nameFilter, setNameFilter] = useState("");
     const [rolesFilter, setRolesFilter] = useState<number[]>([]);
@@ -52,6 +53,7 @@ function StudentInfoPage() {
      */
     useEffect(() => {
         callGetStudents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
 
     /**
@@ -59,7 +61,8 @@ function StudentInfoPage() {
      */
     useEffect(() => {
         callGetStudent();
-    }, [params.id!]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [studentId]);
 
     if (!currentStudent) {
         return (
