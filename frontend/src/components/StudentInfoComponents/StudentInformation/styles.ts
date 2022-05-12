@@ -50,7 +50,7 @@ export const RolesValues = styled.ul`
     margin-left: 5%;
 `;
 
-export const Role = styled.li``;
+export const RoleValue = styled.li``;
 
 export const LineBreak = styled.div`
     background-color: #163542;

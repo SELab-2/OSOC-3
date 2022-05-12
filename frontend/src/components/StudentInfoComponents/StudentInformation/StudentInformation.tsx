@@ -14,7 +14,7 @@ import {
     PersonalInfoFieldSubject,
     RolesField,
     RolesValues,
-    Role,
+    RoleValue,
     NameAndRemoveButtonContainer,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
@@ -23,6 +23,8 @@ import { Suggestion } from "../../../data/interfaces/suggestions";
 import { getSuggestions } from "../../../utils/api/suggestions";
 import { useParams } from "react-router-dom";
 import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
+import { useAuth } from "../../../contexts";
+import { Role } from "../../../data/enums";
 
 interface Props {
     currentStudent: Student;
@@ -33,6 +35,7 @@ interface Props {
  * @param props current student whose information needs to be showed.
  */
 export default function StudentInformation(props: Props) {
+    const { role } = useAuth();
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const params = useParams();
     const editionId = params.editionId;
@@ -130,15 +133,15 @@ export default function StudentInformation(props: Props) {
                 <RolesField>
                     Roles:
                     <RolesValues>
-                        <Role>Frontend</Role>
-                        <Role>Design</Role>
-                        <Role>Communication</Role>
+                        <RoleValue>Frontend</RoleValue>
+                        <RoleValue>Design</RoleValue>
+                        <RoleValue>Communication</RoleValue>
                     </RolesValues>
                 </RolesField>
                 <LineBreak />
                 <div>
                     <CoachSuggestionContainer student={props.currentStudent} />
-                    <AdminDecisionContainer />
+                    {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
                 </div>
             </StudentInformationContainer>
         );
