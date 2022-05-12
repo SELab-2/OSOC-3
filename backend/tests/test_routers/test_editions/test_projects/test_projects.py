@@ -226,13 +226,8 @@ async def test_patch_project_non_existing_coach(database_session: AsyncSession, 
         })
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-
-    #print(project.project_id)
-    #print((await database_session.execute(select(Project))).scalars().all())
-    #test_proj = (await database_session.execute(select(Project).where(Project.project_id == project.project_id))).unique().scalar_one()
-    #print(test_proj)
-    #response = await auth_client.get(f'/editions/{edition.name}/projects/{project.project_id}')
-    #assert len(response.json()['coaches']) == 0
+    response = await auth_client.get(f'/editions/{edition.name}/projects/{project.project_id}')
+    assert len(response.json()['coaches']) == 0
 
 
 async def test_patch_wrong_project(database_session: AsyncSession, auth_client: AuthClient):

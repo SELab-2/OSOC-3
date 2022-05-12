@@ -535,7 +535,6 @@ async def test_post_email_rejected(database_with_data: AsyncSession, auth_client
         response = await auth_client.post("/editions/ed2022/students/emails",
                                           json={"students_id": [2], "email_status": 5})
     assert response.status_code == status.HTTP_201_CREATED
-    print(response.json())
     assert EmailStatusEnum(
         response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.REJECTED
 
@@ -562,7 +561,6 @@ async def test_creat_email_student_in_other_edition(database_with_data: AsyncSes
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
                                           json={"students_id": [3], "email_status": 5})
-    print(response.json())
     assert response.status_code == status.HTTP_201_CREATED
     assert len(response.json()["studentEmails"]) == 0
 
@@ -655,7 +653,6 @@ async def test_emails_filter_emailstatus(database_with_data: AsyncSession, auth_
                                    json={"students_id": [2], "email_status": i})
             response = await auth_client.get(
                 f"/editions/ed2022/students/emails/?email_status={i}", follow_redirects=True)
-            print(response.json())
             assert len(response.json()["studentEmails"]) == 1
             if i > 0:
                 response = await auth_client.get(

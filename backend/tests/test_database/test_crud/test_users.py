@@ -429,7 +429,6 @@ async def test_add_coach(database_session: AsyncSession):
     database_session.add(edition)
 
     await database_session.commit()
-    print(user)
     await users_crud.add_coach(database_session, user.user_id, edition.name)
     coach = (await database_session.execute(select(user_editions))).one()
     assert coach.user_id == user.user_id
