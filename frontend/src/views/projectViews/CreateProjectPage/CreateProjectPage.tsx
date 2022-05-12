@@ -49,7 +49,6 @@ export default function CreateProjectPage() {
                 <CenterTitle>
                     <h2>New Project</h2>
                 </CenterTitle>
-
                 <Label>Name</Label>
                 <NameInput name={name} setName={setName} />
 
@@ -105,16 +104,16 @@ export default function CreateProjectPage() {
         const response = await createProject(editionId, name, partners, coachIds);
 
         if (response) {
-            await toast.promise(addProjectRolls(response.projectId), {
+            await toast.promise(addProjectRoles(response.projectId), {
                 pending: "Creating project",
                 success: "Successfully created project",
-                error: "Something went wrong"
-            }) 
+                error: "Something went wrong",
+            });
             navigate("/editions/" + editionId + "/projects/" + response.projectId);
         } else toast.error("Something went wrong");
     }
 
-    async function addProjectRolls(projectId: number) {
+    async function addProjectRoles(projectId: number) {
         // Use a for loop or else await won't work as intended
         for (const projectSkill of projectSkills) {
             const addedSkill = await createProjectRole(
