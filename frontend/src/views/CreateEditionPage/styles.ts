@@ -31,6 +31,8 @@ export const ButtonDiv = styled.div`
 `;
 
 export const CancelButton = styled(Button)`
+    display: flex;
+    align-items: center;
     margin-right: 5px;
     background-color: #131329;
     color: white;

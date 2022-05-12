@@ -26,25 +26,29 @@ export default function CreateEditionPage() {
     const [loading, setLoading] = useState(false);
 
     async function sendEdition(name: string, year: number): Promise<boolean> {
-        const response = await toast.promise(createEdition(name, year), {
-            pending: "Creating new edition",
-            error: "Connection issue",
-        });
+        const response = await toast.promise(
+            createEdition(name, year),
+            {
+                pending: "Creating new edition",
+                error: "Connection issue",
+            },
+            { toastId: "createEdition" }
+        );
         if (response.status === 201) {
             const allEditions = await getSortedEditions();
             setEditions(allEditions);
             setCurrentEdition(response.data.name);
-            toast.success("Successfully made new edition");
+            toast.success("Successfully made new edition", { toastId: "createEditionSuccess" });
             return true;
         } else if (response.status === 409) {
             setNameError("Edition name already exists.");
-            toast.warning("Edition name already exists");
+            toast.warning("Edition name already exists", { toastId: "createEditionNameExists" });
         } else if (response.status === 422) {
             setNameError("Invalid edition name.");
-            toast.warning("Invalid edition name");
+            toast.warning("Invalid edition name", { toastId: "createEditionBadName" });
         } else {
             setError("Something went wrong.");
-            toast.error("Something went wrong");
+            toast.error("Something went wrong", { toastId: "createEditionError" });
         }
         return false;
     }
