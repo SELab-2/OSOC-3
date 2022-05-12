@@ -31,15 +31,14 @@ body {
     color: white;
 }
 
-
 /* All tables */
-.table-dark{
-    --bs-table-bg: #0F0F30;
-    --bs-table-background: #0F0F30;
-    --bs-table-striped-bg: #1A1A38;
+.table-dark {
+    --bs-table-bg: #0f0f30;
+    --bs-table-background: #0f0f30;
+    --bs-table-striped-bg: #1a1a38;
     --bs-table-striped-color: #fff;
-    --bs-table-active-bg: #51516E;
+    --bs-table-active-bg: #51516e;
     --bs-table-active-color: #fff;
-    --bs-table-hover-bg: #41415E;
+    --bs-table-hover-bg: #41415e;
     --bs-table-hover-color: #fff;
 }
