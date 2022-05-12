@@ -29,7 +29,7 @@ export const SuggestionField = styled.p`
     font-size: 20px;
 `;
 
-export const PersonalInfoField = styled.p`
+export const PersonalInfoField = styled.div`
     width: 100%;
     display: flex;
 `;
