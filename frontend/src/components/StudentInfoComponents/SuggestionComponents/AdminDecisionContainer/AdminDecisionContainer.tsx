@@ -1,14 +1,14 @@
-import React, {useState} from "react";
-import {Button, Modal} from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
 import { SuggestionButtons, ConfirmButton } from "./styles";
 
 export default function AdminDecisionContainer() {
     const [show, setShow] = useState(false);
-    const [clickedButtonText, setClickedButtonText] = useState("")
-    function handleClose(){
-        setShow(false)
-        setClickedButtonText("")
+    const [clickedButtonText, setClickedButtonText] = useState("");
+    function handleClose() {
+        setShow(false);
+        setClickedButtonText("");
     }
     function handleShow(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
@@ -18,7 +18,7 @@ export default function AdminDecisionContainer() {
     function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
         const button: HTMLButtonElement = event.currentTarget;
-        setClickedButtonText(button.innerText)
+        setClickedButtonText(button.innerText);
     }
 
     return (
@@ -27,15 +27,28 @@ export default function AdminDecisionContainer() {
                 <Modal.Header closeButton>
                     <Modal.Title>Definitive decision on student</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Click on one of the buttons to mark your decision
+                <Modal.Body>
+                    Click on one of the buttons to mark your decision
                     <SuggestionButtons>
-                        <ConfirmButton value={0} variant="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                        <ConfirmButton
+                            value={0}
+                            variant="success"
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
+                        >
                             Yes
                         </ConfirmButton>
-                        <ConfirmButton value={1} variant="warning" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                        <ConfirmButton
+                            value={1}
+                            variant="warning"
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
+                        >
                             Maybe
                         </ConfirmButton>
-                        <ConfirmButton value={2} variant="danger" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}>
+                        <ConfirmButton
+                            value={2}
+                            variant="danger"
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
+                        >
                             No
                         </ConfirmButton>
                     </SuggestionButtons>
@@ -45,7 +58,7 @@ export default function AdminDecisionContainer() {
                         Close
                     </Button>
                     <div>
-                        { clickedButtonText? (
+                        {clickedButtonText ? (
                             <Button variant="primary" onClick={handleClose}>
                                 Confirm {clickedButtonText}?
                             </Button>
@@ -59,7 +72,7 @@ export default function AdminDecisionContainer() {
             </Modal>
             <h4>Definitive decision by admin</h4>
             <DefinitiveDecisionContainer>
-                <Button onClick={(e) => handleShow(e)} variant="success" size="lg">
+                <Button onClick={e => handleShow(e)} variant="success" size="lg">
                     Confirm
                 </Button>
             </DefinitiveDecisionContainer>

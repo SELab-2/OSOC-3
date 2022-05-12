@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {useParams} from 'react-router-dom';
-import {getStudent, getStudents} from "../../utils/api/students";
+import { useParams } from "react-router-dom";
+import { getStudent, getStudents } from "../../utils/api/students";
 import StudentInfo from "../../components/StudentInfoComponents/StudentInfo";
-import {Student} from "../../data/interfaces/students";
+import { Student } from "../../data/interfaces/students";
 
 function StudentInfoPage() {
-    const params = useParams()
+    const params = useParams();
     const [students, setStudents] = useState<Student[]>([]);
     const [nameFilter, setNameFilter] = useState("");
     const [rolesFilter, setRolesFilter] = useState<number[]>([]);
@@ -14,7 +14,13 @@ function StudentInfoPage() {
     const [currentStudent, setCurrentStudent] = useState<Student>();
     async function callGetStudents() {
         try {
-            const response = await getStudents(params.editionId!, nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter);
+            const response = await getStudents(
+                params.editionId!,
+                nameFilter,
+                rolesFilter,
+                alumniFilter,
+                studentCoachVolunteerFilter
+            );
             setStudents(response.students);
         } catch (error) {
             console.log(error);
@@ -24,7 +30,7 @@ function StudentInfoPage() {
     async function callGetStudent() {
         try {
             const response = await getStudent(params.editionId!, params.id!);
-            setCurrentStudent(response)
+            setCurrentStudent(response);
         } catch (error) {
             console.log(error);
         }
@@ -36,21 +42,28 @@ function StudentInfoPage() {
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, params.id!]);
 
     if (!currentStudent) {
-        console.log("no current student")
-        return (<div>
-            <h1>loading</h1>
-        </div>);
-    }
-    else {
-        console.log(currentStudent)
+        console.log("no current student");
         return (
             <div>
-                <StudentInfo students={students} currentStudent={currentStudent!}
-                             nameFilter={nameFilter} setNameFilter={setNameFilter}
-                             alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter}
-                             rolesFilter={rolesFilter} setRolesFilter={setRolesFilter}
-                             studentCoachVolunteerFilter={studentCoachVolunteerFilter}
-                             setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}/>
+                <h1>loading</h1>
+            </div>
+        );
+    } else {
+        console.log(currentStudent);
+        return (
+            <div>
+                <StudentInfo
+                    students={students}
+                    currentStudent={currentStudent!}
+                    nameFilter={nameFilter}
+                    setNameFilter={setNameFilter}
+                    alumniFilter={alumniFilter}
+                    setAlumniFilter={setAlumniFilter}
+                    rolesFilter={rolesFilter}
+                    setRolesFilter={setRolesFilter}
+                    studentCoachVolunteerFilter={studentCoachVolunteerFilter}
+                    setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                />
             </div>
         );
     }

@@ -1,7 +1,7 @@
 import React from "react";
 import { StudentCard } from "../index";
 import { StudentCardsList } from "./styles";
-import {Student} from "../../../data/interfaces/students";
+import { Student } from "../../../data/interfaces/students";
 
 interface Props {
     students: Student[];

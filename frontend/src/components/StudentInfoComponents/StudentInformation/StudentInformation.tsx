@@ -72,7 +72,7 @@ export default function StudentInformation(props: Props) {
                     </FullName>
                     <RemoveStudentButton />
                 </NameAndRemoveButtonContainer>
-                <PreferedName>Prefered name: {props.currentStudent.preferredName}</PreferedName>
+                <PreferedName>Preferred name: {props.currentStudent.preferredName}</PreferedName>
                 <LineBreak />
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
                 {suggestions.map(suggestion => (

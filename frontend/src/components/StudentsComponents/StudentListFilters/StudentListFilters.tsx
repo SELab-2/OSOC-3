@@ -14,7 +14,7 @@ import RolesFilter from "./RolesFilter/RolesFilter";
 import "./StudentListFilters.css";
 import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
 import ApplyFilterButton from "./ApplyFilterButton/ApplyFilterButton";
-import {Student} from "../../../data/interfaces/students";
+import { Student } from "../../../data/interfaces/students";
 
 interface Props {
     students: Student[];
@@ -36,7 +36,10 @@ export default function StudentListFilters(props: Props) {
             <NameFilter nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} />
             <RolesFilter rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} />
             <Form.Group>
-                <AlumniFilter alumniFilter={props.alumniFilter} setAlumniFilter={props.setAlumniFilter} />
+                <AlumniFilter
+                    alumniFilter={props.alumniFilter}
+                    setAlumniFilter={props.setAlumniFilter}
+                />
                 <Form.Check type="checkbox" label="Only students you've suggested for" />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={props.studentCoachVolunteerFilter}

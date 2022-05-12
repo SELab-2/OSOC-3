@@ -18,6 +18,5 @@ export interface Authentication {
 }
 
 export interface Suggestions {
-    /** A list of projects */
     suggestions: Suggestion[];
 }

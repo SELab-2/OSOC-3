@@ -55,13 +55,13 @@ export const CardAmountSuggestions = styled.p`
 export const SuggestionSignYes = styled.p`
     font-size: 20px;
     margin-right: 3px;
-    color: var(--osoc_green)
+    color: var(--osoc_green);
 `;
 
 export const SuggestionSignMaybe = styled.p`
     font-size: 20px;
     margin-right: 3px;
-    color: var(--osoc_orange)
+    color: var(--osoc_orange);
 `;
 
 export const SuggestionSignNo = styled.p`

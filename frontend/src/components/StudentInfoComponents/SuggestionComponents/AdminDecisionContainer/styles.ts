@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Button} from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
 export const SuggestionButtons = styled.div`
     display: flex;
