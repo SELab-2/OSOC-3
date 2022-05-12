@@ -2,7 +2,7 @@ import React from "react";
 import { Container, ContentWrapper } from "./app.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
-import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
+import { AdminRoute, Footer, Navbar, PrivateRoute, CurrentEditionRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
     EditionsPage,
@@ -69,7 +69,7 @@ export default function Router() {
                                         {/* Projects routes */}
                                         <Route path="projects" element={<Outlet />}>
                                             <Route path={""} element={<ProjectsPage />} />
-                                            <Route path={"new"} element={<AdminRoute />}>
+                                            <Route path={"new"} element={<CurrentEditionRoute />}>
                                                 {/* create project page */}
                                                 <Route path={""} element={<CreateProjectPage />} />
                                             </Route>

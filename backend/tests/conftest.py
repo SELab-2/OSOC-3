@@ -2,32 +2,38 @@
 from typing import Generator
 
 import pytest
-from alembic import command
-from alembic import config
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from src.app import app
 from src.database.database import get_session
 from src.database.engine import engine
-
+from src.database.models import Base
 from tests.utils.authorization import AuthClient
+
+
+# @pytest.fixture(scope="session")
+# def tables():
+#     """
+#     Fixture to initialize a database before the tests,
+#     and drop it again afterwards
+#     """
+#     alembic_config: config.Config = config.Config('alembic.ini')
+#     command.upgrade(alembic_config, 'head')
+#     yield
+#     command.downgrade(alembic_config, 'base')
 
 
 @pytest.fixture(scope="session")
 def tables():
     """
-    Fixture to initialize a database before the tests,
-    and drop it again afterwards
+    Fixture to initialize a database before the tests
     """
-    alembic_config: config.Config = config.Config('alembic.ini')
-    command.upgrade(alembic_config, 'head')
-    yield
-    command.downgrade(alembic_config, 'base')
+    Base.metadata.create_all(bind=engine)
 
 
 @pytest.fixture
-def database_session(tables: None) -> Generator[Session, None, None]:
+def database_session(tables) -> Generator[Session, None, None]:
     """
     Fixture to create a session for every test, and rollback
     all the transactions so that each tests starts with a clean db

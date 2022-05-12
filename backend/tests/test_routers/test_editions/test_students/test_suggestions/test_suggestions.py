@@ -22,12 +22,12 @@ def database_with_data(database_session: Session) -> Session:
     database_session.commit()
 
     # Skill
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    skill4: Skill = Skill(name="skill4", description="something about skill4")
-    skill5: Skill = Skill(name="skill5", description="something about skill5")
-    skill6: Skill = Skill(name="skill6", description="something about skill6")
+    skill1: Skill = Skill(name="skill1")
+    skill2: Skill = Skill(name="skill2")
+    skill3: Skill = Skill(name="skill3")
+    skill4: Skill = Skill(name="skill4")
+    skill5: Skill = Skill(name="skill5")
+    skill6: Skill = Skill(name="skill6")
     database_session.add(skill1)
     database_session.add(skill2)
     database_session.add(skill3)
@@ -60,7 +60,7 @@ def test_new_suggestion(database_with_data: Session, auth_client: AuthClient):
     """Tests creating a new suggestion"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    resp = auth_client.post("/editions/ed2022/students/2/suggestions/",
+    resp = auth_client.post("/editions/ed2022/students/2/suggestions",
                             json={"suggestion": 1, "argumentation": "test"})
     assert resp.status_code == status.HTTP_201_CREATED
     suggestions: list[Suggestion] = database_with_data.query(
@@ -77,7 +77,7 @@ def test_overwrite_suggestion(database_with_data: Session, auth_client: AuthClie
     # Create initial suggestion
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    auth_client.post("/editions/ed2022/students/2/suggestions/",
+    auth_client.post("/editions/ed2022/students/2/suggestions",
                      json={"suggestion": 1, "argumentation": "test"})
 
     suggestions: list[Suggestion] = database_with_data.query(
@@ -86,7 +86,7 @@ def test_overwrite_suggestion(database_with_data: Session, auth_client: AuthClie
 
     # Send a new request
     arg = "overwritten"
-    resp = auth_client.post("/editions/ed2022/students/2/suggestions/",
+    resp = auth_client.post("/editions/ed2022/students/2/suggestions",
                             json={"suggestion": 2, "argumentation": arg})
     assert resp.status_code == status.HTTP_201_CREATED
     suggestions: list[Suggestion] = database_with_data.query(
@@ -98,7 +98,7 @@ def test_overwrite_suggestion(database_with_data: Session, auth_client: AuthClie
 def test_new_suggestion_not_authorized(database_with_data: Session, auth_client: AuthClient):
     """Tests when not authorized you can't add a new suggestion"""
 
-    assert auth_client.post("/editions/ed2022/students/2/suggestions/", json={
+    assert auth_client.post("/editions/ed2022/students/2/suggestions", json={
                             "suggestion": 1, "argumentation": "test"}).status_code == status.HTTP_401_UNAUTHORIZED
     suggestions: list[Suggestion] = database_with_data.query(
         Suggestion).where(Suggestion.student_id == 2).all()
@@ -108,7 +108,7 @@ def test_new_suggestion_not_authorized(database_with_data: Session, auth_client:
 def test_get_suggestions_of_student_not_authorized(database_with_data: Session, auth_client: AuthClient):
     """Tests if you don't have the right access, you get the right HTTP code"""
 
-    assert auth_client.get("/editions/ed2022/students/29/suggestions/", headers={"Authorization": "auth"}, json={
+    assert auth_client.get("/editions/ed2022/students/29/suggestions", headers={"Authorization": "auth"}, json={
                            "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -117,7 +117,7 @@ def test_get_suggestions_of_ghost(database_with_data: Session, auth_client: Auth
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
     res = auth_client.get(
-        "/editions/ed2022/students/9000/suggestions/")
+        "/editions/ed2022/students/9000/suggestions")
     assert res.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -125,13 +125,13 @@ def test_get_suggestions_of_student(database_with_data: Session, auth_client: Au
     """Tests to get the suggestions of a student"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    assert auth_client.post("/editions/ed2022/students/2/suggestions/", json={
+    assert auth_client.post("/editions/ed2022/students/2/suggestions", json={
                             "suggestion": 1, "argumentation": "Ja"}).status_code == status.HTTP_201_CREATED
     auth_client.admin()
-    assert auth_client.post("/editions/ed2022/students/2/suggestions/", json={
+    assert auth_client.post("/editions/ed2022/students/2/suggestions", json={
                             "suggestion": 3, "argumentation": "Neen"}).status_code == status.HTTP_201_CREATED
     res = auth_client.get(
-        "/editions/1/students/2/suggestions/")
+        "/editions/1/students/2/suggestions")
     assert res.status_code == status.HTTP_200_OK
     res_json = res.json()
     assert len(res_json["suggestions"]) == 2
@@ -169,7 +169,7 @@ def test_delete_suggestion_coach_their_review(database_with_data: Session, auth_
     """Tests that a coach can delete their own suggestion"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    new_suggestion = auth_client.post("/editions/ed2022/students/2/suggestions/",
+    new_suggestion = auth_client.post("/editions/ed2022/students/2/suggestions",
                                       json={"suggestion": 1, "argumentation": "test"})
     assert new_suggestion.status_code == status.HTTP_201_CREATED
     suggestion_id = new_suggestion.json()["suggestion"]["suggestionId"]
@@ -219,7 +219,7 @@ def test_update_suggestion_coach_their_review(database_with_data: Session, auth_
     """Tests that a coach can update their own suggestion"""
     edition: Edition = database_with_data.query(Edition).all()[0]
     auth_client.coach(edition)
-    new_suggestion = auth_client.post("/editions/ed2022/students/2/suggestions/",
+    new_suggestion = auth_client.post("/editions/ed2022/students/2/suggestions",
                                       json={"suggestion": 1, "argumentation": "test"})
     assert new_suggestion.status_code == status.HTTP_201_CREATED
     suggestion_id = new_suggestion.json()["suggestion"]["suggestionId"]

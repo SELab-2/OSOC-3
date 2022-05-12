@@ -60,8 +60,7 @@ def delete_edition(db: Session, edition_name: str):
         db (Session): connection with the database.
         edition_name (str): the primary key of the edition that needs to be deleted
     """
-    edition_to_delete = get_edition_by_name(db, edition_name)
-    db.delete(edition_to_delete)
+    db.delete(get_edition_by_name(db, edition_name))
     db.commit()
 
 

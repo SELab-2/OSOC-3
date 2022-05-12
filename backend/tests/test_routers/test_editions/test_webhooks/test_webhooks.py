@@ -29,7 +29,7 @@ def webhook(edition: Edition, database_session: Session) -> WebhookURL:
 
 def test_new_webhook(auth_client: AuthClient, edition: Edition):
     auth_client.admin()
-    response = auth_client.post(f"/editions/{edition.name}/webhooks/")
+    response = auth_client.post(f"/editions/{edition.name}/webhooks")
     assert response.status_code == status.HTTP_201_CREATED
     assert 'uuid' in response.json()
     assert UUID(response.json()['uuid'])
@@ -37,7 +37,7 @@ def test_new_webhook(auth_client: AuthClient, edition: Edition):
 
 def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edition):
     auth_client.admin()
-    response = auth_client.post("/editions/invalid/webhooks/")
+    response = auth_client.post("/editions/invalid/webhooks")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -119,5 +119,5 @@ def test_new_webhook_old_edition(database_session: Session, auth_client: AuthCli
     database_session.commit()
 
     auth_client.admin()
-    response = auth_client.post(f"/editions/{edition.name}/webhooks/")
+    response = auth_client.post(f"/editions/{edition.name}/webhooks")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

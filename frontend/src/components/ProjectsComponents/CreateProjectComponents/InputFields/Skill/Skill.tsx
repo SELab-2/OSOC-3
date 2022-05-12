@@ -19,6 +19,9 @@ export default function Skill({
             <Input
                 value={skill}
                 onChange={e => setSkill(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === "Enter") addSkill();
+                }}
                 placeholder="Skill"
                 list="skills"
             />
@@ -28,23 +31,21 @@ export default function Skill({
                 })}
             </datalist>
 
-            <AddButton
-                onClick={() => {
-                    if (availableSkills.some(availableSkill => availableSkill === skill)) {
-                        const newSkills = [...skills];
-                        const newSkill: SkillProject = {
-                            skill: skill,
-                            description: "",
-                            amount: 1,
-                        };
-                        newSkills.push(newSkill);
-                        setSkills(newSkills);
-                    }
-                    setSkill("");
-                }}
-            >
-                Add skill
-            </AddButton>
+            <AddButton onClick={addSkill}>Add</AddButton>
         </div>
     );
+
+    function addSkill() {
+        if (availableSkills.some(availableSkill => availableSkill === skill)) {
+            const newSkills = [...skills];
+            const newSkill: SkillProject = {
+                skill: skill,
+                description: "",
+                amount: 1,
+            };
+            newSkills.push(newSkill);
+            setSkills(newSkills);
+        }
+        setSkill("");
+    }
 }

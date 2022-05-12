@@ -15,7 +15,7 @@ students_suggestions_router = APIRouter(
     prefix="/suggestions", tags=[Tags.STUDENTS])
 
 
-@students_suggestions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=SuggestionResponse)
+@students_suggestions_router.post("", status_code=status.HTTP_201_CREATED, response_model=SuggestionResponse)
 async def create_suggestion(new_suggestion: NewSuggestion, student: Student = Depends(get_student),
                             db: Session = Depends(get_session), user: User = Depends(require_auth)):
     """
@@ -46,7 +46,7 @@ async def edit_suggestion(new_suggestion: NewSuggestion, db: Session = Depends(g
     change_suggestion(db, new_suggestion, suggestion, user)
 
 
-@students_suggestions_router.get("/", dependencies=[Depends(require_auth)],
+@students_suggestions_router.get("", dependencies=[Depends(require_auth)],
                                  status_code=status.HTTP_200_OK, response_model=SuggestionListResponse)
 async def get_suggestions(student: Student = Depends(get_student), db: Session = Depends(get_session)):
     """

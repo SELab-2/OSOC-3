@@ -28,12 +28,12 @@ def database_with_data(database_session: Session):
     database_session.commit()
 
     # Skill
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    skill4: Skill = Skill(name="skill4", description="important")
-    skill5: Skill = Skill(name="skill5", description="important")
-    skill6: Skill = Skill(name="skill6", description="something about skill6")
+    skill1: Skill = Skill(name="skill1")
+    skill2: Skill = Skill(name="skill2")
+    skill3: Skill = Skill(name="skill3")
+    skill4: Skill = Skill(name="skill4")
+    skill5: Skill = Skill(name="skill5")
+    skill6: Skill = Skill(name="skill6")
     database_session.add(skill1)
     database_session.add(skill2)
     database_session.add(skill3)
@@ -112,76 +112,62 @@ def test_delete_student(database_with_data: Session):
 
 def test_get_all_students(database_with_data: Session):
     """test get all students"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
     students = get_students(database_with_data, edition, CommonQueryParams())
     assert len(students) == 2
 
 
 def test_search_students_on_first_name(database_with_data: Session):
     """test"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(name="Jos"))
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition, CommonQueryParams(name="Jos"))
     assert len(students) == 1
 
 
 def test_search_students_on_last_name(database_with_data: Session):
     """tests search on last name"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(name="Vermeulen"))
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition, CommonQueryParams(name="Vermeulen"))
     assert len(students) == 1
 
 
 def test_search_students_on_between_first_and_last_name(database_with_data: Session):
     """tests search on between first- and last name"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(name="os V"))
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition, CommonQueryParams(name="os V"))
     assert len(students) == 1
 
 
 def test_search_students_alumni(database_with_data: Session):
     """tests search on alumni"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(alumni=True))
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition, CommonQueryParams(alumni=True))
     assert len(students) == 1
 
 
 def test_search_students_student_coach(database_with_data: Session):
     """tests search on student coach"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(student_coach=True))
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    students = get_students(database_with_data, edition, CommonQueryParams(student_coach=True))
     assert len(students) == 1
 
 
 def test_search_students_one_skill(database_with_data: Session):
     """tests search on one skill"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    skill: Skill = database_with_data.query(
-        Skill).where(Skill.name == "skill1").one()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(), skills=[skill])
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    skill: Skill = database_with_data.query(Skill).where(Skill.name == "skill1").one()
+    students = get_students(database_with_data, edition, CommonQueryParams(), skills=[skill])
     assert len(students) == 1
 
 
 def test_search_students_multiple_skills(database_with_data: Session):
     """tests search on multiple skills"""
-    edition: Edition = database_with_data.query(
-        Edition).where(Edition.edition_id == 1).one()
-    skills: list[Skill] = database_with_data.query(
-        Skill).where(Skill.description == "important").all()
-    students = get_students(database_with_data, edition,
-                            CommonQueryParams(), skills=skills)
+    edition: Edition = database_with_data.query(Edition).where(Edition.edition_id == 1).one()
+    skills: list[Skill] = [
+        database_with_data.query(Skill).where(Skill.name == "skill4").one(),
+        database_with_data.query(Skill).where(Skill.name == "skill5").one(),
+    ]
+    students = get_students(database_with_data, edition, CommonQueryParams(), skills=skills)
     assert len(students) == 1
 
 
