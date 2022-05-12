@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
 import { SuggestionButtons, ConfirmButton } from "./styles";
+import { confirmStudent } from "../../../../utils/api/suggestions";
+import { useParams } from "react-router-dom";
 
 /**
  * Make definitive decision on the current student based on the selected decision value.
  * Only admins can see this component.
  */
 export default function AdminDecisionContainer() {
+    const params = useParams();
     const [show, setShow] = useState(false);
     const [clickedButtonText, setClickedButtonText] = useState("");
 
@@ -34,6 +37,22 @@ export default function AdminDecisionContainer() {
         event.preventDefault();
         const button: HTMLButtonElement = event.currentTarget;
         setClickedButtonText(button.innerText);
+    }
+
+    async function makeDecision() {
+        let decisionNum: number;
+        if (clickedButtonText === "Undecided") {
+            decisionNum = 0;
+        } else if (clickedButtonText === "Yes") {
+            decisionNum = 1;
+        } else if (clickedButtonText === "Maybe") {
+            decisionNum = 2;
+        } else {
+            decisionNum = 3;
+        }
+        await confirmStudent(params.editionId!, params.id!, decisionNum);
+        setClickedButtonText("");
+        setShow(false);
     }
 
     return (
@@ -74,11 +93,11 @@ export default function AdminDecisionContainer() {
                     </Button>
                     <div>
                         {clickedButtonText ? (
-                            <Button variant="primary" onClick={handleClose}>
+                            <Button variant="primary" onClick={makeDecision}>
                                 Confirm {clickedButtonText}?
                             </Button>
                         ) : (
-                            <Button variant="primary" onClick={handleClose} disabled={true}>
+                            <Button variant="primary" onClick={makeDecision} disabled={true}>
                                 Confirm
                             </Button>
                         )}
@@ -87,7 +106,7 @@ export default function AdminDecisionContainer() {
             </Modal>
             <h4>Definitive decision by admin</h4>
             <DefinitiveDecisionContainer>
-                <Button onClick={e => handleShow(e)} variant="success" size="lg">
+                <Button onClick={handleShow} variant="success" size="lg">
                     Confirm
                 </Button>
             </DefinitiveDecisionContainer>

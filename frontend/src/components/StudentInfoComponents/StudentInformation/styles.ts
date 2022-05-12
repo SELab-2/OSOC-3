@@ -65,7 +65,6 @@ export const DefinitiveDecisionContainer = styled.div`
 `;
 
 export const NameAndRemoveButtonContainer = styled.div`
-    background: orange;
     display: flex;
     justify-content: space-between;
     align-items: center;

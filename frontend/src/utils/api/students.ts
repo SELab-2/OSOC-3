@@ -47,10 +47,7 @@ export async function getStudent(edition: string, studentId: string): Promise<St
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
         const response = await axiosInstance.get(request);
-        const student = response.data.student as Student;
-        console.log("get student");
-        console.log(student);
-        return student;
+        return response.data.student as Student;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw error;

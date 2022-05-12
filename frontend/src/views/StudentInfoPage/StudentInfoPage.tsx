@@ -62,14 +62,12 @@ function StudentInfoPage() {
     }, [params.id!]);
 
     if (!currentStudent) {
-        console.log("no current student");
         return (
             <div>
                 <h1>loading</h1>
             </div>
         );
     } else {
-        console.log(currentStudent);
         return (
             <div>
                 <StudentInfo

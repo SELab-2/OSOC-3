@@ -160,3 +160,4 @@ cython_debug/
 
 # Testing SQLite database
 *test.db
+/fill_my_database.py

@@ -33,7 +33,6 @@ export default function RolesFilter({
             newRoles.push(role.value);
         }
         setRolesFilter(newRoles);
-        console.log(rolesFilter);
     }
 
     return (
