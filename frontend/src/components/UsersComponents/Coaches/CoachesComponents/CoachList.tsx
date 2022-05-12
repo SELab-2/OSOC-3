@@ -35,7 +35,7 @@ export default function CoachList(props: {
                 useWindow={false}
                 initialLoad={true}
             >
-                <CoachesTable variant="dark">
+                <CoachesTable>
                     <thead>
                         <tr>
                             <th>Name</th>

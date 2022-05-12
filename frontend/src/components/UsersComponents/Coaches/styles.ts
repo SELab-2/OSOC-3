@@ -14,9 +14,12 @@ export const CoachesTitle = styled.div`
     font-size: 25px;
 `;
 
-export const CoachesTable = styled(Table)`
-    // TODO: make all tables in site uniform
-`;
+export const CoachesTable = styled(Table).attrs({
+    striped: true,
+    bordered: true,
+    variant: "dark",
+    hover: false,
+})``;
 
 export const ModalContent = styled.div`
     border: 3px solid var(--osoc_red);
