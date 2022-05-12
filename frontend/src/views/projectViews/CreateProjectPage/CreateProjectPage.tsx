@@ -13,7 +13,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import {
     NameInput,
-    NumberOfStudentsInput,
     CoachInput,
     SkillInput,
     PartnerInput,
@@ -23,6 +22,7 @@ import {
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
 import { SkillProject } from "../../../data/interfaces/projects";
 import { User } from "../../../utils/api/users/users";
+import { toast } from "react-toastify";
 
 /**
  * React component of the create project page.
@@ -30,7 +30,6 @@ import { User } from "../../../utils/api/users/users";
  */
 export default function CreateProjectPage() {
     const [name, setName] = useState("");
-    const [numberOfStudents, setNumberOfStudents] = useState<number>(1);
 
     // States for coaches
     const [coach, setCoach] = useState("");
@@ -58,12 +57,6 @@ export default function CreateProjectPage() {
 
                 <Label>Name</Label>
                 <NameInput name={name} setName={setName} />
-
-                <Label>Number of students</Label>
-                <NumberOfStudentsInput
-                    numberOfStudents={numberOfStudents}
-                    setNumberOfStudents={setNumberOfStudents}
-                />
 
                 <Label>Coaches</Label>
                 <CoachInput
@@ -96,42 +89,26 @@ export default function CreateProjectPage() {
                         <BiArrowBack />
                         Cancel
                     </CancelButton>
-                    <CreateButton
-                        onClick={async () => {
-                            if (name === "") {
-                                alert("Project name must be filled in");
-                                return;
-                            }
-
-                            if (isNaN(numberOfStudents)) {
-                                alert("Number of students must be filled in");
-                                return;
-                            }
-
-                            const coachIds: number[] = [];
-                            coaches.forEach(coachToAdd => {
-                                coachIds.push(coachToAdd.userId);
-                            });
-
-                            const response = await createProject(
-                                editionId,
-                                name,
-                                numberOfStudents!,
-                                [], // Empty skills for now TODO
-                                partners,
-                                coachIds
-                            );
-                            if (response) {
-                                navigate(
-                                    "/editions/" + editionId + "/projects/" + response.projectId
-                                );
-                            } else alert("Something went wrong :(");
-                        }}
-                    >
-                        Create Project
-                    </CreateButton>
+                    <CreateButton onClick={makeProject}>Create Project</CreateButton>
                 </Center>
             </CreateProjectContainer>
         </CenterContainer>
     );
+
+    async function makeProject() {
+        if (name === "") {
+            toast.warning("Project name must be filled in", { toastId: "createProjectNoName" });
+            return;
+        }
+
+        const coachIds: number[] = [];
+        coaches.forEach(coachToAdd => {
+            coachIds.push(coachToAdd.userId);
+        });
+
+        const response = await createProject(editionId, name, partners, coachIds);
+        if (response) {
+            navigate("/editions/" + editionId + "/projects/" + response.projectId);
+        } else alert("Something went wrong :(");
+    }
 }

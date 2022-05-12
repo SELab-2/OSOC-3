@@ -62,8 +62,6 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
  * API call to create a project.
  * @param edition The edition name.
  * @param name The name of the new project.
- * @param numberOfStudents The amount of students needed for this project.
- * @param skills The skills that are needed for this project.
  * @param partners The partners of the project.
  * @param coaches The coaches that will coach the project.
  * @returns The newly created object.
@@ -71,15 +69,11 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
 export async function createProject(
     edition: string,
     name: string,
-    numberOfStudents: number,
-    skills: string[],
     partners: string[],
     coaches: number[]
 ): Promise<Project | null> {
     const payload: CreateProject = {
         name: name,
-        number_of_students: numberOfStudents,
-        skills: skills,
         partners: partners,
         coaches: coaches,
     };
