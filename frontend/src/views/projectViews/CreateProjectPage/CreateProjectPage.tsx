@@ -105,18 +105,26 @@ export default function CreateProjectPage() {
         const response = await createProject(editionId, name, partners, coachIds);
 
         if (response) {
-            projectSkills.forEach(async projectRole => {
-                const addedSkill = await createProjectRole(
-                    editionId,
-                    response.projectId.toString(),
-                    projectRole.skill.skillId,
-                    projectRole.description,
-                    projectRole.slots
-                );
-                if (!addedSkill) toast.error("Couldn't add skill" + projectRole.skill.name);
-            });
-            toast.success("Successfully created project");
+            await toast.promise(addProjectRolls(response.projectId), {
+                pending: "Creating project",
+                success: "Successfully created project",
+                error: "Something went wrong"
+            }) 
             navigate("/editions/" + editionId + "/projects/" + response.projectId);
         } else toast.error("Something went wrong");
+    }
+
+    async function addProjectRolls(projectId: number) {
+        // Use a for loop or else await won't work as intended
+        for (const projectSkill of projectSkills) {
+            const addedSkill = await createProjectRole(
+                editionId,
+                projectId.toString(),
+                projectSkill.skill.skillId,
+                projectSkill.description,
+                projectSkill.slots
+            );
+            if (!addedSkill) toast.error("Couldn't add skill" + projectSkill.skill.name);
+        }
     }
 }
