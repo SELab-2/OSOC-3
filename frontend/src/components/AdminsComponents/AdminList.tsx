@@ -33,14 +33,6 @@ export default function AdminList(props: {
         }
     }
 
-    const body = (
-        <tbody>
-            {props.admins.map(admin => (
-                <AdminListItem key={admin.userId} admin={admin} removeAdmin={props.removeAdmin} />
-            ))}
-        </tbody>
-    );
-
     return (
         <AdminsTable variant="dark">
             <thead>
@@ -50,7 +42,15 @@ export default function AdminList(props: {
                     <th>Remove</th>
                 </tr>
             </thead>
-            {body}
+            <tbody>
+                {props.admins.map(admin => (
+                    <AdminListItem
+                        key={admin.userId}
+                        admin={admin}
+                        removeAdmin={props.removeAdmin}
+                    />
+                ))}
+            </tbody>
         </AdminsTable>
     );
 }
