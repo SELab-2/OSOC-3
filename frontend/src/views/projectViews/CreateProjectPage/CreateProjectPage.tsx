@@ -23,31 +23,26 @@ import {
 import { SkillProject } from "../../../data/interfaces/projects";
 import { User } from "../../../utils/api/users/users";
 import { toast } from "react-toastify";
-
+import { createProjectRole } from "../../../utils/api/projectRoles";
 /**
  * React component of the create project page.
  * @returns The create project page.
  */
+
 export default function CreateProjectPage() {
-    const [name, setName] = useState("");
+    const [name, setName] = useState(""); // States for coaches
 
-    // States for coaches
     const [coach, setCoach] = useState("");
-    const [coaches, setCoaches] = useState<User[]>([]);
+    const [coaches, setCoaches] = useState<User[]>([]); // States for skills
 
-    // States for skills
     const [skill, setSkill] = useState("");
-    const [skills, setSkills] = useState<SkillProject[]>([]);
+    const [projectSkills, setProjectSkills] = useState<SkillProject[]>([]); // States for partners
 
-    // States for partners
     const [partner, setPartner] = useState("");
     const [partners, setPartners] = useState<string[]>([]);
-
     const navigate = useNavigate();
-
     const params = useParams();
     const editionId = params.editionId!;
-
     return (
         <CenterContainer>
             <CreateProjectContainer>
@@ -71,10 +66,10 @@ export default function CreateProjectPage() {
                 <SkillInput
                     skill={skill}
                     setSkill={setSkill}
-                    skills={skills}
-                    setSkills={setSkills}
+                    skills={projectSkills}
+                    setSkills={setProjectSkills}
                 />
-                <AddedSkills skills={skills} setSkills={setSkills} />
+                <AddedSkills skills={projectSkills} setSkills={setProjectSkills} />
 
                 <Label>Partners</Label>
                 <PartnerInput
@@ -97,7 +92,9 @@ export default function CreateProjectPage() {
 
     async function makeProject() {
         if (name === "") {
-            toast.warning("Project name must be filled in", { toastId: "createProjectNoName" });
+            toast.warning("Project name must be filled in", {
+                toastId: "createProjectNoName",
+            });
             return;
         }
 
@@ -105,10 +102,21 @@ export default function CreateProjectPage() {
         coaches.forEach(coachToAdd => {
             coachIds.push(coachToAdd.userId);
         });
-
         const response = await createProject(editionId, name, partners, coachIds);
+
         if (response) {
+            projectSkills.forEach(async projectRole => {
+                const addedSkill = await createProjectRole(
+                    editionId,
+                    response.projectId.toString(),
+                    projectRole.skill.skillId,
+                    projectRole.description,
+                    projectRole.slots
+                );
+                if (!addedSkill) toast.error("Couldn't add skill" + projectRole.skill.name);
+            });
+            toast.success("Successfully created project");
             navigate("/editions/" + editionId + "/projects/" + response.projectId);
-        } else alert("Something went wrong :(");
+        } else toast.error("Something went wrong");
     }
 }

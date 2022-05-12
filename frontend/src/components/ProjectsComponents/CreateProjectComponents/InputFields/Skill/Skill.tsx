@@ -1,7 +1,9 @@
-import { SkillProject } from "../../../../../data/interfaces/projects";
+import { useEffect, useState } from "react";
+import { SkillProject, Skill } from "../../../../../data/interfaces/projects";
+import { getSkills } from "../../../../../utils/api/projectRoles";
 import { Input, AddButton } from "../../styles";
 
-export default function Skill({
+export default function SkillInput({
     skill,
     setSkill,
     skills,
@@ -12,7 +14,14 @@ export default function Skill({
     skills: SkillProject[];
     setSkills: (skills: SkillProject[]) => void;
 }) {
-    const availableSkills = ["Frontend", "Backend", "Database", "Design"];
+    const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+
+    useEffect(() => {
+        async function callCoaches() {
+            setAvailableSkills((await getSkills()) || []);
+        }
+        callCoaches();
+    }, []);
 
     return (
         <div>
@@ -26,8 +35,8 @@ export default function Skill({
                 list="skills"
             />
             <datalist id="skills">
-                {availableSkills.map((availableCoach, _index) => {
-                    return <option key={_index} value={availableCoach} />;
+                {availableSkills.map((availableSkill, _index) => {
+                    return <option key={availableSkill.skillId} value={availableSkill.name} />;
                 })}
             </datalist>
 
@@ -36,12 +45,18 @@ export default function Skill({
     );
 
     function addSkill() {
-        if (availableSkills.some(availableSkill => availableSkill === skill)) {
+        let skillToAdd: Skill | undefined;
+        availableSkills.forEach(availableSkill => {
+            if (availableSkill.name === skill) {
+                skillToAdd = availableSkill;
+            }
+        });
+        if (skillToAdd) {
             const newSkills = [...skills];
             const newSkill: SkillProject = {
-                skill: skill,
+                skill: skillToAdd,
                 description: "",
-                amount: 1,
+                slots: 1,
             };
             newSkills.push(newSkill);
             setSkills(newSkills);

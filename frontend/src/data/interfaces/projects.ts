@@ -74,13 +74,13 @@ export interface Projects {
  */
 export interface SkillProject {
     /** The name of the skill */
-    skill: string;
+    skill: Skill;
 
     /** More info about this skill in a specific project */
     description: string;
 
     /** Number of positions of this skill in a project */
-    amount: number;
+    slots: number;
 }
 
 /**
@@ -95,6 +95,17 @@ export interface CreateProject {
 
     /** The IDs of the users that will coach this project */
     coaches: number[];
+}
+
+export interface CreateProjectRole {
+    /** The id of the skill */
+    skill_id: number;
+
+    /** More info about this skill in a specific project */
+    description: string;
+
+    /** Number of positions of this skill in a project */
+    slots: number;
 }
 
 /**
