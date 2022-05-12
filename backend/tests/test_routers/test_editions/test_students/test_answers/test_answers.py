@@ -15,9 +15,9 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
     database_session.add(edition)
     user: User = User(name="coach1")
     database_session.add(user)
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
+    skill1: Skill = Skill(name="skill1")
+    skill2: Skill = Skill(name="skill2")
+    skill3: Skill = Skill(name="skill3")
     database_session.add(skill1)
     database_session.add(skill2)
     database_session.add(skill3)
@@ -36,8 +36,8 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
         answer="josvermeulen@mail.com", question=question1)
     database_session.add(question_answer1)
 
-    #aswer1: QuestionAnswer = QuestionAnswer(answer="josvermeulen@mail.com", question=question1)
-    # database_session.add(aswer1)
+    aswer1: QuestionAnswer = QuestionAnswer(answer="josvermeulen@mail.com", question=question1)
+    database_session.add(aswer1)
     await database_session.commit()
     return database_session
 
