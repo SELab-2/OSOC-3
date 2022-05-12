@@ -30,3 +30,18 @@ body {
     background-color: var(--background_color);
     color: white;
 }
+
+
+/* All tables */
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    --bs-table-accent-bg: #1A1A38;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>*:hover {
+    --bs-table-accent-bg: #41415E;
+}
+
+.table>:not(caption)>*>* {
+    --bs-table-accent-bg: #0F0F30;
+    --bs-table-hover-bg: #41415E;
+}
