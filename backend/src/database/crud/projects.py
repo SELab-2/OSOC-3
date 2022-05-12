@@ -107,12 +107,12 @@ async def patch_project(
 
 async def get_project_role(db: AsyncSession, project_role_id: int) -> ProjectRole:
     """Get a project role by id"""
-    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).scalar_one()
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique().scalar_one()
 
 
 async def get_project_roles_for_project(db: AsyncSession, project: Project) -> list[ProjectRole]:
     """Get the project roles associated with a project"""
-    return (await db.execute(select(ProjectRole).where(ProjectRole.project == project))).scalars().all()
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project == project))).unique().scalars().all()
 
 
 async def create_project_role(db: AsyncSession, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
@@ -128,6 +128,8 @@ async def create_project_role(db: AsyncSession, project: Project, input_project_
 
     db.add(project_role)
     await db.commit()
+    # query project_role to create association tables
+    (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role.project_role_id)))
     return project_role
 
 

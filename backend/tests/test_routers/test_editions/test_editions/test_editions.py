@@ -22,7 +22,7 @@ async def test_get_editions(database_session: AsyncSession, auth_client: AuthCli
 
     # Make the get request
     async with auth_client:
-        response = await auth_client.get("/editions/")
+        response = await auth_client.get("/editions/", follow_redirects=True)
 
 
     assert response.status_code == status.HTTP_200_OK
@@ -124,7 +124,7 @@ async def test_create_edition_admin(database_session: AsyncSession, auth_client:
         # Make the post request
         response = await auth_client.post("/editions", json={"year": 2022, "name": "ed2022"})
         assert response.status_code == status.HTTP_201_CREATED
-        response = await auth_client.get("/editions/")
+        response = await auth_client.get("/editions/", follow_redirects=True)
         assert response.json()["editions"][0]["year"] == 2022
         assert response.json()["editions"][0]["editionId"] == 1
         assert response.json()["editions"][0]["name"] == "ed2022"
@@ -147,7 +147,7 @@ async def test_create_edition_coach(database_session: AsyncSession, auth_client:
 
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"})
+        response = await auth_client.post("/editions/", json={"year": 2022, "name": "ed2022"}, follow_redirects=True)
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -235,7 +235,7 @@ async def test_get_editions_limited_permission(database_session: AsyncSession, a
 
     async with auth_client:
         # Make the get request
-        response = await auth_client.get("/editions/")
+        response = await auth_client.get("/editions/", follow_redirects=True)
 
     assert response.status_code == status.HTTP_200_OK
     response = response.json()

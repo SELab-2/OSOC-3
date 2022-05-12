@@ -176,7 +176,8 @@ class ProjectRole(Base):
 
     project: Project = relationship("Project", back_populates="project_roles", uselist=False)
     skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False)
-    suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role")
+    suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role",
+                                                            lazy="joined")
 
 
 class ProjectRoleSuggestion(Base):

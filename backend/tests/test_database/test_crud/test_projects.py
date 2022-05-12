@@ -190,10 +190,10 @@ async def test_delete_project_with_project_roles(database_session: AsyncSession)
     await database_session.commit()
 
     assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 1
-    assert len((await database_session.execute(select(ProjectRole))).scalars().all()) == 1
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 1
     await crud.delete_project(database_session, project)
     assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 0
-    assert len((await database_session.execute(select(ProjectRole))).scalars().all()) == 0
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 0
 
 
 async def test_patch_project(database_session: AsyncSession):

@@ -2,7 +2,6 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from starlette.testclient import TestClient
 
 
 from src.database.models import Edition, InviteLink, User, AuthEmail
