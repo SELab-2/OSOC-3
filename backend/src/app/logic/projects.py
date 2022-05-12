@@ -69,7 +69,8 @@ async def create_project_role(db: AsyncSession, project: Project, input_project_
     return await crud.create_project_role(db, project, input_project_role)
 
 
-async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) -> ProjectRole:
+async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) \
+        -> ProjectRole:
     """Update a project role"""
     return await crud.patch_project_role(db, project_role_id, input_project_role)
 

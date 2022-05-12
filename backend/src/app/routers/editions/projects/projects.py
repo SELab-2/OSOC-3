@@ -5,9 +5,6 @@ from starlette.responses import Response
 
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
-from src.app.schemas.projects import (ProjectList, Project, InputProject,
-                                      ConflictStudentList, QueryParamsProjects)
-from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
 from src.app.schemas.projects import (
     InputProjectRole,
     ProjectRole as ProjectRoleSchema, ProjectRoleResponseList)

@@ -1,13 +1,11 @@
-
-from sqlalchemy.orm import Session, Query
 from sqlalchemy import select
 from sqlalchemy.sql import Select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.schemas.projects import InputArgumentation
-from src.database.models import ProjectRole, User, Student, ProjectRoleSuggestion
+from src.database.models import ProjectRoleSuggestion
 
-from src.database.models import Project, ProjectRole, Skill, User, Student
+from src.database.models import ProjectRole, User, Student
 
 
 def _get_pr_suggestion_for_pr_by_student_query(project_role: ProjectRole, student: Student) -> Select:
@@ -16,12 +14,14 @@ def _get_pr_suggestion_for_pr_by_student_query(project_role: ProjectRole, studen
         ProjectRoleSuggestion.student == student
     )
 
+
 async def get_pr_suggestion_for_pr_by_student(
         db: AsyncSession,
         project_role: ProjectRole,
         student: Student) -> ProjectRoleSuggestion:
     """Get the project role suggestion for a student"""
     return (await db.execute(_get_pr_suggestion_for_pr_by_student_query(project_role, student))).scalar_one()
+
 
 async def get_optional_pr_suggestion_for_pr_by_student(
         db: AsyncSession,

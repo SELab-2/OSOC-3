@@ -1,19 +1,20 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import Partner
 
 
-def create_partner(db: Session, name: str, commit: bool = True) -> Partner:
+async def create_partner(db: AsyncSession, name: str, commit: bool = True) -> Partner:
     """Create a partner given a name"""
     partner = Partner(name=name)
     db.add(partner)
 
     if commit:
-        db.flush()
+        await db.flush()
 
     return partner
 
 
-def get_optional_partner_by_name(db: Session, name: str) -> Partner | None:
+async def get_optional_partner_by_name(db: AsyncSession, name: str) -> Partner | None:
     """Returns an optional partner given a name"""
-    return db.query(Partner).where(Partner.name == name).one_or_none()
+    return (await db.execute(select(Partner).where(Partner.name == name))).scalar_one_or_none()

@@ -1,4 +1,3 @@
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database.crud.projects_students as crud
