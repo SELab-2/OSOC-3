@@ -12,4 +12,9 @@ export const StyledFormControl = styled(Form.Control)`
         border-color: var(--osoc_green);
         box-shadow: none;
     }
+
+    &:invalid {
+        border-color: var(--osoc_red);
+        box-shadow: none;
+    }
 `;
