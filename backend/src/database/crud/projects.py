@@ -107,7 +107,8 @@ async def patch_project(
 
 async def get_project_role(db: AsyncSession, project_role_id: int) -> ProjectRole:
     """Get a project role by id"""
-    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique().scalar_one()
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique()\
+        .scalar_one()
 
 
 async def get_project_roles_for_project(db: AsyncSession, project: Project) -> list[ProjectRole]:
