@@ -54,7 +54,6 @@ export default function StudentInformation(props: Props) {
 
     useEffect(() => {
         callGetSuggestions();
-        console.log("fetched suggestion");
     }, [params.editionId!, params.id!]);
 
     if (!props.currentStudent) {
