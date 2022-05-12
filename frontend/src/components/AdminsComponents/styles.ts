@@ -6,7 +6,6 @@ export const Warning = styled.div`
 `;
 
 export const AdminsTable = styled(Table)`
-    min-width: fit-content;
     width: 45em;
     max-width: 100%;
     margin-top: 10px;
