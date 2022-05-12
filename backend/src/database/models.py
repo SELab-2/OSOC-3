@@ -240,7 +240,8 @@ class Student(Base):
         relationship("ProjectRoleSuggestion", back_populates="student", lazy="joined")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="joined")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", lazy="joined")
-    questions: list[Question] = relationship("Question", back_populates="student", lazy="joined", cascade="all, delete-orphan")
+    questions: list[Question] = relationship("Question", back_populates="student", lazy="joined",
+                                             cascade="all, delete-orphan")
     edition: Edition = relationship("Edition", back_populates="students", uselist=False, lazy="joined")
 
 
@@ -319,9 +320,12 @@ class User(Base):
                                                cascade="all, delete-orphan", lazy="joined")
     drafted_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="drafter",
                                                     cascade="all, delete-orphan", lazy="joined")
-    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches", lazy="joined")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches", lazy="joined")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan", lazy="joined")
+    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches",
+                                           lazy="joined")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches",
+                                           lazy="joined")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan",
+                                                 lazy="joined")
 
     # Authentication methods
     email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False,
