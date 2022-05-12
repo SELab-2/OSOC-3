@@ -16,7 +16,7 @@ def _get_projects_for_edition_query(edition: Edition) -> Select:
 async def get_projects_for_edition(db: AsyncSession, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
     result = await db.execute(_get_projects_for_edition_query(edition))
-    projects: list[Project] = result.scalars().all()
+    projects: list[Project] = result.unique().scalars().all()
     for project in projects:
         await db.refresh(project, attribute_names=["project_roles"])
 
@@ -152,6 +152,6 @@ async def get_conflict_students(db: AsyncSession, edition: Edition) -> list[Stud
     Return an overview of the students that are assigned to multiple projects
     """
     return [
-        s for s in (await db.execute(select(Student).where(Student.edition == edition))).scalars().all()
+        s for s in (await db.execute(select(Student).where(Student.edition == edition))).unique().scalars().all()
         if len(s.pr_suggestions) > 1
     ]
