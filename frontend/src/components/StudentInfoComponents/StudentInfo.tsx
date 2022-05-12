@@ -2,7 +2,7 @@ import React from "react";
 import { StudentListFilters } from "../StudentsComponents";
 import StudentInformation from "./StudentInformation/StudentInformation";
 import { StudentInfoPageContent } from "./styles";
-import {Student} from "../../data/interfaces/students";
+import { Student } from "../../data/interfaces/students";
 
 interface Props {
     students: Student[];
@@ -20,8 +20,8 @@ interface Props {
 export default function StudentInfo(props: Props) {
     return (
         <StudentInfoPageContent>
-            <StudentListFilters students={props.students} nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} alumniFilter={props.alumniFilter} setAlumniFilter={props.setAlumniFilter} rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} studentCoachVolunteerFilter={props.studentCoachVolunteerFilter} setStudentCoachVolunteerFilter={props.setStudentCoachVolunteerFilter} />
-            <StudentInformation currentStudent={props.currentStudent}/>
+            <StudentListFilters {...props} />
+            <StudentInformation currentStudent={props.currentStudent} />
         </StudentInfoPageContent>
     );
 }

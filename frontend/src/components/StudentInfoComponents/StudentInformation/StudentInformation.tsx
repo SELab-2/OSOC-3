@@ -77,7 +77,8 @@ export default function StudentInformation(props: Props) {
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
                 {suggestions.map(suggestion => (
                     <SuggestionField key={suggestion.suggestionId}>
-                        {suggestionToText(suggestion.suggestion)}: {suggestion.argumentation}
+                        {suggestion.coach.name}: "{suggestionToText(suggestion.suggestion)}"{" "}
+                        {suggestion.argumentation}
                     </SuggestionField>
                 ))}
                 <LineBreak />

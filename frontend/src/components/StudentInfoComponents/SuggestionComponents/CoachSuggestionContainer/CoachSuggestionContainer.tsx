@@ -23,8 +23,8 @@ export default function CoachSuggestionContainer(props: Props) {
         setShow(true);
     }
 
-    function doSuggestion() {
-        let suggestionNum: number = 0;
+    async function doSuggestion() {
+        let suggestionNum: number;
         if (clickedButtonText === "Yes") {
             suggestionNum = 1;
         } else if (clickedButtonText === "Maybe") {
@@ -32,7 +32,7 @@ export default function CoachSuggestionContainer(props: Props) {
         } else {
             suggestionNum = 3;
         }
-        makeSuggestion(params.editionId!, params.id!, suggestionNum, argumentation);
+        await makeSuggestion(params.editionId!, params.id!, suggestionNum, argumentation);
         setArgumentation("");
         setShow(false);
     }
