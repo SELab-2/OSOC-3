@@ -2,6 +2,8 @@
  * This file contains all interfaces used in students pages.
  */
 
+import { Skill } from "./skills";
+
 /**
  * Data about a student.
  */
@@ -15,7 +17,7 @@ export interface Student {
     nrOfSuggestions: NrSuggestions;
     phoneNumber: string;
     preferredName: string;
-    skills: string[];
+    skills: Skill[];
     studentId: number;
     wantsToBeStudentCoach: boolean;
 }

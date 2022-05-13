@@ -84,6 +84,7 @@ export default function StudentInformation(props: Props) {
             </div>
         );
     } else {
+        console.log(props.currentStudent.skills);
         return (
             <StudentInformationContainer>
                 <NameAndRemoveButtonContainer>
@@ -133,9 +134,9 @@ export default function StudentInformation(props: Props) {
                 <RolesField>
                     Roles:
                     <RolesValues>
-                        <RoleValue>Frontend</RoleValue>
-                        <RoleValue>Design</RoleValue>
-                        <RoleValue>Communication</RoleValue>
+                        {props.currentStudent.skills.map(skill => (
+                            <RoleValue>{skill.name}</RoleValue>
+                        ))}
                     </RolesValues>
                 </RolesField>
                 <LineBreak />
