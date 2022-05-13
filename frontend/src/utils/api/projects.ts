@@ -101,8 +101,6 @@ export async function createProject(
  * API call to edit a project.
  * @param edition The edition name.
  * @param name The name of the new project.
- * @param numberOfStudents The amount of students needed for this project.
- * @param skills The skills that are needed for this project.
  * @param partners The partners of the project.
  * @param coaches The coaches that will coach the project.
  * @returns whether or not the patch was successful.
@@ -111,15 +109,11 @@ export async function patchProject(
     edition: string,
     projectId: number,
     name: string,
-    numberOfStudents: number,
-    skills: string[],
     partners: string[],
     coaches: number[]
 ): Promise<boolean> {
     const payload: PatchProject = {
         name: name,
-        number_of_students: numberOfStudents,
-        skills: skills,
         partners: partners,
         coaches: coaches,
     };

@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
-import { Project, CreateProject as EditProject } from "../../../data/interfaces";
+import { Project, CreateProject as EditProject } from "../../../data/interfaces/projects";
 
 import projectToEditProject from "../../../utils/logic/project";
 
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
 import { getStudent } from "../../../utils/api/students";
 
-import { useAuth } from "../../../contexts";
+import { useAuth } from "../../../contexts/auth-context";
 
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
@@ -58,7 +58,7 @@ export default function ProjectDetailPage() {
 
     // What to do when deleting a project.
     const handleDelete = () => {
-        deleteProject(project!.editionName, project!.projectId);
+        deleteProject(editionId, project!.projectId);
         setShow(false);
         navigate("/editions/" + editionId + "/projects/");
     };
@@ -90,8 +90,6 @@ export default function ProjectDetailPage() {
             editionId,
             projectId,
             newProject!.name,
-            newProject!.number_of_students,
-            [], // TODO Skills
             newProject!.partners,
             newProject!.coaches
         );
