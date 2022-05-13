@@ -1,6 +1,6 @@
 import { EditionsTable, NewEditionButton } from "../../components/EditionsPage";
 import { useNavigate } from "react-router-dom";
-import { PageContainer } from "../../app.styles";
+import { PageContainer } from "../../App.styles";
 
 /**
  * Page where users can see all editions they can access,
