@@ -37,7 +37,7 @@ export default function StudentListFilters(props: Props) {
             <StudentListTitle>Students</StudentListTitle>
             <StudentListLinebreak />
             <NameFilter nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} />
-            <RolesFilter rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} />
+            <RolesFilter setRolesFilter={props.setRolesFilter} />
             <Form.Group>
                 <AlumniFilter
                     alumniFilter={props.alumniFilter}

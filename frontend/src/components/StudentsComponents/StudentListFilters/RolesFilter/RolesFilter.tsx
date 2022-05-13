@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     FilterRoles,
     FilterRolesDropdownContainer,
@@ -6,6 +6,12 @@ import {
     FilterRolesLabelContainer,
 } from "../styles";
 import Select from "react-select";
+import { getSkills } from "../../../../utils/api/skills";
+
+interface DropdownRole {
+    label: string;
+    value: number;
+}
 
 /**
  * Component that filters the students list based on the current roles selected.
@@ -13,21 +19,24 @@ import Select from "react-select";
  * @param setRolesFilter
  */
 export default function RolesFilter({
-    rolesFilter,
     setRolesFilter,
 }: {
-    rolesFilter: number[];
     setRolesFilter: (value: number[]) => void;
 }) {
-    const roles = [
-        { value: 0, label: "Frontend" },
-        { value: 1, label: "Backend" },
-        { value: 2, label: "Communication" },
-    ];
+    const [roles, setRoles] = useState<DropdownRole[]>([]);
 
-    function handleRolesChange(
-        clickedRoles: () => IterableIterator<{ value: number; label: string }>
-    ): void {
+    async function fetchRoles() {
+        const allRoles = await getSkills();
+        // @ts-ignore
+        const dropdownRoles = allRoles.map(role => ({ label: role.name, value: role.skillId }));
+        setRoles(dropdownRoles);
+    }
+
+    useEffect(() => {
+        fetchRoles();
+    }, []);
+
+    function handleRolesChange(): void {
         const newRoles: number[] = [];
         for (const role of roles) {
             newRoles.push(role.value);
@@ -46,7 +55,7 @@ export default function RolesFilter({
                     isMulti
                     isSearchable
                     placeholder="Choose roles..."
-                    onChange={e => handleRolesChange(e.values)}
+                    onChange={handleRolesChange}
                 />
             </FilterRolesDropdownContainer>
         </FilterRoles>
