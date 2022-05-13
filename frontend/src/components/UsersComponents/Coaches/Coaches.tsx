@@ -51,6 +51,7 @@ export default function Coaches(props: {
     return (
         <CoachesContainer>
             <CoachesTitle>Coaches</CoachesTitle>
+            {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
             <SearchFieldDiv>
                 // TODO: Use new common SearchField
                 <FormControl

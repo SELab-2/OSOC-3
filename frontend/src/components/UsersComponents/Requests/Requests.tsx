@@ -129,6 +129,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
+                {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
                 <SearchFieldDiv>
                     // TODO: Use new common SearchField
                     <FormControl
