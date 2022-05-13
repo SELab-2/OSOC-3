@@ -27,8 +27,10 @@ export default function RolesFilter({
 
     async function fetchRoles() {
         const allRoles = await getSkills();
-        // @ts-ignore
-        const dropdownRoles = allRoles.map(role => ({ label: role.name, value: role.skillId }));
+        const dropdownRoles: DropdownRole[] = allRoles!.skills!.map(role => ({
+            label: role.name,
+            value: role.skillId,
+        }));
         setRoles(dropdownRoles);
     }
 
