@@ -10,12 +10,12 @@ from src.database.models import Project, Edition, Student, ProjectRole, Partner,
 
 
 def _get_projects_for_edition_query(edition: Edition) -> Select:
-    return select(Project).where(Project.edition == edition).order_by(Project.project_id)
+    return select(Project).where(Project.edition == edition)
 
 
 async def get_projects_for_edition(db: AsyncSession, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
-    result = await db.execute(_get_projects_for_edition_query(edition))
+    result = await db.execute(_get_projects_for_edition_query(edition).order_by(Project.name))
     projects: list[Project] = result.unique().scalars().all()
     for project in projects:
         await db.refresh(project, attribute_names=["project_roles"])
@@ -33,7 +33,7 @@ async def get_projects_for_edition_page(
         Project.name.contains(search_params.name))
     if search_params.coach:
         query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
-    result = await db.execute(paginate(query, search_params.page))
+    result = await db.execute(paginate(query.order_by(Project.name), search_params.page))
     projects: list[Project] = result.unique().scalars().all()
     # projects need refreshing
     for project in projects:

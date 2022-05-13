@@ -49,6 +49,7 @@ async def get_students(db: AsyncSession, edition: Edition,
     for skill in skills:
         query = query.where(Student.skills.contains(skill))
 
+    query = query.order_by(Student.first_name, Student.last_name)
     return (await db.execute(paginate(query, commons.page))).unique().scalars().all()
 
 
@@ -84,5 +85,5 @@ async def get_last_emails_of_students(db: AsyncSession, edition: Edition, common
     if commons.email_status:
         emails = emails.where(DecisionEmail.decision.in_(commons.email_status))
 
-    emails = emails.order_by(DecisionEmail.student_id)
+    emails = emails.join(Student, DecisionEmail.student).order_by(Student.first_name, Student.last_name)
     return (await db.execute(paginate(emails, commons.page))).unique().scalars().all()

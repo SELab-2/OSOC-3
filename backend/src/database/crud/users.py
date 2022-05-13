@@ -62,6 +62,7 @@ async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):
 
         query = query.filter(User.user_id.not_in(exclude_user_id))
 
+    query = query.order_by(User.name)
     return (await db.execute(paginate(query, params.page))).unique().scalars().all()
 
 
