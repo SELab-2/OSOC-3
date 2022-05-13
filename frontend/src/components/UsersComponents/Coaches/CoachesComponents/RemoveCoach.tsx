@@ -5,7 +5,13 @@ import {
     removeCoachFromEdition,
 } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { DialogButton, ModalContent } from "../styles";
+import {
+    CancelButton,
+    CredsDiv,
+    DialogButton,
+    DialogButtonContainer,
+    ModalContent,
+} from "../styles";
 import { Error } from "../../Requests/styles";
 
 /**
@@ -63,27 +69,31 @@ export default function RemoveCoach(props: {
         buttons = <Spinner animation="border" />;
     } else {
         buttons = (
-            <div>
-                <DialogButton
-                    variant="primary"
-                    onClick={() => {
-                        removeCoach(props.coach.userId, true);
-                    }}
-                >
-                    Remove from all editions
-                </DialogButton>
-                <DialogButton
-                    variant="primary"
-                    onClick={() => {
-                        removeCoach(props.coach.userId, false);
-                    }}
-                >
-                    Remove from {props.edition}
-                </DialogButton>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancel
-                </Button>
-            </div>
+            <DialogButtonContainer>
+                <div>
+                    <DialogButton
+                        variant="primary"
+                        onClick={() => {
+                            removeCoach(props.coach.userId, true);
+                        }}
+                    >
+                        Remove from all editions
+                    </DialogButton>
+                </div>
+                <div>
+                    <DialogButton
+                        variant="primary"
+                        onClick={() => {
+                            removeCoach(props.coach.userId, false);
+                        }}
+                    >
+                        Remove from current edition
+                    </DialogButton>
+                    <CancelButton variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </CancelButton>
+                </div>
+            </DialogButtonContainer>
         );
     }
 
@@ -99,8 +109,10 @@ export default function RemoveCoach(props: {
                         <Modal.Title>Remove Coach</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>{props.coach.name}</h4>
-                        {props.coach.auth.email}
+                        <CredsDiv>
+                            <h4>{props.coach.name}</h4>
+                            {props.coach.auth.email}
+                        </CredsDiv>
                     </Modal.Body>
                     <Modal.Footer>
                         {buttons}

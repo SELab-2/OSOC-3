@@ -45,8 +45,22 @@ export const ListDiv = styled.div`
 
 export const DialogButton = styled(Button)`
     margin-right: 4px;
+    margin-bottom: 4px;
+`;
+
+export const DialogButtonContainer = styled.div`
+    width: 100%;
+`;
+
+export const CancelButton = styled(Button)`
+    float: right;
 `;
 
 export const EmailDiv = styled.div`
     overflow: auto;
+`;
+
+export const CredsDiv = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;

@@ -24,7 +24,8 @@ export const InviteInput = styled.input.attrs({
 export const MessageDiv = styled.div`
     margin-left: 10px;
     margin-top: 5px;
-    height: 15px;
+    height: fit-content;
+    overflow: auto;
 `;
 
 export const Error = styled.div`
