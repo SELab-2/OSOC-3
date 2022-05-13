@@ -1,9 +1,12 @@
-import { ConButton, Loader, SidePanel } from "./styles";
+import { ConflictButtonDiv, SidePanel } from "./styles";
 import { useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import { getConflicts } from "../../../utils/api/conflicts";
 import { Conflict } from "../../../data/interfaces";
 import ConflictDiv from "./Conflict";
+import LoadSpinner from "../../Common/LoadSpinner";
+import CreateButton from "../../Common/Buttons/CreateButton";
+import WarningButton from "../../Common/Buttons/WarningButton";
 
 /**
  * A button which opens a side-panel to show all students who are assigned to multiple projects.
@@ -25,7 +28,7 @@ export default function ConflictsButton(props: { editionId: string }) {
     }, [props.editionId]);
 
     if (conflicts === undefined) {
-        return <Loader animation="border" />;
+        return <LoadSpinner show={true} />;
     }
     if (show) {
         return (
@@ -64,16 +67,21 @@ export default function ConflictsButton(props: { editionId: string }) {
         );
     }
 
-    let text;
     if (conflicts.length === 0) {
-        text = "No conflicts";
-    } else {
-        text = `Conflicts (${conflicts.length})`;
+        return (
+            <ConflictButtonDiv>
+                <CreateButton disabled={true} showIcon={false}>
+                    No conflicts
+                </CreateButton>
+            </ConflictButtonDiv>
+        );
     }
-
     return (
-        <ConButton onClick={handleShow} disabled={conflicts.length === 0}>
-            {text}
-        </ConButton>
+        <ConflictButtonDiv>
+            <WarningButton
+                onClick={handleShow}
+                animated={true}
+            >{`Conflicts (${conflicts.length})`}</WarningButton>
+        </ConflictButtonDiv>
     );
 }
