@@ -4,7 +4,7 @@ import { getRegisterState } from "../../../utils/session-storage";
 import { registerGithub } from "../../../utils/api/register";
 import axios from "axios";
 import PendingPage from "../../PendingPage";
-import { CenterText, PageContainer } from "../../../app.styles";
+import { CenterText, PageContainer } from "../../../App.styles";
 import { AlreadyRegistered } from "../../../components/RegisterComponents";
 
 /**

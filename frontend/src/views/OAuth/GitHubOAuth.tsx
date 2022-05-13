@@ -5,7 +5,7 @@ import { Navigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { logInGitHub } from "../../utils/api/login";
 import { useAuth } from "../../contexts";
-import { PageContainer, CenterText } from "../../app.styles";
+import { PageContainer, CenterText } from "../../App.styles";
 
 export default function GitHubOAuth() {
     const authCtx = useAuth();
