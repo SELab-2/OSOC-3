@@ -2,7 +2,7 @@ import { User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
-import { ModalContentWarning } from "./styles";
+import { ModalContentWarning, RemoveAdminBody } from "./styles";
 import { Error } from "../UsersComponents/Requests/styles";
 
 /**
@@ -51,11 +51,11 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                         <Modal.Title>Remove Admin</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>{props.admin.name}</h4>
-                        <p>{props.admin.auth.email}</p>
-                        <p>
-                            Remove admin: {props.admin.name} will stay coach for assigned editions
-                        </p>
+                        <RemoveAdminBody>
+                            <h4>{props.admin.name}</h4>
+                            <p>{props.admin.auth.email}</p>
+                            <p>Remove admin: This admin will stay coach for assigned editions</p>
+                        </RemoveAdminBody>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button

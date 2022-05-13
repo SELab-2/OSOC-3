@@ -33,6 +33,13 @@ axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => 
             // If the token is already being refreshed, resend it (will be delayed until the token has been refreshed)
             return axiosInstance(error.config);
         } else {
+            // If the user is on the login page, don't try to refresh their token as
+            // they don't have one yet
+            // Instead just raise the error so we can show a message
+            if (window.location.pathname === "/") {
+                throw error;
+            }
+
             setRefreshTokenLock(true);
             try {
                 const tokens = await refreshTokens();
@@ -56,5 +63,6 @@ axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => 
             setRefreshTokenLock(false);
         }
     }
+
     throw error;
 });

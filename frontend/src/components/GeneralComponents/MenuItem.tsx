@@ -1,5 +1,5 @@
 import { User } from "../../utils/api/users/users";
-import { EmailDiv, NameDiv } from "./styles";
+import { DropdownEmailDiv, NameDiv } from "./styles";
 import EmailAndAuth from "./EmailAndAuth";
 
 /**
@@ -10,9 +10,9 @@ export default function UserMenuItem(props: { user: User }) {
     return (
         <div>
             <NameDiv>{props.user.name}</NameDiv>
-            <EmailDiv>
+            <DropdownEmailDiv>
                 <EmailAndAuth user={props.user} />
-            </EmailDiv>
+            </DropdownEmailDiv>
         </div>
     );
 }
