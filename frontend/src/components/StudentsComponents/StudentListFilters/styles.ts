@@ -83,23 +83,12 @@ export const FilterResetButton = styled.button`
     height: 3vh;
     background-color: var(--osoc_red);
     color: white;
-    margin-bottom: 5px;
-`;
-
-export const FilterApplyButton = styled.button`
-    width: 50%;
-    align-self: center;
-    border: none;
-    height: 3vh;
-    background-color: var(--osoc_green);
-    color: white;
-    margin-bottom: 5px;
-    margin-right: 10px;
 `;
 
 export const FilterControls = styled.div`
+    margin-top: 4%;
+    flex-direction: column;
     display: flex;
-    flex-direction: row;
     align-self: center;
     width: 80%;
 `;
