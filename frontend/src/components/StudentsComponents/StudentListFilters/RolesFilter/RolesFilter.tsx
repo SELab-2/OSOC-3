@@ -7,6 +7,7 @@ import {
 } from "../styles";
 import Select from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
+import "./RolesFilter.css";
 
 interface DropdownRole {
     label: string;
@@ -53,6 +54,7 @@ export default function RolesFilter({
             </FilterRolesLabelContainer>
             <FilterRolesDropdownContainer>
                 <Select
+                    className="RolesFilterDropdown"
                     options={roles}
                     isMulti
                     isSearchable
