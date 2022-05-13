@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
-import { Project, CreateProject as EditProject } from "../../../data/interfaces/projects";
+import {
+    Project,
+    CreateProject as EditProject,
+    ProjectRole,
+} from "../../../data/interfaces/projects";
 
 import projectToEditProject from "../../../utils/logic/project";
 
@@ -63,10 +67,7 @@ export default function ProjectDetailPage() {
         navigate("/editions/" + editionId + "/projects/");
     };
 
-    const [projectRoles, setProjectRoles] = useState([
-        { skill: "Frontend", slots: 5, suggestions: [{ name: "Jef" }] },
-        { skill: "Backend", slots: 5, suggestions: [] },
-    ]);
+    const [projectRoles, setProjectRoles] = useState<ProjectRole[]>([]);
 
     useEffect(() => {
         async function callProjects(): Promise<void> {
@@ -75,6 +76,7 @@ export default function ProjectDetailPage() {
                 const response = await getProject(editionId, projectId);
                 if (response) {
                     setProject(response);
+                    setProjectRoles(response.projectRoles);
                     setEditedProject(response);
                 } else navigate("/404-not-found");
             }
@@ -159,7 +161,7 @@ export default function ProjectDetailPage() {
             if (source.droppableId === "students") return;
             else {
                 const newProjectRoles = projectRoles.map((projectRole, index) => {
-                    if (projectRole.skill === source.droppableId) {
+                    if (projectRole.projectRoleId.toString() === source.droppableId) {
                         const newSuggestions = [...projectRole.suggestions];
                         newSuggestions.splice(source.index, 1);
                         return { ...projectRole, suggestions: newSuggestions };
@@ -172,20 +174,29 @@ export default function ProjectDetailPage() {
         if (source.droppableId === "students") {
             const student = await getStudent(editionId, result.draggableId);
             const newProjectRoles = projectRoles.map((projectRole, index) => {
-                if (projectRole.skill === destination?.droppableId) {
+                if (projectRole.projectRoleId.toString() === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.splice(destination.index, 0, { name: student.lastName });
+                    newSuggestions.splice(destination.index, 0, {
+                        projectRoleSuggestionId: index,
+                        argumentation: "arg",
+                        student: student,
+                    });
                     return { ...projectRole, suggestions: newSuggestions };
                 } else return projectRole;
             });
             setProjectRoles(newProjectRoles);
         } else {
+            const student = await getStudent(editionId, result.draggableId);
             const newProjectRoles = projectRoles.map((projectRole, index) => {
-                if (projectRole.skill === destination?.droppableId) {
+                if (projectRole.projectRoleId.toString() === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.splice(destination.index, 0, { name: result.draggableId });
+                    newSuggestions.splice(destination.index, 0, {
+                        projectRoleSuggestionId: index,
+                        argumentation: "arg",
+                        student: student,
+                    });
                     return { ...projectRole, suggestions: newSuggestions };
-                } else if (projectRole.skill === source.droppableId) {
+                } else if (projectRole.projectRoleId.toString() === source.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
                     newSuggestions.splice(source.index, 1);
                     return { ...projectRole, suggestions: newSuggestions };

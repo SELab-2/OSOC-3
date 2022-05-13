@@ -26,7 +26,7 @@ export interface Coach {
 export interface ProjectRoleSuggestion {
     projectRoleSuggestionId: number;
     argumentation: string;
-    drafter: Coach;
+    // drafter: Coach;
     student: Student;
 }
 
@@ -55,6 +55,9 @@ export interface Project {
 
     /** The partners of this project */
     partners: Partner[];
+
+    /** The roles of this project */
+    projectRoles: ProjectRole[];
 }
 
 /**
@@ -102,18 +105,4 @@ export interface CreateProjectRole {
 
     /** Number of positions of this skill in a project */
     slots: number;
-}
-
-/**
- * Data about a place in a project
- */
-export interface StudentPlace {
-    /** Whether or not this position is filled in */
-    available: boolean;
-
-    /** The skill needed for this place */
-    skill: string;
-
-    /** The name of the student if this place is filled in */
-    name: string | undefined;
 }
