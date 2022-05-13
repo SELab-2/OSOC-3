@@ -11,7 +11,9 @@ export const GreenButton = styled(Button)`
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
 
-    &:hover {
+    &:hover,
+    &:active,
+    &:focus {
         background-color: var(--osoc_orange);
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);

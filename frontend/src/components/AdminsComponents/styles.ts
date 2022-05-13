@@ -5,10 +5,19 @@ export const Warning = styled.div`
     color: var(--osoc_red);
 `;
 
-export const AdminsTable = styled(Table)`
-    min-width: fit-content;
+export const AdminsTable = styled(Table).attrs({
+    striped: true,
+    bordered: true,
+    variant: "dark",
+    hover: false,
+})`
     width: 45em;
     max-width: 100%;
+    margin-top: 10px;
+`;
+
+export const AdminsTableDiv = styled.div`
+    overflow: auto;
 `;
 
 export const ModalContentConfirm = styled.div`
