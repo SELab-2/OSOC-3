@@ -1,5 +1,5 @@
 import aiohttp
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.app.exceptions.register import InvalidGitHubCode
@@ -90,8 +90,8 @@ async def get_github_id(http_session: aiohttp.ClientSession, access_token: str) 
     return profile_json["id"]
 
 
-async def get_user_by_github_code(http_session: aiohttp.ClientSession, db: Session, code: str) -> User:
+async def get_user_by_github_code(http_session: aiohttp.ClientSession, db: AsyncSession, code: str) -> User:
     """Find a User by their GitHub auth code"""
     token_data = await get_github_access_token(http_session, code)
     github_id = await get_github_id(http_session, token_data.access_token)
-    return get_user_by_github_id(db, github_id)
+    return await get_user_by_github_id(db, github_id)
