@@ -174,8 +174,8 @@ class ProjectRole(Base):
     description = Column(Text, nullable=True)
     slots = Column(Integer, nullable=False, default=0)
 
-    project: Project = relationship("Project", back_populates="project_roles", uselist=False)
-    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False)
+    project: Project = relationship("Project", back_populates="project_roles", uselist=False, lazy="joined")
+    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False, lazy="joined")
     suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role",
                                                             lazy="joined")
 
