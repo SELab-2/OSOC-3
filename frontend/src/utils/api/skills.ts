@@ -9,7 +9,7 @@ import { CreateSkill, Skill, Skills } from "../../data/interfaces/skills";
 export async function getSkills(): Promise<Skills | null> {
     try {
         const response = await axiosInstance.get("skills");
-        const skills = response.data.skills as Skills;
+        const skills = response.data as Skills;
         return skills;
     } catch (error) {
         if (axios.isAxiosError(error)) {
