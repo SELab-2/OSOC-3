@@ -1,5 +1,5 @@
 /**
- * This file contains all interfaces used in projects pages.
+ * This file contains all interfaces used for projects.
  */
 
 import { Skill } from "./skills";
@@ -23,19 +23,49 @@ export interface Coach {
     name: string;
 }
 
+/**
+ * Data about a single project role suggestion.
+ */
 export interface ProjectRoleSuggestion {
+    /** The id of the suggestion */
     projectRoleSuggestionId: number;
+
+    /** The argumentation why this student is a good fit */
     argumentation: string;
+
+    /** The user who suggested this student */
     // drafter: Coach;
+
+    /** The suggested student */
     student: Student;
 }
 
+/**
+ * Data about a project role
+ */
 export interface ProjectRole {
+    /** The id of the project role */
     projectRoleId: number;
+
+    /** The id of the project this role belongs to */
     projectId: number;
+
+    /**
+     * More info about the skill
+     */
     description: string;
+
+    /**
+     * The skill needed for this role
+     */
     skill: Skill;
+
+    /** The number of positions this role has */
     slots: number;
+
+    /**
+     * The suggested students for this role
+     */
     suggestions: ProjectRoleSuggestion[];
 }
 
