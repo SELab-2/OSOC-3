@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 import sqlalchemy.exc
 from pydantic import ValidationError
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.exceptions.register import InvalidGitHubCode
 from src.app.logic.oauth import github as logic
@@ -170,13 +170,13 @@ async def test_get_github_id():
     assert user_id == 1
 
 
-async def test_get_user_by_github_code_exists(database_session: Session):
+async def test_get_user_by_github_code_exists(database_session: AsyncSession):
     """Test getting a user by their GitHub code"""
     user = User(name="name", admin=True)
     database_session.add(user)
     gh_auth = AuthGitHub(access_token="token", email="email", github_user_id=1, user=user)
     database_session.add(gh_auth)
-    database_session.commit()
+    await database_session.commit()
 
     http_session = AsyncMock()
 
@@ -204,7 +204,7 @@ async def test_get_user_by_github_code_exists(database_session: Session):
     assert found_user.user_id == user.user_id
 
 
-async def test_get_user_by_github_code_doesnt_exist(database_session: Session):
+async def test_get_user_by_github_code_doesnt_exist(database_session: AsyncSession):
     """Test getting a user by their GitHub code when we don't know the user"""
     http_session = AsyncMock()
 

@@ -99,7 +99,8 @@ async def test_email_exception_doesnt_add(database_session: AsyncSession):
         with pytest.raises(FailedToAddNewUserException):
             await create_request_email(database_session, nu, edition)
 
-    assert len(database_session.query(CoachRequest).all()) == 0
+    requests = (await database_session.execute(select(CoachRequest))).all()
+    assert len(requests) == 0
 
 
 async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
@@ -140,7 +141,7 @@ async def test_create_request_github(database_session: AsyncSession):
     profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
     await create_request_github(database_session, profile, invite.uuid, edition)
 
-    users = database_session.query(User).where(User.name == "Name").all()
+    users = (await database_session.execute(select(User).where(User.name == "Name"))).unique().scalars().all()
 
     assert len(users) == 1
     assert users[0].github_auth is not None
@@ -158,7 +159,7 @@ async def test_create_request_github_duplicate(database_session: AsyncSession):
     profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
     await create_request_github(database_session, profile, invite.uuid, edition)
 
-    users = database_session.query(User).where(User.name == "Name").all()
+    users = (await database_session.execute(select(User).where(User.name == "Name"))).unique().scalars().all()
 
     assert len(users) == 1
 
@@ -189,4 +190,5 @@ async def test_github_exception_doesnt_add(database_session: AsyncSession):
         with pytest.raises(FailedToAddNewUserException):
             await create_request_github(database_session, profile, invite.uuid, edition)
 
-        assert len(database_session.query(CoachRequest).all()) == 0
+        requests = (await database_session.execute(select(CoachRequest))).scalars().all()
+        assert len(requests) == 0

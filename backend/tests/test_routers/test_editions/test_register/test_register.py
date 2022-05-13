@@ -152,6 +152,6 @@ async def test_github_register(database_session: AsyncSession, test_client: Asyn
 
     assert resp.status_code == status.HTTP_201_CREATED
 
-    users = database_session.query(User).all()
+    users = (await database_session.execute(select(User))).unique().scalars().all()
     assert len(users) == 1
     assert users[0].name == "name"

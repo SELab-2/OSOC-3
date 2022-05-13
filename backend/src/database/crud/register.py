@@ -43,6 +43,6 @@ async def create_auth_github(db: AsyncSession, user: User, profile: GitHubProfil
     db.add(auth_gh)
 
     if commit:
-        db.commit()
+        await db.commit()
 
     return auth_gh

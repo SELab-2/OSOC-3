@@ -42,13 +42,13 @@ async def test_create_auth_email(database_session: AsyncSession):
     assert u.email_auth == a[0]
 
 
-def test_create_auth_github(database_session: Session):
+async def test_create_auth_github(database_session: AsyncSession):
     """Test creating a GitHub auth entry"""
-    user = create_user(database_session, name="GitHub")
+    user = await create_user(database_session, name="GitHub")
     profile = GitHubProfile(access_token="token", email="some@test.email", id=1, name="ghn")
-    create_auth_github(database_session, user, profile)
+    await create_auth_github(database_session, user, profile)
 
-    query = database_session.query(AuthGitHub).where(AuthGitHub.user == user).all()
+    a = (await database_session.execute(select(AuthGitHub).where(AuthGitHub.user == user))).scalars().all()
 
-    assert len(query) == 1
-    assert query[0].user_id == user.user_id
+    assert len(a) == 1
+    assert a[0].user_id == user.user_id
