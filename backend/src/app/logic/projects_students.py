@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.database.crud.projects_students as crud
-from src.app.exceptions.editions import DuplicateInsertException
+from src.app.exceptions.crud import DuplicateInsertException
 from src.app.schemas.projects import InputArgumentation
 from src.database.models import ProjectRole, Student, User, ProjectRoleSuggestion
 

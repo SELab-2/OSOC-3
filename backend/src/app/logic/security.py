@@ -56,7 +56,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user_email(db: AsyncSession, email: str, password: str) -> models.User:
+async def authenticate_user_email(db: AsyncSession, email: str, password: str) -> models.User:
     """Match an email/password combination to a User model"""
     user = await get_user_by_email(db, email)
 
