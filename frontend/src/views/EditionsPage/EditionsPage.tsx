@@ -11,7 +11,6 @@ export default function EditionsPage() {
 
     return (
         <EditionsPageContainer>
-            <h1 className={"mx-auto mb-5"}>Editions</h1>
             <NewEditionButton onClick={() => navigate("/editions/new")} />
             <EditionsTable />
         </EditionsPageContainer>

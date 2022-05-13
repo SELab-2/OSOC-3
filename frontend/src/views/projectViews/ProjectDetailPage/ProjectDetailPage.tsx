@@ -137,7 +137,7 @@ export default function ProjectDetailPage() {
                             editing={editing}
                         />
                         <NumberOfStudents>
-                            {project.numberOfStudents}
+                            10
                             <BsPersonFill />
                         </NumberOfStudents>
                     </ClientsContainer>
