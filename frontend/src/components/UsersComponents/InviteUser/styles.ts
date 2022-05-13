@@ -46,3 +46,11 @@ export const DropdownField = styled(Dropdown.Item)`
         transition: 200ms ease-in;
     }
 `;
+
+export const InputContainer = styled.div`
+    width: 15em;
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 5px;
+`;

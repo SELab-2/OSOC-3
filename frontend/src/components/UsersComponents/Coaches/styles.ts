@@ -43,7 +43,7 @@ export const ListDiv = styled.div`
     margin-top: 10px;
 `;
 
-export const DialogButton = styled(Button)`
+export const DialogButtonDiv = styled.div`
     margin-right: 4px;
     margin-bottom: 4px;
 `;
@@ -63,4 +63,14 @@ export const EmailDiv = styled.div`
 export const CredsDiv = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
+`;
+
+export const SearchFieldDiv = styled.div`
+    float: left;
+    width: 15em;
+`;
+
+export const TableDiv = styled.div`
+    width: 100%;
+    clear: left;
 `;

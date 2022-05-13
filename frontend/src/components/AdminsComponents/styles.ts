@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 
 export const Warning = styled.div`
     color: var(--osoc_red);
@@ -30,16 +30,15 @@ export const ModalContentWarning = styled.div`
     background-color: var(--osoc_blue);
 `;
 
-export const AddAdminButton = styled(Button).attrs({
-    size: "sm",
-})`
-    float: right;
-`;
-
 export const EmailDiv = styled.div`
     overflow: auto;
 `;
 
 export const RemoveAdminBody = styled.div`
     overflow: hidden;
+`;
+
+export const AddCoachButtonDiv = styled.div`
+    float: right;
+    margin-bottom: 5px;
 `;

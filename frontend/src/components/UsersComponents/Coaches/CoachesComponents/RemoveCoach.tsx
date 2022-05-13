@@ -4,15 +4,17 @@ import {
     removeCoachFromAllEditions,
     removeCoachFromEdition,
 } from "../../../../utils/api/users/coaches";
-import { Button, Modal, Spinner } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import {
     CancelButton,
     CredsDiv,
-    DialogButton,
     DialogButtonContainer,
+    DialogButtonDiv,
     ModalContent,
 } from "../styles";
 import { Error } from "../../Requests/styles";
+import LoadSpinner from "../../../Common/LoadSpinner";
+import DeleteButton from "../../../Common/Buttons/DeleteButton";
 
 /**
  * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.
@@ -66,42 +68,42 @@ export default function RemoveCoach(props: {
 
     let buttons;
     if (loading) {
-        buttons = <Spinner animation="border" />;
+        buttons = <LoadSpinner show={true} />;
     } else {
         buttons = (
             <DialogButtonContainer>
-                <div>
-                    <DialogButton
-                        variant="primary"
+                <DialogButtonDiv>
+                    <DeleteButton
                         onClick={() => {
                             removeCoach(props.coach.userId, true);
                         }}
+                        showIcon={false}
                     >
                         Remove from all editions
-                    </DialogButton>
-                </div>
-                <div>
-                    <DialogButton
-                        variant="primary"
+                    </DeleteButton>
+                </DialogButtonDiv>
+                <DialogButtonDiv>
+                    <DeleteButton
                         onClick={() => {
                             removeCoach(props.coach.userId, false);
                         }}
+                        showIcon={false}
                     >
                         Remove from current edition
-                    </DialogButton>
+                    </DeleteButton>
                     <CancelButton variant="secondary" onClick={handleClose}>
                         Cancel
                     </CancelButton>
-                </div>
+                </DialogButtonDiv>
             </DialogButtonContainer>
         );
     }
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={handleShow}>
+            <DeleteButton onClick={handleShow} showIcon={false}>
                 Remove
-            </Button>
+            </DeleteButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContent>

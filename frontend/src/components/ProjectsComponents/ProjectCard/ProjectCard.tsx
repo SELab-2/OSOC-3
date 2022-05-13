@@ -44,9 +44,13 @@ export default function ProjectCard({
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const navigate = useNavigate();
+    const params = useParams();
+    const editionId = params.editionId!;
+
     // What to do when deleting a project.
     async function handleDelete() {
-        const success = await deleteProject(project.editionName, project.projectId);
+        const success = await deleteProject(editionId, project.projectId);
         setShow(false);
         if (!success) {
             alert("Failed to delete the project");
@@ -54,10 +58,6 @@ export default function ProjectCard({
             removeProject(project);
         }
     }
-
-    const navigate = useNavigate();
-    const params = useParams();
-    const editionId = params.editionId!;
 
     const { role } = useAuth();
 
