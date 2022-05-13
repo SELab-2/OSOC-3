@@ -1,8 +1,15 @@
 :root {
+    /* OSOC colours */
     --osoc_blue: #131329;
     --osoc_orange: #fcb70f;
     --osoc_red: #f14a3b;
     --osoc_green: #44dba4;
+    /* Darkened OSOC colours, used for hovering, etc */
+    --osoc_blue_darkened: #0e0e1e;
+    --osoc_orange_darkened: #c58c02;
+    --osoc_red_darkened: #d21f0f;
+    --osoc_green_darkened: #21be85;
+    /* General site colours */
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
     --background_color: #272741;
@@ -22,4 +29,16 @@
 body {
     background-color: var(--background_color);
     color: white;
+}
+
+/* All tables */
+.table-dark {
+    --bs-table-bg: #0f0f30;
+    --bs-table-background: #0f0f30;
+    --bs-table-striped-bg: #1a1a38;
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: #51516e;
+    --bs-table-active-color: #fff;
+    --bs-table-hover-bg: #41415e;
+    --bs-table-hover-color: #fff;
 }
