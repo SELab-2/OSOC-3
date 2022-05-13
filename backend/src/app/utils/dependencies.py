@@ -2,7 +2,7 @@ import sqlalchemy.exc
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, ExpiredSignatureError, JWTError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import settings
 import src.database.crud.projects as crud_projects
@@ -24,24 +24,25 @@ from src.database.database import get_session
 from src.database.models import Edition, InviteLink, Student, Suggestion, User, Project, ProjectRole
 
 
-def get_edition(edition_name: str, database: Session = Depends(get_session)) -> Edition:
+async def get_edition(edition_name: str, database: AsyncSession = Depends(get_session)) -> Edition:
     """Get an edition from the database, given the name in the path"""
-    return get_edition_by_name(database, edition_name)
+    return await get_edition_by_name(database, edition_name)
 
 
-def get_student(student_id: int, database: Session = Depends(get_session)) -> Student:
+async def get_student(student_id: int, database: AsyncSession = Depends(get_session)) -> Student:
     """Get the student from the database, given the id in the path"""
-    return get_student_by_id(database, student_id)
+    return await get_student_by_id(database, student_id)
 
 
-def get_suggestion(suggestion_id: int, database: Session = Depends(get_session)) -> Suggestion:
+async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
-    return get_suggestion_by_id(database, suggestion_id)
+    return await get_suggestion_by_id(database, suggestion_id)
 
 
-def get_latest_edition(edition: Edition = Depends(get_edition), database: Session = Depends(get_session)) -> Edition:
+async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
+        -> Edition:
     """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
-    latest = latest_edition(database)
+    latest = await latest_edition(database)
     if edition != latest:
         raise ReadOnlyEditionException
     return latest
@@ -50,7 +51,7 @@ def get_latest_edition(edition: Edition = Depends(get_edition), database: Sessio
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
-async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -> User:
+async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:
     """Check which user is making a request by decoding its token, and verifying the token type"""
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
@@ -64,7 +65,7 @@ async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -
             raise WrongTokenTypeException()
 
         try:
-            user = get_user_by_id(db, int(user_id))
+            user = await get_user_by_id(db, int(user_id))
         except sqlalchemy.exc.NoResultFound as not_found:
             raise InvalidCredentialsException() from not_found
 
@@ -75,14 +76,16 @@ async def _get_user_from_token(token_type: TokenType, db: Session, token: str) -
         raise InvalidCredentialsException() from jwt_err
 
 
-async def get_user_from_access_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_access_token(db: AsyncSession = Depends(get_session),
+                                     token: str = Depends(oauth2_scheme)) -> User:
     """Check which user is making a request by decoding its access token
     This function is used as a dependency for other functions
     """
     return await _get_user_from_token(TokenType.ACCESS, db, token)
 
 
-async def get_user_from_refresh_token(db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)) -> User:
+async def get_user_from_refresh_token(db: AsyncSession = Depends(get_session), token: str = Depends(oauth2_scheme)) \
+        -> User:
     """Check which user is making a request by decoding its refresh token
     This function is used as a dependency for other functions
     """
@@ -132,28 +135,28 @@ async def require_coach(edition: Edition = Depends(get_edition),
     return user
 
 
-def get_invite_link(invite_uuid: str, db: Session = Depends(get_session)) -> InviteLink:
+async def get_invite_link(invite_uuid: str, db: AsyncSession = Depends(get_session)) -> InviteLink:
     """Get an invite link from the database, given the id in the path"""
-    return get_invite_link_by_uuid(db, invite_uuid)
+    return await get_invite_link_by_uuid(db, invite_uuid)
 
 
-def get_project(
+async def get_project(
         project_id: int,
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         edition: Edition = Depends(get_edition)) -> Project:
     """Get a project from het database, given the id in the path"""
-    project = crud_projects.get_project(db, project_id)
+    project = await crud_projects.get_project(db, project_id)
     if project.edition != edition:
         raise NotFound()
     return project
 
 
-def get_project_role(
+async def get_project_role(
         project_role_id: int,
         project: Project = Depends(get_project),
-        db: Session = Depends(get_session)) -> ProjectRole:
+        db: AsyncSession = Depends(get_session)) -> ProjectRole:
     """Get a project from het database, given the id in the path"""
-    project_role = crud_projects.get_project_role(db, project_role_id)
+    project_role = await crud_projects.get_project_role(db, project_role_id)
     if project_role.project != project:
         raise NotFound()
     return project_role

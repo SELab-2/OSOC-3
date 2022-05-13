@@ -2,7 +2,7 @@ import sqlalchemy.exc
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.exceptions.authentication import InvalidCredentialsException
 from src.app.logic.security import authenticate_user, create_tokens
@@ -18,10 +18,11 @@ login_router = APIRouter(prefix="/login", tags=[Tags.LOGIN])
 
 
 @login_router.post("/token", response_model=Token)
-async def login_for_access_token(db: Session = Depends(get_session), form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(db: AsyncSession = Depends(get_session),
+                                 form_data: OAuth2PasswordRequestForm = Depends()):
     """Called when logging in, generates an access token to use in other functions"""
     try:
-        user = authenticate_user(db, form_data.username, form_data.password)
+        user = await authenticate_user(db, form_data.username, form_data.password)
     except sqlalchemy.exc.NoResultFound as not_found:
         # Don't use our own error handler here because this should
         # be a 401 instead of a 404
@@ -31,7 +32,8 @@ async def login_for_access_token(db: Session = Depends(get_session), form_data: 
 
 
 @login_router.post("/refresh", response_model=Token)
-async def refresh_access_token(db: Session = Depends(get_session), user: User = Depends(get_user_from_refresh_token)):
+async def refresh_access_token(db: AsyncSession = Depends(get_session),
+                               user: User = Depends(get_user_from_refresh_token)):
     """
     Return a new access & refresh token using on the old refresh token
 
@@ -40,14 +42,14 @@ async def refresh_access_token(db: Session = Depends(get_session), user: User = 
     return await generate_token_response_for_user(db, user)
 
 
-async def generate_token_response_for_user(db: Session, user: User) -> Token:
+async def generate_token_response_for_user(db: AsyncSession, user: User) -> Token:
     """
     Generate new tokens for a user and put them in the Token response schema.
     """
     access_token, refresh_token = create_tokens(user)
 
     user_data: dict = user_model_to_schema(user).__dict__
-    user_data["editions"] = get_user_editions(db, user)
+    user_data["editions"] = await get_user_editions(db, user)
 
     return Token(
         access_token=access_token,

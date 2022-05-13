@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.app.logic.partners as partners_logic
 import src.database.crud.projects as crud
@@ -9,68 +10,72 @@ from src.app.schemas.projects import (
 from src.database.models import Edition, Project, ProjectRole, User
 
 
-def get_project_list(db: Session, edition: Edition, search_params: QueryParamsProjects, user: User) -> ProjectList:
+async def get_project_list(db: AsyncSession, edition: Edition, search_params: QueryParamsProjects,
+                           user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
-    return ProjectList(projects=crud.get_projects_for_edition_page(db, edition, search_params, user))
+    proj_page = await crud.get_projects_for_edition_page(db, edition, search_params, user)
+    return ProjectList(projects=proj_page)
 
 
-def create_project(db: Session, edition: Edition, input_project: InputProject) -> Project:
+async def create_project(db: AsyncSession, edition: Edition, input_project: InputProject) -> Project:
     """Create a new project"""
     try:
         # Fetch or create all partners
-        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
+        partners = await partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
 
         # Create the project
-        project = crud.create_project(db, edition, input_project, partners, commit=False)
+        project = await crud.create_project(db, edition, input_project, partners, commit=False)
 
         # Save the changes to the database
-        db.commit()
-
+        await db.commit()
+        # query the project to create the association tables
+        (await db.execute(select(Project).where(Project.project_id == project.project_id)))
         return project
     except Exception as ex:
         # When an error occurs undo al database changes
-        db.rollback()
+        await db.rollback()
         raise ex
 
 
-def patch_project(db: Session, project: Project, input_project: InputProject) -> Project:
+async def patch_project(db: AsyncSession, project: Project, input_project: InputProject) -> Project:
     """Make changes to a project"""
     try:
         # Fetch or create all partners
-        partners = partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
+        partners = await partners_logic.get_or_create_partners_by_name(db, input_project.partners, commit=False)
 
-        crud.patch_project(db, project, input_project, partners, commit=False)
+        await crud.patch_project(db, project, input_project, partners, commit=False)
 
         # Save the changes to the database
-        db.commit()
+        await db.commit()
 
         return project
     except Exception as ex:
         # When an error occurs undo al database changes
-        db.rollback()
+        await db.rollback()
         raise ex
 
 
-def delete_project(db: Session, project: Project):
+async def delete_project(db: AsyncSession, project: Project):
     """Delete a project"""
-    crud.delete_project(db, project)
+    await crud.delete_project(db, project)
 
 
-def get_project_roles(db: Session, project: Project) -> ProjectRoleResponseList:
+async def get_project_roles(db: AsyncSession, project: Project) -> ProjectRoleResponseList:
     """Get project roles for a project"""
-    return ProjectRoleResponseList(project_roles=crud.get_project_roles_for_project(db, project))
+    return ProjectRoleResponseList(project_roles=(await crud.get_project_roles_for_project(db, project)))
 
 
-def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
+async def create_project_role(db: AsyncSession, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
     """Create a project role"""
-    return crud.create_project_role(db, project, input_project_role)
+    return await crud.create_project_role(db, project, input_project_role)
 
 
-def patch_project_role(db: Session, project_role_id: int, input_project_role: InputProjectRole) -> ProjectRole:
+async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) \
+        -> ProjectRole:
     """Update a project role"""
-    return crud.patch_project_role(db, project_role_id, input_project_role)
+    return await crud.patch_project_role(db, project_role_id, input_project_role)
 
 
-def get_conflicts(db: Session, edition: Edition) -> ConflictStudentList:
+async def get_conflicts(db: AsyncSession, edition: Edition) -> ConflictStudentList:
     """Returns a list of all students together with the projects they are causing a conflict for"""
-    return ConflictStudentList(conflict_students=crud.get_conflict_students(db, edition))
+    return ConflictStudentList(conflict_students=(await crud.get_conflict_students(db, edition)))

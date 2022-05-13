@@ -1,5 +1,6 @@
 import pytest
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -13,12 +14,12 @@ from src.database.enums import DecisionEnum
 
 
 @pytest.fixture
-def database_with_data(database_session: Session):
+async def database_with_data(database_session: AsyncSession):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
     edition: Edition = Edition(year=2022, name="ed22")
     database_session.add(edition)
-    database_session.commit()
+    await database_session.commit()
 
     # Users
     admin: User = User(name="admin", admin=True)
@@ -27,7 +28,7 @@ def database_with_data(database_session: Session):
     database_session.add(admin)
     database_session.add(coach1)
     database_session.add(coach2)
-    database_session.commit()
+    await database_session.commit()
 
     # Skill
     skill1: Skill = Skill(name="skill1")
@@ -42,7 +43,7 @@ def database_with_data(database_session: Session):
     database_session.add(skill4)
     database_session.add(skill5)
     database_session.add(skill6)
-    database_session.commit()
+    await database_session.commit()
 
     # Student
     student01: Student = Student(first_name="Jos", last_name="Vermeulen", preferred_name="Joske",
@@ -54,29 +55,29 @@ def database_with_data(database_session: Session):
 
     database_session.add(student01)
     database_session.add(student30)
-    database_session.commit()
+    await database_session.commit()
 
     # Suggestion
     suggestion1: Suggestion = Suggestion(
         student=student01, coach=admin, argumentation="Good student", suggestion=DecisionEnum.YES)
     database_session.add(suggestion1)
-    database_session.commit()
+    await database_session.commit()
     return database_session
 
 
-def test_create_suggestion_yes(database_with_data: Session):
+async def test_create_suggestion_yes(database_with_data: AsyncSession):
     """Test creat a yes suggestion"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    new_suggestion = create_suggestion(
+    new_suggestion = await create_suggestion(
         database_with_data, user.user_id, student.student_id, DecisionEnum.YES, "This is a good student")
 
-    suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
 
     assert new_suggestion == suggestion
 
@@ -86,19 +87,19 @@ def test_create_suggestion_yes(database_with_data: Session):
     assert suggestion.argumentation == "This is a good student"
 
 
-def test_create_suggestion_no(database_with_data: Session):
+async def test_create_suggestion_no(database_with_data: AsyncSession):
     """Test create a no suggestion"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    new_suggestion = create_suggestion(
+    new_suggestion = await create_suggestion(
         database_with_data, user.user_id, student.student_id, DecisionEnum.NO, "This is a not good student")
 
-    suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
 
     assert new_suggestion == suggestion
 
@@ -108,19 +109,19 @@ def test_create_suggestion_no(database_with_data: Session):
     assert suggestion.argumentation == "This is a not good student"
 
 
-def test_create_suggestion_maybe(database_with_data: Session):
+async def test_create_suggestion_maybe(database_with_data: AsyncSession):
     """Test create a maybe suggestion"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    new_suggestion = create_suggestion(
+    new_suggestion = await create_suggestion(
         database_with_data, user.user_id, student.student_id, DecisionEnum.MAYBE, "Idk if it's good student")
 
-    suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
 
     assert new_suggestion == suggestion
 
@@ -130,102 +131,102 @@ def test_create_suggestion_maybe(database_with_data: Session):
     assert suggestion.argumentation == "Idk if it's good student"
 
 
-def test_get_own_suggestion_existing(database_with_data: Session):
+async def test_get_own_suggestion_existing(database_with_data: AsyncSession):
     """Test getting your own suggestion"""
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").one()
-    student1: Student = database_with_data.query(Student).where(
-        Student.email_address == "josvermeulen@mail.com").one()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().one()
+    student1: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "josvermeulen@mail.com"))).unique().scalars().one()
 
-    suggestion = create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
+    suggestion = await create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
 
-    assert get_own_suggestion(database_with_data, student1.student_id, user.user_id) == suggestion
+    assert (await get_own_suggestion(database_with_data, student1.student_id, user.user_id)) == suggestion
 
 
-def test_get_own_suggestion_non_existing(database_with_data: Session):
+async def test_get_own_suggestion_non_existing(database_with_data: AsyncSession):
     """Test getting your own suggestion when it doesn't exist"""
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").one()
-    student1: Student = database_with_data.query(Student).where(
-        Student.email_address == "josvermeulen@mail.com").one()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().one()
+    student1: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "josvermeulen@mail.com"))).unique().scalars().one()
 
-    assert get_own_suggestion(database_with_data, student1.student_id, user.user_id) is None
+    assert (await get_own_suggestion(database_with_data, student1.student_id, user.user_id)) is None
 
 
-def test_get_own_suggestion_fields_none(database_with_data: Session):
+async def test_get_own_suggestion_fields_none(database_with_data: AsyncSession):
     """Test getting your own suggestion when either of the fields are None
     This is really only to increase coverage, the case isn't possible in practice
     """
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").one()
-    student1: Student = database_with_data.query(Student).where(
-        Student.email_address == "josvermeulen@mail.com").one()
-    create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().one()
+    student1: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "josvermeulen@mail.com"))).unique().scalars().one()
+    await create_suggestion(database_with_data, user.user_id, student1.student_id, DecisionEnum.YES, "args")
 
-    assert get_own_suggestion(database_with_data, None, user.user_id) is None
-    assert get_own_suggestion(database_with_data, student1.student_id, None) is None
+    assert (await get_own_suggestion(database_with_data, None, user.user_id)) is None
+    assert (await get_own_suggestion(database_with_data, student1.student_id, None)) is None
 
 
-def test_one_coach_two_students(database_with_data: Session):
+async def test_one_coach_two_students(database_with_data: AsyncSession):
     """Test that one coach can write multiple suggestions"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").one()
-    student1: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").one()
-    student2: Student = database_with_data.query(Student).where(
-        Student.email_address == "josvermeulen@mail.com").one()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().one()
+    student1: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().one()
+    student2: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "josvermeulen@mail.com"))).unique().scalars().one()
 
-    create_suggestion(database_with_data, user.user_id,
+    await create_suggestion(database_with_data, user.user_id,
                       student1.student_id, DecisionEnum.YES, "This is a good student")
-    create_suggestion(database_with_data, user.user_id, student2.student_id,
+    await create_suggestion(database_with_data, user.user_id, student2.student_id,
                       DecisionEnum.NO, "This is a not good student")
 
-    suggestion1: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student1.student_id).one()
+    suggestion1: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student1.student_id))).unique().scalars().one()
     assert suggestion1.coach == user
     assert suggestion1.student == student1
     assert suggestion1.suggestion == DecisionEnum.YES
     assert suggestion1.argumentation == "This is a good student"
 
-    suggestion2: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student2.student_id).one()
+    suggestion2: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student2.student_id))).unique().scalars().one()
     assert suggestion2.coach == user
     assert suggestion2.student == student2
     assert suggestion2.suggestion == DecisionEnum.NO
     assert suggestion2.argumentation == "This is a not good student"
 
 
-def test_multiple_suggestions_about_same_student(database_with_data: Session):
+async def test_multiple_suggestions_about_same_student(database_with_data: AsyncSession):
     """Test get multiple suggestions about the same student"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    create_suggestion(database_with_data, user.user_id, student.student_id,
+    await create_suggestion(database_with_data, user.user_id, student.student_id,
                       DecisionEnum.MAYBE, "Idk if it's good student")
     with pytest.raises(IntegrityError):
-        create_suggestion(database_with_data, user.user_id,
+        await create_suggestion(database_with_data, user.user_id,
                           student.student_id, DecisionEnum.YES, "This is a good student")
 
 
-def test_get_suggestions_of_student(database_with_data: Session):
+async def test_get_suggestions_of_student(database_with_data: AsyncSession):
     """Test get all suggestions of a student"""
 
-    user1: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    user2: User = database_with_data.query(
-        User).where(User.name == "coach2").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user1: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    user2: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach2"))).scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    create_suggestion(database_with_data, user1.user_id, student.student_id,
+    await create_suggestion(database_with_data, user1.user_id, student.student_id,
                       DecisionEnum.MAYBE, "Idk if it's good student")
-    create_suggestion(database_with_data, user2.user_id,
+    await create_suggestion(database_with_data, user2.user_id,
                       student.student_id, DecisionEnum.YES, "This is a good student")
-    suggestions_student = get_suggestions_of_student(
+    suggestions_student = await get_suggestions_of_student(
         database_with_data, student.student_id)
 
     assert len(suggestions_student) == 2
@@ -233,85 +234,85 @@ def test_get_suggestions_of_student(database_with_data: Session):
     assert suggestions_student[1].student == student
 
 
-def test_get_suggestion_by_id(database_with_data: Session):
+async def test_get_suggestion_by_id(database_with_data: AsyncSession):
     """Test get suggestion by id"""
-    suggestion: Suggestion = get_suggestion_by_id(database_with_data, 1)
+    suggestion: Suggestion = await get_suggestion_by_id(database_with_data, 1)
     assert suggestion.student_id == 1
     assert suggestion.coach_id == 1
     assert suggestion.suggestion == DecisionEnum.YES
     assert suggestion.argumentation == "Good student"
 
 
-def test_get_suggestion_by_id_non_existing(database_with_data: Session):
+async def test_get_suggestion_by_id_non_existing(database_with_data: AsyncSession):
     """Test you get an error when you search an id that don't exist"""
     with pytest.raises(NoResultFound):
-        get_suggestion_by_id(database_with_data, 900)
+        await get_suggestion_by_id(database_with_data, 900)
 
 
-def test_delete_suggestion(database_with_data: Session):
+async def test_delete_suggestion(database_with_data: AsyncSession):
     """Test delete suggestion"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    create_suggestion(database_with_data, user.user_id,
+    await create_suggestion(database_with_data, user.user_id,
                       student.student_id, DecisionEnum.YES, "This is a good student")
-    suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
 
-    delete_suggestion(database_with_data, suggestion)
+    await delete_suggestion(database_with_data, suggestion)
 
-    suggestions: list[Suggestion] = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).all()
+    suggestions: list[Suggestion] = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().all()
     assert len(suggestions) == 0
 
 
-def test_update_suggestion(database_with_data: Session):
+async def test_update_suggestion(database_with_data: AsyncSession):
     """Test update suggestion"""
 
-    user: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    create_suggestion(database_with_data, user.user_id,
+    await create_suggestion(database_with_data, user.user_id,
                       student.student_id, DecisionEnum.YES, "This is a good student")
-    suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
 
-    update_suggestion(database_with_data, suggestion,
+    await update_suggestion(database_with_data, suggestion,
                       DecisionEnum.NO, "Not that good student")
 
-    new_suggestion: Suggestion = database_with_data.query(Suggestion).where(
-        Suggestion.coach == user).where(Suggestion.student_id == student.student_id).one()
+    new_suggestion: Suggestion = (await database_with_data.execute(select(Suggestion).where(
+        Suggestion.coach == user).where(Suggestion.student_id == student.student_id))).unique().scalars().one()
     assert new_suggestion.suggestion == DecisionEnum.NO
     assert new_suggestion.argumentation == "Not that good student"
 
 
-def test_get_suggestions_of_student_by_type(database_with_data: Session):
+async def test_get_suggestions_of_student_by_type(database_with_data: AsyncSession):
     """Tests get suggestion of a student by type of suggestion"""
-    user1: User = database_with_data.query(
-        User).where(User.name == "coach1").first()
-    user2: User = database_with_data.query(
-        User).where(User.name == "coach2").first()
-    user3: User = database_with_data.query(
-        User).where(User.name == "admin").first()
-    student: Student = database_with_data.query(Student).where(
-        Student.email_address == "marta.marquez@example.com").first()
+    user1: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach1"))).unique().scalars().first()
+    user2: User = (await database_with_data.execute(select(
+        User).where(User.name == "coach2"))).scalars().first()
+    user3: User = (await database_with_data.execute(select(
+        User).where(User.name == "admin"))).scalars().first()
+    student: Student = (await database_with_data.execute(select(Student).where(
+        Student.email_address == "marta.marquez@example.com"))).unique().scalars().first()
 
-    create_suggestion(database_with_data, user1.user_id, student.student_id,
+    await create_suggestion(database_with_data, user1.user_id, student.student_id,
                       DecisionEnum.MAYBE, "Idk if it's good student")
-    create_suggestion(database_with_data, user2.user_id,
+    await create_suggestion(database_with_data, user2.user_id,
                       student.student_id, DecisionEnum.YES, "This is a good student")
-    create_suggestion(database_with_data, user3.user_id,
+    await create_suggestion(database_with_data, user3.user_id,
                       student.student_id, DecisionEnum.NO, "This is not a good student")
-    suggestions_student_yes = get_suggestions_of_student_by_type(
+    suggestions_student_yes = await get_suggestions_of_student_by_type(
         database_with_data, student.student_id, DecisionEnum.YES)
-    suggestions_student_no = get_suggestions_of_student_by_type(
+    suggestions_student_no = await get_suggestions_of_student_by_type(
         database_with_data, student.student_id, DecisionEnum.NO)
-    suggestions_student_maybe = get_suggestions_of_student_by_type(
+    suggestions_student_maybe = await get_suggestions_of_student_by_type(
         database_with_data, student.student_id, DecisionEnum.MAYBE)
     assert len(suggestions_student_yes) == 1
     assert len(suggestions_student_no) == 1

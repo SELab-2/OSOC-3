@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session, Query
+from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import Select
 
 from src.app.schemas.users import FilterParameters
 from src.database.crud.editions import get_edition_by_name
@@ -7,10 +9,10 @@ from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
 
 
-def get_user_edition_names(db: Session, user: User) -> list[str]:
+async def get_user_edition_names(db: AsyncSession, user: User) -> list[str]:
     """Get all names of the editions this user can see"""
     # For admins: return all editions - otherwise, all editions this user is verified coach in
-    source = user.editions if not user.admin else get_editions(db)
+    source = user.editions if not user.admin else await get_editions(db)
 
     editions = []
     # Name & year are non-nullable in the database, so it can never be None,
@@ -24,7 +26,7 @@ def get_user_edition_names(db: Session, user: User) -> list[str]:
     return editions
 
 
-def get_users_filtered_page(db: Session, params: FilterParameters):
+async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):
     """
     Get users and filter by optional parameters:
     :param admin: only return admins / only return non-admins
@@ -36,7 +38,7 @@ def get_users_filtered_page(db: Session, params: FilterParameters):
     Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
 
-    query = db.query(User)
+    query = select(User)
 
     if params.name is not None:
         query = query.where(User.name.contains(params.name))
@@ -44,87 +46,91 @@ def get_users_filtered_page(db: Session, params: FilterParameters):
     if params.admin is not None:
         query = query.filter(User.admin.is_(params.admin))
         # If admin parameter is set, edition & exclude_edition is ignored
-        return paginate(query, params.page).all()
+        return (await db.execute(paginate(query, params.page))).unique().scalars().all()
 
     if params.edition is not None:
-        edition = get_edition_by_name(db, params.edition)
+        edition = await get_edition_by_name(db, params.edition)
 
         query = query \
             .join(user_editions) \
             .filter(user_editions.c.edition_id == edition.edition_id)
 
     if params.exclude_edition is not None:
-        exclude_edition = get_edition_by_name(db, params.exclude_edition)
+        exclude_edition = await get_edition_by_name(db, params.exclude_edition)
+        exclude_user_id = select(user_editions.c.user_id)\
+            .where(user_editions.c.edition_id == exclude_edition.edition_id)
 
-        query = query.filter(
-            User.user_id.not_in(
-                db.query(user_editions.c.user_id).where(user_editions.c.edition_id == exclude_edition.edition_id)
-            )
-        )
+        query = query.filter(User.user_id.not_in(exclude_user_id))
 
-    return paginate(query, params.page).all()
+    return (await db.execute(paginate(query, params.page))).unique().scalars().all()
 
 
-def edit_admin_status(db: Session, user_id: int, admin: bool):
+async def edit_admin_status(db: AsyncSession, user_id: int, admin: bool):
     """
     Edit the admin-status of a user
     """
-    user = db.query(User).where(User.user_id == user_id).one()
+    result = await db.execute(select(User).where(User.user_id == user_id))
+    user = result.unique().scalar_one()
     user.admin = admin
     db.add(user)
-    db.commit()
+    await db.commit()
 
 
-def add_coach(db: Session, user_id: int, edition_name: str):
+async def add_coach(db: AsyncSession, user_id: int, edition_name: str):
     """
     Add user as coach for the given edition
     """
-    user = db.query(User).where(User.user_id == user_id).one()
-    edition = db.query(Edition).where(Edition.name == edition_name).one()
+    user_result = await db.execute(select(User).where(User.user_id == user_id))
+    user = user_result.unique().scalar_one()
+    edition_result = await db.execute(select(Edition).where(Edition.name == edition_name))
+    edition = edition_result.scalar_one()
     user.editions.append(edition)
-    db.commit()
+
+    await db.commit()
 
 
-def remove_coach(db: Session, user_id: int, edition_name: str):
+async def remove_coach(db: AsyncSession, user_id: int, edition_name: str):
     """
     Remove user as coach for the given edition
     """
-    edition = db.query(Edition).where(Edition.name == edition_name).one()
-    db.query(user_editions) \
+    edition_result = await db.execute(select(Edition).where(Edition.name == edition_name))
+    edition = edition_result.scalar_one()
+
+    delete_query = delete(user_editions) \
         .where(user_editions.c.user_id == user_id) \
-        .where(user_editions.c.edition_id == edition.edition_id) \
-        .delete()
-    db.commit()
+        .where(user_editions.c.edition_id == edition.edition_id)
+    await db.execute(delete_query)
+    await db.commit()
 
 
-def remove_coach_all_editions(db: Session, user_id: int):
+async def remove_coach_all_editions(db: AsyncSession, user_id: int):
     """
     Remove user as coach from all editions
     """
-    db.query(user_editions).where(user_editions.c.user_id == user_id).delete()
-    db.commit()
+    await db.execute(delete(user_editions).where(user_editions.c.user_id == user_id))
+    await db.commit()
 
 
-def _get_requests_query(db: Session, user_name: str = "") -> Query:
-    return db.query(CoachRequest).join(User).where(User.name.contains(user_name))
+def _get_requests_query(user_name: str = "") -> Select:
+    return select(CoachRequest).join(User).where(User.name.contains(user_name))
 
 
-def get_requests(db: Session) -> list[CoachRequest]:
+async def get_requests(db: AsyncSession) -> list[CoachRequest]:
     """
     Get all userrequests
     """
-    return _get_requests_query(db).all()
+    return (await db.execute(_get_requests_query())).unique().scalars().all()
 
 
-def get_requests_page(db: Session, page: int, user_name: str = "") -> list[CoachRequest]:
+async def get_requests_page(db: AsyncSession, page: int, user_name: str = "") -> list[CoachRequest]:
     """
     Get all userrequests
     """
-    return paginate(_get_requests_query(db, user_name), page).all()
+    return (await db.execute(paginate(_get_requests_query(user_name), page))).unique().scalars().all()
 
 
-def _get_requests_for_edition_query(db: Session, edition: Edition, user_name: str = "") -> Query:
-    return db.query(CoachRequest) \
+def _get_requests_for_edition_query(edition: Edition, user_name: str = "") -> Select:
+    return select(CoachRequest) \
         .where(CoachRequest.edition_id == edition.edition_id) \
         .join(User) \
         .where(User.name.contains(user_name)) \
@@ -133,15 +139,16 @@ def _get_requests_for_edition_query(db: Session, edition: Edition, user_name: st
         .join(AuthGoogle, isouter=True)
 
 
-def get_requests_for_edition(db: Session, edition_name: str = "") -> list[CoachRequest]:
+async def get_requests_for_edition(db: AsyncSession, edition_name: str = "") -> list[CoachRequest]:
     """
     Get all userrequests from a given edition
     """
-    return _get_requests_for_edition_query(db, get_edition_by_name(db, edition_name)).all()
+    edition = await get_edition_by_name(db, edition_name)
+    return (await db.execute(_get_requests_for_edition_query(edition))).unique().scalars().all()
 
 
-def get_requests_for_edition_page(
-        db: Session,
+async def get_requests_for_edition_page(
+        db: AsyncSession,
         edition_name: str,
         page: int,
         user_name: str = ""
@@ -149,41 +156,48 @@ def get_requests_for_edition_page(
     """
     Get all userrequests from a given edition
     """
-    return paginate(_get_requests_for_edition_query(db, get_edition_by_name(db, edition_name), user_name), page).all()
+    edition = await get_edition_by_name(db, edition_name)
+    return \
+        (await db.execute(paginate(_get_requests_for_edition_query(edition, user_name), page))).unique().scalars().all()
 
 
-def accept_request(db: Session, request_id: int):
+async def accept_request(db: AsyncSession, request_id: int):
     """
     Remove request and add user as coach
     """
-    request = db.query(CoachRequest).where(CoachRequest.request_id == request_id).one()
-    edition = db.query(Edition).where(Edition.edition_id == request.edition_id).one()
-    add_coach(db, request.user_id, edition.name)
-    db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
-    db.commit()
+    request = \
+        (await db.execute(select(CoachRequest).where(CoachRequest.request_id == request_id))).unique().scalar_one()
+    edition = (await db.execute(select(Edition).where(Edition.edition_id == request.edition_id))).scalar_one()
+    await add_coach(db, request.user_id, edition.name)
+    await db.execute(delete(CoachRequest).where(CoachRequest.request_id == request_id))
+    await db.commit()
 
 
-def reject_request(db: Session, request_id: int):
+async def reject_request(db: AsyncSession, request_id: int):
     """
     Remove request
     """
-    db.query(CoachRequest).where(CoachRequest.request_id == request_id).delete()
-    db.commit()
+    await db.execute(delete(CoachRequest).where(CoachRequest.request_id == request_id))
+    await db.commit()
 
 
-def remove_request_if_exists(db: Session, user_id: int, edition_name: str):
+async def remove_request_if_exists(db: AsyncSession, user_id: int, edition_name: str):
     """Remove a pending request for a user if there is one, otherwise do nothing"""
-    edition = db.query(Edition).where(Edition.name == edition_name).one()
-    db.query(CoachRequest).where(CoachRequest.user_id == user_id)\
-        .where(CoachRequest.edition_id == edition.edition_id).delete()
+    edition = (await db.execute(select(Edition).where(Edition.name == edition_name))).scalar_one()
+    delete_query = delete(CoachRequest).where(CoachRequest.user_id == user_id)\
+        .where(CoachRequest.edition_id == edition.edition_id)
+    await db.execute(delete_query)
+    await db.commit()
 
 
-def get_user_by_email(db: Session, email: str) -> User:
+async def get_user_by_email(db: AsyncSession, email: str) -> User:
     """Find a user by their email address"""
-    auth_email = db.query(AuthEmail).where(AuthEmail.email == email).one()
-    return db.query(User).where(User.user_id == auth_email.user_id).one()
+    auth_email = (await db.execute(select(AuthEmail).where(AuthEmail.email == email))).scalar_one()
+    return (await db.execute(select(User).where(User.user_id == auth_email.user_id))).unique().scalar_one()
 
 
-def get_user_by_id(db: Session, user_id: int) -> User:
+async def get_user_by_id(db: AsyncSession, user_id: int) -> User:
     """Find a user by their id"""
-    return db.query(User).where(User.user_id == user_id).one()
+    query = select(User).where(User.user_id == user_id)
+    result = await db.execute(query)
+    return result.unique().scalars().one()
