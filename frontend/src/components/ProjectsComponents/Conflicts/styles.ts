@@ -9,7 +9,8 @@ export const ConButton = styled(Button)`
 
 export const SidePanel = styled(Offcanvas)`
     background-color: #323252;
-    width: fit-content;
+    width: 33em;
+    max-width: fit-content;
     color: white;
 `;
 
@@ -20,4 +21,6 @@ export const Loader = styled(Spinner)`
 
 export const ListLink = styled(Link)`
     color: white;
+    margin-right: 10px;
+    white-space: nowrap;
 `;
