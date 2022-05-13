@@ -32,8 +32,8 @@ export default function StudentMailHistoryPage() {
             <Table bordered striped>
                 <thead>
                     <tr>
-                        <th>Sent</th>
-                        <th>Type</th>
+                        <th>Date</th>
+                        <th>State</th>
                     </tr>
                 </thead>
                 <tbody>

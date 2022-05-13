@@ -193,8 +193,8 @@ export default function MailOverviewPage() {
                                 </th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Current Email State</th>
-                                <th>Data Of Last Email</th>
+                                <th>Current State</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -264,7 +264,7 @@ export default function MailOverviewPage() {
                 </SearchDiv>
                 <FilterDiv>
                     <Multiselect
-                        placeholder="Filter on Email State"
+                        placeholder="Filter on State"
                         showArrow={true}
                         isObject={false}
                         onRemove={changeFilter}
