@@ -34,6 +34,7 @@ import {
     ProjectCoaches,
     ProjectPartners,
 } from "../../../components/ProjectDetailComponents";
+import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -157,9 +158,19 @@ export default function ProjectDetailPage() {
 
     async function onDragDrop(result: DropResult) {
         const { source, destination } = result;
+
         if (!destination || destination.droppableId === "student") {
             if (source.droppableId === "students") return;
             else {
+                deleteStudentFromProject(
+                    editionId,
+                    projectId.toString(),
+                    source.droppableId,
+                    result.draggableId.substring(
+                        0,
+                        result.draggableId.length - source.droppableId.length
+                    )
+                );
                 const newProjectRoles = projectRoles.map((projectRole, index) => {
                     if (projectRole.projectRoleId.toString() === source.droppableId) {
                         const newSuggestions = [...projectRole.suggestions];
@@ -173,6 +184,13 @@ export default function ProjectDetailPage() {
         if (destination?.droppableId === source.droppableId) return;
         if (source.droppableId === "students") {
             const student = await getStudent(editionId, result.draggableId);
+            await addStudentToProject(
+                editionId,
+                projectId.toString(),
+                destination!.droppableId,
+                result.draggableId,
+                "Good fit!"
+            );
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.projectRoleId.toString() === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];
@@ -186,7 +204,13 @@ export default function ProjectDetailPage() {
             });
             setProjectRoles(newProjectRoles);
         } else {
-            const student = await getStudent(editionId, result.draggableId);
+            const student = await getStudent(
+                editionId,
+                result.draggableId.substring(
+                    0,
+                    result.draggableId.length - source.droppableId.length
+                )
+            );
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.projectRoleId.toString() === destination?.droppableId) {
                     const newSuggestions = [...projectRole.suggestions];

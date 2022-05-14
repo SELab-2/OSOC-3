@@ -17,7 +17,10 @@ export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRo
                             <Suggestions ref={provided.innerRef} {...provided.droppableProps}>
                                 {projectRole.suggestions.map((sug, _index2) => (
                                     <Draggable
-                                        draggableId={sug.student.studentId.toString()}
+                                        draggableId={
+                                            sug.student.studentId.toString() +
+                                            projectRole.projectRoleId.toString()
+                                        }
                                         index={_index2}
                                         key={_index2}
                                     >

@@ -98,8 +98,8 @@ export async function patchStudentProjectRole(
  */
 export async function deleteStudentFromProject(
     edition: string,
-    projectId: number,
-    projectRoleId: number,
+    projectId: string,
+    projectRoleId: string,
     studentId: string
 ): Promise<boolean> {
     try {
