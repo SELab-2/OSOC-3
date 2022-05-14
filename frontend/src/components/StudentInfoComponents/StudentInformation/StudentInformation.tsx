@@ -86,7 +86,6 @@ export default function StudentInformation(props: Props) {
             </div>
         );
     } else {
-        console.log(props.currentStudent.skills);
         return (
             <StudentInformationContainer>
                 <NameAndRemoveButtonContainer>
@@ -137,7 +136,7 @@ export default function StudentInformation(props: Props) {
                     Roles:
                     <RolesValues>
                         {props.currentStudent.skills.map(skill => (
-                            <RoleValue>{skill.name}</RoleValue>
+                            <RoleValue key={skill.skillId}>{skill.name}</RoleValue>
                         ))}
                     </RolesValues>
                 </RolesField>

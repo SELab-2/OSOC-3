@@ -2,6 +2,7 @@ import React from "react";
 import { NrSuggestions } from "../../../../data/interfaces/students";
 import { SuggestionBarContainer } from "./styles";
 import { ProgressBar } from "react-bootstrap";
+import "./SuggestionProgressBar.css";
 
 interface Props {
     nrOfSuggestions: NrSuggestions;
@@ -28,12 +29,13 @@ export default function SuggestionProgressBar(props: Props) {
     const frequencyYes = (props.nrOfSuggestions.yes * 100) / amountSuggestions;
     const frequencyMaybe = (props.nrOfSuggestions.maybe * 100) / amountSuggestions;
     const frequencyNo = (props.nrOfSuggestions.no * 100) / amountSuggestions;
+
     return (
         <SuggestionBarContainer>
             <ProgressBar>
-                <ProgressBar now={frequencyYes} variant={"success"} />
-                <ProgressBar now={frequencyMaybe} variant={"warning"} />
-                <ProgressBar now={frequencyNo} variant={"danger"} />
+                <ProgressBar id="green-progress" now={frequencyYes} />
+                <ProgressBar id="orange-progress" now={frequencyMaybe} />
+                <ProgressBar id="red-progress" now={frequencyNo} />
             </ProgressBar>
         </SuggestionBarContainer>
     );
