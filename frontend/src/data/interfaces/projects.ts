@@ -41,6 +41,14 @@ export interface ProjectRoleSuggestion {
 }
 
 /**
+ * Data to create a new project role suggestion.
+ */
+export interface AddRoleSuggestion {
+    /** The argumentation why this student is a good fit */
+    argumentation: string;
+}
+
+/**
  * Data about a project role
  */
 export interface ProjectRole {
