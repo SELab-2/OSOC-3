@@ -130,6 +130,10 @@ env = [
     "DB_USE_SQLITE = 1",
 ]
 
+[tool.coverage.run]
+concurrency = [
+    "greenlet"
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
