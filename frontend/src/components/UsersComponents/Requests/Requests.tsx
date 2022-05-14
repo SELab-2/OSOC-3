@@ -4,7 +4,7 @@ import { RequestsContainer, Error, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
 import { SearchFieldDiv } from "../Coaches/styles";
-import FormControl from "../../Common/Forms/FormControl";
+import SearchBar from "../../Common/Forms/SearchBar";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -129,14 +129,13 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
                 <SearchFieldDiv>
-                    // TODO: Use new common SearchField
-                    <FormControl
+                    <SearchBar
                         onChange={e => {
                             filter(e.target.value);
                         }}
                         value={searchTerm}
+                        placeholder="Search name..."
                     />
                 </SearchFieldDiv>
                 <RequestListContainer>{list}</RequestListContainer>
