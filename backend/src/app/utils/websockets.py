@@ -1,9 +1,9 @@
 import enum
-from asyncio import Queue, Lock
+from asyncio import Queue as AsyncQueue, Lock
 from enum import Enum
-from typing import Any
+from queue import Queue
 
-from fastapi import Depends, Request
+from fastapi import Depends, Request, Response, FastAPI
 
 from src.app.utils.dependencies import get_edition
 from src.database.models import Edition
@@ -49,21 +49,21 @@ class LiveEventParameters:
         return {
             'method': self.method,
             'pathIds': self.path_ids,
-            'eventType': self.event_type.value()
+            'eventType': self.event_type.value
         }
 
 
 class DataPublisher:
     def __init__(self):
-        self.queues: list[Queue] = []
+        self.queues: list[AsyncQueue] = []
         self._broadcast_lock: Lock = Lock()
 
-    async def subscribe(self) -> Queue:
-        queue: Queue = Queue()
+    async def subscribe(self) -> AsyncQueue:
+        queue: AsyncQueue = AsyncQueue()
         self.queues.append(queue)
         return queue
 
-    async def unsubscribe(self, queue: Queue) -> None:
+    async def unsubscribe(self, queue: AsyncQueue) -> None:
         self.queues.remove(queue)
 
     async def broadcast(self, live_event: LiveEventParameters) -> None:
@@ -85,11 +85,26 @@ async def get_publisher(edition: Edition = Depends(get_edition)) -> DataPublishe
 
 
 async def live(request: Request, publisher: DataPublisher = Depends(get_publisher)):
-    path_ids: dict = request.path_params.copy()
-    del path_ids['edition_name']
-    live_event: LiveEventParameters = LiveEventParameters(
-        request.method,
-        request.path_params
-    )
-    yield  # yield to make sure this part happens after the request has been handled
-    await publisher.broadcast(live_event)
+    queue: Queue = request.state.websocket_publisher_queue
+    queue.put_nowait(publisher)
+
+
+def install_middleware(app: FastAPI):
+    @app.middleware("http")
+    async def live_middleware(request: Request, call_next) -> Response:
+        queue: Queue[DataPublisher] = Queue()
+        request.state.websocket_publisher_queue = queue
+
+        response: Response = await call_next(request)
+
+        if 200 <= response.status_code < 300 and not queue.empty():
+            if (publisher := queue.get_nowait()) is not None:
+                path_ids: dict = request.path_params.copy()
+                del path_ids['edition_name']
+                live_event: LiveEventParameters = LiveEventParameters(
+                    request.method,
+                    request.path_params
+                )
+                await publisher.broadcast(live_event)
+
+        return response

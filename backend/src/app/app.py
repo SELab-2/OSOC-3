@@ -7,6 +7,7 @@ from src.database.models import Base
 from .exceptions import install_handlers
 from .routers import editions_router, login_router, skills_router
 from .routers.users.users import users_router
+from .utils.websockets import install_middleware
 
 # Main application
 app = FastAPI(
@@ -22,6 +23,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+install_middleware(app)
+
 
 # Include all routers
 app.include_router(editions_router)
