@@ -27,10 +27,10 @@ class LiveEventParameters:
     def __init__(self, method: str, path_ids: dict):
         self.method: str = method
         self.path_ids: dict = path_ids
-        self.event_type: EventType = await LiveEventParameters.get_event_type(path_ids)
+        self.event_type: EventType = LiveEventParameters.get_event_type(path_ids)
 
     @staticmethod
-    async def get_event_type(path_ids: dict) -> EventType:
+    def get_event_type(path_ids: dict) -> EventType:
         match path_ids:
             case {'project_id': _}:
                 return EventType.PROJECT
@@ -57,7 +57,6 @@ class DataPublisher:
     def __init__(self):
         self.queues: list[Queue] = []
         self._broadcast_lock: Lock = Lock()
-        self.cache: dict[str, Any] = {}
 
     async def subscribe(self) -> Queue:
         queue: Queue = Queue()
@@ -86,7 +85,7 @@ async def get_publisher(edition: Edition = Depends(get_edition)) -> DataPublishe
 
 
 async def live(request: Request, publisher: DataPublisher = Depends(get_publisher)):
-    path_ids: dict = request.path_params
+    path_ids: dict = request.path_params.copy()
     del path_ids['edition_name']
     live_event: LiveEventParameters = LiveEventParameters(
         request.method,
