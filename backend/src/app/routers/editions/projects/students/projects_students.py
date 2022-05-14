@@ -10,6 +10,7 @@ from src.app.utils.dependencies import (
     require_coach, get_latest_edition, get_student,
     get_project_role
 )
+from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import User, Student, ProjectRole
 
@@ -20,7 +21,7 @@ project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tag
     "/{student_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
-    dependencies=[Depends(require_coach), Depends(get_latest_edition)]
+    dependencies=[Depends(require_coach), Depends(get_latest_edition), Depends(live)]
 )
 async def remove_student_from_project(
         student: Student = Depends(get_student),
@@ -36,7 +37,7 @@ async def remove_student_from_project(
     "/{student_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     response_class=Response,
-    dependencies=[Depends(get_latest_edition)]
+    dependencies=[Depends(get_latest_edition), Depends(live)]
 )
 async def change_project_role(
         argumentation: InputArgumentation,
@@ -54,7 +55,7 @@ async def change_project_role(
     "/{student_id}",
     status_code=status.HTTP_201_CREATED,
     response_class=Response,
-    dependencies=[Depends(get_latest_edition)]
+    dependencies=[Depends(get_latest_edition), Depends(live)]
 )
 async def add_student_to_project(
         argumentation: InputArgumentation,
