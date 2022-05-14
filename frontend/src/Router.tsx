@@ -17,6 +17,7 @@ import {
     UsersPage,
     AdminsPage,
     VerifyingTokenPage,
+    StudentInfoPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
 import { Role } from "./data/enums";
@@ -82,7 +83,10 @@ export default function Router() {
                                         {/* Students routes */}
                                         <Route path={"students"} element={<StudentsPage />} />
                                         {/* TODO student page */}
-                                        <Route path={"students/:id"} element={<div />} />
+                                        <Route
+                                            path={"students/:id"}
+                                            element={<StudentInfoPage />}
+                                        />
                                         {/* TODO student emails page */}
                                         <Route path={"students/:id/emails"} element={<div />} />
 

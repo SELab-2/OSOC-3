@@ -3,7 +3,7 @@ from datetime import timedelta, datetime
 
 from jose import jwt
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import settings
 from src.app.exceptions.authentication import InvalidCredentialsException
@@ -54,9 +54,9 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_user(db: Session, email: str, password: str) -> models.User:
+async def authenticate_user(db: AsyncSession, email: str, password: str) -> models.User:
     """Match an email/password combination to a User model"""
-    user = get_user_by_email(db, email)
+    user = await get_user_by_email(db, email)
 
     if user.email_auth.pw_hash is None or not verify_password(password, user.email_auth.pw_hash):
         raise InvalidCredentialsException()

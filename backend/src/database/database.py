@@ -1,9 +1,9 @@
-from typing import Generator
+from typing import AsyncGenerator
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
-def get_session() -> Generator[Session, None, None]:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """FastAPI dependency to inject a database session into a route instead of using an import
     Allows the tests to replace it with another database session (not hard coding the session)
     """
@@ -18,4 +18,4 @@ def get_session() -> Generator[Session, None, None]:
     try:
         yield session
     finally:
-        session.close()
+        await session.close()
