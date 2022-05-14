@@ -15,7 +15,7 @@ interface EditionFields {
  * Get all editions the user can see.
  */
 export async function getEditions(): Promise<EditionsResponse> {
-    const response = await axiosInstance.get("/editions/");
+    const response = await axiosInstance.get("/editions");
     return response.data as EditionsResponse;
 }
 
@@ -41,7 +41,7 @@ export async function deleteEdition(name: string): Promise<number> {
 export async function createEdition(name: string, year: number): Promise<AxiosResponse> {
     const payload: EditionFields = { name: name, year: year };
     try {
-        return await axiosInstance.post("/editions/", payload);
+        return await axiosInstance.post("/editions", payload);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response !== undefined) {
             return error.response;

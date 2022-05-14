@@ -21,7 +21,7 @@ export async function getStudents(
         const response = await axiosInstance.get(
             "/editions/" +
                 edition +
-                "/students/?first_name=" +
+                "/students?first_name=" +
                 nameFilter +
                 "&alumni=" +
                 alumniFilter +

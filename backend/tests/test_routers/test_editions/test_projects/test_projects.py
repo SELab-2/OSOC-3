@@ -297,7 +297,7 @@ async def test_search_project_coach(database_session: AsyncSession, auth_client:
     await database_session.commit()
 
     async with auth_client:
-        response = await auth_client.get(f"/editions/{edition.name}/projects/?coach=true", follow_redirects=True)
+        response = await auth_client.get(f"/editions/{edition.name}/projects?coach=true", follow_redirects=True)
         json = response.json()
         assert len(json["projects"]) == 1
         assert json["projects"][0]["name"] == "project 2"
