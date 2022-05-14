@@ -43,6 +43,6 @@ body {
     --bs-table-hover-color: #fff;
 }
 
-.table>:not(:first-child) {
+.table > :not(:first-child) {
     border-top: none;
 }
