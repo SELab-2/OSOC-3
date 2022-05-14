@@ -42,3 +42,7 @@ body {
     --bs-table-hover-bg: #41415e;
     --bs-table-hover-color: #fff;
 }
+
+.table>:not(:first-child) {
+    border-top: none;
+}
