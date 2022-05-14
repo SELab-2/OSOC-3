@@ -78,8 +78,12 @@ async def delete_edition(edition_name: str, db: AsyncSession = Depends(get_sessi
     await logic_editions.delete_edition(db, edition_name)
 
 
-@editions_router.websocket('/live')
-async def feed(websocket: WebSocket, publisher: DataPublisher = Depends(get_publisher)):
+@editions_router.websocket('/{edition_name}/live')
+async def feed(
+        websocket: WebSocket,
+        publisher: DataPublisher = Depends(get_publisher),
+        #_: None = Depends(require_coach)
+):
     await websocket.accept()
     queue: Queue = await publisher.subscribe()
     try:
