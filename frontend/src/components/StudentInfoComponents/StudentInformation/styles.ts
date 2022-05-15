@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const StudentInformationContainer = styled.div`
+    width: 100%;
     padding: 20px;
 `;
 
@@ -30,16 +31,33 @@ export const SuggestionField = styled.p`
 `;
 
 export const PersonalInfoField = styled.div`
-    width: 100%;
+    width: 50%;
     display: flex;
 `;
 
+export const SubjectFields = styled.div`
+    width: 30vh;
+    display: flex;
+    flex-direction: column;
+`;
+
+export const PersonalInformation = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+export const SubjectValues = styled.div`
+    width: 30vh;
+    display: flex;
+    flex-direction: column;
+`;
+
 export const PersonalInfoFieldSubject = styled.p`
-    width: 50%;
+    min-width: 30%;
 `;
 
 export const PersonalInfoFieldValue = styled.p`
-    margin-left: 5%;
+    margin-left: 1vh;
 `;
 
 export const RolesField = styled.div`
@@ -55,7 +73,7 @@ export const RoleValue = styled.li``;
 export const LineBreak = styled.div`
     background-color: #163542;
     height: 3px;
-    width: 420px;
+    width: 100%;
     margin-bottom: 30px;
     margin-top: 30px;
 `;

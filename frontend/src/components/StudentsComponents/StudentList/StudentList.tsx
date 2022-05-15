@@ -15,12 +15,7 @@ export default function StudentList(props: Props) {
     return (
         <StudentCardsList>
             {props.students.map(student => (
-                <StudentCard
-                    key={student.studentId}
-                    studentId={student.studentId}
-                    firstName={student.firstName}
-                    nrOfSuggestions={student.nrOfSuggestions}
-                />
+                <StudentCard key={student.studentId} student={student} />
             ))}
         </StudentCardsList>
     );

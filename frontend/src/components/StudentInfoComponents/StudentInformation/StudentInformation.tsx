@@ -9,13 +9,15 @@ import {
     StudentInfoTitle,
     SuggestionField,
     StudentInformationContainer,
-    PersonalInfoField,
     PersonalInfoFieldValue,
     PersonalInfoFieldSubject,
     RolesField,
     RolesValues,
     RoleValue,
     NameAndRemoveButtonContainer,
+    SubjectFields,
+    SubjectValues,
+    PersonalInformation,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Student } from "../../../data/interfaces/students";
@@ -104,30 +106,30 @@ export default function StudentInformation(props: Props) {
                 ))}
                 <LineBreak />
                 <StudentInfoTitle>Personal information</StudentInfoTitle>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.emailAddress}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.phoneNumber}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.alumni ? "Yes" : "No"}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Wants to be student coach?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.wantsToBeStudentCoach ? "Yes" : "No"}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
+                <PersonalInformation>
+                    <SubjectFields>
+                        <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>
+                            Wants to be student coach?:
+                        </PersonalInfoFieldSubject>
+                    </SubjectFields>
+                    <SubjectValues>
+                        <PersonalInfoFieldValue>
+                            {props.currentStudent.emailAddress}
+                        </PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>
+                            {props.currentStudent.phoneNumber}
+                        </PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>
+                            {props.currentStudent.alumni ? "Yes" : "No"}
+                        </PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>
+                            {props.currentStudent.wantsToBeStudentCoach ? "Yes" : "No"}
+                        </PersonalInfoFieldValue>
+                    </SubjectValues>
+                </PersonalInformation>
                 <LineBreak />
                 <StudentInfoTitle>Skills</StudentInfoTitle>
                 <RolesField>

@@ -1,12 +1,7 @@
 import React from "react";
 import StudentList from "../StudentList";
 import { Form } from "react-bootstrap";
-import {
-    StudentListSideMenu,
-    StudentListTitle,
-    StudentListLinebreak,
-    FilterControls,
-} from "./styles";
+import { StudentListSideMenu, StudentListLinebreak, FilterControls } from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
@@ -34,8 +29,6 @@ interface Props {
 export default function StudentListFilters(props: Props) {
     return (
         <StudentListSideMenu>
-            <StudentListTitle>Students</StudentListTitle>
-            <StudentListLinebreak />
             <NameFilter nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} />
             <RolesFilter setRolesFilter={props.setRolesFilter} />
             <Form.Group>
@@ -50,6 +43,7 @@ export default function StudentListFilters(props: Props) {
                 />
                 <Form.Check type="checkbox" label="Only available students" />
             </Form.Group>
+            <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
                     setNameFilter={props.setNameFilter}
