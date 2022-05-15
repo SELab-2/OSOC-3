@@ -9,11 +9,6 @@ export const CreateEditionDiv = styled.div`
 
 export const FormGroup = styled(Form.Group)`
     margin-top: 20px;
-    .form-control {
-        background-color: #131329;
-        color: white;
-        border: none;
-    }
 `;
 
 export const ButtonDiv = styled.div`
