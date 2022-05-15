@@ -75,13 +75,13 @@ class DataPublisher:
 
 
 # Map containing a publishers for each edition, since access is managed per edition
-_publisher_by_edition: dict[Edition, DataPublisher] = dict()
+_publisher_by_edition: dict[str, DataPublisher] = dict()
 
 
 async def get_publisher(edition: Edition = Depends(get_edition)) -> DataPublisher:
-    if edition not in _publisher_by_edition:
-        _publisher_by_edition[edition] = DataPublisher()
-    return _publisher_by_edition[edition]
+    if edition.name not in _publisher_by_edition:
+        _publisher_by_edition[edition.name] = DataPublisher()
+    return _publisher_by_edition[edition.name]
 
 
 async def live(request: Request, publisher: DataPublisher = Depends(get_publisher)):
