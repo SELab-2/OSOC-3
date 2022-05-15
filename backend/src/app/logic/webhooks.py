@@ -1,7 +1,7 @@
 from typing import cast
 
 import sqlalchemy.exc
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from settings import FormMapping
 from src.app.exceptions.webhooks import WebhookProcessException
@@ -10,7 +10,7 @@ from src.database.enums import QuestionEnum as QE
 from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
 
 
-def process_webhook(edition: Edition, data: WebhookEvent, database: Session):
+async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncSession):
     """
     Process webhook data
 
@@ -65,12 +65,12 @@ def process_webhook(edition: Edition, data: WebhookEvent, database: Session):
     process_remaining_questions(student, extra_questions, database)
 
     try:
-        database.commit()
+        await database.commit()
     except sqlalchemy.exc.IntegrityError as error:
         raise WebhookProcessException('Unique Check Failed') from error
 
 
-def process_remaining_questions(student: Student, questions: list[Question], database: Session):
+def process_remaining_questions(student: Student, questions: list[Question], database: AsyncSession):
     """Process all remaining questions"""
     for question in questions:
 

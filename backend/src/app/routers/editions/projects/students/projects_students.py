@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.responses import Response
 
@@ -24,12 +24,12 @@ project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tag
 )
 async def remove_student_from_project(
         student: Student = Depends(get_student),
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         project_role: ProjectRole = Depends(get_project_role)):
     """
     Remove a student from a project.
     """
-    logic.remove_project_role_suggestion(db, project_role, student)
+    await logic.remove_project_role_suggestion(db, project_role, student)
 
 
 @project_students_router.patch(
@@ -41,13 +41,13 @@ async def remove_student_from_project(
 async def change_project_role(
         argumentation: InputArgumentation,
         student: Student = Depends(get_student),
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         project_role: ProjectRole = Depends(get_project_role),
         user: User = Depends(require_coach)):
     """
     Change the role a student is drafted for in a project.
     """
-    logic.change_project_role_suggestion(db, project_role, student, user, argumentation)
+    await logic.change_project_role_suggestion(db, project_role, student, user, argumentation)
 
 
 @project_students_router.post(
@@ -59,7 +59,7 @@ async def change_project_role(
 async def add_student_to_project(
         argumentation: InputArgumentation,
         student: Student = Depends(get_student),
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         project_role: ProjectRole = Depends(get_project_role),
         user: User = Depends(require_coach)):
     """
@@ -67,4 +67,4 @@ async def add_student_to_project(
 
     This is not a definitive decision, but represents a coach drafting the student.
     """
-    logic.add_student_project(db, project_role, student, user, argumentation)
+    await logic.add_student_project(db, project_role, student, user, argumentation)

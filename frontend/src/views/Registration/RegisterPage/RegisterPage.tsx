@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { register } from "../../utils/api/register";
-import { validateRegistrationUrl } from "../../utils/api";
+import { register } from "../../../utils/api/register";
+import { validateRegistrationUrl } from "../../../utils/api";
 
 import {
     Email,
@@ -12,17 +12,21 @@ import {
     SocialButtons,
     InfoText,
     BadInviteLink,
-} from "../../components/RegisterComponents";
+    AlreadyRegistered,
+} from "../../../components/RegisterComponents";
 
 import { RegisterFormContainer, Or, RegisterButton } from "./styles";
-import { decodeRegistrationLink } from "../../utils/logic/registration";
-import PendingPage from "../PendingPage";
+import { decodeRegistrationLink } from "../../../utils/logic";
+import PendingPage from "../../PendingPage";
+import { useAuth } from "../../../contexts";
+import { PageContainer } from "../../../App.styles";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
  * this renders the [[BadInviteLink]] component instead.
  */
 export default function RegisterPage() {
+    const { isLoggedIn } = useAuth();
     const [validUuid, setValidUuid] = useState(false);
     const [pending, setPending] = useState(false);
     const params = useParams();
@@ -71,6 +75,15 @@ export default function RegisterPage() {
         }
     }
 
+    // User is currently logged in, show them a message instead
+    if (isLoggedIn) {
+        return (
+            <PageContainer>
+                <AlreadyRegistered />
+            </PageContainer>
+        );
+    }
+
     if (pending) {
         return <PendingPage />;
     }
@@ -84,7 +97,7 @@ export default function RegisterPage() {
         <div>
             <RegisterFormContainer>
                 <InfoText />
-                <SocialButtons />
+                <SocialButtons edition={data.edition} uuid={data.uuid} />
                 <Or>or</Or>
                 <Email email={email} setEmail={setEmail} />
                 <Name name={name} setName={setName} />

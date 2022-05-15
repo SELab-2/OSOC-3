@@ -7,16 +7,21 @@ from starlette import status
 from .authentication import (
     ExpiredCredentialsException, InvalidCredentialsException,
     MissingPermissionsException, WrongTokenTypeException)
-from .editions import DuplicateInsertException, ReadOnlyEditionException
+from .crud import DuplicateInsertException
+from .editions import ReadOnlyEditionException
 from .parsing import MalformedUUIDError
 from .projects import StudentInConflictException, FailedToAddProjectRoleException
-from .register import FailedToAddNewUserException
+from .register import FailedToAddNewUserException, InvalidGitHubCode
 from .students_email import FailedToAddNewEmailException
 from .webhooks import WebhookProcessException
 from .util import NotFound
 
 
-def install_handlers(app: FastAPI):  # pylint: disable=R0914
+# Pylint says there are too many local variables because of all the inner functions here
+# however, we can't really change that so we'll just disable the warning because it doesn't make
+# a lot of sense
+# pylint: disable=R0914
+def install_handlers(app: FastAPI):
     """Install all custom exception handlers"""
 
     @app.exception_handler(ExpiredCredentialsException)
@@ -32,6 +37,13 @@ def install_handlers(app: FastAPI):  # pylint: disable=R0914
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": "Could not validate credentials"},
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    @app.exception_handler(InvalidGitHubCode)
+    def invalid_github_code(_request: Request, _exception: InvalidGitHubCode):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"message": str(_exception)}
         )
 
     @app.exception_handler(MalformedUUIDError)

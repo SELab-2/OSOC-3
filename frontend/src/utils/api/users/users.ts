@@ -52,11 +52,11 @@ export async function getUsersExcludeEdition(
 ): Promise<UsersList> {
     if (name) {
         const response = await axiosInstance.get(
-            `/users/?page=${page}&exclude_edition=${edition}&name=${name}`
+            `/users?page=${page}&exclude_edition=${edition}&name=${name}`
         );
         return response.data as UsersList;
     }
-    const response = await axiosInstance.get(`/users/?exclude_edition=${edition}&page=${page}`);
+    const response = await axiosInstance.get(`/users?exclude_edition=${edition}&page=${page}`);
     return response.data as UsersList;
 }
 
@@ -67,9 +67,9 @@ export async function getUsersExcludeEdition(
  */
 export async function getUsersNonAdmin(name: string, page: number): Promise<UsersList> {
     if (name) {
-        const response = await axiosInstance.get(`/users/?page=${page}&admin=false&name=${name}`);
+        const response = await axiosInstance.get(`/users?page=${page}&admin=false&name=${name}`);
         return response.data as UsersList;
     }
-    const response = await axiosInstance.get(`/users/?admin=false&page=${page}`);
+    const response = await axiosInstance.get(`/users?admin=false&page=${page}`);
     return response.data as UsersList;
 }
