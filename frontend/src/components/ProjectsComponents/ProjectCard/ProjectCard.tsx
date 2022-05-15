@@ -34,26 +34,30 @@ import { Role } from "../../../data/enums";
  */
 export default function ProjectCard({
     project,
-    refreshProjects,
+    removeProject,
 }: {
     project: Project;
-    refreshProjects: () => void;
+    removeProject: (project: Project) => void;
 }) {
     // Used for the confirm screen.
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    // What to do when deleting a project.
-    const handleDelete = () => {
-        deleteProject(project.editionName, project.projectId);
-        setShow(false);
-        refreshProjects();
-    };
-
     const navigate = useNavigate();
     const params = useParams();
     const editionId = params.editionId!;
+
+    // What to do when deleting a project.
+    async function handleDelete() {
+        const success = await deleteProject(editionId, project.projectId);
+        setShow(false);
+        if (!success) {
+            alert("Failed to delete the project");
+        } else {
+            removeProject(project);
+        }
+    }
 
     const { role } = useAuth();
 
@@ -80,7 +84,7 @@ export default function ProjectCard({
                     handleConfirm={handleDelete}
                     handleClose={handleClose}
                     name={project.name}
-                ></ConfirmDelete>
+                />
             </TitleContainer>
 
             <ClientContainer>

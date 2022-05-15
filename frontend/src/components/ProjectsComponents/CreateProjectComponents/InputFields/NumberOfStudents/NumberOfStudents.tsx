@@ -12,9 +12,10 @@ export default function NumberOfStudents({
             <Input
                 type="number"
                 min="1"
-                value={numberOfStudents}
+                value={numberOfStudents.toString()}
                 onChange={e => {
-                    setNumberOfStudents(e.target.valueAsNumber);
+                    if (e.target.valueAsNumber > 0 || isNaN(e.target.valueAsNumber))
+                        setNumberOfStudents(e.target.valueAsNumber);
                 }}
                 placeholder="Number of students"
             />

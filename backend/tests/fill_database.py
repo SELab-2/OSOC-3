@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import (User, AuthEmail, Skill, Student,
                                 Edition, CoachRequest, DecisionEmail, InviteLink, Partner,
@@ -8,12 +8,12 @@ from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.app.logic.security import get_password_hash
 
 
-def fill_database(db: Session):
+async def fill_database(db: AsyncSession):
     """A function to fill the database with fake data that can easly be used when testing"""
     # Editions
     edition: Edition = Edition(year=2022, name="ed2022")
     db.add(edition)
-    db.commit()
+    await db.commit()
 
     # Users
     admin: User = User(name="admin", admin=True)
@@ -24,7 +24,7 @@ def fill_database(db: Session):
     db.add(coach1)
     db.add(coach2)
     db.add(request)
-    db.commit()
+    await db.commit()
 
     # AuthEmail
     pw_hash = get_password_hash("wachtwoord")
@@ -36,22 +36,22 @@ def fill_database(db: Session):
     db.add(auth_email_coach1)
     db.add(auth_email_coach2)
     db.add(auth_email_request)
-    db.commit()
+    await db.commit()
 
     # Skill
-    skill1: Skill = Skill(name="skill1", description="something about skill1")
-    skill2: Skill = Skill(name="skill2", description="something about skill2")
-    skill3: Skill = Skill(name="skill3", description="something about skill3")
-    skill4: Skill = Skill(name="skill4", description="something about skill4")
-    skill5: Skill = Skill(name="skill5", description="something about skill5")
-    skill6: Skill = Skill(name="skill6", description="something about skill6")
+    skill1: Skill = Skill(name="skill1")
+    skill2: Skill = Skill(name="skill2")
+    skill3: Skill = Skill(name="skill3")
+    skill4: Skill = Skill(name="skill4")
+    skill5: Skill = Skill(name="skill5")
+    skill6: Skill = Skill(name="skill6")
     db.add(skill1)
     db.add(skill2)
     db.add(skill3)
     db.add(skill4)
     db.add(skill5)
     db.add(skill6)
-    db.commit()
+    await db.commit()
 
     # Student
     student01: Student = Student(first_name="Jos", last_name="Vermeulen", preferred_name="Joske",
@@ -179,12 +179,12 @@ def fill_database(db: Session):
     db.add(student29)
     db.add(student30)
     db.add(student31)
-    db.commit()
+    await db.commit()
 
     # CoachRequest
     coach_request: CoachRequest = CoachRequest(edition=edition, user=request)
     db.add(coach_request)
-    db.commit()
+    await db.commit()
 
     # DecisionEmail
     decision_email1: DecisionEmail = DecisionEmail(
@@ -208,7 +208,7 @@ def fill_database(db: Session):
     db.add(decision_email5)
     db.add(decision_email6)
     db.add(decision_email7)
-    db.commit()
+    await db.commit()
 
     # InviteLink
     invite_link1: InviteLink = InviteLink(
@@ -217,7 +217,7 @@ def fill_database(db: Session):
         target_email="newuser2@email.com", edition=edition)
     db.add(invite_link1)
     db.add(invite_link2)
-    db.commit()
+    await db.commit()
 
     # Partner
     partner1: Partner = Partner(name="Partner1")
@@ -226,22 +226,22 @@ def fill_database(db: Session):
     db.add(partner1)
     db.add(partner2)
     db.add(partner3)
-    db.commit()
+    await db.commit()
 
     # Project
     project1: Project = Project(
-        name="project1", number_of_students=3, edition=edition, partners=[partner1])
+        name="project1", edition=edition, partners=[partner1])
     project2: Project = Project(
-        name="project2", number_of_students=6, edition=edition, partners=[partner2])
+        name="project2", edition=edition, partners=[partner2])
     project3: Project = Project(
-        name="project3", number_of_students=2, edition=edition, partners=[partner3])
+        name="project3", edition=edition, partners=[partner3])
     project4: Project = Project(
-        name="project4", number_of_students=9, edition=edition, partners=[partner1, partner3])
+        name="project4", edition=edition, partners=[partner1, partner3])
     db.add(project1)
     db.add(project2)
     db.add(project3)
     db.add(project4)
-    db.commit()
+    await db.commit()
 
     # Suggestion
     suggestion1: Suggestion = Suggestion(
@@ -268,25 +268,16 @@ def fill_database(db: Session):
     db.add(suggestion6)
     db.add(suggestion7)
     db.add(suggestion8)
-    db.commit()
+    await db.commit()
 
     # ProjectRole
-    project_role1: ProjectRole = ProjectRole(
-        student=student01, project=project1, skill=skill1, drafter=coach1, argumentation="argmunet")
-    project_role2: ProjectRole = ProjectRole(  # This brings a confict
-        student=student01, project=project2, skill=skill2, drafter=coach2, argumentation="argmunet")
-    project_role3: ProjectRole = ProjectRole(
-        student=student09, project=project2, skill=skill3, drafter=coach1, argumentation="argmunet")
-    project_role3: ProjectRole = ProjectRole(
-        student=student05, project=project1, skill=skill4, drafter=coach1, argumentation="argmunet")
-    project_role4: ProjectRole = ProjectRole(
-        student=student25, project=project3, skill=skill5, drafter=coach1, argumentation="argmunet")
-    project_role5: ProjectRole = ProjectRole(
-        student=student29, project=project3, skill=skill6, drafter=coach1, argumentation="argmunet")
-    project_role6: ProjectRole = ProjectRole(
-        student=student03, project=project4, skill=skill5, drafter=coach1, argumentation="argmunet")
-    project_role7: ProjectRole = ProjectRole(
-        student=student13, project=project4, skill=skill4, drafter=coach1, argumentation="argmunet")
+    project_role1: ProjectRole = ProjectRole(project=project1, description="description", skill=skill1, slots=1)
+    project_role2: ProjectRole = ProjectRole(project=project2, description="description", skill=skill2, slots=1)
+    project_role3: ProjectRole = ProjectRole(project=project1, description="description", skill=skill3, slots=1)
+    project_role4: ProjectRole = ProjectRole(project=project3, description="description", skill=skill4, slots=1)
+    project_role5: ProjectRole = ProjectRole(project=project3, description="description", skill=skill3, slots=1)
+    project_role6: ProjectRole = ProjectRole(project=project4, description="description", skill=skill5, slots=1)
+    project_role7: ProjectRole = ProjectRole(project=project4, description="description", skill=skill6, slots=1)
     db.add(project_role1)
     db.add(project_role2)
     db.add(project_role3)
@@ -294,4 +285,4 @@ def fill_database(db: Session):
     db.add(project_role5)
     db.add(project_role6)
     db.add(project_role7)
-    db.commit()
+    await db.commit()

@@ -1,7 +1,9 @@
-import { AcceptButton, RejectButton } from "../styles";
 import { Request, acceptRequest, rejectRequest } from "../../../../utils/api/users/requests";
 import React, { useState } from "react";
-import { Spinner } from "react-bootstrap";
+import LoadSpinner from "../../../Common/LoadSpinner";
+import CreateButton from "../../../Common/Buttons/CreateButton";
+import DeleteButton from "../../../Common/Buttons/DeleteButton";
+import { Spacing } from "../styles";
 
 /**
  * Component consisting of two buttons to accept or reject a coach request.
@@ -54,13 +56,18 @@ export default function AcceptReject(props: {
     }
 
     if (loading) {
-        return <Spinner animation="border" />;
+        return <LoadSpinner show={true} />;
     }
 
     return (
         <div>
-            <AcceptButton onClick={accept}>Accept</AcceptButton>
-            <RejectButton onClick={reject}>Reject</RejectButton>
+            <CreateButton onClick={accept} showIcon={false}>
+                Accept
+            </CreateButton>
+            <Spacing />
+            <DeleteButton onClick={reject} showIcon={false}>
+                Reject
+            </DeleteButton>
         </div>
     );
 }

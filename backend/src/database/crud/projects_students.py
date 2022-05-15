@@ -1,49 +1,71 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.sql import Select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.models import Project, ProjectRole, Skill, User, Student
+from src.app.schemas.projects import InputArgumentation
+from src.database.models import ProjectRoleSuggestion
+
+from src.database.models import ProjectRole, User, Student
 
 
-def remove_student_project(db: Session, project: Project, student_id: int):
+def _get_pr_suggestion_for_pr_by_student_query(project_role: ProjectRole, student: Student) -> Select:
+    return select(ProjectRoleSuggestion).where(
+        ProjectRoleSuggestion.project_role == project_role and
+        ProjectRoleSuggestion.student == student
+    )
+
+
+async def get_pr_suggestion_for_pr_by_student(
+        db: AsyncSession,
+        project_role: ProjectRole,
+        student: Student) -> ProjectRoleSuggestion:
+    """Get the project role suggestion for a student"""
+    return (await db.execute(_get_pr_suggestion_for_pr_by_student_query(project_role, student))).scalar_one()
+
+
+async def get_optional_pr_suggestion_for_pr_by_student(
+        db: AsyncSession,
+        project_role: ProjectRole,
+        student: Student) -> ProjectRoleSuggestion | None:
+    """Get the project role suggestion for a student, but don't raise an error when none is found"""
+    return (await db.execute(_get_pr_suggestion_for_pr_by_student_query(project_role, student))).scalar_one_or_none()
+
+
+async def create_pr_suggestion(
+        db: AsyncSession,
+        project_role: ProjectRole,
+        student: Student,
+        drafter: User,
+        argumentation: InputArgumentation) -> ProjectRoleSuggestion:
+    """Create a project role suggestion"""
+    pr_suggestion = ProjectRoleSuggestion(
+        project_role=project_role,
+        student=student,
+        drafter=drafter,
+        argumentation=argumentation.argumentation
+    )
+    db.add(pr_suggestion)
+    await db.commit()
+    return pr_suggestion
+
+
+async def update_pr_suggestion(
+        db: AsyncSession,
+        pr_suggestion: ProjectRoleSuggestion,
+        drafter: User,
+        argumentation: InputArgumentation) -> ProjectRoleSuggestion:
+    """Update a project role suggestion"""
+    pr_suggestion.argumentation = argumentation.argumentation
+    pr_suggestion.drafter = drafter
+    await db.commit()
+    return pr_suggestion
+
+
+async def remove_project_role_suggestion(db: AsyncSession, project_role: ProjectRole, student: Student):
     """Remove a student from a project in the database"""
-    proj_role = db.query(ProjectRole).where(
-        ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
-    db.delete(proj_role)
-    db.commit()
-
-
-def add_student_project(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
-    """Add a student to a project in the database"""
-
-    # check if all parameters exist in the database
-    db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.query(User).where(User.user_id == drafter_id).one()
-    db.query(Student).where(Student.student_id == student_id).one()
-
-    proj_role = ProjectRole(student_id=student_id, project_id=project.project_id, skill_id=skill_id,
-                            drafter_id=drafter_id)
-    db.add(proj_role)
-    db.commit()
-
-
-def change_project_role(db: Session, project: Project, student_id: int, skill_id: int, drafter_id: int):
-    """Change the role of a student in a project and update the drafter"""
-
-    # check if all parameters exist in the database
-    db.query(Skill).where(Skill.skill_id == skill_id).one()
-    db.query(User).where(User.user_id == drafter_id).one()
-    db.query(Student).where(Student.student_id == student_id).one()
-
-    proj_role = db.query(ProjectRole).where(
-        ProjectRole.student_id == student_id).where(ProjectRole.project == project).one()
-    proj_role.drafter_id = drafter_id
-    proj_role.skill_id = skill_id
-    db.commit()
-
-
-def confirm_project_role(db: Session, project: Project, student_id: int):
-    """Confirm a project role"""
-    proj_role = db.query(ProjectRole).where(ProjectRole.student_id == student_id) \
-        .where(ProjectRole.project == project).one()
-
-    proj_role.definitive = True
-    db.commit()
+    project_role_suggestion = (await db.execute(select(ProjectRoleSuggestion).where(
+        ProjectRoleSuggestion.student == student and
+        ProjectRoleSuggestion.project_role == project_role
+    ))).scalar_one()
+    await db.delete(project_role_suggestion)
+    await db.commit()

@@ -1,8 +1,7 @@
 import React from "react";
-import { Container, ContentWrapper } from "./app.styles";
+import { Container, ContentWrapper } from "./App.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-
-import { AdminRoute, Footer, Navbar, PrivateRoute } from "./components";
+import { AdminRoute, Footer, Navbar, PrivateRoute, CurrentEditionRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
     EditionsPage,
@@ -12,16 +11,18 @@ import {
     ProjectsPage,
     ProjectDetailPage,
     CreateProjectPage,
-    RegisterPage,
     StudentsPage,
     UsersPage,
     AdminsPage,
     VerifyingTokenPage,
     StudentMailHistoryPage,
     MailOverviewPage,
+    StudentInfoPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
+import { RedirectPage, RegisterPage } from "./views/Registration";
 import { Role } from "./data/enums";
+import { GitHubOAuth } from "./views/OAuth";
 
 /**
  * Router component to render different pages depending on the current url. Renders
@@ -48,8 +49,16 @@ export default function Router() {
                         // the LoginPage
                         <Routes>
                             <Route path={"/"} element={<LoginPage />} />
+                            <Route path={"/oauth"} element={<Outlet />}>
+                                <Route path={"github"} element={<GitHubOAuth />} />
+                                <Route
+                                    path={"*"}
+                                    element={<Navigate to={"/404-not-found"} replace />}
+                                />
+                            </Route>
                             {/* Redirect /login to the login page */}
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />
+                            <Route path={"/register/redirect"} element={<RedirectPage />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
                             {/* Catch all routes in a PrivateRoute, so you can't visit them */}
                             {/* unless you are logged in */}
@@ -70,7 +79,7 @@ export default function Router() {
                                         {/* Projects routes */}
                                         <Route path="projects" element={<Outlet />}>
                                             <Route path={""} element={<ProjectsPage />} />
-                                            <Route path={"new"} element={<AdminRoute />}>
+                                            <Route path={"new"} element={<CurrentEditionRoute />}>
                                                 {/* create project page */}
                                                 <Route path={""} element={<CreateProjectPage />} />
                                             </Route>
@@ -87,7 +96,7 @@ export default function Router() {
                                             <Route path={"emails"} element={<AdminRoute />}>
                                                 <Route path={""} element={<MailOverviewPage />} />
                                             </Route>
-                                            <Route path={":id"} element={<div />} />
+                                            <Route path={":id"} element={<StudentInfoPage />} />
                                             <Route
                                                 path={":id/emails"}
                                                 element={<StudentMailHistoryPage />}

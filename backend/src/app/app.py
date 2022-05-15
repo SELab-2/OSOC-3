@@ -1,12 +1,9 @@
-from alembic import config
-from alembic import script
-from alembic.runtime import migration
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 import settings
 from src.database.engine import engine
-from src.database.exceptions import PendingMigrationsException
+from src.database.models import Base
 from .exceptions import install_handlers
 from .routers import editions_router, login_router, skills_router
 from .routers.users.users import users_router
@@ -41,9 +38,6 @@ async def startup():
     """
     Check if all migrations have been executed. If not refuse to start the app.
     """
-    alembic_config: config.Config = config.Config('alembic.ini')
-    alembic_script: script.ScriptDirectory = script.ScriptDirectory.from_config(alembic_config)
-    with engine.begin() as conn:
-        context: migration.MigrationContext = migration.MigrationContext.configure(conn)
-        if context.get_current_revision() != alembic_script.get_current_head():
-            raise PendingMigrationsException('Pending migrations')
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

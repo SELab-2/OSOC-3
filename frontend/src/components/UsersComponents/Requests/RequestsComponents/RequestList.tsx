@@ -17,7 +17,7 @@ export default function RequestList(props: {
     requests: Request[];
     removeRequest: (coachAdded: boolean, request: Request) => void;
     moreRequestsAvailable: boolean;
-    getMoreRequests: (page: number) => void;
+    getMoreRequests: () => void;
 }) {
     return (
         <ListDiv>
