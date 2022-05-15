@@ -35,9 +35,6 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
     question_answer1: QuestionAnswer = QuestionAnswer(
         answer="josvermeulen@mail.com", question=question1)
     database_session.add(question_answer1)
-
-    aswer1: QuestionAnswer = QuestionAnswer(answer="josvermeulen@mail.com", question=question1)
-    database_session.add(aswer1)
     await database_session.commit()
     return database_session
 
