@@ -15,6 +15,8 @@ import {
     UsersPage,
     AdminsPage,
     VerifyingTokenPage,
+    StudentMailHistoryPage,
+    MailOverviewPage,
     StudentInfoPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
@@ -89,14 +91,17 @@ export default function Router() {
                                         </Route>
 
                                         {/* Students routes */}
-                                        <Route path={"students"} element={<StudentsPage />} />
-                                        {/* TODO student page */}
-                                        <Route
-                                            path={"students/:id"}
-                                            element={<StudentInfoPage />}
-                                        />
-                                        {/* TODO student emails page */}
-                                        <Route path={"students/:id/emails"} element={<div />} />
+                                        <Route path={"students"} element={<Outlet />}>
+                                            <Route path={""} element={<StudentsPage />} />
+                                            <Route path={"emails"} element={<AdminRoute />}>
+                                                <Route path={""} element={<MailOverviewPage />} />
+                                            </Route>
+                                            <Route path={":id"} element={<StudentInfoPage />} />
+                                            <Route
+                                                path={":id/emails"}
+                                                element={<StudentMailHistoryPage />}
+                                            />
+                                        </Route>
 
                                         {/* Users routes */}
                                         <Route path="users" element={<AdminRoute />}>
