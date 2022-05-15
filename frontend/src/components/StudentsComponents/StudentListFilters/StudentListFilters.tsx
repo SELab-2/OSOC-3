@@ -95,12 +95,6 @@ export default function StudentListFilters() {
             }
 
             // If no filters are set, allStudents can be changed
-            console.log(
-                nameFilter === "" &&
-                    rolesFilter.length === 0 &&
-                    !alumniFilter &&
-                    !studentCoachVolunteerFilter
-            );
             if (
                 nameFilter === "" &&
                 rolesFilter.length === 0 &&

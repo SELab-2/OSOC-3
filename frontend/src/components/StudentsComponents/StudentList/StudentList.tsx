@@ -3,8 +3,8 @@ import { StudentCard } from "../index";
 import { StudentCardsList } from "./styles";
 import { Student } from "../../../data/interfaces/students";
 import { SpinnerContainer } from "../../UsersComponents/Requests/styles";
-import { Spinner } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroller";
+import LoadSpinner from "../../Common/LoadSpinner";
 
 interface Props {
     students: Student[];
@@ -24,7 +24,7 @@ export default function StudentList(props: Props) {
                 hasMore={props.moreDataAvailable}
                 loader={
                     <SpinnerContainer key={"spinner"}>
-                        <Spinner animation="border" />
+                        <LoadSpinner show={true} />
                     </SpinnerContainer>
                 }
                 useWindow={false}
