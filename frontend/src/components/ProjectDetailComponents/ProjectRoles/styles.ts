@@ -13,14 +13,3 @@ export const ProjectRoleContainer = styled.div`
 export const Suggestions = styled.div`
     min-height: 10vh;
 `;
-
-export const SuggestionContainer = styled.div`
-    background-color: #1a1a36;
-    border-radius: 5px;
-    margin-top: 10px;
-    margin-right: 10px;
-    text-align: center;
-    padding: 7.5px 15px;
-    max-width: 25vw;
-    display: flex;
-`;
