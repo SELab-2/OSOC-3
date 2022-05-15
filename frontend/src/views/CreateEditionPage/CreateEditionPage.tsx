@@ -8,6 +8,7 @@ import { setCurrentEdition } from "../../utils/session-storage";
 import { toast } from "react-toastify";
 import { BiArrowBack } from "react-icons/bi";
 import { CreateButton } from "../../components/Common/Buttons";
+import { FormControl } from "../../components/Common/Forms";
 
 /**
  * Page to create a new edition.
@@ -123,10 +124,9 @@ export default function CreateEditionPage() {
             <Form noValidate onSubmit={handleSubmit}>
                 <FormGroup>
                     <Form.Label>Edition name</Form.Label>
-                    <Form.Control
+                    <FormControl
                         type="text"
                         value={name}
-                        required
                         placeholder="Edition name"
                         isInvalid={nameError}
                         onChange={e => {
@@ -138,10 +138,9 @@ export default function CreateEditionPage() {
 
                 <FormGroup>
                     <Form.Label>Edition year</Form.Label>
-                    <Form.Control
+                    <FormControl
                         type="number"
                         value={year}
-                        required
                         placeholder="Edition year"
                         isInvalid={yearError}
                         onChange={e => {
