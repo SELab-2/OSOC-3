@@ -15,7 +15,7 @@ from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-from ...utils.dependencies import require_admin, require_auth, require_coach
+from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
 from ...utils.websockets import DataPublisher, get_publisher
@@ -82,8 +82,11 @@ async def delete_edition(edition_name: str, db: AsyncSession = Depends(get_sessi
 async def feed(
         websocket: WebSocket,
         publisher: DataPublisher = Depends(get_publisher),
-        #_: None = Depends(require_coach)
+        _: User = Depends(require_coach_ws)
 ):
+    """Handle websocket.
+    Events in the application are sent using this websocket
+    """
     await websocket.accept()
     queue: Queue = await publisher.subscribe()
     try:
