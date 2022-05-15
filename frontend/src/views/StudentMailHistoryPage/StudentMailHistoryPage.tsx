@@ -5,6 +5,7 @@ import { getEmails } from "../../utils/api/student_email_history";
 import { EmailHistoryList } from "../../data/interfaces";
 import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
+import { CenterDiv, MessageDiv } from "../MailOverviewPage/styles";
 
 /**
  * Page that shows the email history of a student in a table
@@ -14,12 +15,15 @@ export default function StudentMailHistoryPage() {
         emails: [],
     };
     const [table, setTable] = useState(init);
+    const [gotEmails, setGotEmails] = useState(false);
     const { editionId, id } = useParams();
     useEffect(() => {
         const updateEmailList = async () => {
             try {
+                setGotEmails(false);
                 const emails = await getEmails(editionId, id);
                 setTable(emails);
+                setGotEmails(true);
             } catch (exception) {
                 console.log(exception);
             }
@@ -27,8 +31,15 @@ export default function StudentMailHistoryPage() {
         updateEmailList();
     }, [editionId, id]);
 
-    return (
-        <MailHistoryPage>
+    let emailtable;
+    if (gotEmails && table.emails.length === 0) {
+        emailtable = (
+            <CenterDiv>
+                <MessageDiv>No states found.</MessageDiv>
+            </CenterDiv>
+        );
+    } else {
+        emailtable = (
             <Table bordered striped>
                 <thead>
                     <tr>
@@ -45,6 +56,8 @@ export default function StudentMailHistoryPage() {
                     ))}
                 </tbody>
             </Table>
-        </MailHistoryPage>
-    );
+        );
+    }
+
+    return <MailHistoryPage>{emailtable}</MailHistoryPage>;
 }

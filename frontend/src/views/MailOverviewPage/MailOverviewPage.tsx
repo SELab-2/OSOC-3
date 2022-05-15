@@ -163,7 +163,7 @@ export default function MailOverviewPage() {
     } else if (gotEmails && emailRows.length === 0) {
         table = (
             <CenterDiv>
-                <MessageDiv>No emails found.</MessageDiv>
+                <MessageDiv>No students found.</MessageDiv>
             </CenterDiv>
         );
     } else {
