@@ -1,16 +1,20 @@
+from uuid import UUID
+
 import sqlalchemy.exc
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.app.exceptions.crud import DuplicateInsertException
 from src.app.exceptions.register import FailedToAddNewUserException
 from src.app.logic.security import get_password_hash
-from src.app.schemas.register import NewUser
+from src.app.schemas.oauth.github import GitHubProfile
+from src.app.schemas.register import EmailRegister
 from src.database.crud.invites import get_invite_link_by_uuid, delete_invite_link
-from src.database.crud.register import create_coach_request, create_user, create_auth_email
+from src.database.crud.register import create_coach_request, create_user, create_auth_email, create_auth_github
 from src.database.models import Edition, InviteLink
 
 
-async def create_request(db: AsyncSession, new_user: NewUser, edition: Edition) -> None:
-    """Create a coach request. If something fails, the changes aren't committed"""
+async def create_request_email(db: AsyncSession, new_user: EmailRegister, edition: Edition):
+    """Create a coach request using email-password auth"""
     invite_link: InviteLink = await get_invite_link_by_uuid(db, new_user.uuid)
 
     try:
@@ -22,6 +26,28 @@ async def create_request(db: AsyncSession, new_user: NewUser, edition: Edition) 
         await delete_invite_link(db, invite_link, commit=False)
 
         await db.commit()
+    except sqlalchemy.exc.IntegrityError as exception:
+        await db.rollback()
+        raise DuplicateInsertException from exception
+    except sqlalchemy.exc.SQLAlchemyError as exception:
+        await db.rollback()
+        raise FailedToAddNewUserException from exception
+
+
+async def create_request_github(db: AsyncSession, profile: GitHubProfile, uuid: UUID, edition: Edition):
+    """Create a coach request using GitHub auth"""
+    invite_link: InviteLink = await get_invite_link_by_uuid(db, uuid)
+
+    try:
+        user = await create_user(db, profile.name, commit=False)
+        await create_auth_github(db, user, profile, commit=False)
+        await create_coach_request(db, user, edition, commit=False)
+        await delete_invite_link(db, invite_link, commit=False)
+
+        await db.commit()
+    except sqlalchemy.exc.IntegrityError as exception:
+        await db.rollback()
+        raise DuplicateInsertException from exception
     except sqlalchemy.exc.SQLAlchemyError as exception:
         await db.rollback()
         raise FailedToAddNewUserException from exception

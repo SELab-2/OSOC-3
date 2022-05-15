@@ -202,3 +202,9 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> User:
     query = select(User).where(User.user_id == user_id)
     result = await db.execute(query)
     return result.unique().scalars().one()
+
+
+async def get_user_by_github_id(db: AsyncSession, github_id: int) -> User:
+    """Find a user by their GitHub id"""
+    auth_gh = (await db.execute(select(AuthGitHub).where(AuthGitHub.github_user_id == github_id))).scalar_one()
+    return await get_user_by_id(db, auth_gh.user_id)

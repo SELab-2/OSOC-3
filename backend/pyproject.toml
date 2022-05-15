@@ -43,6 +43,7 @@ sqlalchemy-utils = "0.38.2"
 
 # Uvicorn: ASGI web server implementation
 uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
+aiohttp = "^3.8.1"
 
 # AioSQLite: async connector for SQLite
 aiosqlite = "^0.17.0"
@@ -54,9 +55,6 @@ asyncmy = "^0.2.5"
 httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
-# Aioresponses: mocking library for aiohttp requests
-aioresponses = "^0.7.3"
-
 # Coverage: generate code coverage reports
 coverage = { "version" = "6.3.1", extras = ["toml"] }
 
@@ -128,6 +126,8 @@ filterwarnings = [
 ]
 env = [
     "DB_USE_SQLITE = 1",
+    "GITHUB_CLIENT_ID = 25",
+    "GITHUB_CLIENT_SECRET = secret"
 ]
 
 [tool.coverage.run]

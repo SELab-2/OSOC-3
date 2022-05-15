@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { logIn } from "../../utils/api/login";
+import { logInEmail } from "../../utils/api/login";
 
 import CreateButton from "../../components/Common/Buttons/CreateButton";
 import { SocialButtons, WelcomeText } from "../../components/LoginComponents";
@@ -71,7 +71,7 @@ export default function LoginPage() {
     }
 
     async function callLogIn() {
-        const status = await logIn(authCtx, email, password);
+        const status = await logInEmail(authCtx, email, password);
         toast.dismiss();
 
         if (status === 200) {

@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:  # pragma: no cover
     """FastAPI dependency to inject a database session into a route instead of using an import
     Allows the tests to replace it with another database session (not hard coding the session)
     """

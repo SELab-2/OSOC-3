@@ -1,16 +1,21 @@
+import uuid
+from unittest.mock import patch
+
 import pytest
+from pydantic import ValidationError
+from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import NoResultFound
 
-from src.app.schemas.register import NewUser
+from src.app.exceptions.crud import DuplicateInsertException
+from src.app.exceptions.register import FailedToAddNewUserException
+from src.app.logic.register import create_request_email, create_request_github
+from src.app.schemas.oauth.github import GitHubProfile
+from src.app.schemas.register import EmailRegister
 from src.database.models import AuthEmail, CoachRequest, User, Edition, InviteLink
 
-from src.app.logic.register import create_request
-from src.app.exceptions.register import FailedToAddNewUserException
 
-
-async def test_create_request(database_session: AsyncSession):
+async def test_create_request_email(database_session: AsyncSession):
     """Tests if a normal request can be created"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -18,9 +23,9 @@ async def test_create_request(database_session: AsyncSession):
         edition=edition, target_email="jw@gmail.com")
     database_session.add(invite_link)
     await database_session.commit()
-    new_user = NewUser(name="jos", email="email@email.com",
-                       pw="wachtwoord", uuid=invite_link.uuid)
-    await create_request(database_session, new_user, edition)
+    new_user = EmailRegister(name="jos", email="email@email.com",
+                             pw="wachtwoord", uuid=invite_link.uuid)
+    await create_request_email(database_session, new_user, edition)
 
     users = (await database_session.execute(select(User).where(User.name == "jos"))).unique().scalars().all()
     assert len(users) == 1
@@ -45,20 +50,20 @@ async def test_duplicate_user(database_session: AsyncSession):
     database_session.add(invite_link1)
     database_session.add(invite_link2)
     await database_session.commit()
-    nu1 = NewUser(name="user1", email="email@email.com",
-                  pw="wachtwoord1", uuid=invite_link1.uuid)
-    nu2 = NewUser(name="user2", email="email@email.com",
-                  pw="wachtwoord2", uuid=invite_link2.uuid)
+    nu1 = EmailRegister(name="user1", email="email@email.com",
+                        pw="wachtwoord1", uuid=invite_link1.uuid)
+    nu2 = EmailRegister(name="user2", email="email@email.com",
+                        pw="wachtwoord2", uuid=invite_link2.uuid)
 
     # These two have to be nested transactions because they share the same database_session,
     # and otherwise the second one rolls the first one back
     # Making them nested transactions creates a savepoint so only that part is rolled back
     async with database_session.begin_nested():
-        await create_request(database_session, nu1, edition)
+        await create_request_email(database_session, nu1, edition)
 
     async with database_session.begin_nested():
-        with pytest.raises(FailedToAddNewUserException):
-            await create_request(database_session, nu2, edition)
+        with pytest.raises(DuplicateInsertException):
+            await create_request_email(database_session, nu2, edition)
 
     # Verify that second user wasn't added
     # the first addition was successful, the second wasn't
@@ -79,6 +84,25 @@ async def test_duplicate_user(database_session: AsyncSession):
     assert len(links) == 1
 
 
+async def test_email_exception_doesnt_add(database_session: AsyncSession):
+    """Test that if another exception is raised, we handle it correctly"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite_link: InviteLink = InviteLink(
+        edition=edition, target_email="jw@gmail.com")
+    database_session.add(invite_link)
+    await database_session.commit()
+    nu = EmailRegister(name="user", email="email@email.com",
+                       pw="wachtwoord", uuid=invite_link.uuid)
+
+    with patch("src.app.logic.register.create_auth_email", side_effect=SQLAlchemyError("mocked")):
+        with pytest.raises(FailedToAddNewUserException):
+            await create_request_email(database_session, nu, edition)
+
+    requests = (await database_session.execute(select(CoachRequest))).all()
+    assert len(requests) == 0
+
+
 async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
     """Tests that you can't use the same UUID multiple times"""
     edition = Edition(year=2022, name="ed2022")
@@ -87,20 +111,84 @@ async def test_use_same_uuid_multiple_times(database_session: AsyncSession):
         edition=edition, target_email="jw@gmail.com")
     database_session.add(invite_link)
     await database_session.commit()
-    new_user1 = NewUser(name="jos", email="email@email.com",
-                        pw="wachtwoord", uuid=invite_link.uuid)
-    await create_request(database_session, new_user1, edition)
+    new_user1 = EmailRegister(name="jos", email="email@email.com",
+                              pw="wachtwoord", uuid=invite_link.uuid)
+    await create_request_email(database_session, new_user1, edition)
     with pytest.raises(NoResultFound):
-        new_user2 = NewUser(name="jos", email="email2@email.com",
-                            pw="wachtwoord", uuid=invite_link.uuid)
-        await create_request(database_session, new_user2, edition)
+        new_user2 = EmailRegister(name="jos", email="email2@email.com",
+                                  pw="wachtwoord", uuid=invite_link.uuid)
+        await create_request_email(database_session, new_user2, edition)
 
 
 async def test_not_a_correct_email(database_session: AsyncSession):
-    """Tests when the email is not a correct email adress, it's get the right error"""
+    """Tests when the email is not a correct email address, it gets the right error"""
     edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
     await database_session.commit()
-    with pytest.raises(ValueError):
-        new_user = NewUser(name="jos", email="email", pw="wachtwoord")
-        await create_request(database_session, new_user, edition)
+    with pytest.raises(ValidationError):
+        new_user = EmailRegister(name="jos", email="email", pw="wachtwoord", uuid=uuid.uuid4())
+        await create_request_email(database_session, new_user, edition)
+
+
+async def test_create_request_github(database_session: AsyncSession):
+    """Test creating a new request using GitHub OAuth"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+    await create_request_github(database_session, profile, invite.uuid, edition)
+
+    users = (await database_session.execute(select(User).where(User.name == "Name"))).unique().scalars().all()
+
+    assert len(users) == 1
+    assert users[0].github_auth is not None
+    assert users[0].github_auth.github_user_id == 1
+
+
+async def test_create_request_github_duplicate(database_session: AsyncSession):
+    """Test creating a request with an already-existing GitHub user"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+    await create_request_github(database_session, profile, invite.uuid, edition)
+
+    users = (await database_session.execute(select(User).where(User.name == "Name"))).unique().scalars().all()
+
+    assert len(users) == 1
+
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    # Change everything but re-use the same GitHub userid
+    profile.access_token = "another access token"
+    profile.name = "another name"
+    profile.email = "another@email.address"
+
+    with pytest.raises(DuplicateInsertException):
+        await create_request_github(database_session, profile, invite.uuid, edition)
+
+
+async def test_github_exception_doesnt_add(database_session: AsyncSession):
+    """Test that if another exception is raised, we handle it correctly"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    invite = InviteLink(edition=edition, target_email="a@b.c")
+    database_session.add(invite)
+    await database_session.commit()
+
+    profile = GitHubProfile(access_token="", email="email@addre.ss", id=1, name="Name")
+
+    with patch("src.app.logic.register.create_auth_github", side_effect=SQLAlchemyError("mocked")):
+        with pytest.raises(FailedToAddNewUserException):
+            await create_request_github(database_session, profile, invite.uuid, edition)
+
+        requests = (await database_session.execute(select(CoachRequest))).scalars().all()
+        assert len(requests) == 0
