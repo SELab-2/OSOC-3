@@ -177,7 +177,7 @@ class ProjectRole(Base):
     project: Project = relationship("Project", back_populates="project_roles", uselist=False, lazy="selectin")
     skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False, lazy="selectin")
     suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role",
-                                                            lazy="selectin")
+                                                            lazy="selectin", cascade="all, delete-orphan")
 
 
 class ProjectRoleSuggestion(Base):
@@ -192,7 +192,8 @@ class ProjectRoleSuggestion(Base):
         "ProjectRole",
         back_populates="suggestions",
         uselist=False,
-        lazy="selectin"
+        lazy="selectin",
+        cascade="save-update"
     )
 
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)

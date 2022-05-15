@@ -58,7 +58,7 @@ async def get_conflicts(db: AsyncSession = Depends(get_session), edition: Editio
 @projects_router.delete(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_class=Response,
+    # response_class=Response,
     dependencies=[Depends(require_admin), Depends(live)]
 )
 async def delete_project(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
@@ -80,7 +80,7 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 @projects_router.patch(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_class=Response,
+    # response_class=Response,
     dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(live)]
 )
 async def patch_project(

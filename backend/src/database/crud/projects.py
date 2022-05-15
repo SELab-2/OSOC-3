@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import Select
 
 import src.database.crud.skills as skills_crud
@@ -66,7 +67,7 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
     result = await db.execute(query)
     project = result.unique().scalars().one()
     # refresh to see updated relations
-    await db.refresh(project)
+    # await db.refresh(project)
     return project
 
 
