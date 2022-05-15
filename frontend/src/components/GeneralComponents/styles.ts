@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { MenuItem } from "react-bootstrap-typeahead";
 
 export const StyledMenuItem = styled(MenuItem)`
+    padding-top: 0;
+    padding-bottom: 0;
     color: white;
     transition: 200ms ease-out;
 
@@ -12,12 +14,10 @@ export const StyledMenuItem = styled(MenuItem)`
     }
 `;
 
-export const NameDiv = styled.div`
-    float: left;
-`;
+export const NameDiv = styled.div``;
 
 export const EmailDiv = styled.div`
-    float: right;
+    float: left;
 `;
 
 export const AuthTypeDiv = styled.div`
@@ -26,5 +26,10 @@ export const AuthTypeDiv = styled.div`
 `;
 
 export const EmailAndAuthDiv = styled.div`
-    width: fit-content;
+    width: max-content;
+`;
+
+export const DropdownEmailDiv = styled.div`
+    font-size: small;
+    margin-bottom: 5px;
 `;

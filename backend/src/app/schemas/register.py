@@ -1,13 +1,17 @@
 from uuid import UUID
 
 from src.app.schemas.invites import EmailAddress
+from src.app.schemas.utils import CamelCaseModel
 
 
-class NewUser(EmailAddress):
-    """
-    The scheme of a new user
-    The email address will be stored in AuthEmail, but is included here to easily create a user
-    """
+class EmailRegister(EmailAddress):
+    """Scheme used for a new user created with email-password authentication"""
     name: str
     pw: str
+    uuid: UUID
+
+
+class GitHubRegister(CamelCaseModel):
+    """Scheme used for a new user created with GitHub OAuth"""
+    code: str
     uuid: UUID

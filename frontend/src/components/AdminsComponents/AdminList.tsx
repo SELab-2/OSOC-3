@@ -1,7 +1,7 @@
 import { User } from "../../utils/api/users/users";
 import { SpinnerContainer } from "../UsersComponents/Requests/styles";
 import { Spinner } from "react-bootstrap";
-import { AdminsTable } from "./styles";
+import { AdminsTable, AdminsTableDiv } from "./styles";
 import React from "react";
 import { AdminListItem } from "./index";
 
@@ -33,24 +33,26 @@ export default function AdminList(props: {
         }
     }
 
-    const body = (
-        <tbody>
-            {props.admins.map(admin => (
-                <AdminListItem key={admin.userId} admin={admin} removeAdmin={props.removeAdmin} />
-            ))}
-        </tbody>
-    );
-
     return (
-        <AdminsTable variant="dark">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Remove</th>
-                </tr>
-            </thead>
-            {body}
-        </AdminsTable>
+        <AdminsTableDiv>
+            <AdminsTable>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {props.admins.map(admin => (
+                        <AdminListItem
+                            key={admin.userId}
+                            admin={admin}
+                            removeAdmin={props.removeAdmin}
+                        />
+                    ))}
+                </tbody>
+            </AdminsTable>
+        </AdminsTableDiv>
     );
 }

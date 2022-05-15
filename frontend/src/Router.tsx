@@ -1,7 +1,6 @@
 import React from "react";
-import { Container, ContentWrapper } from "./app.styles";
+import { Container, ContentWrapper } from "./App.styles";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
-
 import { AdminRoute, Footer, Navbar, PrivateRoute, CurrentEditionRoute } from "./components";
 import { useAuth } from "./contexts";
 import {
@@ -12,7 +11,6 @@ import {
     ProjectsPage,
     ProjectDetailPage,
     CreateProjectPage,
-    RegisterPage,
     StudentsPage,
     UsersPage,
     AdminsPage,
@@ -20,7 +18,9 @@ import {
     StudentInfoPage,
 } from "./views";
 import { ForbiddenPage, NotFoundPage } from "./views/errors";
+import { RedirectPage, RegisterPage } from "./views/Registration";
 import { Role } from "./data/enums";
+import { GitHubOAuth } from "./views/OAuth";
 
 /**
  * Router component to render different pages depending on the current url. Renders
@@ -47,8 +47,16 @@ export default function Router() {
                         // the LoginPage
                         <Routes>
                             <Route path={"/"} element={<LoginPage />} />
+                            <Route path={"/oauth"} element={<Outlet />}>
+                                <Route path={"github"} element={<GitHubOAuth />} />
+                                <Route
+                                    path={"*"}
+                                    element={<Navigate to={"/404-not-found"} replace />}
+                                />
+                            </Route>
                             {/* Redirect /login to the login page */}
                             <Route path={"/login"} element={<Navigate to={"/"} replace />} />
+                            <Route path={"/register/redirect"} element={<RedirectPage />} />
                             <Route path={"/register/:uuid"} element={<RegisterPage />} />
                             {/* Catch all routes in a PrivateRoute, so you can't visit them */}
                             {/* unless you are logged in */}

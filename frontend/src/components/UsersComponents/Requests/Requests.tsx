@@ -3,7 +3,8 @@ import Collapsible from "react-collapsible";
 import { RequestsContainer, Error, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
-import { SearchInput } from "../../styles";
+import { SearchFieldDiv } from "../Coaches/styles";
+import FormControl from "../../Common/Forms/FormControl";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -55,6 +56,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         }
 
         if (allRequestsFetched) {
+            setGotData(true);
             setRequests(
                 allRequests.filter(request =>
                     request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
@@ -127,12 +129,16 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                <SearchInput
-                    value={searchTerm}
-                    onChange={e => {
-                        filter(e.target.value);
-                    }}
-                />
+                {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+                <SearchFieldDiv>
+                    // TODO: Use new common SearchField
+                    <FormControl
+                        onChange={e => {
+                            filter(e.target.value);
+                        }}
+                        value={searchTerm}
+                    />
+                </SearchFieldDiv>
                 <RequestListContainer>{list}</RequestListContainer>
             </Collapsible>
         </RequestsContainer>
