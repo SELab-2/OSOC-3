@@ -27,9 +27,12 @@ export const ClosedArrow = styled(BiDownArrow)`
     offset: 0 30px;
 `;
 
-export const RequestsTable = styled(Table)`
-    // TODO: make all tables in site uniform
-`;
+export const RequestsTable = styled(Table).attrs({
+    striped: true,
+    bordered: true,
+    variant: "dark",
+    hover: false,
+})``;
 
 export const RequestsContainer = styled.div`
     width: 50em;

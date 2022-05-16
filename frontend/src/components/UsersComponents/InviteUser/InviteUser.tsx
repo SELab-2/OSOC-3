@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users/users";
-import "./InviteUser.css";
 import { InviteContainer, Error, MessageDiv, InputContainer } from "./styles";
 import { ButtonsDiv } from "./InviteUserComponents";
-import FormControl from "../../Common/Forms/FormControl";
+import { SearchBar } from "../../Common/Forms";
 
 /**
  * A component to invite a user as coach to a given edition.
@@ -68,10 +67,11 @@ export default function InviteUser(props: { edition: string }) {
         <div>
             <InviteContainer>
                 <InputContainer>
-                    <FormControl
-                        className={valid ? "" : "email-field-error"}
+                    <SearchBar
                         value={email}
                         onChange={e => changeEmail(e.target.value)}
+                        isInvalid={!valid}
+                        placeholder="Email address"
                     />
                 </InputContainer>
                 <ButtonsDiv loading={loading} sendInvite={sendInvite} />
