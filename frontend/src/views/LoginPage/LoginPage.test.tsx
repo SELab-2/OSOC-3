@@ -7,42 +7,6 @@ import "@testing-library/jest-dom";
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 
-const token = {
-    data: {
-        access_token: "test",
-        refresh_token: "test",
-        user: { editions: ['ed2022'] }
-    }
-}
-
-
-// Configure Enzyme adapter
-configure({ adapter: new Adapter() });
-
-// Mock Axios so the tests never make API calls
-
-jest.mock("axios", () => {
-    return {
-        create: () => {
-            return {
-                defaults: {
-                    baseURL: "",
-                },
-                interceptors: {
-                    request: {
-                        use: jest.fn(),
-                    },
-                    response: {
-                        use: jest.fn(),
-                    },
-                },
-                get: () => jest.fn(),
-                post: () => token,
-            };
-        },
-    };
-});
-
 const mockedUsedNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -76,20 +40,4 @@ test('has headings', () => {
     expect(headings[1]).toHaveTextContent("Welcome to the Open Summer of Code selections app. After you've logged in with your account, we'll enable your account so you can get started. An admin will verify you as soon as possible.")
 })
 
-// TODO: when the toast is implemented, edit this test that you can see the toast
-//test('enter on password field and login fales', () => {
-//    const passwordField = screen.getByPlaceholderText("Password");
-//    expect(passwordField).toHaveValue("")
-//    fireEvent.keyPress(passwordField, {key: 'Enter', code: 'Enter', charCode: 13})
-//})
-
-test('enter on password field and login goes trough', async () => {
-    const emailField = screen.getByPlaceholderText("Email");
-    userEvent.type(emailField, "admin@ngmail.com");
-    const passwordField = screen.getByPlaceholderText("Password");
-    userEvent.type(passwordField, "wachtwoord");
-    fireEvent.keyPress(passwordField, {key: 'Enter', code: 'Enter', charCode: 13})
-    expect(mockedUsedNavigate).toHaveBeenCalled()
-    //screen.debug()
-})
 
