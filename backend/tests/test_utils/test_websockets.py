@@ -50,7 +50,7 @@ async def test_parse_event_type_student_suggestion():
 
 async def test_parse_event_type_invalid():
     with pytest.raises(Exception):
-        live_event: LiveEventParameters = LiveEventParameters(
+        LiveEventParameters(
             'POST',
             {'blargh': 1}
         )
