@@ -29,6 +29,7 @@ import {
     AddStudentModal,
 } from "../../../components/ProjectDetailComponents";
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
+import { toast } from "react-toastify";
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
@@ -44,28 +45,6 @@ export default function ProjectDetailPage() {
     const { role } = useAuth(); // const [students, setStudents] = useState<StudentPlace[]>([]);
 
     const [editing, setEditing] = useState(false);
-
-    // Used for the delete modal.
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const handleDeleteClose = () => setShowDeleteModal(false);
-    const handleDeleteShow = () => setShowDeleteModal(true);
-    const handleDelete = () => {
-        // What to do when deleting a project.
-        deleteProject(editionId, project!.projectId);
-        setShowDeleteModal(false);
-        navigate("/editions/" + editionId + "/projects/");
-    };
-
-    // Used for the Add modal.
-    const [showAddModal, setShowAddModal] = useState(false);
-    const handleAddClose = () => setShowAddModal(false);
-    const handleAddShow = () => setShowAddModal(true);
-    const handleAdd = () => {
-        // What to do when adding a student.
-        deleteProject(editionId, project!.projectId);
-        setShowDeleteModal(false);
-        navigate("/editions/" + editionId + "/projects/");
-    };
 
     const [projectRoles, setProjectRoles] = useState<ProjectRole[]>([]);
     useEffect(() => {
@@ -86,6 +65,58 @@ export default function ProjectDetailPage() {
             callProjects();
         }
     }, [editionId, gotProject, navigate, projectId]);
+
+    // Used for the delete modal.
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const handleDeleteClose = () => setShowDeleteModal(false);
+    const handleDeleteShow = () => setShowDeleteModal(true);
+    const handleDelete = () => {
+        // What to do when deleting a project.
+        deleteProject(editionId, project!.projectId);
+        setShowDeleteModal(false);
+        navigate("/editions/" + editionId + "/projects/");
+    };
+
+    // Used for the Add modal.
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [resultModal, setResult] = useState<DropResult>();
+    const handleAddClose = () => setShowAddModal(false);
+    const handleAddShow = (result: DropResult) => {
+        setShowAddModal(true);
+        setResult(result);
+    };
+    const handleAdd = async (motivation: string, result: DropResult) => {
+        setShowAddModal(false);
+
+        const student = await getStudent(editionId, result.draggableId);
+        await toast.promise(
+            addStudentToProject(
+                editionId,
+                projectId.toString(),
+                result.destination!.droppableId,
+                result.draggableId,
+                motivation
+            ),
+            {
+                pending: "Adding student",
+                success: "Successfully added student",
+                error: "Something went wrong",
+            },
+            { toastId: "addStudentToProject" }
+        );
+        const newProjectRoles = projectRoles.map((projectRole, index) => {
+            if (projectRole.projectRoleId.toString() === result.destination?.droppableId) {
+                const newSuggestions = [...projectRole.suggestions];
+                newSuggestions.splice(result.destination.index, 0, {
+                    projectRoleSuggestionId: index,
+                    argumentation: motivation,
+                    student: student,
+                });
+                return { ...projectRole, suggestions: newSuggestions };
+            } else return projectRole;
+        });
+        setProjectRoles(newProjectRoles);
+    };
 
     async function editProject() {
         const newProject: EditProject = projectToEditProject(editedProject!);
@@ -154,7 +185,7 @@ export default function ProjectDetailPage() {
                         visible={showAddModal}
                         handleConfirm={handleAdd}
                         handleClose={handleAddClose}
-                        name={project.name}
+                        result={resultModal!}
                     />
                 </ProjectContainer>
             </ProjectPageContainer>
@@ -190,27 +221,7 @@ export default function ProjectDetailPage() {
         if (destination?.droppableId === source.droppableId) return;
 
         if (source.droppableId === "students") {
-            handleAddShow();
-            const student = await getStudent(editionId, result.draggableId);
-            await addStudentToProject(
-                editionId,
-                projectId.toString(),
-                destination!.droppableId,
-                result.draggableId,
-                "Good fit!"
-            );
-            const newProjectRoles = projectRoles.map((projectRole, index) => {
-                if (projectRole.projectRoleId.toString() === destination?.droppableId) {
-                    const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.splice(destination.index, 0, {
-                        projectRoleSuggestionId: index,
-                        argumentation: "arg",
-                        student: student,
-                    });
-                    return { ...projectRole, suggestions: newSuggestions };
-                } else return projectRole;
-            });
-            setProjectRoles(newProjectRoles);
+            handleAddShow(result);
         } else {
             const student = await getStudent(
                 editionId,

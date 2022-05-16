@@ -13,3 +13,7 @@ export const ProjectRoleContainer = styled.div`
 export const Suggestions = styled.div`
     min-height: 10vh;
 `;
+
+export const NoStudents = styled.div`
+    margin: 15px 0;
+`;
