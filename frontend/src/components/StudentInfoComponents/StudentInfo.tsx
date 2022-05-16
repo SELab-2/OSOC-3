@@ -2,8 +2,7 @@ import React from "react";
 import { StudentListFilters } from "../StudentsComponents";
 import StudentInformation from "./StudentInformation/StudentInformation";
 import { StudentInfoPageContent } from "./styles";
-import {Student} from "../../data/interfaces/students";
-import RemoveStudentButton from "./RemoveStudentButton/RemoveStudentButton";
+import { Student } from "../../data/interfaces/students";
 
 interface Props {
     students: Student[];
@@ -18,12 +17,15 @@ interface Props {
     setStudentCoachVolunteerFilter: (value: boolean) => void;
 }
 
+/**
+ * Component that renders the students list and the information about the currently selected student.
+ * @param props all student, current student and all filters to handle the student information page.
+ */
 export default function StudentInfo(props: Props) {
     return (
         <StudentInfoPageContent>
-            <StudentListFilters students={props.students} nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} alumniFilter={props.alumniFilter} setAlumniFilter={props.setAlumniFilter} rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} studentCoachVolunteerFilter={props.studentCoachVolunteerFilter} setStudentCoachVolunteerFilter={props.setStudentCoachVolunteerFilter} />
-            <RemoveStudentButton />
-            <StudentInformation currentStudent={props.currentStudent}/>
+            <StudentListFilters {...props} />
+            <StudentInformation currentStudent={props.currentStudent} />
         </StudentInfoPageContent>
     );
 }

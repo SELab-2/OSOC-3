@@ -1,54 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     CardStudent,
     CardStudentInfo,
     CardVerticalContainer,
     CardHorizontalContainer,
-    CardSuggestionBar,
     CardStudentName,
-    CardAmountSuggestions,
-    AllSuggestions,
-    SuggestionSignYes,
-    SuggestionSignMaybe,
-    SuggestionSignNo
 } from "./styles";
-import {useNavigate, useParams} from "react-router-dom";
-import {NrSuggestions} from "../../../../data/interfaces/students";
+import { useNavigate, useParams } from "react-router-dom";
+import { Student } from "../../../../data/interfaces/students";
+import SuggestionProgressBar from "../SuggestionProgressBar";
 
 interface Props {
-    firstName: string;
-    nrOfSuggestions: NrSuggestions;
-    studentId: number;
+    student: Student;
 }
 
+/**
+ * Card component that will be used to show a student in the students list.
+ * @param props all information about a student.
+ */
 export default function StudentCard(props: Props) {
+    const params = useParams();
     const navigate = useNavigate();
-    const params = useParams()
+    const [nameColor, setNameColor] = useState("");
+
+    useEffect(() => {
+        const final = props.student.finalDecision;
+        if (final === 0) {
+            setNameColor("white");
+        } else if (final === 1) {
+            setNameColor("#44dba4"); // osoc green
+        } else if (final === 2) {
+            setNameColor("#fcb70f"); // osoc orange
+        } else if (final === 3) {
+            setNameColor("#f14a3b"); // osoc red
+        }
+    }, [props.student.finalDecision]);
 
     return (
         <>
-            <CardStudent onClick={() => navigate(`/editions/${params.editionId}/students/${props.studentId}`)}>
+            <CardStudent
+                onClick={() =>
+                    navigate(`/editions/${params.editionId}/students/${props.student.studentId}`)
+                }
+            >
                 {/* <CardConfirmColorBlock /> */}
                 <CardStudentInfo>
                     <CardVerticalContainer>
                         <CardHorizontalContainer>
-                            <CardStudentName>{props.firstName}</CardStudentName>
-                            <AllSuggestions>
-                                <SuggestionSignYes>V</SuggestionSignYes>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.yes}
-                                </CardAmountSuggestions>
-                                <SuggestionSignMaybe>?</SuggestionSignMaybe>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.maybe}
-                                </CardAmountSuggestions>
-                                <SuggestionSignNo>X</SuggestionSignNo>
-                                <CardAmountSuggestions>
-                                    {props.nrOfSuggestions.no}
-                                </CardAmountSuggestions>
-                            </AllSuggestions>
+                            <CardStudentName style={{ color: nameColor }}>
+                                {props.student.firstName} {props.student.lastName}
+                            </CardStudentName>
                         </CardHorizontalContainer>
-                        <CardSuggestionBar />
+                        <SuggestionProgressBar nrOfSuggestions={props.student.nrOfSuggestions} />
                     </CardVerticalContainer>
                 </CardStudentInfo>
             </CardStudent>

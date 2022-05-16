@@ -1,6 +1,11 @@
 import { Form } from "react-bootstrap";
 import React from "react";
 
+/**
+ * Component that filters the students list based on the student coach field.
+ * @param studentCoachVolunteerFilter
+ * @param setStudentCoachVolunteerFilter
+ */
 export default function StudentCoachVolunteerFilter({
     studentCoachVolunteerFilter,
     setStudentCoachVolunteerFilter,

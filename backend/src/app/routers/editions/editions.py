@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.app.logic import editions as logic_editions
@@ -32,30 +32,30 @@ for router in child_routers:
 
 
 @editions_router.get("", response_model=EditionList, tags=[Tags.EDITIONS])
-async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
+async def get_editions(db: AsyncSession = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
     """Get a paginated list of all editions."""
     if user.admin:
-        return logic_editions.get_editions_page(db, page)
+        return await logic_editions.get_editions_page(db, page)
 
     return EditionList(editions=user.editions)
 
 
 @editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
                      dependencies=[Depends(require_coach)])
-async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
+async def get_edition_by_name(edition_name: str, db: AsyncSession = Depends(get_session)):
     """Get a specific edition."""
-    return logic_editions.get_edition_by_name(db, edition_name)
+    return await logic_editions.get_edition_by_name(db, edition_name)
 
 
 @editions_router.post("", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
                       dependencies=[Depends(require_admin)])
-async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
+async def post_edition(edition: EditionBase, db: AsyncSession = Depends(get_session)):
     """ Create a new edition."""
-    return logic_editions.create_edition(db, edition)
+    return await logic_editions.create_edition(db, edition)
 
 
 @editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
                         dependencies=[Depends(require_admin)])
-async def delete_edition(edition_name: str, db: Session = Depends(get_session)):
+async def delete_edition(edition_name: str, db: AsyncSession = Depends(get_session)):
     """Delete an existing edition."""
-    logic_editions.delete_edition(db, edition_name)
+    await logic_editions.delete_edition(db, edition_name)

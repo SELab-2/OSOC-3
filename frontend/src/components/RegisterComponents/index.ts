@@ -5,3 +5,4 @@ export { default as ConfirmPassword } from "./InputFields/ConfirmPassword";
 export { default as SocialButtons } from "./SocialButtons";
 export { default as InfoText } from "./InfoText";
 export { default as BadInviteLink } from "./BadInviteLink";
+export { default as AlreadyRegistered } from "./AlreadyRegistered";

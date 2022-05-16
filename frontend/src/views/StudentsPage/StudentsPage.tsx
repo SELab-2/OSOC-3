@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { StudentListFilters } from "../../components/StudentsComponents";
 import { getStudents } from "../../utils/api/students";
-import {Student} from "../../data/interfaces/students";
-import {useParams} from "react-router-dom";
+import { Student } from "../../data/interfaces/students";
+import { useParams } from "react-router-dom";
 
+/**
+ * @returns Page where admins and coaches can filter on students.
+ */
 function StudentsPage() {
     const params = useParams();
     const [students, setStudents] = useState<Student[]>([]);
@@ -12,9 +15,18 @@ function StudentsPage() {
     const [alumniFilter, setAlumniFilter] = useState(false);
     const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
 
+    /**
+     * Request all students with selected filters
+     */
     async function callGetStudents() {
         try {
-            const response = await getStudents(params.editionId!, nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter);
+            const response = await getStudents(
+                params.editionId!,
+                nameFilter,
+                rolesFilter,
+                alumniFilter,
+                studentCoachVolunteerFilter
+            );
             if (response) {
                 setStudents(response.students);
             }
@@ -23,13 +35,27 @@ function StudentsPage() {
         }
     }
 
+    /**
+     * fetch students again when a filter changes
+     */
     useEffect(() => {
         callGetStudents();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
 
     return (
         <div>
-            <StudentListFilters students={students} nameFilter={nameFilter} setNameFilter={setNameFilter} alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} studentCoachVolunteerFilter={studentCoachVolunteerFilter} setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}/>
+            <StudentListFilters
+                students={students}
+                nameFilter={nameFilter}
+                setNameFilter={setNameFilter}
+                alumniFilter={alumniFilter}
+                setAlumniFilter={setAlumniFilter}
+                rolesFilter={rolesFilter}
+                setRolesFilter={setRolesFilter}
+                studentCoachVolunteerFilter={studentCoachVolunteerFilter}
+                setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+            />
         </div>
     );
 }

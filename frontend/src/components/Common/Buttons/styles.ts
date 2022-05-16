@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 
 import { HoverAnimation } from "../styles";
 import { AnimatedButton } from "./props";
+import { Dropdown } from "react-bootstrap";
 
 export const GreenButton = styled(Button)`
     ${HoverAnimation};
@@ -11,7 +12,25 @@ export const GreenButton = styled(Button)`
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
 
-    &:hover {
+    &:hover,
+    &:active,
+    &:focus {
+        background-color: var(--osoc_orange);
+        border-color: var(--osoc_orange);
+        color: var(--osoc_blue);
+    }
+`;
+
+export const DropdownToggle = styled(Dropdown.Toggle)`
+    ${HoverAnimation};
+
+    background-color: var(--osoc_green);
+    border-color: var(--osoc_green);
+    color: var(--osoc_blue);
+
+    &:hover,
+    &:active,
+    &:focus {
         background-color: var(--osoc_orange);
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);

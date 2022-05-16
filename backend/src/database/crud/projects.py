@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session, Query
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import Select
 
 import src.database.crud.skills as skills_crud
 from src.app.schemas.projects import InputProject, InputProjectRole, QueryParamsProjects
@@ -7,32 +9,41 @@ from src.database.crud.util import paginate
 from src.database.models import Project, Edition, Student, ProjectRole, Partner, User
 
 
-def _get_projects_for_edition_query(db: Session, edition: Edition) -> Query:
-    return db.query(Project).where(Project.edition == edition).order_by(Project.project_id)
+def _get_projects_for_edition_query(edition: Edition) -> Select:
+    return select(Project).where(Project.edition == edition)
 
 
-def get_projects_for_edition(db: Session, edition: Edition) -> list[Project]:
+async def get_projects_for_edition(db: AsyncSession, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
-    return _get_projects_for_edition_query(db, edition).all()
-
-
-def get_projects_for_edition_page(
-        db: Session,
-        edition: Edition,
-        search_params: QueryParamsProjects,
-        user: User) -> list[Project]:
-    """Returns a paginated list of all projects from a certain edition from the database"""
-    query = _get_projects_for_edition_query(db, edition).where(
-        Project.name.contains(search_params.name))
-    if search_params.coach:
-        query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
-    projects: list[Project] = paginate(query, search_params.page).all()
+    result = await db.execute(_get_projects_for_edition_query(edition).order_by(Project.name))
+    projects: list[Project] = result.unique().scalars().all()
+    for project in projects:
+        await db.refresh(project, attribute_names=["project_roles"])
 
     return projects
 
 
-def create_project(
-        db: Session,
+async def get_projects_for_edition_page(
+        db: AsyncSession,
+        edition: Edition,
+        search_params: QueryParamsProjects,
+        user: User) -> list[Project]:
+    """Returns a paginated list of all projects from a certain edition from the database"""
+    query = _get_projects_for_edition_query(edition).where(
+        Project.name.contains(search_params.name))
+    if search_params.coach:
+        query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
+    result = await db.execute(paginate(query.order_by(Project.name), search_params.page))
+    projects: list[Project] = result.unique().scalars().all()
+    # projects need refreshing
+    for project in projects:
+        await db.refresh(project, attribute_names=["project_roles"])
+
+    return projects
+
+
+async def create_project(
+        db: AsyncSession,
         edition: Edition,
         input_project: InputProject,
         partners: list[Partner],
@@ -41,7 +52,7 @@ def create_project(
     Add a project to the database
     If there are partner names that are not already in the database, add them
     """
-    coaches = [get_user_by_id(db, coach) for coach in input_project.coaches]
+    coaches = [await get_user_by_id(db, coach) for coach in input_project.coaches]
 
     project = Project(
         name=input_project.name,
@@ -53,24 +64,29 @@ def create_project(
     db.add(project)
 
     if commit:
-        db.commit()
+        await db.commit()
 
     return project
 
 
-def get_project(db: Session, project_id: int) -> Project:
+async def get_project(db: AsyncSession, project_id: int) -> Project:
     """Query a specific project from the database through its ID"""
-    return db.query(Project).where(Project.project_id == project_id).one()
+    query = select(Project).where(Project.project_id == project_id)
+    result = await db.execute(query)
+    project = result.unique().scalars().one()
+    # refresh to see updated relations
+    await db.refresh(project)
+    return project
 
 
-def delete_project(db: Session, project: Project):
+async def delete_project(db: AsyncSession, project: Project):
     """Delete a specific project from the database"""
-    db.delete(project)
-    db.commit()
+    await db.delete(project)
+    await db.commit()
 
 
-def patch_project(
-        db: Session,
+async def patch_project(
+        db: AsyncSession,
         project: Project,
         input_project: InputProject,
         partners: list[Partner],
@@ -79,30 +95,30 @@ def patch_project(
     Change some fields of a Project in the database
     If there are partner names that are not already in the database, add them
     """
-
-    coaches = [get_user_by_id(db, coach) for coach in input_project.coaches]
+    coaches = [await get_user_by_id(db, coach) for coach in input_project.coaches]
 
     project.name = input_project.name
     project.coaches = coaches
     project.partners = partners
 
     if commit:
-        db.commit()
+        await db.commit()
 
 
-def get_project_role(db: Session, project_role_id: int) -> ProjectRole:
+async def get_project_role(db: AsyncSession, project_role_id: int) -> ProjectRole:
     """Get a project role by id"""
-    return db.query(ProjectRole).where(ProjectRole.project_role_id == project_role_id).one()
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique()\
+        .scalar_one()
 
 
-def get_project_roles_for_project(db: Session, project: Project) -> list[ProjectRole]:
+async def get_project_roles_for_project(db: AsyncSession, project: Project) -> list[ProjectRole]:
     """Get the project roles associated with a project"""
-    return db.query(ProjectRole).where(ProjectRole.project == project).all()
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project == project))).unique().scalars().all()
 
 
-def create_project_role(db: Session, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
+async def create_project_role(db: AsyncSession, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
     """Create a project role for a project"""
-    skill = skills_crud.get_skill_by_id(db, input_project_role.skill_id)
+    skill = await skills_crud.get_skill_by_id(db, input_project_role.skill_id)
 
     project_role = ProjectRole(
         project=project,
@@ -112,31 +128,33 @@ def create_project_role(db: Session, project: Project, input_project_role: Input
     )
 
     db.add(project_role)
-    db.commit()
+    await db.commit()
+    # query project_role to create association tables
+    (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role.project_role_id)))
     return project_role
 
 
-def patch_project_role(
-        db: Session,
+async def patch_project_role(
+        db: AsyncSession,
         project_role_id: int,
         input_project_role: InputProjectRole) -> ProjectRole:
     """Create a project role for a project"""
-    skill = skills_crud.get_skill_by_id(db, input_project_role.skill_id)
-    project_role = get_project_role(db, project_role_id)
+    skill = await skills_crud.get_skill_by_id(db, input_project_role.skill_id)
+    project_role = await get_project_role(db, project_role_id)
 
     project_role.skill = skill
     project_role.description = input_project_role.description
     project_role.slots = input_project_role.slots
 
-    db.commit()
+    await db.commit()
     return project_role
 
 
-def get_conflict_students(db: Session, edition: Edition) -> list[Student]:
+async def get_conflict_students(db: AsyncSession, edition: Edition) -> list[Student]:
     """
     Return an overview of the students that are assigned to multiple projects
     """
     return [
-        s for s in db.query(Student).where(Student.edition == edition).all()
+        s for s in (await db.execute(select(Student).where(Student.edition == edition))).unique().scalars().all()
         if len(s.pr_suggestions) > 1
     ]

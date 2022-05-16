@@ -7,6 +7,11 @@ import {
 } from "../styles";
 import { Form } from "react-bootstrap";
 
+/**
+ * Component that filters the students list based on the name inserted in the input field.
+ * @param nameFilter
+ * @param setNameFilter
+ */
 export default function NameFilter({
     nameFilter,
     setNameFilter,

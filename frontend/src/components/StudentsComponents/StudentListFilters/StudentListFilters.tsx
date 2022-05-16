@@ -1,20 +1,14 @@
 import React from "react";
 import StudentList from "../StudentList";
 import { Form } from "react-bootstrap";
-import {
-    StudentListSideMenu,
-    StudentListTitle,
-    StudentListLinebreak,
-    FilterControls,
-} from "./styles";
+import { StudentListSideMenu, StudentListLinebreak, FilterControls } from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
 import RolesFilter from "./RolesFilter/RolesFilter";
 import "./StudentListFilters.css";
 import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
-import ApplyFilterButton from "./ApplyFilterButton/ApplyFilterButton";
-import {Student} from "../../../data/interfaces/students";
+import { Student } from "../../../data/interfaces/students";
 
 interface Props {
     students: Student[];
@@ -28,15 +22,20 @@ interface Props {
     setStudentCoachVolunteerFilter: (value: boolean) => void;
 }
 
+/**
+ * Component that shows the sidebar with all the filters and student list.
+ * @param props All students and filters currently selected.
+ */
 export default function StudentListFilters(props: Props) {
     return (
         <StudentListSideMenu>
-            <StudentListTitle>Students</StudentListTitle>
-            <StudentListLinebreak />
             <NameFilter nameFilter={props.nameFilter} setNameFilter={props.setNameFilter} />
-            <RolesFilter rolesFilter={props.rolesFilter} setRolesFilter={props.setRolesFilter} />
+            <RolesFilter setRolesFilter={props.setRolesFilter} />
             <Form.Group>
-                <AlumniFilter alumniFilter={props.alumniFilter} setAlumniFilter={props.setAlumniFilter} />
+                <AlumniFilter
+                    alumniFilter={props.alumniFilter}
+                    setAlumniFilter={props.setAlumniFilter}
+                />
                 <Form.Check type="checkbox" label="Only students you've suggested for" />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={props.studentCoachVolunteerFilter}
@@ -44,8 +43,8 @@ export default function StudentListFilters(props: Props) {
                 />
                 <Form.Check type="checkbox" label="Only available students" />
             </Form.Group>
+            <StudentListLinebreak />
             <FilterControls>
-                <ApplyFilterButton />
                 <ResetFiltersButton
                     setNameFilter={props.setNameFilter}
                     setAlumniFilter={props.setAlumniFilter}
