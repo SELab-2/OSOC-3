@@ -11,6 +11,7 @@ from src.database.models import Edition
 
 @enum.unique
 class EventType(Enum):
+    """Event Type Enum"""
     # Project
     PROJECT = 0
     # Project Role
@@ -24,13 +25,17 @@ class EventType(Enum):
 
 
 class LiveEventParameters:
+    """Construct a live event data object"""
+
     def __init__(self, method: str, path_ids: dict):
+        """Initialize the object"""
         self.method: str = method
         self.path_ids: dict = path_ids
         self.event_type: EventType = LiveEventParameters.get_event_type(path_ids)
 
     @staticmethod
     def get_event_type(path_ids: dict) -> EventType:
+        """Parse the event type from given path ids"""
         match path_ids:
             case {'project_id': _, 'project_role_id': _, 'student_id': _}:
                 return EventType.PROJECT_ROLE_SUGGESTION
@@ -46,6 +51,7 @@ class LiveEventParameters:
                 raise Exception('Invalid path_ids')
 
     async def json(self) -> dict:
+        """Generate json dict for live event"""
         return {
             'method': self.method,
             'pathIds': self.path_ids,
@@ -54,19 +60,25 @@ class LiveEventParameters:
 
 
 class DataPublisher:
+    """Event Bus"""
+
     def __init__(self):
+        """Initialize"""
         self.queues: list[AsyncQueue] = []
         self._broadcast_lock: Lock = Lock()
 
     async def subscribe(self) -> AsyncQueue:
+        """Subscribe to the event bus, returns a queue where your events will be published"""
         queue: AsyncQueue = AsyncQueue()
         self.queues.append(queue)
         return queue
 
     async def unsubscribe(self, queue: AsyncQueue) -> None:
+        """No longer receive updates"""
         self.queues.remove(queue)
 
     async def broadcast(self, live_event: LiveEventParameters) -> None:
+        """Notify all subscribed listeners"""
         data: dict = await live_event.json()
 
         async with self._broadcast_lock:
@@ -75,21 +87,26 @@ class DataPublisher:
 
 
 # Map containing a publishers for each edition, since access is managed per edition
-_publisher_by_edition: dict[str, DataPublisher] = dict()
+_publisher_by_edition: dict[str, DataPublisher] = {}
 
 
 async def get_publisher(edition: Edition = Depends(get_edition)) -> DataPublisher:
+    """Get a publisher for the given edition"""
     if edition.name not in _publisher_by_edition:
         _publisher_by_edition[edition.name] = DataPublisher()
     return _publisher_by_edition[edition.name]
 
 
 async def live(request: Request, publisher: DataPublisher = Depends(get_publisher)):
+    """Add the publisher for the current edition to the queue
+    Indicates to the middleware the event might trigger a live data event
+    """
     queue: Queue = request.state.websocket_publisher_queue
     queue.put_nowait(publisher)
 
 
 def install_middleware(app: FastAPI):
+    """Middleware for sending actions upon successful requests to live endpoints"""
     @app.middleware("http")
     async def live_middleware(request: Request, call_next) -> Response:
         queue: Queue[DataPublisher] = Queue()

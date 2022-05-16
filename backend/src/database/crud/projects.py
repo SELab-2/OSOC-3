@@ -1,6 +1,5 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import Select
 
 import src.database.crud.skills as skills_crud
@@ -99,7 +98,7 @@ async def patch_project(
 
 async def get_project_role(db: AsyncSession, project_role_id: int) -> ProjectRole:
     """Get a project role by id"""
-    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique()\
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique() \
         .scalar_one()
 
 

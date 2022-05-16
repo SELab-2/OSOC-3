@@ -93,8 +93,8 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
-    name = Column(Text, unique=True, nullable=False)
-    year = Column(Integer, nullable=False)
+    name: str = Column(Text, unique=True, nullable=False)
+    year: int = Column(Integer, nullable=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition", cascade="all, delete-orphan")
     projects: list[Project] = relationship("Project", back_populates="edition", cascade="all, delete-orphan")
@@ -201,7 +201,8 @@ class ProjectRoleSuggestion(Base):
     )
 
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)
-    student: Optional[Student] = relationship("Student", back_populates="pr_suggestions", uselist=False, lazy="selectin")
+    student: Optional[Student] = \
+        relationship("Student", back_populates="pr_suggestions", uselist=False, lazy="selectin")
 
     drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
     drafter: Optional[User] = relationship("User", back_populates="drafted_roles", uselist=False, lazy="selectin")
@@ -221,7 +222,8 @@ class Skill(Base):
     name = Column(Text, nullable=False)
 
     project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="skill", lazy="selectin")
-    students: list[Student] = relationship("Student", secondary="student_skills", back_populates="skills", lazy="selectin")
+    students: list[Student] = \
+        relationship("Student", secondary="student_skills", back_populates="skills", lazy="selectin")
 
 
 class Student(Base):

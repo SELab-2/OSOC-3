@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from starlette.responses import Response
 
 import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
