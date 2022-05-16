@@ -8,6 +8,7 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import axios from "axios";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -52,6 +53,8 @@ export default function ProjectPage() {
         }
 
         setLoading(true);
+        let notFoundError = false;
+
         try {
             const response = await getProjects(editionId, searchString, ownProjects, page);
             if (response) {
@@ -80,10 +83,18 @@ export default function ProjectPage() {
             } else {
                 setError("Oops, something went wrong...");
             }
-        } catch (exception) {
+        } catch (error) {
             setError("Oops, something went wrong...");
+
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                notFoundError = true;
+            }
         }
         setLoading(false);
+        if (notFoundError) {
+            // Navigate must be at end of function
+            navigate("/404-not-found");
+        }
     }
 
     /**

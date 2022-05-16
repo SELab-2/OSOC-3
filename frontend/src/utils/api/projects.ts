@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Projects, Project, CreateProject } from "../../data/interfaces/projects";
+import { CreateProject, Project, Projects } from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
 /**
@@ -16,26 +16,17 @@ export async function getProjects(
     ownProjects: boolean,
     page: number
 ): Promise<Projects | null> {
-    try {
-        const response = await axiosInstance.get(
-            "/editions/" +
-                edition +
-                "/projects?name=" +
-                name +
-                "&coach=" +
-                ownProjects.toString() +
-                "&page=" +
-                page.toString()
-        );
-        const projects = response.data as Projects;
-        return projects;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return null;
-        } else {
-            throw error;
-        }
-    }
+    const response = await axiosInstance.get(
+        "/editions/" +
+            edition +
+            "/projects?name=" +
+            name +
+            "&coach=" +
+            ownProjects.toString() +
+            "&page=" +
+            page.toString()
+    );
+    return response.data as Projects;
 }
 
 /**
@@ -47,8 +38,7 @@ export async function getProjects(
 export async function getProject(edition: string, projectId: number): Promise<Project | null> {
     try {
         const response = await axiosInstance.get("/editions/" + edition + "/projects/" + projectId);
-        const project = response.data as Project;
-        return project;
+        return response.data as Project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
@@ -86,9 +76,7 @@ export async function createProject(
 
     try {
         const response = await axiosInstance.post("editions/" + edition + "/projects/", payload);
-        const project = response.data as Project;
-
-        return project;
+        return response.data as Project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
