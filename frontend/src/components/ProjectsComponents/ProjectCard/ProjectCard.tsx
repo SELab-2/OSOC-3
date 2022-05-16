@@ -44,9 +44,6 @@ export default function ProjectCard({
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const navigate = useNavigate();
-    const params = useParams();
-    const editionId = params.editionId!;
 
     const navigate = useNavigate();
     const params = useParams();
