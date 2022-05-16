@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from pydantic import BaseModel
 
 from src.app.schemas.skills import Skill

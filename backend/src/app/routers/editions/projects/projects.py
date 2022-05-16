@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.responses import Response
 
@@ -22,12 +22,12 @@ projects_router.include_router(project_students_router, prefix="/{project_id}/ro
 
 @projects_router.get("", response_model=ProjectList)
 async def get_projects(
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         edition: Edition = Depends(get_edition),
         search_params: QueryParamsProjects = Depends(QueryParamsProjects),
         user: User = Depends(require_coach)):
     """Get a list of all projects."""
-    return logic.get_project_list(db, edition, search_params, user)
+    return await logic.get_project_list(db, edition, search_params, user)
 
 
 @projects_router.post(
@@ -38,19 +38,20 @@ async def get_projects(
 )
 async def create_project(
         input_project: InputProject,
-        db: Session = Depends(get_session),
+        db: AsyncSession = Depends(get_session),
         edition: Edition = Depends(get_latest_edition)):
     """Create a new project"""
-    return logic.create_project(db, edition, input_project)
+    return await logic.create_project(db, edition,
+                                      input_project)
 
 
 @projects_router.get("/conflicts", response_model=ConflictStudentList, dependencies=[Depends(require_coach)])
-async def get_conflicts(db: Session = Depends(get_session), edition: Edition = Depends(get_edition)):
+async def get_conflicts(db: AsyncSession = Depends(get_session), edition: Edition = Depends(get_edition)):
     """
     Get a list of all projects with conflicts, and the users that
     are causing those conflicts.
     """
-    return logic.get_conflicts(db, edition)
+    return await logic.get_conflicts(db, edition)
 
 
 @projects_router.delete(
@@ -59,9 +60,9 @@ async def get_conflicts(db: Session = Depends(get_session), edition: Edition = D
     response_class=Response,
     dependencies=[Depends(require_admin)]
 )
-async def delete_project(project: ProjectModel = Depends(get_project), db: Session = Depends(get_session)):
+async def delete_project(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
     """Delete a specific project."""
-    return logic.delete_project(db, project)
+    return await logic.delete_project(db, project)
 
 
 @projects_router.get(
@@ -84,11 +85,11 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 async def patch_project(
         input_project: InputProject,
         project: ProjectModel = Depends(get_project),
-        db: Session = Depends(get_session)):
+        db: AsyncSession = Depends(get_session)):
     """
     Update a project, changing some fields.
     """
-    logic.patch_project(db, project, input_project)
+    await logic.patch_project(db, project, input_project)
 
 
 @projects_router.get(
@@ -96,9 +97,9 @@ async def patch_project(
     response_model=ProjectRoleResponseList,
     dependencies=[Depends(require_coach), Depends(get_latest_edition)]
 )
-async def get_project_roles(project: ProjectModel = Depends(get_project), db: Session = Depends(get_session)):
+async def get_project_roles(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
     """List all project roles for a project"""
-    return logic.get_project_roles(db, project)
+    return await logic.get_project_roles(db, project)
 
 
 @projects_router.post(
@@ -109,9 +110,9 @@ async def get_project_roles(project: ProjectModel = Depends(get_project), db: Se
 async def post_project_role(
         input_project_role: InputProjectRole,
         project: ProjectModel = Depends(get_project),
-        db: Session = Depends(get_session)):
+        db: AsyncSession = Depends(get_session)):
     """Create a new project role"""
-    return logic.create_project_role(db, project, input_project_role)
+    return await logic.create_project_role(db, project, input_project_role)
 
 
 @projects_router.patch(
@@ -122,6 +123,6 @@ async def post_project_role(
 async def patch_project_role(
         input_project_role: InputProjectRole,
         project_role_id: int,
-        db: Session = Depends(get_session)):
+        db: AsyncSession = Depends(get_session)):
     """Create a new project role"""
-    return logic.patch_project_role(db, project_role_id, input_project_role)
+    return await logic.patch_project_role(db, project_role_id, input_project_role)

@@ -24,7 +24,8 @@ export const InviteInput = styled.input.attrs({
 export const MessageDiv = styled.div`
     margin-left: 10px;
     margin-top: 5px;
-    height: 15px;
+    height: fit-content;
+    overflow: auto;
 `;
 
 export const Error = styled.div`
@@ -44,4 +45,12 @@ export const DropdownField = styled(Dropdown.Item)`
         color: var(--osoc_green);
         transition: 200ms ease-in;
     }
+`;
+
+export const InputContainer = styled.div`
+    width: 15em;
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 5px;
 `;

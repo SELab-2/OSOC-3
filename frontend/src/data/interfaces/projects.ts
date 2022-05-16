@@ -46,7 +46,7 @@ export interface Project {
 }
 
 /**
- * Used as an response object for multiple projects
+ * Used as a response object for multiple projects
  */
 export interface Projects {
     /** A list of projects */

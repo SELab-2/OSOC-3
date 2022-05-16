@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { UsersPageDiv, UsersHeader } from "./styles";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/Requests";
@@ -117,12 +116,7 @@ function UsersPage() {
         return <div>Error</div>;
     } else {
         return (
-            <UsersPageDiv>
-                <div>
-                    <UsersHeader>
-                        <h1>Manage coaches from {params.editionId}</h1>
-                    </UsersHeader>
-                </div>
+            <div>
                 <InviteUser edition={params.editionId} />
                 <PendingRequests edition={params.editionId} refreshCoaches={refreshCoaches} />
                 <Coaches
@@ -137,7 +131,7 @@ function UsersPage() {
                     refreshCoaches={refreshCoaches}
                     removeCoach={removeCoach}
                 />
-            </UsersPageDiv>
+            </div>
         );
     }
 }
