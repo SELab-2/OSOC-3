@@ -46,12 +46,12 @@ class LiveEventParameters:
                 raise Exception('Invalid path_ids')
 
 
-async def json(self) -> dict:
-    return {
-        'method': self.method,
-        'pathIds': self.path_ids,
-        'eventType': self.event_type.value
-    }
+    async def json(self) -> dict:
+        return {
+            'method': self.method,
+            'pathIds': self.path_ids,
+            'eventType': self.event_type.value
+        }
 
 
 class DataPublisher:

@@ -54,3 +54,15 @@ async def test_parse_event_type_invalid():
             'POST',
             {'blargh': 1}
         )
+
+
+async def test_event_format():
+    live_event: dict = await LiveEventParameters(
+        'POST',
+        {'student_id': 2, 'suggestion_id': 1}
+    ).json()
+
+    assert 'method' in live_event
+    assert 'pathIds' in live_event
+    assert type(live_event['pathIds']) == dict
+    assert 'eventType' in live_event
