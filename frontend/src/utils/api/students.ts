@@ -2,6 +2,14 @@ import axios from "axios";
 import { Student, Students } from "../../data/interfaces/students";
 import { axiosInstance } from "./api";
 
+/**
+ * API call to get students (and filter them).
+ * @param edition The edition name.
+ * @param nameFilter name to filter on.
+ * @param rolesFilter roles to filter on.
+ * @param alumniFilter check to filter on.
+ * @param studentCoachVolunteerFilter check to filter on.
+ */
 export async function getStudents(
     edition: string,
     nameFilter: string,
@@ -13,15 +21,14 @@ export async function getStudents(
         const response = await axiosInstance.get(
             "/editions/" +
                 edition +
-                "/students/?first_name=" +
+                "/students?name=" +
                 nameFilter +
                 "&alumni=" +
                 alumniFilter +
                 "&student_coach=" +
                 studentCoachVolunteerFilter
         );
-        const students = response.data as Students;
-        return students;
+        return response.data as Students;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw error;
@@ -31,14 +38,16 @@ export async function getStudents(
     }
 }
 
+/**
+ * API call to get a specific student.
+ * @param edition The edition name.
+ * @param studentId The ID of the student.
+ */
 export async function getStudent(edition: string, studentId: string): Promise<Student> {
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
         const response = await axiosInstance.get(request);
-        const student = response.data.student as Student;
-        console.log("get student");
-        console.log(student);
-        return student;
+        return response.data.student as Student;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw error;
@@ -48,6 +57,11 @@ export async function getStudent(edition: string, studentId: string): Promise<St
     }
 }
 
+/**
+ * API call to delete a student.
+ * @param edition The edition name.
+ * @param studentId The ID of the student that needs to be deleted.
+ */
 export async function removeStudent(edition: string, studentId: string): Promise<number> {
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
@@ -62,6 +76,13 @@ export async function removeStudent(edition: string, studentId: string): Promise
     }
 }
 
+/**
+ * API call to make a suggestion on a student.
+ * @param edition The edition name.
+ * @param studentId The ID of the student on who a suggestion needs to be made.
+ * @param suggestionArg The Suggestion value.
+ * @param argumentationArg The argumentation for this suggestion.
+ */
 export async function makeSuggestion(
     edition: string,
     studentId: string,

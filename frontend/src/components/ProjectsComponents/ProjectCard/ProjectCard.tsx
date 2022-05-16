@@ -48,6 +48,10 @@ export default function ProjectCard({
     const params = useParams();
     const editionId = params.editionId!;
 
+    const navigate = useNavigate();
+    const params = useParams();
+    const editionId = params.editionId!;
+
     // What to do when deleting a project.
     async function handleDelete() {
         const success = await deleteProject(editionId, project.projectId);
