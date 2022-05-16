@@ -38,5 +38,7 @@ async def create_skill(db: AsyncSession, skill: SkillBase) -> Skill:
 
 async def delete_skill(db: AsyncSession, skill_id: int):
     """Delete an existing skill."""
+    # query a skill to return 404 if it doesn't exist
+    (await (db.execute(select(Skill).where(Skill.skill_id == skill_id)))).scalars().one()
     await db.execute(delete(Skill).where(Skill.skill_id == skill_id))
     await db.commit()

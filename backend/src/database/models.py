@@ -40,8 +40,12 @@ class AuthGitHub(Base):
     __tablename__ = "github_auths"
 
     gh_auth_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    # Allow nullable in case a token gets invalidated
+    access_token = Column(Text, nullable=True)
     email = Column(Text, unique=True, nullable=False)
+    github_user_id = Column(Integer, unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False)
 
@@ -90,7 +94,7 @@ class Edition(Base):
 
     edition_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
-    year = Column(Integer, unique=True, nullable=False)
+    year = Column(Integer, nullable=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition", cascade="all, delete-orphan")
     projects: list[Project] = relationship("Project", back_populates="edition", cascade="all, delete-orphan")
@@ -174,9 +178,10 @@ class ProjectRole(Base):
     description = Column(Text, nullable=True)
     slots = Column(Integer, nullable=False, default=0)
 
-    project: Project = relationship("Project", back_populates="project_roles", uselist=False)
-    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False)
-    suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role")
+    project: Project = relationship("Project", back_populates="project_roles", uselist=False, lazy="joined")
+    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False, lazy="joined")
+    suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role",
+                                                            lazy="joined")
 
 
 class ProjectRoleSuggestion(Base):
@@ -239,7 +244,8 @@ class Student(Base):
         relationship("ProjectRoleSuggestion", back_populates="student", lazy="joined")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="joined")
     suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", lazy="joined")
-    questions: list[Question] = relationship("Question", back_populates="student", lazy="joined", cascade="all, delete-orphan")
+    questions: list[Question] = relationship("Question", back_populates="student", lazy="joined",
+                                             cascade="all, delete-orphan")
     edition: Edition = relationship("Edition", back_populates="students", uselist=False, lazy="joined")
 
 
@@ -318,9 +324,12 @@ class User(Base):
                                                cascade="all, delete-orphan", lazy="joined")
     drafted_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="drafter",
                                                     cascade="all, delete-orphan", lazy="joined")
-    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches", lazy="joined")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches", lazy="joined")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan", lazy="joined")
+    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches",
+                                           lazy="joined")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches",
+                                           lazy="joined")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan",
+                                                 lazy="joined")
 
     # Authentication methods
     email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False,

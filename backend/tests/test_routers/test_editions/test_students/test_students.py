@@ -197,7 +197,7 @@ async def test_get_students_no_autorization(database_with_data: AsyncSession, au
     """tests you have to be logged in to get all students"""
     async with auth_client:
         assert (await auth_client.get(
-            "/editions/ed2022/students/")).status_code == status.HTTP_401_UNAUTHORIZED
+            "/editions/ed2022/students/", follow_redirects=True)).status_code == status.HTTP_401_UNAUTHORIZED
 
 
 async def test_get_all_students(database_with_data: AsyncSession, auth_client: AuthClient,
@@ -205,7 +205,7 @@ async def test_get_all_students(database_with_data: AsyncSession, auth_client: A
     """tests get all students"""
     await auth_client.coach(current_edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/")
+        response = await auth_client.get("/editions/ed2022/students/", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == 2
 
@@ -221,10 +221,10 @@ async def test_get_all_students_pagination(database_with_data: AsyncSession, aut
         database_with_data.add(student)
     await database_with_data.commit()
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?page=0")
+        response = await auth_client.get("/editions/ed2022/students?page=0", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == DB_PAGE_SIZE
-        response = await auth_client.get("/editions/ed2022/students/?page=1")
+        response = await auth_client.get("/editions/ed2022/students?page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == max(
             round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 2, 0)  # +2 because there were already 2 students in the database
@@ -235,7 +235,7 @@ async def test_get_first_name_students(database_with_data: AsyncSession, auth_cl
     edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?name=Jos")
+        response = await auth_client.get("/editions/ed2022/students?name=Jos", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
 
@@ -252,11 +252,11 @@ async def test_get_first_name_student_pagination(database_with_data: AsyncSessio
     await database_with_data.commit()
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=Student&page=0")
+            "/editions/ed2022/students?name=Student&page=0", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == DB_PAGE_SIZE
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=Student&page=1")
+            "/editions/ed2022/students?name=Student&page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == max(
             round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
@@ -268,7 +268,7 @@ async def test_get_last_name_students(database_with_data: AsyncSession, auth_cli
     await auth_client.coach(edition)
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=Vermeulen")
+            "/editions/ed2022/students?name=Vermeulen", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
 
@@ -285,11 +285,11 @@ async def test_get_last_name_students_pagination(database_with_data: AsyncSessio
     await database_with_data.commit()
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=Student&page=0")
+            "/editions/ed2022/students?name=Student&page=0", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == DB_PAGE_SIZE
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=Student&page=1")
+            "/editions/ed2022/students?name=Student&page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == max(
             round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE, 0)
@@ -301,7 +301,7 @@ async def test_get_between_first_and_last_name_students(database_with_data: Asyn
     await auth_client.coach(edition)
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?name=os V")
+            "/editions/ed2022/students?name=os V", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == 1
 
@@ -311,7 +311,7 @@ async def test_get_alumni_students(database_with_data: AsyncSession, auth_client
     edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?alumni=true")
+        response = await auth_client.get("/editions/ed2022/students?alumni=true", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == 1
 
@@ -328,11 +328,11 @@ async def test_get_alumni_students_pagination(database_with_data: AsyncSession, 
     await database_with_data.commit()
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?alumni=true&page=0")
+            "/editions/ed2022/students?alumni=true&page=0", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == DB_PAGE_SIZE
         response = await auth_client.get(
-            "/editions/ed2022/students/?alumni=true&page=1")
+            "/editions/ed2022/students?alumni=true&page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == max(
             round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1, 0)  # +1 because there is already is one
@@ -343,7 +343,7 @@ async def test_get_student_coach_students(database_with_data: AsyncSession, auth
     edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?student_coach=true")
+        response = await auth_client.get("/editions/ed2022/students?student_coach=true", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
 
@@ -360,11 +360,11 @@ async def test_get_student_coach_students_pagination(database_with_data: AsyncSe
     await database_with_data.commit()
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?student_coach=true&page=0")
+            "/editions/ed2022/students?student_coach=true&page=0", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["students"]) == DB_PAGE_SIZE
         response = await auth_client.get(
-            "/editions/ed2022/students/?student_coach=true&page=1")
+            "/editions/ed2022/students?student_coach=true&page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()['students']) == max(
             round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE + 1, 0)  # +1 because there is already is one
@@ -375,7 +375,7 @@ async def test_get_one_skill_students(database_with_data: AsyncSession, auth_cli
     edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?skill_ids=1")
+        response = await auth_client.get("/editions/ed2022/students?skill_ids=1", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
     assert response.json()["students"][0]["firstName"] == "Jos"
@@ -387,7 +387,7 @@ async def test_get_multiple_skill_students(database_with_data: AsyncSession, aut
     await auth_client.coach(edition)
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?skill_ids=4&skill_ids=5")
+            "/editions/ed2022/students?skill_ids=4&skill_ids=5", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 1
     assert response.json()["students"][0]["firstName"] == "Marta"
@@ -399,7 +399,7 @@ async def test_get_multiple_skill_students_no_students(database_with_data: Async
     await auth_client.coach(edition)
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?skill_ids=4&skill_ids=6")
+            "/editions/ed2022/students?skill_ids=4&skill_ids=6", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
 
@@ -409,7 +409,7 @@ async def test_get_ghost_skill_students(database_with_data: AsyncSession, auth_c
     edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
     await auth_client.coach(edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2022/students/?skill_ids=100")
+        response = await auth_client.get("/editions/ed2022/students?skill_ids=100", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
 
@@ -420,7 +420,7 @@ async def test_get_one_real_one_ghost_skill_students(database_with_data: AsyncSe
     await auth_client.coach(edition)
     async with auth_client:
         response = await auth_client.get(
-            "/editions/ed2022/students/?skill_ids=4&skill_ids=100")
+            "/editions/ed2022/students?skill_ids=4&skill_ids=100", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
 
@@ -535,7 +535,6 @@ async def test_post_email_rejected(database_with_data: AsyncSession, auth_client
         response = await auth_client.post("/editions/ed2022/students/emails",
                                           json={"students_id": [2], "email_status": 5})
     assert response.status_code == status.HTTP_201_CREATED
-    print(response.json())
     assert EmailStatusEnum(
         response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.REJECTED
 
@@ -562,7 +561,6 @@ async def test_creat_email_student_in_other_edition(database_with_data: AsyncSes
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
                                           json={"students_id": [3], "email_status": 5})
-    print(response.json())
     assert response.status_code == status.HTTP_201_CREATED
     assert len(response.json()["studentEmails"]) == 0
 
@@ -609,7 +607,7 @@ async def test_emails_filter_first_name(database_with_data: AsyncSession, auth_c
         await auth_client.post("/editions/ed2022/students/emails",
                                json={"students_id": [2], "email_status": 1})
         response = await auth_client.get(
-            "/editions/ed2022/students/emails/?name=Jos", follow_redirects=True)
+            "/editions/ed2022/students/emails?name=Jos", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()["studentEmails"][0]["student"]["firstName"] == "Jos"
 
@@ -623,7 +621,7 @@ async def test_emails_filter_last_name(database_with_data: AsyncSession, auth_cl
         await auth_client.post("/editions/ed2022/students/emails",
                                json={"students_id": [2], "email_status": 1})
         response = await auth_client.get(
-            "/editions/ed2022/students/emails/?name=Vermeulen", follow_redirects=True)
+            "/editions/ed2022/students/emails?name=Vermeulen", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()[
                "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
@@ -638,7 +636,7 @@ async def test_emails_filter_between_first_and_last_name(database_with_data: Asy
         await auth_client.post("/editions/ed2022/students/emails",
                                json={"students_id": [2], "email_status": 1})
         response = await auth_client.get(
-            "/editions/ed2022/students/emails/?name=os V", follow_redirects=True)
+            "/editions/ed2022/students/emails?name=os V", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()[
                "studentEmails"][0]["student"]["firstName"] == "Jos"
@@ -654,12 +652,11 @@ async def test_emails_filter_emailstatus(database_with_data: AsyncSession, auth_
             await auth_client.post("/editions/ed2022/students/emails",
                                    json={"students_id": [2], "email_status": i})
             response = await auth_client.get(
-                f"/editions/ed2022/students/emails/?email_status={i}", follow_redirects=True)
-            print(response.json())
+                f"/editions/ed2022/students/emails?email_status={i}", follow_redirects=True)
             assert len(response.json()["studentEmails"]) == 1
             if i > 0:
                 response = await auth_client.get(
-                    f"/editions/ed2022/students/emails/?email_status={i - 1}", follow_redirects=True)
+                    f"/editions/ed2022/students/emails?email_status={i - 1}", follow_redirects=True)
                 assert len(response.json()["studentEmails"]) == 0
 
 
@@ -672,7 +669,7 @@ async def test_emails_filter_emailstatus_multiple_status(database_with_data: Asy
         await auth_client.post("/editions/ed2022/students/emails",
                                json={"students_id": [1], "email_status": 3})
         response = await auth_client.get(
-            "/editions/ed2022/students/emails/?email_status=3&email_status=1", follow_redirects=True)
+            "/editions/ed2022/students/emails?email_status=3&email_status=1", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 2
     assert response.json()["studentEmails"][0]["student"]["studentId"] == 1
     assert response.json()["studentEmails"][1]["student"]["studentId"] == 2

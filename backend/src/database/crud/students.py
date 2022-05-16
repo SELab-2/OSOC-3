@@ -1,10 +1,10 @@
 from datetime import datetime
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.expression import func, and_
 
 from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
+
 from src.database.crud.util import paginate
 from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Edition, Skill, Student, DecisionEmail
@@ -49,6 +49,7 @@ async def get_students(db: AsyncSession, edition: Edition,
     for skill in skills:
         query = query.where(Student.skills.contains(skill))
 
+    query = query.order_by(Student.first_name, Student.last_name)
     return (await db.execute(paginate(query, commons.page))).unique().scalars().all()
 
 
@@ -71,18 +72,19 @@ async def create_email(db: AsyncSession, student: Student, email_status: EmailSt
 async def get_last_emails_of_students(db: AsyncSession, edition: Edition, commons: EmailsSearchQueryParams) -> list[
     DecisionEmail]:
     """get last email of all students that got an email"""
-    last_emails = select(DecisionEmail.email_id, func.max(DecisionEmail.date)) \
+    last_emails = select(DecisionEmail.student_id, func.max(DecisionEmail.date).label("maxdate")) \
         .join(Student) \
         .where(Student.edition == edition) \
         .where((Student.first_name + ' ' + Student.last_name).contains(commons.name)) \
         .group_by(DecisionEmail.student_id).subquery()
 
     emails = select(DecisionEmail).join(
-        last_emails, DecisionEmail.email_id == last_emails.c.email_id
+        last_emails, and_(DecisionEmail.student_id == last_emails.c.student_id,
+                                  DecisionEmail.date == last_emails.c.maxdate)
     )
 
     if commons.email_status:
         emails = emails.where(DecisionEmail.decision.in_(commons.email_status))
 
-    emails = emails.order_by(DecisionEmail.student_id)
+    emails = emails.join(Student, DecisionEmail.student).order_by(Student.first_name, Student.last_name)
     return (await db.execute(paginate(emails, commons.page))).unique().scalars().all()

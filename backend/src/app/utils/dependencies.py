@@ -1,3 +1,6 @@
+from typing import AsyncGenerator
+
+import aiohttp
 import sqlalchemy.exc
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -48,7 +51,7 @@ async def get_latest_edition(edition: Edition = Depends(get_edition), database: 
     return latest
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")
 
 
 async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:
@@ -160,3 +163,9 @@ async def get_project_role(
     if project_role.project != project:
         raise NotFound()
     return project_role
+
+
+async def get_http_session() -> AsyncGenerator[aiohttp.ClientSession, None]:
+    """Get an aiohttp ClientSession to send requests with"""
+    async with aiohttp.ClientSession() as session:  # pragma: no cover
+        yield session

@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,12 +8,9 @@ from src.app.schemas.projects import InputProject, QueryParamsProjects
 import src.database.crud.projects as crud
 from src.database.models import Edition, Partner, Project, User, Skill, ProjectRole, Student, ProjectRoleSuggestion
 
-# temporary skip until merge is done
-pytest.skip(allow_module_level=True)
-
 
 @pytest.fixture
-def database_with_data(database_session: AsyncSession) -> Session:
+async def database_with_data(database_session: AsyncSession) -> AsyncSession:
     """fixture for adding data to the database"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
@@ -45,39 +43,39 @@ def database_with_data(database_session: AsyncSession) -> Session:
     database_session.add(project_role1)
     database_session.add(project_role2)
     database_session.add(project_role3)
-    database_session.commit()
+    await database_session.commit()
 
     return database_session
 
 
 @pytest.fixture
-def current_edition(database_with_data: Session) -> Edition:
+async def current_edition(database_with_data: AsyncSession) -> Edition:
     """fixture to get the latest edition"""
-    return database_with_data.query(Edition).all()[-1]
+    return (await database_with_data.execute(select(Edition))).scalars().all()[-1]
 
 
-def test_get_all_projects_empty(database_session: AsyncSession):
+async def test_get_all_projects_empty(database_session: AsyncSession):
     """test get all projects but there are none"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
-    database_session.commit()
-    projects: list[Project] = crud.get_projects_for_edition(
+    await database_session.commit()
+    projects: list[Project] = await crud.get_projects_for_edition(
         database_session, edition)
     assert len(projects) == 0
 
 
-def test_get_all_projects(database_session: Session):
+async def test_get_all_projects(database_session: AsyncSession):
     """test get all projects"""
     edition: Edition = Edition(year=2022, name="ed2022")
     for i in range(DB_PAGE_SIZE - 1):
         database_session.add(Project(name=f"Project {i}", edition=edition))
-    database_session.commit()
+    await database_session.commit()
 
-    projects: list[Project] = crud.get_projects_for_edition(database_session, edition)
+    projects: list[Project] = await crud.get_projects_for_edition(database_session, edition)
     assert len(projects) == DB_PAGE_SIZE - 1
 
 
-def test_get_all_projects_pagination(database_session: AsyncSession):
+async def test_get_all_projects_pagination(database_session: AsyncSession):
     """test get all projects paginated"""
     edition = Edition(year=2022, name="ed2022")
     user: User = User(name="coach")
@@ -85,17 +83,17 @@ def test_get_all_projects_pagination(database_session: AsyncSession):
 
     for i in range(round(DB_PAGE_SIZE * 1.5)):
         database_session.add(Project(name=f"Project {i}", edition=edition))
-    database_session.commit()
+    await database_session.commit()
 
     assert len(
-        crud.get_projects_for_edition_page(database_session, edition, QueryParamsProjects(page=0), user=user)
+        await crud.get_projects_for_edition_page(database_session, edition, QueryParamsProjects(page=0), user=user)
     ) == DB_PAGE_SIZE
     assert len(
-        crud.get_projects_for_edition_page(database_session, edition, QueryParamsProjects(page=1), user=user)
+        await crud.get_projects_for_edition_page(database_session, edition, QueryParamsProjects(page=1), user=user)
     ) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
-def test_get_project_search_name(database_session: Session):
+async def test_get_project_search_name(database_session: AsyncSession):
     """test get project with a specific name"""
     edition: Edition = Edition(year=2022, name="ed2022")
     user: User = User(name="coach")
@@ -104,16 +102,16 @@ def test_get_project_search_name(database_session: Session):
     for i in range(DB_PAGE_SIZE - 2):
         database_session.add(Project(name=f"Project {i}", edition=edition))
     database_session.add(Project(name=f"nice project", edition=edition))
-    database_session.commit()
+    await database_session.commit()
 
-    projects: list[Project] = crud.get_projects_for_edition_page(
+    projects: list[Project] = await crud.get_projects_for_edition_page(
         database_session, edition, QueryParamsProjects(name="nice"), user=user
     )
     assert len(projects) == 1
     assert projects[0].name == "nice project"
 
 
-def test_get_project_search_coach(database_session: Session):
+async def test_get_project_search_coach(database_session: AsyncSession):
     """test get projects that you are a coach"""
     edition: Edition = Edition(year=2022, name="ed2022")
     user: User = User(name="coach")
@@ -122,19 +120,19 @@ def test_get_project_search_coach(database_session: Session):
     for i in range(DB_PAGE_SIZE - 2):
         database_session.add(Project(name=f"Project {i}", edition=edition))
     database_session.add(Project(name=f"nice project", edition=edition, coaches=[user]))
-    database_session.commit()
+    await database_session.commit()
 
-    projects: list[Project] = crud.get_projects_for_edition_page(
+    projects: list[Project] = await crud.get_projects_for_edition_page(
         database_session, edition, QueryParamsProjects(coach=True), user=user
     )
     assert len(projects) == 1
 
 
-def test_add_project(database_session: Session):
+async def test_add_project(database_session: AsyncSession):
     """tests add a project when the project don't exist yet"""
     edition: Edition = Edition(year=2022, name="ed2022")
     database_session.add(edition)
-    database_session.commit()
+    await database_session.commit()
 
     partners: list[Partner] = [Partner(name="partner1"), Partner(name="partner2")]
 
@@ -144,43 +142,43 @@ def test_add_project(database_session: Session):
         coaches=[]
     )
 
-    project: Project = crud.create_project(database_session, edition, input_project, partners=partners)
+    project: Project = await crud.create_project(database_session, edition, input_project, partners=partners)
 
-    assert len(database_session.query(Project).all()) == 1
+    assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 1
     assert project.name == input_project.name
     assert len(project.partners) == len(partners)
     assert project.edition == edition
 
 
-def test_get_project_not_found(database_session: Session):
+async def test_get_project_not_found(database_session: AsyncSession):
     """test project that don't exist"""
     with pytest.raises(NoResultFound):
-        crud.get_project(database_session, 500)
+        await crud.get_project(database_session, 500)
 
 
-def test_get_project(database_session: Session):
+async def test_get_project(database_session: AsyncSession):
     """test get project"""
     edition: Edition = Edition(year=2022, name="ed2022")
     project: Project = Project(name="project 1", edition=edition)
     database_session.add(project)
-    database_session.commit()
+    await database_session.commit()
 
-    assert project == crud.get_project(database_session, project.project_id)
+    assert project == await crud.get_project(database_session, project.project_id)
 
 
-def test_delete_project_no_project_roles(database_session: Session):
+async def test_delete_project_no_project_roles(database_session: AsyncSession):
     """test delete a project that don't have project roles"""
     edition: Edition = Edition(year=2022, name="ed2022")
     project: Project = Project(name="project 1", edition=edition)
     database_session.add(project)
-    database_session.commit()
+    await database_session.commit()
 
-    assert len(database_session.query(Project).all()) == 1
-    crud.delete_project(database_session, project)
-    assert len(database_session.query(Project).all()) == 0
+    assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 1
+    await crud.delete_project(database_session, project)
+    assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 0
 
 
-def test_delete_project_with_project_roles(database_session: Session):
+async def test_delete_project_with_project_roles(database_session: AsyncSession):
     """test delete a project that has project roles"""
     edition: Edition = Edition(year=2022, name="ed2022")
     project: Project = Project(
@@ -189,16 +187,16 @@ def test_delete_project_with_project_roles(database_session: Session):
         project_roles=[ProjectRole(slots=1, skill=Skill(name="skill"))]
     )
     database_session.add(project)
-    database_session.commit()
+    await database_session.commit()
 
-    assert len(database_session.query(Project).all()) == 1
-    assert len(database_session.query(ProjectRole).all()) == 1
-    crud.delete_project(database_session, project)
-    assert len(database_session.query(Project).all()) == 0
-    assert len(database_session.query(ProjectRole).all()) == 0
+    assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 1
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 1
+    await crud.delete_project(database_session, project)
+    assert len((await database_session.execute(select(Project))).unique().scalars().all()) == 0
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 0
 
 
-def test_patch_project(database_session: Session):
+async def test_patch_project(database_session: AsyncSession):
     """tests patch a project"""
     edition: Edition = Edition(year=2022, name="ed2022")
     project: Project = Project(
@@ -208,13 +206,13 @@ def test_patch_project(database_session: Session):
         partners=[Partner(name="partner 1")]
     )
     database_session.add(project)
-    database_session.commit()
+    await database_session.commit()
 
     new_user = User(name="coach 2")
     new_partner = Partner(name="partner 2")
     database_session.add(new_user)
     database_session.add(new_partner)
-    database_session.commit()
+    await database_session.commit()
 
     patch: InputProject = InputProject(
         name="project 1 - PATCHED",
@@ -222,7 +220,7 @@ def test_patch_project(database_session: Session):
         coaches=[new_user.user_id]
     )
 
-    crud.patch_project(database_session, project, patch, [new_partner])
+    await crud.patch_project(database_session, project, patch, [new_partner])
     assert project.name == "project 1 - PATCHED"
     assert len(project.partners) == 1
     assert len(project.coaches) == 1
@@ -230,7 +228,7 @@ def test_patch_project(database_session: Session):
     assert project.coaches[0].user_id == new_user.user_id
 
 
-def test_get_conflict_students(database_session: Session):
+async def test_get_conflict_students(database_session: AsyncSession):
     """test if the right ConflictStudent is given"""
     edition: Edition = Edition(year=2022, name="ed2022")
     skill: Skill = Skill(name="skill 1")
@@ -279,9 +277,9 @@ def test_get_conflict_students(database_session: Session):
             )
         )
     ))
-    database_session.commit()
+    await database_session.commit()
 
-    conflicts: list[Student] = crud.get_conflict_students(database_session, edition)
+    conflicts: list[Student] = await crud.get_conflict_students(database_session, edition)
     assert len(conflicts) == 1
     assert conflicts[0].student_id == student.student_id
     assert len(conflicts[0].pr_suggestions) == 2

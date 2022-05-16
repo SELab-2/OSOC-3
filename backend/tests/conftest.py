@@ -1,6 +1,7 @@
 """Pytest configuration file with fixtures"""
+from typing import AsyncGenerator, Generator
+from unittest.mock import AsyncMock
 import asyncio
-from typing import AsyncGenerator
 
 import pytest
 import pytest_asyncio
@@ -10,6 +11,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app import app
+from src.app.utils.dependencies import get_http_session
 from src.database.database import get_session
 from src.database.engine import engine
 from src.database.models import Base
@@ -69,7 +71,15 @@ async def database_session(tables) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
-def test_client(database_session: AsyncSession) -> AsyncClient:
+def aiohttp_session() -> AsyncMock:
+    """Fixture to get a mock aiohttp.ClientSession instance
+    Used to replace the dependency of the TestClient
+    """
+    yield AsyncMock()
+
+
+@pytest.fixture
+def test_client(database_session: AsyncSession, aiohttp_session: AsyncMock) -> AsyncClient:
     """Fixture to create a testing version of our main application"""
 
     def override_get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -78,13 +88,18 @@ def test_client(database_session: AsyncSession) -> AsyncClient:
         """
         yield database_session
 
+    def override_get_http_session() -> Generator[AsyncMock, None, None]:
+        """Inner function to override the ClientSession used in the app"""
+        yield aiohttp_session
+
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
+    app.dependency_overrides[get_http_session] = override_get_http_session
     return AsyncClient(app=app, base_url="http://test")
 
 
 @pytest.fixture
-def auth_client(database_session: AsyncSession) -> AuthClient:
+def auth_client(database_session: AsyncSession, aiohttp_session: AsyncMock) -> AuthClient:
     """Fixture to get a TestClient that handles authentication"""
 
     def override_get_session() -> AsyncGenerator[AsyncSession, None]:
@@ -93,6 +108,11 @@ def auth_client(database_session: AsyncSession) -> AuthClient:
         """
         yield database_session
 
+    def override_get_http_session() -> Generator[AsyncMock, None, None]:
+        """Inner function to override the ClientSession used in the app"""
+        yield aiohttp_session
+
     # Replace get_session with a call to this method instead
     app.dependency_overrides[get_session] = override_get_session
+    app.dependency_overrides[get_http_session] = override_get_http_session
     return AuthClient(database_session, app=app, base_url="http://test")

@@ -7,6 +7,7 @@ This script does it automatically to prevent the user from having to
 fiddle in the database themselves.
 """
 import argparse
+import asyncio
 import getpass
 import sys
 import traceback
@@ -43,25 +44,26 @@ def get_hashed_password() -> str:
     return get_password_hash(first_pass)
 
 
-def create_admin(name: str, email: str, pw: str):
+async def create_admin(name: str, email: str, pw: str):
     """Create a new user in the database"""
-    with DBSession.begin() as session:
+    async with DBSession() as session:
         try:
-            transaction = session.begin_nested()
-            user = create_user(session, name, commit=False)
+            transaction = await session.begin_nested()
+            user = await create_user(session, name, commit=False)
             user.admin = True
 
             # Add an email auth entry
-            create_auth_email(session, user, pw, email, commit=False)
+            await create_auth_email(session, user, pw, email, commit=False)
+            await session.commit()
         except sqlalchemy.exc.SQLAlchemyError:
             # Something went wrong: rollback the transaction & print the error
-            transaction.rollback()
+            await transaction.rollback()
 
             # Print the traceback of the exception
             print(traceback.format_exc())
             exit(3)
 
-    session.close()
+    await session.close()
 
 
 if __name__ == "__main__":
@@ -83,6 +85,8 @@ if __name__ == "__main__":
     pw_hash = get_hashed_password()
 
     # Create new database entry
-    create_admin(args.name, args.email, pw_hash)
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(create_admin(args.name, args.email, pw_hash))
+    loop.close()
 
     print("Addition successful.")

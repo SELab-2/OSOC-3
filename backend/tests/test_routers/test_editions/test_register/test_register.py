@@ -1,8 +1,10 @@
+from unittest.mock import AsyncMock
+
+from sqlalchemy.orm import Session
 from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from starlette.testclient import TestClient
 
 
 from src.database.models import Edition, InviteLink, User, AuthEmail
@@ -91,12 +93,12 @@ async def test_duplicate_user(database_session: AsyncSession, test_client: Async
     await database_session.commit()
     async with test_client:
         await test_client.post("/editions/ed2022/register/email",
-                         json={"name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
-                               "uuid": str(invite_link1.uuid)})
+                               json={"name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
+                                     "uuid": str(invite_link1.uuid)})
         response = await test_client.post("/editions/ed2022/register/email", json={
                                     "name": "Joske vermeulen", "email": "jw@gmail.com", "pw": "test1",
                                     "uuid": str(invite_link2.uuid)})
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_409_CONFLICT
 
 
 async def test_old_edition(database_session: AsyncSession, test_client: AsyncClient):
@@ -114,3 +116,42 @@ async def test_old_edition(database_session: AsyncSession, test_client: AsyncCli
                                     "name": "Joskes vermeulen", "email": "jw@gmail.com", "pw": "test",
                                     "uuid": str(invite_link.uuid)})
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
+async def test_github_register(database_session: AsyncSession, test_client: AsyncClient, aiohttp_session: AsyncMock):
+    """Test registering with github"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    invite_link: InviteLink = InviteLink(
+        edition=edition, target_email="jw@gmail.com")
+    database_session.add(edition)
+    database_session.add(invite_link)
+    await database_session.commit()
+
+    # Request that gets an access token
+    first_response = AsyncMock()
+    first_response.status = 200
+    first_response.json.return_value = {
+        "access_token": "token",
+        "scope": "read:user,user:email"
+    }
+
+    # Request that gets the user's id
+    second_response = AsyncMock()
+    second_response.status = 200
+    second_response.json.return_value = {
+        "name": "name",
+        "email": "email",
+        "id": 1
+    }
+
+    aiohttp_session.post.return_value = first_response
+    aiohttp_session.get.return_value = second_response
+
+    async with test_client:
+        resp = await test_client.post("/editions/ed2022/register/github", json={"code": "code", "uuid": str(invite_link.uuid)})
+
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    users = (await database_session.execute(select(User))).unique().scalars().all()
+    assert len(users) == 1
+    assert users[0].name == "name"

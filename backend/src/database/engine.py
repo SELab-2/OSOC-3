@@ -15,7 +15,7 @@ if settings.DB_USE_SQLITE:
         drivername="sqlite+aiosqlite",
         database="test.db"
     ), connect_args={"check_same_thread": False})
-else:
+else:  # pragma: no cover
     # Use Mariadb database.
     _encoded_password = quote_plus(settings.DB_PASSWORD)
     engine = create_async_engine(URL.create(

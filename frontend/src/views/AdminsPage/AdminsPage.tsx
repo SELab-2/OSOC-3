@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AdminsContainer } from "./styles";
+import { AdminsContainer, AdminsHeader } from "./styles";
 import { getAdmins } from "../../utils/api/users/admins";
 import { Error, SpinnerContainer } from "../../components/UsersComponents/Requests/styles";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
@@ -96,13 +96,15 @@ export default function AdminsPage() {
 
     return (
         <AdminsContainer>
-            <SearchInput
-                value={searchTerm}
-                onChange={e => {
-                    filter(e.target.value);
-                }}
-            />
-            <AddAdmin adminAdded={addAdmin} />
+            <AdminsHeader>
+                <SearchInput
+                    value={searchTerm}
+                    onChange={e => {
+                        filter(e.target.value);
+                    }}
+                />
+                <AddAdmin adminAdded={addAdmin} />
+            </AdminsHeader>
             {list}
         </AdminsContainer>
     );

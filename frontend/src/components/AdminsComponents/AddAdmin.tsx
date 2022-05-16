@@ -1,28 +1,14 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
-import { AddAdminButton, ModalContentConfirm, Warning } from "./styles";
+import { EmailDiv, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import { Error } from "../UsersComponents/Requests/styles";
 import { StyledMenuItem } from "../GeneralComponents/styles";
 import UserMenuItem from "../GeneralComponents/MenuItem";
 import { EmailAndAuth } from "../GeneralComponents";
-
-/**
- * Warning that the user will get all persmissions.
- * @param props.name The name of the user.
- */
-function AddWarning(props: { name: string | undefined }) {
-    if (props.name !== undefined) {
-        return (
-            <Warning>
-                Warning: {props.name} will be able to edit/delete all data and manage admin roles.
-            </Warning>
-        );
-    }
-    return null;
-}
+import CreateButton from "../Common/Buttons/CreateButton";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -107,16 +93,25 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                 }}
                 disabled={selected === undefined}
             >
-                Add {selected?.name} as admin
+                Add admin
             </Button>
+        );
+    }
+
+    let warning;
+    if (selected !== undefined) {
+        warning = (
+            <Warning>
+                Warning: This user will be able to edit/delete all data and manage admin roles.
+            </Warning>
         );
     }
 
     return (
         <>
-            <AddAdminButton variant="primary" onClick={handleShow}>
+            <CreateButton showIcon={false} onClick={handleShow}>
                 Add admin
-            </AddAdminButton>
+            </CreateButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -163,8 +158,10 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 );
                             }}
                         />
-                        <EmailAndAuth user={selected} />
-                        <AddWarning name={selected?.name} />
+                        <EmailDiv>
+                            <EmailAndAuth user={selected} />
+                        </EmailDiv>
+                        {warning}
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}

@@ -10,11 +10,11 @@ import { axiosInstance } from "../api";
 export async function getCoaches(edition: string, name: string, page: number): Promise<UsersList> {
     if (name) {
         const response = await axiosInstance.get(
-            `/users/?edition=${edition}&page=${page}&name=${name}`
+            `/users?edition=${edition}&page=${page}&name=${name}`
         );
         return response.data as UsersList;
     }
-    const response = await axiosInstance.get(`/users/?edition=${edition}&page=${page}`);
+    const response = await axiosInstance.get(`/users?edition=${edition}&page=${page}`);
     return response.data as UsersList;
 }
 

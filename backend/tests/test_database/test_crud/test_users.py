@@ -28,7 +28,7 @@ async def data(database_session: AsyncSession) -> dict[str, str]:
     await database_session.commit()
 
     email_auth1 = models.AuthEmail(user_id=user1.user_id, email="user1@mail.com", pw_hash="HASH1")
-    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com")
+    github_auth1 = models.AuthGitHub(user_id=user2.user_id, gh_auth_id=123, email="user2@mail.com", github_user_id=2)
     database_session.add(email_auth1)
     database_session.add(github_auth1)
     await database_session.commit()
@@ -429,7 +429,6 @@ async def test_add_coach(database_session: AsyncSession):
     database_session.add(edition)
 
     await database_session.commit()
-    print(user)
     await users_crud.add_coach(database_session, user.user_id, edition.name)
     coach = (await database_session.execute(select(user_editions))).one()
     assert coach.user_id == user.user_id

@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import src.app.logic.partners as partners_logic
@@ -13,7 +14,6 @@ async def get_project_list(db: AsyncSession, edition: Edition, search_params: Qu
                            user: User) -> ProjectList:
     """Returns a list of all projects from a certain edition"""
     proj_page = await crud.get_projects_for_edition_page(db, edition, search_params, user)
-
     return ProjectList(projects=proj_page)
 
 
@@ -28,7 +28,8 @@ async def create_project(db: AsyncSession, edition: Edition, input_project: Inpu
 
         # Save the changes to the database
         await db.commit()
-
+        # query the project to create the association tables
+        (await db.execute(select(Project).where(Project.project_id == project.project_id)))
         return project
     except Exception as ex:
         # When an error occurs undo al database changes
@@ -69,7 +70,8 @@ async def create_project_role(db: AsyncSession, project: Project, input_project_
     return await crud.create_project_role(db, project, input_project_role)
 
 
-async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) -> ProjectRole:
+async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) \
+        -> ProjectRole:
     """Update a project role"""
     return await crud.patch_project_role(db, project_role_id, input_project_role)
 
