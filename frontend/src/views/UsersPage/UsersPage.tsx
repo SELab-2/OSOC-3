@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/Requests";
 import { User } from "../../utils/api/users/users";
 import { getCoaches } from "../../utils/api/users/coaches";
+import axios from "axios";
 
 /**
  * Page for admins to manage coach and admin settings.
@@ -22,6 +23,7 @@ function UsersPage() {
     const [page, setPage] = useState(0); // The next page to request
 
     const params = useParams();
+    const navigate = useNavigate();
 
     /**
      * Request the next page from the list of coaches.
@@ -44,6 +46,9 @@ function UsersPage() {
 
         setLoading(true);
         setError("");
+
+        let notFoundError = false;
+
         try {
             const response = await getCoaches(params.editionId as string, searchTerm, page);
             if (response.users.length === 0) {
@@ -68,10 +73,18 @@ function UsersPage() {
 
             setPage(page + 1);
             setGotData(true);
-        } catch (exception) {
+        } catch (error) {
             setError("Oops, something went wrong...");
+
+            if (axios.isAxiosError(error) && error.response?.status === 404) {
+                notFoundError = true;
+            }
         }
         setLoading(false);
+        if (notFoundError) {
+            // Navigate must be at end of function
+            navigate("/404-not-found");
+        }
     }
 
     /**
