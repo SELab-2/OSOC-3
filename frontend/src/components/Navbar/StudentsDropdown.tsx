@@ -1,10 +1,13 @@
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { LinkContainer } from "react-router-bootstrap";
 import { StyledDropdownItem } from "./styles";
+import { Role } from "../../data/enums";
+import { Nav } from "react-bootstrap";
 
 interface Props {
     isLoggedIn: boolean;
     currentEdition: string;
+    role: Role | null;
 }
 
 /**
@@ -14,14 +17,24 @@ interface Props {
 export default function StudentsDropdown(props: Props) {
     if (!props.isLoggedIn) return null;
 
-    return (
-        <NavDropdown title={"Students"}>
+    if (props.role === Role.COACH) {
+        return (
             <LinkContainer to={`/editions/${props.currentEdition}/students`}>
-                <StyledDropdownItem>Students</StyledDropdownItem>
+                <Nav.Link>Students</Nav.Link>
             </LinkContainer>
-            <LinkContainer to={`/editions/${props.currentEdition}/students/emails`}>
-                <StyledDropdownItem>Email History</StyledDropdownItem>
-            </LinkContainer>
-        </NavDropdown>
-    );
+        );
+    } else if (props.role === Role.ADMIN) {
+        return (
+            <NavDropdown title={"Students"}>
+                <LinkContainer to={`/editions/${props.currentEdition}/students`}>
+                    <StyledDropdownItem>Students</StyledDropdownItem>
+                </LinkContainer>
+                <LinkContainer to={`/editions/${props.currentEdition}/students/emails`}>
+                    <StyledDropdownItem>State History</StyledDropdownItem>
+                </LinkContainer>
+            </NavDropdown>
+        );
+    } else {
+        return null;
+    }
 }

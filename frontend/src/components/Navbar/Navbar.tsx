@@ -77,7 +77,11 @@ export default function Navbar() {
                             <Nav.Link>Projects</Nav.Link>
                         </LinkContainer>
                     </EditionNavLink>
-                    <StudentsDropdown isLoggedIn={isLoggedIn} currentEdition={currentEdition} />
+                    <StudentsDropdown
+                        isLoggedIn={isLoggedIn}
+                        currentEdition={currentEdition}
+                        role={role}
+                    />
                     <UsersDropdown currentEdition={currentEdition} role={role} />
                     <VerticalSep className={"vr d-none d-lg-block"} />
                     <HorizontalSep className={"d-lg-none"} />
