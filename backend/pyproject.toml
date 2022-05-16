@@ -15,7 +15,7 @@ alembic = "1.7.6"
 environs = "9.5.0"
 
 # FastAPI: API framework
-fastapi = "0.74.1"
+fastapi = "0.75.2"
 
 # MariaDB: Python MariaDB connector
 mariadb = "1.0.10"
