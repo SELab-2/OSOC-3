@@ -32,25 +32,26 @@ class LiveEventParameters:
     @staticmethod
     def get_event_type(path_ids: dict) -> EventType:
         match path_ids:
-            case {'project_id': _}:
-                return EventType.PROJECT
-            case {'project_id': _, 'project_role_id': _}:
-                return EventType.PROJECT_ROLE
             case {'project_id': _, 'project_role_id': _, 'student_id': _}:
                 return EventType.PROJECT_ROLE_SUGGESTION
-            case {'student_id': _}:
-                return EventType.STUDENT
+            case {'project_id': _, 'project_role_id': _}:
+                return EventType.PROJECT_ROLE
+            case {'project_id': _}:
+                return EventType.PROJECT
             case {'student_id': _, 'suggestion_id': _}:
                 return EventType.STUDENT_SUGGESTION
+            case {'student_id': _}:
+                return EventType.STUDENT
             case _:
                 raise Exception('Invalid path_ids')
 
-    async def json(self) -> dict:
-        return {
-            'method': self.method,
-            'pathIds': self.path_ids,
-            'eventType': self.event_type.value
-        }
+
+async def json(self) -> dict:
+    return {
+        'method': self.method,
+        'pathIds': self.path_ids,
+        'eventType': self.event_type.value
+    }
 
 
 class DataPublisher:
