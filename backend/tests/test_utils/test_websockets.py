@@ -1,6 +1,8 @@
+from asyncio import Queue
+
 import pytest
 
-from src.app.utils.websockets import LiveEventParameters, EventType
+from src.app.utils.websockets import LiveEventParameters, EventType, DataPublisher
 
 
 async def test_parse_event_type_project():
@@ -66,3 +68,30 @@ async def test_event_format():
     assert 'pathIds' in live_event
     assert type(live_event['pathIds']) == dict
     assert 'eventType' in live_event
+
+
+async def test_data_publisher_subscribe():
+    dp: DataPublisher = DataPublisher()
+    assert await dp.subscribe() is not None
+    assert len(dp.queues) == 1
+
+
+async def test_data_publisher_unsubscribe():
+    dp: DataPublisher = DataPublisher()
+    q: Queue = await dp.subscribe()
+    await dp.unsubscribe(q)
+    assert len(dp.queues) == 0
+
+
+async def test_data_publisher_broadcast():
+    dp: DataPublisher = DataPublisher()
+    qs: list[Queue] = [await dp.subscribe() for _ in range(10)]
+    live_event: LiveEventParameters = LiveEventParameters(
+        'POST',
+        {'project_id': 1}
+    )
+
+    await dp.broadcast(live_event)
+    for q in qs:
+        data: dict = await q.get()
+        assert data == await live_event.json()

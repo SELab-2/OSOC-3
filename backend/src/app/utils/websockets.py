@@ -12,15 +12,15 @@ from src.database.models import Edition
 @enum.unique
 class EventType(Enum):
     # Project
-    PROJECT = 1
+    PROJECT = 0
     # Project Role
-    PROJECT_ROLE = 2
+    PROJECT_ROLE = 1
     # Project Role Suggestion
-    PROJECT_ROLE_SUGGESTION = 3
+    PROJECT_ROLE_SUGGESTION = 2
     # Student
-    STUDENT = 4
+    STUDENT = 3
     # Student Suggestion
-    STUDENT_SUGGESTION = 5
+    STUDENT_SUGGESTION = 4
 
 
 class LiveEventParameters:
@@ -44,7 +44,6 @@ class LiveEventParameters:
                 return EventType.STUDENT
             case _:
                 raise Exception('Invalid path_ids')
-
 
     async def json(self) -> dict:
         return {
