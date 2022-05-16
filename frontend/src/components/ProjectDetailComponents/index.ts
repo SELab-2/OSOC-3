@@ -5,3 +5,4 @@ export { default as StudentList } from "./StudentList";
 export { default as ProjectRoles } from "./ProjectRoles";
 export { default as ProjectCoaches } from "./ProjectCoaches";
 export { default as ProjectPartners } from "./ProjectPartners";
+export { default as AddStudentModal } from "./AddStudentModal";

@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-
 import {
     Project,
     CreateProject as EditProject,
     ProjectRole,
 } from "../../../data/interfaces/projects";
-
 import projectToEditProject from "../../../utils/logic/project";
-
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
 import { getStudent } from "../../../utils/api/students";
-
 import { useAuth } from "../../../contexts/auth-context";
-
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
-
 import {
     GoBack,
     ProjectContainer,
@@ -25,7 +19,6 @@ import {
     NumberOfStudents,
     ProjectPageContainer,
 } from "./styles";
-
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import {
     TitleAndEdit,
@@ -33,48 +26,54 @@ import {
     ProjectRoles,
     ProjectCoaches,
     ProjectPartners,
+    AddStudentModal,
 } from "../../../components/ProjectDetailComponents";
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
-
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
+
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
     const editionId = params.editionId!;
-
     const [project, setProject] = useState<Project>();
     const [editedProject, setEditedProject] = useState<Project>();
     const [gotProject, setGotProject] = useState(false);
-
     const navigate = useNavigate();
-
-    const { role } = useAuth();
-
-    // const [students, setStudents] = useState<StudentPlace[]>([]);
+    const { role } = useAuth(); // const [students, setStudents] = useState<StudentPlace[]>([]);
 
     const [editing, setEditing] = useState(false);
 
-    // Used for the confirm screen.
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    // What to do when deleting a project.
+    // Used for the delete modal.
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const handleDeleteClose = () => setShowDeleteModal(false);
+    const handleDeleteShow = () => setShowDeleteModal(true);
     const handleDelete = () => {
+        // What to do when deleting a project.
         deleteProject(editionId, project!.projectId);
-        setShow(false);
+        setShowDeleteModal(false);
+        navigate("/editions/" + editionId + "/projects/");
+    };
+
+    // Used for the Add modal.
+    const [showAddModal, setShowAddModal] = useState(false);
+    const handleAddClose = () => setShowAddModal(false);
+    const handleAddShow = () => setShowAddModal(true);
+    const handleAdd = () => {
+        // What to do when adding a student.
+        deleteProject(editionId, project!.projectId);
+        setShowDeleteModal(false);
         navigate("/editions/" + editionId + "/projects/");
     };
 
     const [projectRoles, setProjectRoles] = useState<ProjectRole[]>([]);
-
     useEffect(() => {
         async function callProjects(): Promise<void> {
             if (projectId) {
                 setGotProject(true);
                 const response = await getProject(editionId, projectId);
+
                 if (response) {
                     setProject(response);
                     setProjectRoles(response.projectRoles);
@@ -82,6 +81,7 @@ export default function ProjectDetailPage() {
                 } else navigate("/404-not-found");
             }
         }
+
         if (!gotProject) {
             callProjects();
         }
@@ -100,7 +100,6 @@ export default function ProjectDetailPage() {
     }
 
     if (!project || !editedProject) return null;
-
     return (
         <DragDropContext onDragEnd={result => onDragDrop(result)}>
             <ProjectPageContainer>
@@ -120,13 +119,13 @@ export default function ProjectDetailPage() {
                         setEditing={setEditing}
                         editProject={editProject}
                         role={role!}
-                        handleShow={handleShow}
+                        handleShow={handleDeleteShow}
                     />
 
                     <ConfirmDelete
-                        visible={show}
+                        visible={showDeleteModal}
                         handleConfirm={handleDelete}
-                        handleClose={handleClose}
+                        handleClose={handleDeleteClose}
                         name={project.name}
                     ></ConfirmDelete>
 
@@ -151,6 +150,12 @@ export default function ProjectDetailPage() {
                     />
 
                     <ProjectRoles projectRoles={projectRoles} />
+                    <AddStudentModal
+                        visible={showAddModal}
+                        handleConfirm={handleAdd}
+                        handleClose={handleAddClose}
+                        name={project.name}
+                    />
                 </ProjectContainer>
             </ProjectPageContainer>
         </DragDropContext>
@@ -181,8 +186,11 @@ export default function ProjectDetailPage() {
                 setProjectRoles(newProjectRoles);
             }
         }
+
         if (destination?.droppableId === source.droppableId) return;
+
         if (source.droppableId === "students") {
+            handleAddShow();
             const student = await getStudent(editionId, result.draggableId);
             await addStudentToProject(
                 editionId,

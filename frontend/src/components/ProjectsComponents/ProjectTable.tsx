@@ -4,7 +4,6 @@ import InfiniteScroll from "react-infinite-scroller";
 import { Project } from "../../data/interfaces";
 import { SpinnerContainer, Error } from "../UsersComponents/Requests/styles";
 import { Spinner } from "react-bootstrap";
-import React from "react";
 import { MessageDiv } from "./styles";
 
 /**
