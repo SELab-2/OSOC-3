@@ -1,9 +1,9 @@
 import React from "react";
-import { CoachesTitle, CoachesContainer } from "./styles";
+import { CoachesTitle, CoachesContainer, SearchFieldDiv, TableDiv } from "./styles";
 import { User } from "../../../utils/api/users/users";
 import { Error } from "../Requests/styles";
 import { CoachList, AddCoach } from "./CoachesComponents";
-import { SearchInput } from "../../styles";
+import { SearchBar } from "../../Common/Forms";
 
 /**
  * List of coaches of the given edition.
@@ -51,12 +51,15 @@ export default function Coaches(props: {
     return (
         <CoachesContainer>
             <CoachesTitle>Coaches</CoachesTitle>
-            <SearchInput
-                value={props.searchTerm}
-                onChange={e => props.searchCoaches(e.target.value)}
-            />
+            <SearchFieldDiv>
+                <SearchBar
+                    onChange={e => props.searchCoaches(e.target.value)}
+                    value={props.searchTerm}
+                    placeholder="Search name..."
+                />
+            </SearchFieldDiv>
             <AddCoach edition={props.edition} refreshCoaches={props.refreshCoaches} />
-            {table}
+            <TableDiv>{table}</TableDiv>
         </CoachesContainer>
     );
 }

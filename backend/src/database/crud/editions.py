@@ -2,7 +2,7 @@ from sqlalchemy import exc, func, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Select
 
-from src.app.exceptions.editions import DuplicateInsertException
+from src.app.exceptions.crud import DuplicateInsertException
 from src.app.schemas.editions import EditionBase
 from src.database.models import Edition
 from .util import paginate

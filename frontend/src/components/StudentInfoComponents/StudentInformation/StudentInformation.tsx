@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
     FullName,
@@ -9,48 +8,47 @@ import {
     StudentInfoTitle,
     SuggestionField,
     StudentInformationContainer,
-    PersonalInfoField,
     PersonalInfoFieldValue,
     PersonalInfoFieldSubject,
     RolesField,
     RolesValues,
     RoleValue,
     NameAndRemoveButtonContainer,
+    SubjectFields,
+    SubjectValues,
+    PersonalInformation,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
-import { Student } from "../../../data/interfaces/students";
 import { Suggestion } from "../../../data/interfaces/suggestions";
 import { getSuggestions } from "../../../utils/api/suggestions";
-import { useParams } from "react-router-dom";
 import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
 import { useAuth } from "../../../contexts";
 import { Role } from "../../../data/enums";
-
-interface Props {
-    currentStudent: Student;
-}
+import { Student } from "../../../data/interfaces/students";
+import { getStudent } from "../../../utils/api/students";
+import LoadSpinner from "../../Common/LoadSpinner";
+import { toast } from "react-toastify";
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
- * @param props current student whose information needs to be showed.
  */
-export default function StudentInformation(props: Props) {
+export default function StudentInformation(props: { studentId: number; editionId: string }) {
     const { role } = useAuth();
+
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-    const params = useParams();
-    const editionId = params.editionId;
-    const studentId = params.id;
+    const [student, setStudent] = useState<Student | undefined>(undefined);
 
     /**
      * Get all the suggestion that were made on this student.
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    async function callGetSuggestions() {
+    async function getData() {
         try {
-            const response = await getSuggestions(params.editionId!, params.id!);
-            setSuggestions(response.suggestions);
+            const studentResponse = await getStudent(props.editionId, props.studentId);
+            const suggenstionsResponse = await getSuggestions(props.editionId, props.studentId);
+            setStudent(studentResponse);
+            setSuggestions(suggenstionsResponse.suggestions);
         } catch (error) {
-            console.log(error);
+            toast.error("Failed to get details", { toastId: "fetch_student_details_failed" });
         }
     }
 
@@ -74,26 +72,23 @@ export default function StudentInformation(props: Props) {
      * fetch suggestions whenever an edition id or student id changes.
      */
     useEffect(() => {
-        callGetSuggestions();
-    }, [editionId, studentId]);
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.studentId, props.editionId]);
 
-    if (!props.currentStudent) {
-        return (
-            <div>
-                <h1>loading</h1>
-            </div>
-        );
+    if (student === undefined) {
+        return <LoadSpinner show={true} />;
     } else {
         return (
             <StudentInformationContainer>
                 <NameAndRemoveButtonContainer>
                     <FullName>
-                        <FirstName>{props.currentStudent.firstName}</FirstName>
-                        <LastName>{props.currentStudent.lastName}</LastName>
+                        <FirstName>{student.firstName}</FirstName>
+                        <LastName>{student.lastName}</LastName>
                     </FullName>
-                    <RemoveStudentButton />
+                    <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
                 </NameAndRemoveButtonContainer>
-                <PreferedName>Preferred name: {props.currentStudent.preferredName}</PreferedName>
+                <PreferedName>Preferred name: {student.preferredName}</PreferedName>
                 <LineBreak />
                 <StudentInfoTitle>Suggestions</StudentInfoTitle>
                 {suggestions.map(suggestion => (
@@ -104,43 +99,39 @@ export default function StudentInformation(props: Props) {
                 ))}
                 <LineBreak />
                 <StudentInfoTitle>Personal information</StudentInfoTitle>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.emailAddress}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.phoneNumber}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.alumni ? "Yes" : "No"}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
-                <PersonalInfoField>
-                    <PersonalInfoFieldSubject>Wants to be student coach?:</PersonalInfoFieldSubject>
-                    <PersonalInfoFieldValue>
-                        {props.currentStudent.wantsToBeStudentCoach ? "Yes" : "No"}
-                    </PersonalInfoFieldValue>
-                </PersonalInfoField>
+                <PersonalInformation>
+                    <SubjectFields>
+                        <PersonalInfoFieldSubject>Email:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>Phone number:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>Is an alumni?:</PersonalInfoFieldSubject>
+                        <PersonalInfoFieldSubject>
+                            Wants to be student coach?:
+                        </PersonalInfoFieldSubject>
+                    </SubjectFields>
+                    <SubjectValues>
+                        <PersonalInfoFieldValue>{student.emailAddress}</PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>{student.phoneNumber}</PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>
+                            {student.alumni ? "Yes" : "No"}
+                        </PersonalInfoFieldValue>
+                        <PersonalInfoFieldValue>
+                            {student.wantsToBeStudentCoach ? "Yes" : "No"}
+                        </PersonalInfoFieldValue>
+                    </SubjectValues>
+                </PersonalInformation>
                 <LineBreak />
                 <StudentInfoTitle>Skills</StudentInfoTitle>
                 <RolesField>
                     Roles:
                     <RolesValues>
-                        {props.currentStudent.skills.map(skill => (
+                        {student.skills.map(skill => (
                             <RoleValue key={skill.skillId}>{skill.name}</RoleValue>
                         ))}
                     </RolesValues>
                 </RolesField>
                 <LineBreak />
                 <div>
-                    <CoachSuggestionContainer student={props.currentStudent} />
+                    <CoachSuggestionContainer student={student} />
                     {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
                 </div>
             </StudentInformationContainer>

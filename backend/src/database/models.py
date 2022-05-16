@@ -40,8 +40,12 @@ class AuthGitHub(Base):
     __tablename__ = "github_auths"
 
     gh_auth_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    # Allow nullable in case a token gets invalidated
+    access_token = Column(Text, nullable=True)
     email = Column(Text, unique=True, nullable=False)
+    github_user_id = Column(Integer, unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
     user: User = relationship("User", back_populates="github_auth", uselist=False, lazy="selectin")
 

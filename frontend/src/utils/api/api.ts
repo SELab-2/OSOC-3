@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { BASE_URL } from "../../settings";
+import { BE_BASE_URL } from "../../settings";
 import {
     getAccessToken,
     getRefreshTokenLock,
@@ -11,7 +11,7 @@ import { refreshTokens } from "./auth";
 
 export const axiosInstance = axios.create();
 
-axiosInstance.defaults.baseURL = BASE_URL;
+axiosInstance.defaults.baseURL = BE_BASE_URL;
 
 axiosInstance.interceptors.request.use(async config => {
     // If the request is sent when a token is being refreshed, delay it for 100ms.
@@ -62,6 +62,10 @@ axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => 
             }
             setRefreshTokenLock(false);
         }
+    } else if (error.response?.status === 403) {
+        window.location.replace("/403-forbidden");
+    } else if (error.response?.status === 404) {
+        window.location.replace("/404-not-found");
     }
 
     throw error;

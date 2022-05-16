@@ -9,33 +9,29 @@ import { axiosInstance } from "./api";
  * @param rolesFilter roles to filter on.
  * @param alumniFilter check to filter on.
  * @param studentCoachVolunteerFilter check to filter on.
+ * @param page The page to fetch.
  */
 export async function getStudents(
     edition: string,
     nameFilter: string,
     rolesFilter: number[],
     alumniFilter: boolean,
-    studentCoachVolunteerFilter: boolean
+    studentCoachVolunteerFilter: boolean,
+    page: number
 ): Promise<Students> {
-    try {
-        const response = await axiosInstance.get(
-            "/editions/" +
-                edition +
-                "/students/?first_name=" +
-                nameFilter +
-                "&alumni=" +
-                alumniFilter +
-                "&student_coach=" +
-                studentCoachVolunteerFilter
-        );
-        return response.data as Students;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            throw error;
-        } else {
-            throw error;
-        }
-    }
+    const response = await axiosInstance.get(
+        "/editions/" +
+            edition +
+            "/students?name=" +
+            nameFilter +
+            "&alumni=" +
+            alumniFilter +
+            "&student_coach=" +
+            studentCoachVolunteerFilter +
+            "&page=" +
+            page
+    );
+    return response.data as Students;
 }
 
 /**
@@ -43,18 +39,10 @@ export async function getStudents(
  * @param edition The edition name.
  * @param studentId The ID of the student.
  */
-export async function getStudent(edition: string, studentId: string): Promise<Student> {
-    try {
-        const request = "/editions/" + edition + "/students/" + studentId.toString();
-        const response = await axiosInstance.get(request);
-        return response.data.student as Student;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            throw error;
-        } else {
-            throw error;
-        }
-    }
+export async function getStudent(edition: string, studentId: number): Promise<Student> {
+    const request = "/editions/" + edition + "/students/" + studentId.toString();
+    const response = await axiosInstance.get(request);
+    return response.data.student as Student;
 }
 
 /**
@@ -62,7 +50,7 @@ export async function getStudent(edition: string, studentId: string): Promise<St
  * @param edition The edition name.
  * @param studentId The ID of the student that needs to be deleted.
  */
-export async function removeStudent(edition: string, studentId: string): Promise<number> {
+export async function removeStudent(edition: string, studentId: number): Promise<number> {
     try {
         const request = "/editions/" + edition + "/students/" + studentId.toString();
         await axiosInstance.delete(request);

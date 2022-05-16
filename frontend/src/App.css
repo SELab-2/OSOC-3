@@ -13,6 +13,7 @@
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
     --background_color: #272741;
+    --card-color: #323252;
 }
 
 #root {
@@ -41,4 +42,8 @@ body {
     --bs-table-active-color: #fff;
     --bs-table-hover-bg: #41415e;
     --bs-table-hover-color: #fff;
+}
+
+.table > :not(:first-child) {
+    border-top: none;
 }

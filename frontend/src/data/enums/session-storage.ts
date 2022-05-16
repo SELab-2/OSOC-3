@@ -3,4 +3,5 @@
  */
 export const enum SessionStorageKey {
     CURRENT_EDITION = "currentEdition",
+    REGISTER_STATE = "registerState",
 }

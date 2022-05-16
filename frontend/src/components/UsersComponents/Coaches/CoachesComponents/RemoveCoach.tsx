@@ -4,9 +4,17 @@ import {
     removeCoachFromAllEditions,
     removeCoachFromEdition,
 } from "../../../../utils/api/users/coaches";
-import { Button, Modal, Spinner } from "react-bootstrap";
-import { DialogButton, ModalContent } from "../styles";
+import { Modal } from "react-bootstrap";
+import {
+    CancelButton,
+    CredsDiv,
+    DialogButtonContainer,
+    DialogButtonDiv,
+    ModalContent,
+} from "../styles";
 import { Error } from "../../Requests/styles";
+import LoadSpinner from "../../../Common/LoadSpinner";
+import DeleteButton from "../../../Common/Buttons/DeleteButton";
 
 /**
  * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.
@@ -60,38 +68,42 @@ export default function RemoveCoach(props: {
 
     let buttons;
     if (loading) {
-        buttons = <Spinner animation="border" />;
+        buttons = <LoadSpinner show={true} />;
     } else {
         buttons = (
-            <div>
-                <DialogButton
-                    variant="primary"
-                    onClick={() => {
-                        removeCoach(props.coach.userId, true);
-                    }}
-                >
-                    Remove from all editions
-                </DialogButton>
-                <DialogButton
-                    variant="primary"
-                    onClick={() => {
-                        removeCoach(props.coach.userId, false);
-                    }}
-                >
-                    Remove from {props.edition}
-                </DialogButton>
-                <Button variant="secondary" onClick={handleClose}>
-                    Cancel
-                </Button>
-            </div>
+            <DialogButtonContainer>
+                <DialogButtonDiv>
+                    <DeleteButton
+                        onClick={() => {
+                            removeCoach(props.coach.userId, true);
+                        }}
+                        showIcon={false}
+                    >
+                        Remove from all editions
+                    </DeleteButton>
+                </DialogButtonDiv>
+                <DialogButtonDiv>
+                    <DeleteButton
+                        onClick={() => {
+                            removeCoach(props.coach.userId, false);
+                        }}
+                        showIcon={false}
+                    >
+                        Remove from current edition
+                    </DeleteButton>
+                    <CancelButton variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </CancelButton>
+                </DialogButtonDiv>
+            </DialogButtonContainer>
         );
     }
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={handleShow}>
+            <DeleteButton onClick={handleShow} showIcon={false}>
                 Remove
-            </Button>
+            </DeleteButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContent>
@@ -99,8 +111,10 @@ export default function RemoveCoach(props: {
                         <Modal.Title>Remove Coach</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>{props.coach.name}</h4>
-                        {props.coach.auth.email}
+                        <CredsDiv>
+                            <h4>{props.coach.name}</h4>
+                            {props.coach.auth.email}
+                        </CredsDiv>
                     </Modal.Body>
                     <Modal.Footer>
                         {buttons}
