@@ -52,25 +52,10 @@ async def test_get_answers_not_logged_in(database_with_data: AsyncSession, auth_
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-async def test_get_answers_as_coach(database_with_data: AsyncSession, auth_client: AuthClient, current_edition: Edition):
+async def test_get_answers_as_coach(database_with_data: AsyncSession, auth_client: AuthClient,
+                                    current_edition: Edition):
     """test get answers when logged in as coach"""
     await auth_client.coach(current_edition)
-    async with auth_client:
-        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
-        assert response.status_code == status.HTTP_200_OK
-        json = response.json()
-        assert len(json["questions"]) == 1
-        assert QuestionEnum(json["questions"][0]["type"]
-                            ) == QuestionEnum.INPUT_EMAIL
-        assert json["questions"][0]["question"] == "Email"
-        assert len(json["questions"][0]["answers"]) == 1
-        assert json["questions"][0]["answers"][0]["answer"] == "josvermeulen@mail.com"
-        assert len(json["questions"][0]["files"]) == 0
-
-
-async def test_get_answers_as_admin(database_with_data: AsyncSession, auth_client: AuthClient):
-    """test get answers when logged in as admin"""
-    await auth_client.admin()
     async with auth_client:
         response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
