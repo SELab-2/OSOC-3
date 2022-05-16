@@ -4,7 +4,7 @@ import { Button, Table } from "react-bootstrap";
 export const CoachesContainer = styled.div`
     width: 50em;
     height: fit-content;
-    margin: 10px auto auto;
+    margin: 10px auto 20px auto;
 `;
 
 export const CoachesTitle = styled.div`
@@ -38,7 +38,8 @@ export const RemoveTd = styled.td`
 
 export const ListDiv = styled.div`
     width: 100%;
-    height: 40em;
+    height: fit-content;
+    max-height: 40em;
     overflow: auto;
     margin-top: 10px;
 `;

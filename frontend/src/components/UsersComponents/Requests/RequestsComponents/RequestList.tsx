@@ -33,7 +33,7 @@ export default function RequestList(props: {
                 useWindow={false}
                 initialLoad={true}
             >
-                <RequestsTable variant="dark">
+                <RequestsTable>
                     <thead>
                         <tr>
                             <th>Name</th>
