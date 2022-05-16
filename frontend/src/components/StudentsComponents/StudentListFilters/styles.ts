@@ -92,3 +92,8 @@ export const FilterControls = styled.div`
     align-self: center;
     width: 80%;
 `;
+
+export const MessageDiv = styled.div`
+    text-align: center;
+    margin-top: 20px;
+`;
