@@ -13,9 +13,9 @@ export const GreenButton = styled(Button)`
     color: var(--osoc_blue);
 
     &:disabled {
-        background-color: var(--osoc_green);
-        border-color: var(--osoc_green);
-        color: var(--osoc_blue);
+        background-color: #3a6453;
+        border-color: #3a6453;
+        color: white;
     }
 
     &:hover,
@@ -24,7 +24,7 @@ export const GreenButton = styled(Button)`
         background-color: var(--osoc_orange);
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);
-        box-shadow: none;
+        box-shadow: none !important;
     }
 `;
 
@@ -87,12 +87,15 @@ export const RedButton = styled(Button)<AnimatedButton>`
     border-color: var(--osoc_red);
 
     &:disabled {
-        background-color: var(--osoc_red);
-        border-color: var(--osoc_red);
+        background-color: #8a4944;
+        border-color: #8a4944;
     }
 
-    &:hover {
+    &:hover,
+    &:active,
+    &:focus {
         background-color: var(--osoc_red_darkened);
         border-color: var(--osoc_red_darkened);
+        box-shadow: none !important;
     }
 `;
