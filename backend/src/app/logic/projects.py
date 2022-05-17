@@ -79,3 +79,8 @@ async def patch_project_role(db: AsyncSession, project_role_id: int, input_proje
 async def get_conflicts(db: AsyncSession, edition: Edition) -> ConflictStudentList:
     """Returns a list of all students together with the projects they are causing a conflict for"""
     return ConflictStudentList(conflict_students=(await crud.get_conflict_students(db, edition)))
+
+
+async def delete_project_role(db: AsyncSession, project_role_id: int) -> None:
+    """delete a project role"""
+    await crud.delete_project_role(db, project_role_id)
