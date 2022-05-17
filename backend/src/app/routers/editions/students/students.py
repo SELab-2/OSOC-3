@@ -59,11 +59,11 @@ async def delete_student(student: Student = Depends(get_student), db: AsyncSessi
 
 
 @students_router.get("/{student_id}", dependencies=[Depends(require_auth)], response_model=ReturnStudent)
-async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)):
+async def get_student_by_id(student: Student = Depends(get_student)):
     """
     Get information about a specific student.
     """
-    return get_student_return(student, edition)
+    return get_student_return(student)
 
 
 @students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin), Depends(get_latest_edition)],

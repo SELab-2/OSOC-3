@@ -64,7 +64,7 @@ async def get_students_search(db: AsyncSession, edition: Edition, commons: Commo
     return ReturnStudentList(students=students)
 
 
-def get_student_return(student: Student, edition: Edition) -> ReturnStudent:
+def get_student_return(student: Student) -> ReturnStudent:
     """return a student"""
     return ReturnStudent(student=student)
 
