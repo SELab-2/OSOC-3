@@ -39,7 +39,7 @@ export default function Coach({
                     if (e.key === "Enter") addCoach();
                 }}
                 list="users"
-                placeholder="Coach"
+                placeholder="Ex. Michael Scott"
             />
             <datalist id="users">
                 {availableCoaches.map((availableCoach, _index) => {

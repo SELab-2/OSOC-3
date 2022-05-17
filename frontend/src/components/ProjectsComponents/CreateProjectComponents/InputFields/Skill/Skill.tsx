@@ -32,7 +32,7 @@ export default function SkillInput({
                 onKeyDown={e => {
                     if (e.key === "Enter") addSkill();
                 }}
-                placeholder="Skill"
+                placeholder="Ex. Front-end Developer"
                 list="skills"
             />
             <datalist id="skills">
