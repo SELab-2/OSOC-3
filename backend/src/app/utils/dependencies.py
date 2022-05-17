@@ -42,9 +42,13 @@ async def get_student(student_id: int, database: AsyncSession = Depends(get_sess
     return student
 
 
-async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
+async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session),
+                         student: Student = Depends(get_student)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
-    return await get_suggestion_by_id(database, suggestion_id)
+    suggestion: Suggestion = await get_suggestion_by_id(database, suggestion_id)
+    if suggestion.student != student:
+        raise NoResultFound
+    return suggestion
 
 
 async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
@@ -62,8 +66,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")
 async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:
     """Check which user is making a request by decoding its token, and verifying the token type"""
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY,
-                             algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         user_id: int | None = payload.get("sub")
         type_in_token: int | None = payload.get("type")
 
