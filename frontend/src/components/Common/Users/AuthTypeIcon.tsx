@@ -1,6 +1,6 @@
 import { HiOutlineMail } from "react-icons/hi";
 import { AiFillGithub, AiOutlineQuestionCircle } from "react-icons/ai";
-import { AuthType } from "../../data/enums";
+import { AuthType } from "../../../data/enums";
 
 /**
  * An icon representing the type of authentication

@@ -6,9 +6,9 @@ import { Error } from "../../Requests/styles";
 import { AddCoachButtonDiv, ModalContentConfirm } from "../../../AdminsComponents/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
-import UserMenuItem from "../../../GeneralComponents/MenuItem";
-import { StyledMenuItem } from "../../../GeneralComponents/styles";
-import { EmailAndAuth } from "../../../GeneralComponents";
+import UserMenuItem from "../../../Common/Users/MenuItem";
+import { StyledMenuItem } from "../../../Common/Users/styles";
+import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 

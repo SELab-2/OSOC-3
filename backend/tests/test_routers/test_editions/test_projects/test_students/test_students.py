@@ -246,6 +246,43 @@ async def test_delete_pr_suggestion(database_session: AsyncSession, auth_client:
         assert len(json['projectRoles'][0]['suggestions']) == 0
 
 
+async def test_delete_pr_suggestion_multiple(database_session: AsyncSession, auth_client: AuthClient):
+    """Tests deleting a student from a project, with a student being assigned to multiple project_roles"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    project: Project = Project(name="project 1", edition=edition)
+    project2: Project = Project(name="project 2", edition=edition)
+    skill: Skill = Skill(name="skill 1")
+    project_role: ProjectRole = ProjectRole(project=project, skill=skill, slots=1)
+    project_role2: ProjectRole = ProjectRole(project=project2, skill=skill, slots=1)
+    student: Student = Student(
+        first_name="Jos",
+        last_name="Vermeulen",
+        preferred_name="Joske",
+        email_address="josvermeulen@mail.com",
+        phone_number="0487/86.24.45",
+        alumni=True,
+        wants_to_be_student_coach=True,
+        edition=edition
+    )
+    pr_suggestion: ProjectRoleSuggestion = ProjectRoleSuggestion(project_role=project_role, student=student)
+    pr_suggestion2: ProjectRoleSuggestion = ProjectRoleSuggestion(project_role=project_role2, student=student)
+    database_session.add(pr_suggestion)
+    database_session.add(pr_suggestion2)
+    await database_session.commit()
+
+    await auth_client.coach(edition)
+    async with auth_client:
+        resp = await auth_client.delete(
+            f"/editions/{edition.name}/projects/{project.project_id}/roles/{project_role.project_role_id}/students/{student.student_id}"
+        )
+        assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+        response2 = await auth_client.get(f'/editions/{edition.name}/projects/{project.project_id}')
+        json = response2.json()
+        assert len(json['projectRoles']) == 1
+        assert len(json['projectRoles'][0]['suggestions']) == 0
+
+
 async def test_delete_pr_suggestion_non_existing_pr_suggestion(database_session: AsyncSession, auth_client: AuthClient):
     """Tests deleting a pr_suggestion that doesn't exist"""
     edition: Edition = Edition(year=2022, name="ed2022")
