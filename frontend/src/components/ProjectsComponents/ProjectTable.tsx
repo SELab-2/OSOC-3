@@ -11,14 +11,12 @@ import LoadSpinner from "../Common/LoadSpinner";
  * @param props.loading Data is not available yet.
  * @param props.getMoreProjects A function to load more projects.
  * @param props.moreProjectsAvailable More unfetched projects available.
- * @param props.removeProject A function which will be called when a project is removed.
  */
 export default function ProjectTable(props: {
     projects: Project[];
     loading: boolean;
     getMoreProjects: (page: number, reset: boolean) => void;
     moreProjectsAvailable: boolean;
-    removeProject: (project: Project) => void;
 }) {
     if (props.projects.length === 0) {
         if (props.loading) {
@@ -43,11 +41,7 @@ export default function ProjectTable(props: {
             <ProjectsContainer>
                 <CardsGrid>
                     {props.projects.map((project, _index) => (
-                        <ProjectCard
-                            project={project}
-                            removeProject={props.removeProject}
-                            key={_index}
-                        />
+                        <ProjectCard project={project} key={_index} />
                     ))}
                 </CardsGrid>
             </ProjectsContainer>

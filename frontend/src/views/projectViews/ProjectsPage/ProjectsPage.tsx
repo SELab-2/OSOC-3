@@ -8,10 +8,13 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { useSockets } from "../../../contexts/socket-context";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
 import { CreateButton } from "../../../components/Common/Buttons";
 import { SearchBar } from "../../../components/Common/Forms";
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -38,6 +41,7 @@ export default function ProjectPage() {
     const editionId = params.editionId!;
 
     const { role, editions, userId } = useAuth();
+    const { socket } = useSockets();
 
     /**
      * Used to fetch the projects
@@ -126,16 +130,62 @@ export default function ProjectPage() {
     }, [searchString, ownProjects, params.editionId]);
 
     /**
-     * Remove a project in local list.
-     * @param project The project to remove.
+     * Remove a project with a specific id
      */
-    function removeProject(project: Project) {
-        setProjects(
-            projects.filter(object => {
-                return object !== project;
-            })
-        );
+    function findAndRemoveProject(id: string, list: Project[]): Project[] {
+        return list.filter(project => project.projectId.toString() !== id);
     }
+
+    /**
+     * Filter the projects by name
+     * @param searchTerm
+     */
+    function filter(searchTerm: string) {
+        setPage(0);
+        setGotProjects(false);
+        setMoreProjectsAvailable(true);
+        setSearchString(searchTerm);
+        setProjects([]);
+    }
+
+    /**
+     * Websockets
+     */
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Ignore all events that aren't about projects
+            if (data.eventType !== EventType.PROJECT) return;
+
+            // If the project from the event hasn't been loaded in the list, ignore the event as well
+            if (
+                !allProjects.some(
+                    project => project.projectId.toString() === data.pathIds.project_id
+                )
+            ) {
+                return;
+            }
+
+            // Project was deleted: remove it from the list
+            if (data.method === RequestMethod.DELETE) {
+                setAllProjects(findAndRemoveProject(data.pathIds.project_id!, allProjects));
+                setProjects(findAndRemoveProject(data.pathIds.project_id!, projects));
+            } else if (data.method === RequestMethod.PATCH) {
+                console.log("TODO patch :)");
+            }
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [socket, allProjects, projects]);
 
     return (
         <div>
@@ -177,7 +227,6 @@ export default function ProjectPage() {
                 loading={loading}
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
-                removeProject={removeProject}
             />
         </div>
     );
