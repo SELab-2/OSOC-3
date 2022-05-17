@@ -10,10 +10,7 @@ import { CreateProjectRole, ProjectRole } from "../../data/interfaces/projects";
  */
 export async function getProjectRoles(
     edition: string,
-    projectId: string,
-    skillId: number,
-    description: string | undefined,
-    slots: number
+    projectId: string
 ): Promise<ProjectRole[] | null> {
     try {
         const response = await axiosInstance.get(
@@ -105,6 +102,33 @@ export async function editProjectRole(
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
+        } else {
+            throw error;
+        }
+    }
+}
+
+/**
+ * API call to delete a project role
+ * @param edition The edition name.
+ * @param projectId The projectId where to delete a project role.
+ * @param projectRoleId The Id of the project role to delete
+ * @returns whether the delete was successful or not.
+ */
+export async function deleteProjectRole(
+    edition: string,
+    projectId: string,
+    projectRoleId: string
+): Promise<boolean> {
+    try {
+        await axiosInstance.delete(
+            "editions/" + edition + "/projects/" + projectId + "/roles" + projectRoleId
+        );
+
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return false;
         } else {
             throw error;
         }

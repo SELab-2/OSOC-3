@@ -1036,11 +1036,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-<<<<<<< HEAD
-content-hash = "e7952db82764830e89e51ad0b5c433782baa4578cc82320fded134d3d52e3c04"
-=======
 content-hash = "af57762cac23f6cbae8e7ff78c36a7395e3e85f4083303fe6eb8d713dc5ea941"
->>>>>>> develop
 
 [metadata.files]
 aiohttp = [
