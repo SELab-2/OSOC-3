@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from starlette.responses import Response
 
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
@@ -12,6 +11,7 @@ from src.app.schemas.projects import (
     ProjectList, Project, InputProject, ConflictStudentList, QueryParamsProjects
 )
 from src.app.utils.dependencies import get_edition, get_project, require_admin, require_coach, get_latest_edition
+from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Edition, Project as ProjectModel, User
 from .students import project_students_router
@@ -57,8 +57,7 @@ async def get_conflicts(db: AsyncSession = Depends(get_session), edition: Editio
 @projects_router.delete(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_class=Response,
-    dependencies=[Depends(require_admin)]
+    dependencies=[Depends(require_admin), Depends(live)]
 )
 async def delete_project(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
     """Delete a specific project."""
@@ -79,8 +78,7 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 @projects_router.patch(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    response_class=Response,
-    dependencies=[Depends(require_admin), Depends(get_latest_edition)]
+    dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(live)]
 )
 async def patch_project(
         input_project: InputProject,
@@ -105,7 +103,7 @@ async def get_project_roles(project: ProjectModel = Depends(get_project), db: As
 @projects_router.post(
     "/{project_id}/roles",
     response_model=ProjectRoleSchema,
-    dependencies=[Depends(require_admin), Depends(get_latest_edition)]
+    dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(live)]
 )
 async def post_project_role(
         input_project_role: InputProjectRole,
@@ -118,7 +116,7 @@ async def post_project_role(
 @projects_router.patch(
     "/{project_id}/roles/{project_role_id}",
     response_model=ProjectRoleSchema,
-    dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(get_project)]
+    dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(get_project), Depends(live)]
 )
 async def patch_project_role(
         input_project_role: InputProjectRole,

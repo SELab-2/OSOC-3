@@ -234,6 +234,7 @@ async def test_delete_pr_suggestion(database_session: AsyncSession, auth_client:
     await database_session.commit()
 
     await auth_client.coach(edition)
+
     async with auth_client:
         resp = await auth_client.delete(
             f"/editions/{edition.name}/projects/{project.project_id}/roles/{project_role.project_role_id}/students/{student.student_id}"
@@ -241,6 +242,8 @@ async def test_delete_pr_suggestion(database_session: AsyncSession, auth_client:
         assert resp.status_code == status.HTTP_204_NO_CONTENT
 
         response2 = await auth_client.get(f'/editions/{edition.name}/projects/{project.project_id}')
+        print(response2.json())
+        print((await database_session.execute(select(ProjectRole))).scalars().one().suggestions)
         json = response2.json()
         assert len(json['projectRoles']) == 1
         assert len(json['projectRoles'][0]['suggestions']) == 0
