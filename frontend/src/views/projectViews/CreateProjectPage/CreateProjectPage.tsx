@@ -91,11 +91,22 @@ export default function CreateProjectPage() {
 
     async function makeProject() {
         if (name === "") {
-            toast.warning("Project name must be filled in", {
+            toast.error("Project name must be filled in", {
                 toastId: "createProjectNoName",
             });
             return;
         }
+
+        let badSkill = false;
+        projectSkills.forEach(projectSkill => {
+            if (isNaN(projectSkill.slots)) {
+                badSkill = true;
+                toast.error(projectSkill.skill.name + " is missing the amount of students", {
+                    toastId: "invalidSkill" + projectSkill.skill.name,
+                });
+            }
+        });
+        if (badSkill) return;
 
         const coachIds: number[] = [];
         coaches.forEach(coachToAdd => {

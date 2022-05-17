@@ -11,6 +11,7 @@ import {
 } from "./styles";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from "react";
+import { BsPersonFill } from "react-icons/bs";
 
 /**
  * 
@@ -73,6 +74,7 @@ export default function AddedSkills({
                                     updateSkills(event, index, true);
                                 }}
                             />
+                            <BsPersonFill />
                         </TopLeftContainer>
                         <Delete
                             onClick={() => {
