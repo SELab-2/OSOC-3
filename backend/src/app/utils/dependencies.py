@@ -36,7 +36,6 @@ async def get_edition(edition_name: str, database: AsyncSession = Depends(get_se
 async def get_student(student_id: int, database: AsyncSession = Depends(get_session),
                       edition: Edition = Depends(get_edition)) -> Student:
     """Get the student from the database, given the id in the path"""
-    # return await get_student_by_id(database, student_id)
     student: Student = await get_student_by_id(database, student_id)
     if student.edition != edition:
         raise NoResultFound
