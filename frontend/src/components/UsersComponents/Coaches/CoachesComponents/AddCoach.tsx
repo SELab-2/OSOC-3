@@ -33,9 +33,9 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     useEffect(() => {
         // For some obscure reason the ref can only be cleared in here & not somewhere else
         if (clearRef) {
-            typeaheadRef.current?.clear();
             // This triggers itself, but only once, so it doesn't really matter
             setClearRef(false);
+            typeaheadRef.current?.clear();
         }
     }, [clearRef, typeaheadRef]);
 
