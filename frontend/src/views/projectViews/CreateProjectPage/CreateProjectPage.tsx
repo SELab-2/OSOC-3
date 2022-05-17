@@ -1,6 +1,5 @@
 import {
     CreateProjectContainer,
-    CreateButton,
     Label,
     CenterContainer,
     Center,
@@ -24,6 +23,7 @@ import { SkillProject } from "../../../data/interfaces/projects";
 import { User } from "../../../utils/api/users/users";
 import { toast } from "react-toastify";
 import { createProjectRole } from "../../../utils/api/projectRoles";
+import { CreateButton } from "../../../components/Common/Buttons";
 /**
  * React component of the create project page.
  * @returns The create project page.
@@ -83,7 +83,7 @@ export default function CreateProjectPage() {
                         <BiArrowBack />
                         Cancel
                     </CancelButton>
-                    <CreateButton onClick={makeProject}>Create Project</CreateButton>
+                    <CreateButton label="Create Project" onClick={makeProject} />
                 </Center>
             </CreateProjectContainer>
         </CenterContainer>
