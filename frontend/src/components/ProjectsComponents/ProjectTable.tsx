@@ -2,10 +2,10 @@ import { CardsGrid, ProjectsContainer } from "../../views/projectViews/ProjectsP
 import { ProjectCard } from "./index";
 import InfiniteScroll from "react-infinite-scroller";
 import { Project } from "../../data/interfaces";
-import { SpinnerContainer, Error } from "../UsersComponents/Requests/styles";
-import { Spinner } from "react-bootstrap";
 import React from "react";
 import { MessageDiv } from "./styles";
+import LoadSpinner from "../Common/LoadSpinner";
+import { Error } from "../Common/Users/styles";
 
 /**
  * A table of [[ProjectCard]]s.
@@ -43,11 +43,7 @@ export default function ProjectTable(props: {
         <InfiniteScroll
             loadMore={props.getMoreProjects}
             hasMore={props.moreProjectsAvailable}
-            loader={
-                <SpinnerContainer key={"spinner"}>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            }
+            loader={<LoadSpinner show={true} />}
             initialLoad={true}
             useWindow={false}
             getScrollParent={() => document.getElementById("root")}

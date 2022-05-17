@@ -2,7 +2,6 @@ import React from "react";
 import { StudentCard } from "../index";
 import { StudentCardsList } from "./styles";
 import { Student } from "../../../data/interfaces/students";
-import { SpinnerContainer } from "../../UsersComponents/Requests/styles";
 import InfiniteScroll from "react-infinite-scroller";
 import LoadSpinner from "../../Common/LoadSpinner";
 
@@ -22,11 +21,7 @@ export default function StudentList(props: Props) {
             <InfiniteScroll
                 loadMore={props.getMoreData}
                 hasMore={props.moreDataAvailable}
-                loader={
-                    <SpinnerContainer key={"spinner"}>
-                        <LoadSpinner show={true} />
-                    </SpinnerContainer>
-                }
+                loader={<LoadSpinner show={true} />}
                 useWindow={false}
                 initialLoad={true}
             >

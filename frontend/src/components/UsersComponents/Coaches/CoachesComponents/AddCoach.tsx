@@ -2,15 +2,15 @@ import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users"
 import { useState, createRef, useEffect } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { Error } from "../../Requests/styles";
-import { AddCoachButtonDiv, ModalContentConfirm } from "../../../AdminsComponents/styles";
+import { AddButtonDiv } from "../../../AdminsComponents/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../Common/Users/MenuItem";
-import { StyledMenuItem } from "../../../Common/Users/styles";
+import { Error, StyledMenuItem } from "../../../Common/Users/styles";
 import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../../../Common/styles";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -118,11 +118,11 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     return (
         <>
-            <AddCoachButtonDiv>
+            <AddButtonDiv>
                 <CreateButton showIcon={false} onClick={handleShow}>
                     Add coach to current edition
                 </CreateButton>
-            </AddCoachButtonDiv>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
