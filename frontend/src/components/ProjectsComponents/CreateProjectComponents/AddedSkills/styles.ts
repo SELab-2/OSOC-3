@@ -61,5 +61,5 @@ export const AmountInput = styled.input`
     border: none;
     border-radius: 5px;
     width: 100px;
-    direction:rtl;
+    direction: rtl;
 `;

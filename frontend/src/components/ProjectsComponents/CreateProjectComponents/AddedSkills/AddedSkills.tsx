@@ -73,11 +73,7 @@ export default function AddedSkills({
                                     updateSkills(event, index, true);
                                 }}
                             />
-                            {
-                            (skill.slots === 1)
-                            ? <div>student</div>
-                            : <div>students</div>
-                            }
+                            {skill.slots === 1 ? <div>student</div> : <div>students</div>}
                         </TopLeftContainer>
                         <Delete
                             onClick={() => {
