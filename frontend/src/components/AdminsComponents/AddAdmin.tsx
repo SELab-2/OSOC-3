@@ -4,12 +4,13 @@ import { addAdmin } from "../../utils/api/users/admins";
 import { AddButtonDiv, EmailDiv, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import { Error, StyledMenuItem } from "../Common/Users/styles";
+import { StyledMenuItem } from "../Common/Users/styles";
 import UserMenuItem from "../Common/Users/MenuItem";
 import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../Common/styles";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
+import { toast } from "react-toastify";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -19,7 +20,6 @@ import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
@@ -42,7 +42,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
             filter = searchTerm;
         }
         setGettingData(true);
-        setError("");
         try {
             const response = await getUsersNonAdmin(filter, page);
             if (page === 0) {
@@ -53,7 +52,9 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
             setGettingData(false);
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive users", {
+                toastId: "add_admins_failed",
+            });
             setGettingData(false);
         }
     }
@@ -66,7 +67,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
     const handleClose = () => {
         setSelected(undefined);
-        setError("");
         setShow(false);
     };
     const handleShow = () => {
@@ -75,15 +75,18 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
     async function addUserAsAdmin(user: User) {
         setLoading(true);
-        setError("");
         let success = false;
         try {
             success = await addAdmin(user.userId);
             if (!success) {
-                setError("Something went wrong. Failed to add admin");
+                toast.error("Failed to add admin", {
+                    toastId: "add_admins_failed",
+                });
             }
         } catch (error) {
-            setError("Something went wrong. Failed to add admin");
+            toast.error("Failed to add admin", {
+                toastId: "add_admins_failed",
+            });
         }
         setLoading(false);
         if (success) {
@@ -149,7 +152,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
-                                setError("");
                             }}
                             renderMenu={(results, menuProps) => {
                                 const {
@@ -187,7 +189,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentConfirm>
             </Modal>

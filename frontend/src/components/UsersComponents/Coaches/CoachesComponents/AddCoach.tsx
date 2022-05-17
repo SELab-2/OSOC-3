@@ -6,11 +6,12 @@ import { AddButtonDiv } from "../../../AdminsComponents/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../Common/Users/MenuItem";
-import { Error, StyledMenuItem } from "../../../Common/Users/styles";
+import { StyledMenuItem } from "../../../Common/Users/styles";
 import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../../../Common/styles";
+import { toast } from "react-toastify";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -22,7 +23,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
@@ -44,7 +44,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
             filter = searchTerm;
         }
         setGettingData(true);
-        setError("");
         try {
             const response = await getUsersExcludeEdition(props.edition, filter, page);
             if (page === 0) {
@@ -55,7 +54,9 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
             setGettingData(false);
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive users", {
+                toastId: "fetch_users_failed",
+            });
             setGettingData(false);
         }
     }
@@ -68,7 +69,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     const handleClose = () => {
         setSelected(undefined);
-        setError("");
         setShow(false);
     };
     const handleShow = () => {
@@ -77,15 +77,18 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     async function addCoach(user: User) {
         setLoading(true);
-        setError("");
         let success = false;
         try {
             success = await addCoachToEdition(user.userId, props.edition);
             if (!success) {
-                setError("Something went wrong. Failed to add coach");
+                toast.error("Failed to add coach", {
+                    toastId: "add_coach_failed",
+                });
             }
         } catch (error) {
-            setError("Something went wrong. Failed to add coach");
+            toast.error("Failed to add coach", {
+                toastId: "add_coach_failed",
+            });
         }
         setLoading(false);
         if (success) {
@@ -142,7 +145,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
-                                setError("");
                             }}
                             renderMenu={(results, menuProps) => {
                                 const {
@@ -179,7 +181,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentConfirm>
             </Modal>

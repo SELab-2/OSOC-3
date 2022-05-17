@@ -4,6 +4,7 @@ import LoadSpinner from "../../../Common/LoadSpinner";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 import DeleteButton from "../../../Common/Buttons/DeleteButton";
 import { Spacing } from "../styles";
+import { toast } from "react-toastify";
 
 /**
  * Component consisting of two buttons to accept or reject a coach request.
@@ -15,7 +16,6 @@ export default function AcceptReject(props: {
     removeRequest: (coachAdded: boolean, request: Request) => void;
 }) {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     async function accept() {
         setLoading(true);
@@ -23,10 +23,14 @@ export default function AcceptReject(props: {
         try {
             success = await acceptRequest(props.request.requestId);
             if (!success) {
-                setError("Failed to accept");
+                toast.error("Failed to accept request", {
+                    toastId: "accept_request_failed",
+                });
             }
         } catch (exception) {
-            setError("Failed to accept");
+            toast.error("Failed to accept request", {
+                toastId: "accept_request_failed",
+            });
         }
         setLoading(false);
         if (success) {
@@ -40,19 +44,19 @@ export default function AcceptReject(props: {
         try {
             success = await rejectRequest(props.request.requestId);
             if (!success) {
-                setError("Failed to reject");
+                toast.error("Failed to reject request", {
+                    toastId: "reject_request_failed",
+                });
             }
         } catch (exception) {
-            setError("Failed to reject");
+            toast.error("Failed to reject request", {
+                toastId: "reject_request_failed",
+            });
         }
         setLoading(false);
         if (success) {
             props.removeRequest(false, props.request);
         }
-    }
-
-    if (error) {
-        return <div>{error}</div>;
     }
 
     if (loading) {

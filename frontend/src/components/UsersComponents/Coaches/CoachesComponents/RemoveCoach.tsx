@@ -14,7 +14,7 @@ import {
 } from "../styles";
 import LoadSpinner from "../../../Common/LoadSpinner";
 import DeleteButton from "../../../Common/Buttons/DeleteButton";
-import { Error } from "../../../Common/Users/styles";
+import { toast } from "react-toastify";
 
 /**
  * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.
@@ -29,14 +29,12 @@ export default function RemoveCoach(props: {
     removeCoach: () => void;
 }) {
     const [show, setShow] = useState(false);
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleClose = () => setShow(false);
 
     const handleShow = () => {
         setShow(true);
-        setError("");
     };
 
     /**
@@ -57,11 +55,15 @@ export default function RemoveCoach(props: {
             if (removed) {
                 props.removeCoach();
             } else {
-                setError("Something went wrong. Failed to remove coach");
+                toast.error("Failed to remove coach", {
+                    toastId: "remove_coach_failed",
+                });
                 setLoading(false);
             }
         } catch (error) {
-            setError("Something went wrong. Failed to remove coach");
+            toast.error("Failed to remove coach", {
+                toastId: "remove_coach_failed",
+            });
             setLoading(false);
         }
     }
@@ -116,10 +118,7 @@ export default function RemoveCoach(props: {
                             {props.coach.auth.email}
                         </CredsDiv>
                     </Modal.Body>
-                    <Modal.Footer>
-                        {buttons}
-                        <Error> {error} </Error>
-                    </Modal.Footer>
+                    <Modal.Footer>{buttons}</Modal.Footer>
                 </ModalContent>
             </Modal>
         </>

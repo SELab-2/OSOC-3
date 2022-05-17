@@ -21,7 +21,7 @@ import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
-import { Error } from "../../components/Common/Users/styles";
+import { toast } from "react-toastify";
 
 interface EmailRow {
     email: StudentEmail;
@@ -36,7 +36,6 @@ export default function MailOverviewPage() {
     const [gotEmails, setGotEmails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emailRows available
-    const [error, setError] = useState<string | undefined>(undefined);
     const [page, setPage] = useState(0);
     const [allSelected, setAllSelected] = useState(false);
 
@@ -83,10 +82,12 @@ export default function MailOverviewPage() {
                 );
             }
             setPage(page + 1);
-            setGotEmails(true);
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive states", {
+                toastId: "fetch_emails_failed",
+            });
         }
+        setGotEmails(true);
         setLoading(false);
     }
 
@@ -150,18 +151,14 @@ export default function MailOverviewPage() {
             alert("Successful changed");
             refresh();
         } catch {
-            alert("Failed to change state");
+            toast.error("Failed to change state", {
+                toastId: "change_emails_failed",
+            });
         }
     }
 
     let table;
-    if (error) {
-        table = (
-            <CenterDiv>
-                <Error>{error}</Error>
-            </CenterDiv>
-        );
-    } else if (gotEmails && emailRows.length === 0) {
+    if (gotEmails && emailRows.length === 0) {
         table = (
             <CenterDiv>
                 <MessageDiv>No students found.</MessageDiv>

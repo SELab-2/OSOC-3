@@ -4,7 +4,8 @@ import { RequestsContainer, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
 import SearchBar from "../../Common/Forms/SearchBar";
-import { Error, SearchFieldDiv } from "../../Common/Users/styles";
+import { SearchFieldDiv } from "../../Common/Users/styles";
+import { toast } from "react-toastify";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -19,7 +20,6 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
     const [gotData, setGotData] = useState(false); // Received data
     const [open, setOpen] = useState(false); // Collapsible is open
-    const [error, setError] = useState(""); // Error message
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
     const [allRequestsFetched, setAllRequestsFetched] = useState(false);
     const [page, setPage] = useState(0); // The next page which needs to be fetched
@@ -67,7 +67,6 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         }
 
         setLoading(true);
-        setError("");
         try {
             const response = await getRequests(props.edition, searchTerm, page);
             if (response.requests.length === 0) {
@@ -91,10 +90,12 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
             }
 
             setPage(page + 1);
-            setGotData(true);
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive requests", {
+                toastId: "fetch_requests_failed",
+            });
         }
+        setGotData(true);
         setLoading(false);
     }
 
@@ -107,9 +108,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     }
 
     let list;
-    if (error) {
-        list = <Error>{error}</Error>;
-    } else if (gotData && requests.length === 0) {
+    if (gotData && requests.length === 0) {
         list = <div>No requests found</div>;
     } else {
         list = (

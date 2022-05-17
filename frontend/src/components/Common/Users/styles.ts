@@ -42,12 +42,6 @@ export const ListDiv = styled.div`
     margin-top: 10px;
 `;
 
-export const Error = styled.div`
-    color: var(--osoc_red);
-    width: 100%;
-    margin: auto;
-`;
-
 export const SearchFieldDiv = styled.div`
     float: left;
     width: 15em;

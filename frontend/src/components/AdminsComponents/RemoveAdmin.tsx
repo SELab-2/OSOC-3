@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
 import { RemoveAdminBody } from "./styles";
-import { Error } from "../Common/Users/styles";
 import { ModalContentWarning } from "../Common/styles";
+import { toast } from "react-toastify";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
@@ -13,12 +13,10 @@ import { ModalContentWarning } from "../Common/styles";
  */
 export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: User) => void }) {
     const [show, setShow] = useState(false);
-    const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
         setShow(true);
-        setError("");
     };
 
     async function removeUserAsAdmin(removeCoach: boolean) {
@@ -33,10 +31,14 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
             if (removed) {
                 props.removeAdmin(props.admin);
             } else {
-                setError("Something went wrong. Failed to remove admin");
+                toast.error("Failed to remove admin", {
+                    toastId: "remove_admin_failed",
+                });
             }
         } catch (error) {
-            setError("Something went wrong. Failed to remove admin");
+            toast.error("Failed to remove admin", {
+                toastId: "remove_admin_failed",
+            });
         }
     }
 
@@ -63,9 +65,6 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                             variant="primary"
                             onClick={() => {
                                 removeUserAsAdmin(false);
-                                if (!error) {
-                                    handleClose();
-                                }
                             }}
                         >
                             Remove admin
@@ -74,9 +73,6 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                             variant="primary"
                             onClick={() => {
                                 removeUserAsAdmin(true);
-                                if (!error) {
-                                    handleClose();
-                                }
                             }}
                         >
                             Remove as admin and coach
@@ -84,7 +80,6 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentWarning>
             </Modal>

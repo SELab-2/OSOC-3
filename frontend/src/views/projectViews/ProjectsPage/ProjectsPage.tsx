@@ -8,6 +8,7 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { toast } from "react-toastify";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -19,7 +20,6 @@ export default function ProjectPage() {
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
-    const [error, setError] = useState<string | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -76,13 +76,17 @@ export default function ProjectPage() {
                 }
 
                 setPage(page + 1);
-                setGotProjects(true);
             } else {
-                setError("Oops, something went wrong...");
+                toast.error("Failed to receive projects", {
+                    toastId: "fetch_projects_failed",
+                });
             }
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive projects", {
+                toastId: "fetch_projects_failed",
+            });
         }
+        setGotProjects(true);
         setLoading(false);
     }
 
@@ -158,7 +162,6 @@ export default function ProjectPage() {
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}
-                error={error}
             />
         </div>
     );

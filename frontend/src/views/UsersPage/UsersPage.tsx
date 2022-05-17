@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/Requests";
 import { User } from "../../utils/api/users/users";
 import { getCoaches } from "../../utils/api/users/coaches";
+import { toast } from "react-toastify";
 
 /**
  * Page for admins to manage coach and admin settings.
@@ -15,13 +16,13 @@ function UsersPage() {
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [gotData, setGotData] = useState(false); // Received data
-    const [error, setError] = useState(""); // Error message
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
     const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
 
     const params = useParams();
+    const navigate = useNavigate();
 
     /**
      * Request the next page from the list of coaches.
@@ -43,7 +44,6 @@ function UsersPage() {
         }
 
         setLoading(true);
-        setError("");
         try {
             const response = await getCoaches(params.editionId as string, searchTerm, page);
             if (response.users.length === 0) {
@@ -67,10 +67,12 @@ function UsersPage() {
             }
 
             setPage(page + 1);
-            setGotData(true);
         } catch (exception) {
-            setError("Oops, something went wrong...");
+            toast.error("Failed to receive coaches", {
+                toastId: "fetch_coaches_failed",
+            });
         }
+        setGotData(true);
         setLoading(false);
     }
 
@@ -112,8 +114,8 @@ function UsersPage() {
     }
 
     if (params.editionId === undefined) {
-        // If this happens, User should be redirected to error page
-        return <div>Error</div>;
+        navigate("/404-not-found");
+        return null;
     } else {
         return (
             <div>
@@ -123,7 +125,6 @@ function UsersPage() {
                     edition={params.editionId}
                     coaches={coaches}
                     gotData={gotData}
-                    error={error}
                     getMoreCoaches={getCoachesData}
                     searchCoaches={filterCoachesData}
                     moreCoachesAvailable={moreCoachesAvailable}
