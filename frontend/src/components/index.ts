@@ -10,4 +10,5 @@ export * as RegisterComponents from "./RegisterComponents";
 export { default as Modal } from "./ProjectsComponents/ConfirmDelete";
 export * as UsersComponents from "./UsersComponents";
 export * as AdminsComponents from "./AdminsComponents";
-export * as GeneralComponents from "./GeneralComponents";
+export * as GeneralComponents from "./Common/Users";
+export * as ProjectsComponenets from "./ProjectsComponents";

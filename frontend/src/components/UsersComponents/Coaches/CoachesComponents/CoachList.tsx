@@ -1,9 +1,10 @@
 import { User } from "../../../../utils/api/users/users";
-import { CoachesTable, ListDiv, RemoveTh } from "../styles";
+import { CoachesTable, RemoveTh } from "../styles";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { CoachListItem } from "./index";
 import LoadSpinner from "../../../Common/LoadSpinner";
+import { ListDiv } from "../../../Common/Users/styles";
 
 /**
  * A list of [[CoachListItem]]s.
@@ -26,7 +27,7 @@ export default function CoachList(props: {
                 pageStart={0}
                 loadMore={props.getMoreCoaches}
                 hasMore={props.moreCoachesAvailable}
-                loader={<LoadSpinner show={true} />}
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >

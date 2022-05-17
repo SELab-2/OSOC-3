@@ -27,9 +27,12 @@ export const ClosedArrow = styled(BiDownArrow)`
     offset: 0 30px;
 `;
 
-export const RequestsTable = styled(Table)`
-    // TODO: make all tables in site uniform
-`;
+export const RequestsTable = styled(Table).attrs({
+    striped: true,
+    bordered: true,
+    variant: "dark",
+    hover: false,
+})``;
 
 export const RequestsContainer = styled.div`
     width: 50em;
@@ -50,19 +53,6 @@ export const AcceptRejectTd = styled.td`
 export const Spacing = styled.div`
     display: inline-block;
     width: 5px;
-`;
-
-export const SpinnerContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
-`;
-
-export const Error = styled.div`
-    color: var(--osoc_red);
-    width: 100%;
-    margin: auto;
 `;
 
 export const RequestListContainer = styled.div`

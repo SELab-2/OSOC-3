@@ -1,7 +1,7 @@
 import { User } from "../../utils/api/users/users";
 import React from "react";
 import { RemoveAdmin } from "./index";
-import { EmailAndAuth } from "../GeneralComponents";
+import { EmailAndAuth } from "../Common/Users";
 
 /**
  * An item from [[AdminList]]. Contains the credentials of an admin and a button to remove the admin.

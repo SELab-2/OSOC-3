@@ -1,9 +1,10 @@
 import { User } from "../../utils/api/users/users";
-import { SpinnerContainer } from "../UsersComponents/Requests/styles";
-import { Spinner } from "react-bootstrap";
-import { AdminsTable, AdminsTableDiv } from "./styles";
+import { AdminsTable } from "./styles";
 import React from "react";
 import { AdminListItem } from "./index";
+import LoadSpinner from "../Common/LoadSpinner";
+import { ListDiv } from "../Common/Users/styles";
+import { SpinnerContainer } from "../Common/LoadSpinner/styles";
 
 /**
  * List of [[AdminListItem]]s which represents all admins.
@@ -22,7 +23,7 @@ export default function AdminList(props: {
     if (props.loading) {
         return (
             <SpinnerContainer>
-                <Spinner animation="border" />
+                <LoadSpinner show={true} />
             </SpinnerContainer>
         );
     } else if (props.admins.length === 0) {
@@ -34,7 +35,7 @@ export default function AdminList(props: {
     }
 
     return (
-        <AdminsTableDiv>
+        <ListDiv>
             <AdminsTable>
                 <thead>
                     <tr>
@@ -53,6 +54,6 @@ export default function AdminList(props: {
                     ))}
                 </tbody>
             </AdminsTable>
-        </AdminsTableDiv>
+        </ListDiv>
     );
 }
