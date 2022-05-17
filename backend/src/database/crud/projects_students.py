@@ -67,7 +67,6 @@ async def remove_project_role_suggestion(db: AsyncSession, project_role: Project
         ProjectRoleSuggestion.student == student and
         ProjectRoleSuggestion.project_role == project_role
     ))).scalar_one()
-    print(project_role_suggestion)
     await db.delete(project_role_suggestion)
     await db.commit()
     await db.refresh(project_role)

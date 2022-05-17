@@ -66,7 +66,6 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
     result = await db.execute(query)
     project = result.unique().scalars().one()
     # refresh to see updated relations
-    # await db.refresh(project)
     return project
 
 
