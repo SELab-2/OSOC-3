@@ -7,7 +7,7 @@ import { Suggestions } from "../../data/interfaces/suggestions";
  * @param edition The edition name.
  * @param studentId The ID of the student which suggestions need to be fetched.
  */
-export async function getSuggestions(edition: string, studentId: string) {
+export async function getSuggestions(edition: string, studentId: number) {
     try {
         const response = await axiosInstance.get(
             "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions"

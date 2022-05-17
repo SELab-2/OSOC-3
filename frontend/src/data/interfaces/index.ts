@@ -3,3 +3,4 @@ export type { User } from "./users";
 export type { Partner, Coach, Project, CreateProject } from "./projects";
 export type { Email, EmailHistoryList } from "./email";
 export type { Student } from "./student";
+export type { Conflicts, Conflict, PrSuggestion } from "./conflicts";

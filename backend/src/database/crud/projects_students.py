@@ -1,7 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.sql import Select
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.app.schemas.projects import InputArgumentation
 from src.database.models import ProjectRoleSuggestion
 
@@ -10,7 +9,7 @@ from src.database.models import ProjectRole, User, Student
 
 def _get_pr_suggestion_for_pr_by_student_query(project_role: ProjectRole, student: Student) -> Select:
     return select(ProjectRoleSuggestion).where(
-        ProjectRoleSuggestion.project_role == project_role and
+        ProjectRoleSuggestion.project_role == project_role).where(
         ProjectRoleSuggestion.student == student
     )
 
@@ -64,7 +63,7 @@ async def update_pr_suggestion(
 async def remove_project_role_suggestion(db: AsyncSession, project_role: ProjectRole, student: Student):
     """Remove a student from a project in the database"""
     project_role_suggestion = (await db.execute(select(ProjectRoleSuggestion).where(
-        ProjectRoleSuggestion.student == student and
+        ProjectRoleSuggestion.student == student).where(
         ProjectRoleSuggestion.project_role == project_role
     ))).scalar_one()
     print(project_role_suggestion)

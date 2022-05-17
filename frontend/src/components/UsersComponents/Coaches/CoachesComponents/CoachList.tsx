@@ -26,7 +26,7 @@ export default function CoachList(props: {
                 pageStart={0}
                 loadMore={props.getMoreCoaches}
                 hasMore={props.moreCoachesAvailable}
-                loader={<LoadSpinner show={true} />}
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >
