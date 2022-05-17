@@ -1,4 +1,4 @@
-import { User } from "../../utils/api/users/users";
+import { User } from "../../../utils/api/users/users";
 import { DropdownEmailDiv, NameDiv } from "./styles";
 import EmailAndAuth from "./EmailAndAuth";
 
