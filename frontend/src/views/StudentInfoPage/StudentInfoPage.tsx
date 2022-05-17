@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getStudent, getStudents } from "../../utils/api/students";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import StudentInfo from "../../components/StudentInfoComponents/StudentInfo";
-import { Student } from "../../data/interfaces/students";
 
 /**
  * @returns the detailed page of a student. Here you can make a suggestion and admins
@@ -11,83 +9,15 @@ import { Student } from "../../data/interfaces/students";
 function StudentInfoPage() {
     const params = useParams();
     const studentId = params.id;
-    const [students, setStudents] = useState<Student[]>([]);
-    const [nameFilter, setNameFilter] = useState("");
-    const [rolesFilter, setRolesFilter] = useState<number[]>([]);
-    const [alumniFilter, setAlumniFilter] = useState(false);
-    const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
-    const [currentStudent, setCurrentStudent] = useState<Student>();
+    const editionId = params.editionId;
 
-    /**
-     * Request all students with selected filters.
-     */
-    async function callGetStudents() {
-        try {
-            const response = await getStudents(
-                params.editionId!,
-                nameFilter,
-                rolesFilter,
-                alumniFilter,
-                studentCoachVolunteerFilter
-            );
-            setStudents(response.students);
-        } catch (error) {
-            console.log(error);
-        }
+    const navigate = useNavigate();
+
+    if (studentId === undefined || (isNaN(+studentId) && editionId === undefined)) {
+        navigate("/404-not-found");
     }
 
-    /**
-     * Request the currently selected student.
-     */
-    async function callGetStudent() {
-        try {
-            const response = await getStudent(params.editionId!, params.id!);
-            setCurrentStudent(response);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    /**
-     * fetch students when a filter changes
-     */
-    useEffect(() => {
-        callGetStudents();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
-
-    /**
-     * fetch student when the student id changes
-     */
-    useEffect(() => {
-        callGetStudent();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [studentId]);
-
-    if (!currentStudent) {
-        return (
-            <div>
-                <h1>loading</h1>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                <StudentInfo
-                    students={students}
-                    currentStudent={currentStudent!}
-                    nameFilter={nameFilter}
-                    setNameFilter={setNameFilter}
-                    alumniFilter={alumniFilter}
-                    setAlumniFilter={setAlumniFilter}
-                    rolesFilter={rolesFilter}
-                    setRolesFilter={setRolesFilter}
-                    studentCoachVolunteerFilter={studentCoachVolunteerFilter}
-                    setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
-                />
-            </div>
-        );
-    }
+    return <StudentInfo studentId={Number(studentId)} editionId={editionId as string} />;
 }
 
 export default StudentInfoPage;

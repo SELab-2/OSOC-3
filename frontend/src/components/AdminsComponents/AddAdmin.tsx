@@ -5,9 +5,9 @@ import { EmailDiv, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import { Error } from "../UsersComponents/Requests/styles";
-import { StyledMenuItem } from "../GeneralComponents/styles";
-import UserMenuItem from "../GeneralComponents/MenuItem";
-import { EmailAndAuth } from "../GeneralComponents";
+import { StyledMenuItem } from "../Common/Users/styles";
+import UserMenuItem from "../Common/Users/MenuItem";
+import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
 
 /**

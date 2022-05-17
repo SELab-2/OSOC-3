@@ -2,7 +2,7 @@ import { User } from "../../../../utils/api/users/users";
 import React from "react";
 import RemoveCoach from "./RemoveCoach";
 import { RemoveTd } from "../styles";
-import { EmailAndAuth } from "../../../GeneralComponents";
+import { EmailAndAuth } from "../../../Common/Users";
 
 /**
  * An item from [[CoachList]] which represents one coach.
