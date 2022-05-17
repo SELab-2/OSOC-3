@@ -15,7 +15,16 @@ export const FirstName = styled.h1`
 `;
 
 export const LastName = styled.h1`
+    padding-right: 5px;
     color: var(--osoc_orange);
+`;
+
+export const StudentLink = styled.p`
+    font-size: 12px;
+    align-self: flex-end;
+    &:hover {
+        cursor: pointer;
+    }
 `;
 
 export const PreferedName = styled.p`
