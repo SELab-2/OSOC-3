@@ -30,7 +30,6 @@ import {
 } from "../../../components/ProjectDetailComponents";
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
 import { toast } from "react-toastify";
-import { StudentListFilters } from "../../../components/StudentsComponents";
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
@@ -90,7 +89,7 @@ export default function ProjectDetailPage() {
         setShowAddModal(false);
 
         const student = await getStudent(editionId, parseInt(result.draggableId));
-        await toast.promise(
+        const newProjectRole = await toast.promise(
             addStudentToProject(
                 editionId,
                 projectId.toString(),
@@ -105,12 +104,15 @@ export default function ProjectDetailPage() {
             },
             { toastId: "addStudentToProject" }
         );
+        if (!newProjectRole) return
+
         const newProjectRoles = projectRoles.map((projectRole, index) => {
             if (projectRole.projectRoleId.toString() === result.destination?.droppableId) {
                 const newSuggestions = [...projectRole.suggestions];
                 newSuggestions.splice(result.destination.index, 0, {
                     projectRoleSuggestionId: index,
                     argumentation: motivation,
+                    drafter: newProjectRole.drafter,
                     student: student,
                 });
                 return { ...projectRole, suggestions: newSuggestions };
@@ -136,7 +138,7 @@ export default function ProjectDetailPage() {
         <DragDropContext onDragEnd={result => onDragDrop(result)}>
             <ProjectPageContainer>
                 <StudentList/>
-                <StudentListFilters/>
+                
 
                 <ProjectContainer>
                     <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
@@ -239,6 +241,7 @@ export default function ProjectDetailPage() {
                     newSuggestions.splice(destination.index, 0, {
                         projectRoleSuggestionId: index,
                         argumentation: "arg",
+                        drafter: {userId: 1, name: "Fix this"},
                         student: student,
                     });
                     return { ...projectRole, suggestions: newSuggestions };

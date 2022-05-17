@@ -1,6 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
-import { AddRoleSuggestion } from "../../data/interfaces/projects";
+import { AddRoleSuggestion, ProjectRoleSuggestion } from "../../data/interfaces/projects";
 
 /**
  * API call to make a student role suggestion.
@@ -17,7 +17,7 @@ export async function addStudentToProject(
     projectRoleId: string,
     studentId: string,
     argumentation: string | undefined
-): Promise<boolean> {
+): Promise<ProjectRoleSuggestion | null> {
     const payload: AddRoleSuggestion = {
         argumentation: argumentation || "",
     };
@@ -34,11 +34,10 @@ export async function addStudentToProject(
                 studentId,
             payload
         );
-        if (response) return true;
-        else return false;
+        return response.data as ProjectRoleSuggestion;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            return false;
+            return null;
         } else {
             throw error;
         }

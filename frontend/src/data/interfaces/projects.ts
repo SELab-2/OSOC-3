@@ -34,7 +34,7 @@ export interface ProjectRoleSuggestion {
     argumentation: string;
 
     /** The user who suggested this student */
-    // drafter: Coach;
+    drafter: Coach;
 
     /** The suggested student */
     student: Student;

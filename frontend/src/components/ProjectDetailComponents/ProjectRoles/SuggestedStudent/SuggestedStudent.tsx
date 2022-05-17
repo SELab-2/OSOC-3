@@ -55,8 +55,13 @@ export default function SuggestedStudent({
                         />
                     </NameDeleteContainer>
                     <DrafterContainer>
-                        By Coach 1:
-                        {" " + suggestion.argumentation}
+                        {suggestion.argumentation !== "" ? (
+                            <>
+                                By {suggestion.drafter.name}:{" " + suggestion.argumentation}
+                            </>
+                        ) : (
+                            <>By {suggestion.drafter.name}</>
+                        )}
                     </DrafterContainer>
                     {role === Role.ADMIN && (
                         <ConfirmContainer>

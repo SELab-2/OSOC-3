@@ -10,6 +10,12 @@ export const ProjectRoleContainer = styled.div`
     box-shadow: 5px 5px 15px #131329;
 `;
 
+export const TitleDeleteContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+
 export const Suggestions = styled.div`
     min-height: 10vh;
 `;

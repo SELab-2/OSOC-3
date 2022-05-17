@@ -28,7 +28,7 @@ export default function TitleAndEdit({
     editedProject: Project;
     setEditedProject: (project: Project) => void;
     setEditing: (editing: boolean) => void;
-    editProject: () => void;
+    editProject: () => Promise<void>;
     role: Role;
     handleShow: () => void;
 }) {
@@ -49,7 +49,7 @@ export default function TitleAndEdit({
                 <EditDeleteContainer>
                     {!editing ? (
                         <Edit>
-                            <MdOutlineEditNote size={"30px"} onClick={() => setEditing(true)} />
+                            <MdOutlineEditNote size={"35px"} onClick={() => setEditing(true)} />
                         </Edit>
                     ) : (
                         <>

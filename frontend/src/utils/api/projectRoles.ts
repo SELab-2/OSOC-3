@@ -122,7 +122,7 @@ export async function deleteProjectRole(
 ): Promise<boolean> {
     try {
         await axiosInstance.delete(
-            "editions/" + edition + "/projects/" + projectId + "/roles" + projectRoleId
+            "editions/" + edition + "/projects/" + projectId + "/roles/" + projectRoleId
         );
 
         return true;
