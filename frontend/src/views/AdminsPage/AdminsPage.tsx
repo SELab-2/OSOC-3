@@ -1,73 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AdminsContainer } from "./styles";
 import { getAdmins } from "../../utils/api/users/admins";
-import { Error, SpinnerContainer } from "../../components/UsersComponents/Requests/styles";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
-import { Spinner } from "react-bootstrap";
 import { User } from "../../utils/api/users/users";
-import { SearchInput } from "../../components/styles";
+import { SearchBar } from "../../components/Common/Forms";
+import { Error, SearchFieldDiv, TableDiv } from "../../components/Common/Users/styles";
+import LoadSpinner from "../../components/Common/LoadSpinner";
 
 export default function AdminsPage() {
+    const [allAdmins, setAllAdmins] = useState<User[]>([]);
     const [admins, setAdmins] = useState<User[]>([]);
-    const [gettingData, setGettingData] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
     const [error, setError] = useState("");
-    const [moreAdminsAvailable, setMoreAdminsAvailable] = useState(true);
 
-    async function getData(page: number, filter: string | undefined = undefined) {
-        if (filter === undefined) {
-            filter = searchTerm;
-        }
-        setGettingData(true);
+    const getData = useCallback(async () => {
         setError("");
         try {
-            const response = await getAdmins(page, filter);
-            if (response.users.length !== 25) {
-                setMoreAdminsAvailable(false);
+            let adminsAvailable = true;
+            let page = 0;
+            let newAdmins: User[] = [];
+            while (adminsAvailable) {
+                const response = await getAdmins(page, searchTerm);
+                if (page === 0) {
+                    newAdmins = response.users;
+                } else {
+                    newAdmins = newAdmins.concat(response.users);
+                }
+                adminsAvailable = response.users.length !== 0;
+                page += 1;
             }
-            if (page === 0) {
-                setAdmins(response.users);
-            } else {
-                setAdmins(admins.concat(response.users));
-            }
-
             setGotData(true);
-            setGettingData(false);
+            setAdmins(newAdmins);
+            setAllAdmins(newAdmins);
         } catch (exception) {
             setError("Oops, something went wrong...");
-            setGettingData(false);
         }
-    }
+        setLoading(false);
+    }, [searchTerm]);
 
     useEffect(() => {
-        if (!gotData && !gettingData && !error) {
-            getData(0);
+        if (!gotData && !loading && !error) {
+            setLoading(true);
+            getData();
         }
-    });
+    }, [gotData, loading, error, getData]);
 
-    function filter(word: string) {
-        setGotData(false);
-        setSearchTerm(word);
-        setAdmins([]);
-        setMoreAdminsAvailable(true);
-        getData(0, word);
-    }
-
-    function adminAdded(user: User) {
+    function addAdmin(user: User) {
+        setAllAdmins(allAdmins.concat([user]));
         if (user.name.includes(searchTerm)) {
             setAdmins([user].concat(admins));
         }
     }
 
+    function removeAdmin(user: User) {
+        setAllAdmins(allAdmins.filter(el => el !== user));
+        setAdmins(admins.filter(el => el !== user));
+    }
+
+    function filter(searchTerm: string) {
+        setSearchTerm(searchTerm);
+        const newAdmins: User[] = [];
+        for (const admin of allAdmins) {
+            if (admin.name.toUpperCase().includes(searchTerm.toUpperCase())) {
+                newAdmins.push(admin);
+            }
+        }
+        setAdmins(newAdmins);
+    }
+
     let list;
     if (admins.length === 0) {
-        if (gettingData) {
-            list = (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
+        if (loading) {
+            list = <LoadSpinner show={true} />;
         } else if (gotData) {
             list = <div>No admins found</div>;
         } else {
@@ -77,21 +83,24 @@ export default function AdminsPage() {
         list = (
             <AdminList
                 admins={admins}
-                loading={gettingData}
+                loading={loading}
                 gotData={gotData}
-                refresh={() => getData(0)}
-                getMoreAdmins={getData}
-                moreAdminsAvailable={moreAdminsAvailable}
+                removeAdmin={removeAdmin}
             />
         );
     }
 
     return (
         <AdminsContainer>
-            <SearchInput value={searchTerm} onChange={e => filter(e.target.value)} />
-            <AddAdmin adminAdded={adminAdded} />
-            {list}
-            <Error> {error} </Error>
+            <SearchFieldDiv>
+                <SearchBar
+                    onChange={e => filter(e.target.value)}
+                    value={searchTerm}
+                    placeholder="Search name..."
+                />
+            </SearchFieldDiv>
+            <AddAdmin adminAdded={addAdmin} />
+            <TableDiv>{list}</TableDiv>
         </AdminsContainer>
     );
 }

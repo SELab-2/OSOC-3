@@ -1,28 +1,15 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
-import React, { useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
-import { AddAdminButton, ModalContentConfirm, Warning } from "./styles";
+import { AddButtonDiv, EmailDiv, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import { Error } from "../UsersComponents/Requests/styles";
-import { StyledMenuItem } from "../GeneralComponents/styles";
-import UserMenuItem from "../GeneralComponents/MenuItem";
-import { EmailAndAuth } from "../GeneralComponents";
-
-/**
- * Warning that the user will get all persmissions.
- * @param props.name The name of the user.
- */
-function AddWarning(props: { name: string | undefined }) {
-    if (props.name !== undefined) {
-        return (
-            <Warning>
-                Warning: {props.name} will be able to edit/delete all data and manage admin roles.
-            </Warning>
-        );
-    }
-    return null;
-}
+import { Error, StyledMenuItem } from "../Common/Users/styles";
+import UserMenuItem from "../Common/Users/MenuItem";
+import { EmailAndAuth } from "../Common/Users";
+import CreateButton from "../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../Common/styles";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -37,6 +24,18 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [clearRef, setClearRef] = useState(false); // The ref must be cleared
+
+    const typeaheadRef = createRef<Typeahead>();
+
+    useEffect(() => {
+        // For some obscure reason the ref can only be cleared in here & not somewhere else
+        if (clearRef) {
+            // This triggers itself, but only once, so it doesn't really matter
+            setClearRef(false);
+            typeaheadRef.current?.clear();
+        }
+    }, [clearRef, typeaheadRef]);
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
@@ -89,7 +88,10 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
         setLoading(false);
         if (success) {
             props.adminAdded(user);
-            handleClose();
+            setSearchTerm("");
+            getData(0, "");
+            setSelected(undefined);
+            setClearRef(true);
         }
     }
 
@@ -107,16 +109,27 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                 }}
                 disabled={selected === undefined}
             >
-                Add {selected?.name} as admin
+                Add admin
             </Button>
+        );
+    }
+
+    let warning;
+    if (selected !== undefined) {
+        warning = (
+            <Warning>
+                Warning: This user will be able to edit/delete all data and manage admin roles.
+            </Warning>
         );
     }
 
     return (
         <>
-            <AddAdminButton variant="primary" onClick={handleShow}>
-                Add admin
-            </AddAdminButton>
+            <AddButtonDiv>
+                <CreateButton showIcon={false} onClick={handleShow}>
+                    Add admin
+                </CreateButton>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -132,6 +145,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             minLength={1}
                             onSearch={filterData}
                             options={users}
+                            ref={typeaheadRef}
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
@@ -163,8 +177,10 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 );
                             }}
                         />
-                        <EmailAndAuth user={selected} />
-                        <AddWarning name={selected?.name} />
+                        <EmailDiv>
+                            <EmailAndAuth user={selected} />
+                        </EmailDiv>
+                        {warning}
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}

@@ -1,9 +1,14 @@
-import { Button, Form, Spinner } from "react-bootstrap";
-import React, { SyntheticEvent, useState } from "react";
+import { Form, Spinner } from "react-bootstrap";
+import { SyntheticEvent, useState } from "react";
 import { createEdition, getSortedEditions } from "../../utils/api/editions";
 import { useNavigate } from "react-router-dom";
-import { CreateEditionDiv, Error, FormGroup, ButtonDiv } from "./styles";
+import { CreateEditionDiv, FormGroup, ButtonDiv, CancelButton } from "./styles";
 import { useAuth } from "../../contexts";
+import { setCurrentEdition } from "../../utils/session-storage";
+import { toast } from "react-toastify";
+import { BiArrowBack } from "react-icons/bi";
+import { CreateButton } from "../../components/Common/Buttons";
+import { FormControl } from "../../components/Common/Forms";
 
 /**
  * Page to create a new edition.
@@ -16,23 +21,33 @@ export default function CreateEditionPage() {
 
     const [name, setName] = useState("");
     const [year, setYear] = useState<string>(currentYear.toString());
-    const [nameError, setNameError] = useState<string | undefined>(undefined);
-    const [yearError, setYearError] = useState<string | undefined>(undefined);
-    const [error, setError] = useState<string | undefined>(undefined);
+    const [nameError, setNameError] = useState<boolean>(false);
+    const [yearError, setYearError] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
 
     async function sendEdition(name: string, year: number): Promise<boolean> {
-        const response = await createEdition(name, year);
-        if (response === 201) {
+        const response = await toast.promise(
+            createEdition(name, year),
+            {
+                pending: "Creating new edition",
+                error: "Connection issue",
+            },
+            { toastId: "createEdition" }
+        );
+        if (response.status === 201) {
             const allEditions = await getSortedEditions();
             setEditions(allEditions);
+            setCurrentEdition(response.data.name);
+            toast.success("Successfully made new edition", { toastId: "createEditionSuccess" });
             return true;
-        } else if (response === 409) {
-            setNameError("Edition name already exists.");
-        } else if (response === 422) {
-            setNameError("Invalid edition name.");
+        } else if (response.status === 409) {
+            setNameError(true);
+            toast.error("Edition name already exists", { toastId: "createEditionNameExists" });
+        } else if (response.status === 422) {
+            setNameError(true);
+            toast.error("Invalid edition name", { toastId: "createEditionBadName" });
         } else {
-            setError("Something went wrong.");
+            toast.error("Something went wrong", { toastId: "createEditionError" });
         }
         return false;
     }
@@ -45,11 +60,18 @@ export default function CreateEditionPage() {
         // Edition name can't contain spaces and must be at least 5 long.
         if (!/^([^ ]{5,})$/.test(name)) {
             if (name.includes(" ")) {
-                setNameError("Edition name can't contain spaces.");
+                setNameError(true);
+                toast.error("Edition name can't contain spaces.", {
+                    toastId: "createEditionNoSpaces",
+                });
             } else if (name.length < 5) {
-                setNameError("Edition name must be longer than 4 characters.");
+                setNameError(true);
+                toast.error("Edition name must be longer than 4 characters.", {
+                    toastId: "createEditionBadName",
+                });
             } else {
-                setNameError("Invalid edition name.");
+                setNameError(true);
+                toast.error("Invalid edition name", { toastId: "createEditionBadName" });
             }
             correct = false;
         }
@@ -57,22 +79,31 @@ export default function CreateEditionPage() {
         const yearNumber = Number(year);
         if (isNaN(yearNumber)) {
             correct = false;
-            setYearError("Invalid year.");
+            setYearError(true);
+            toast.error("Invalid year.", { toastId: "createEditionYearNoNumber" });
         } else {
             if (yearNumber < currentYear) {
                 correct = false;
-                setYearError("New editions can't be in the past.");
+                setYearError(true);
+                toast.error("New editions can't be in the past.", {
+                    toastId: "createEditionPastYear",
+                });
             } else if (yearNumber > 3000) {
                 correct = false;
-                setYearError("Invalid year.");
+                setYearError(true);
+                toast.error("Invalid year.", { toastId: "createEditionYearName" });
             }
         }
 
         let success = false;
         if (correct) {
             setLoading(true);
-            success = await sendEdition(name, yearNumber);
-            setLoading(false);
+            try {
+                success = await sendEdition(name, yearNumber);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
         }
 
         if (success) {
@@ -85,11 +116,7 @@ export default function CreateEditionPage() {
     if (loading) {
         submitButton = <Spinner animation="border" />;
     } else {
-        submitButton = (
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        );
+        submitButton = <CreateButton label="Submit" type="submit" />;
     }
 
     return (
@@ -97,39 +124,38 @@ export default function CreateEditionPage() {
             <Form noValidate onSubmit={handleSubmit}>
                 <FormGroup>
                     <Form.Label>Edition name</Form.Label>
-                    <Form.Control
+                    <FormControl
                         type="text"
                         value={name}
-                        required
-                        placeholder="Edition name"
-                        isInvalid={nameError !== undefined}
+                        placeholder={"Ex. OSOC-" + currentYear.toString()}
+                        isInvalid={nameError}
                         onChange={e => {
                             setName(e.target.value);
-                            setNameError(undefined);
-                            setError(undefined);
+                            setNameError(false);
                         }}
                     />
-                    <Form.Control.Feedback type="invalid">{nameError}</Form.Control.Feedback>
                 </FormGroup>
 
                 <FormGroup>
                     <Form.Label>Edition year</Form.Label>
-                    <Form.Control
+                    <FormControl
                         type="number"
                         value={year}
-                        required
-                        placeholder="Edition year"
-                        isInvalid={yearError !== undefined}
+                        placeholder={"Ex. " + currentYear.toString()}
+                        isInvalid={yearError}
                         onChange={e => {
                             setYear(e.target.value);
-                            setYearError(undefined);
-                            setError(undefined);
+                            setYearError(false);
                         }}
                     />
-                    <Form.Control.Feedback type="invalid">{yearError}</Form.Control.Feedback>
                 </FormGroup>
-                <ButtonDiv>{submitButton}</ButtonDiv>
-                <Error>{error}</Error>
+                <ButtonDiv>
+                    <CancelButton onClick={() => navigate("/editions")}>
+                        <BiArrowBack />
+                        Cancel
+                    </CancelButton>
+                    {submitButton}
+                </ButtonDiv>
             </Form>
         </CreateEditionDiv>
     );

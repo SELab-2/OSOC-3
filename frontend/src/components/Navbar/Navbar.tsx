@@ -1,4 +1,4 @@
-import { BSNavbar } from "./styles";
+import { BSNavbar, HorizontalSep, VerticalSep } from "./styles";
 import { useAuth } from "../../contexts";
 import Nav from "react-bootstrap/Nav";
 import EditionDropdown from "./EditionDropdown";
@@ -10,13 +10,13 @@ import UsersDropdown from "./UsersDropdown";
 import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
 import EditionNavLink from "./EditionNavLink";
-
+import StudentsDropdown from "./StudentsDropdown";
 /**
  * Navbar component displayed at the top of the screen.
  * If the user is not signed in, this is hidden automatically.
  */
 export default function Navbar() {
-    const { isLoggedIn, editions } = useAuth();
+    const { isLoggedIn, editions, role } = useAuth();
     /**
      * Important: DO NOT MOVE THIS LINE UNDERNEATH THE RETURN!
      * Placing an early return above a React hook (in this case, useLocation) causes
@@ -42,6 +42,12 @@ export default function Navbar() {
     // Matched /editions/new path
     if (editionId === "new") {
         editionId = null;
+    } else if (editionId && !editions.includes(editionId)) {
+        // If the edition was not found in the user's list of editions,
+        // don't display it in the navbar!
+        // This will lead to a 404 or 403 re-route either way, so keep
+        // the previous/the best edition displayed in the dropdown
+        editionId = null;
     }
 
     // If the current URL contains an edition, use that
@@ -61,6 +67,8 @@ export default function Navbar() {
             <BSNavbar.Collapse id={"responsive-navbar-nav"}>
                 <Nav className={"ms-auto"}>
                     <EditionDropdown editions={editions} />
+                    <VerticalSep className={"vr d-none d-lg-block"} />
+                    <HorizontalSep className={"d-lg-none"} />
                     <LinkContainer to={"/editions"} className={"link"}>
                         <Nav.Link>Editions</Nav.Link>
                     </LinkContainer>
@@ -68,11 +76,15 @@ export default function Navbar() {
                         <LinkContainer to={`/editions/${currentEdition}/projects`}>
                             <Nav.Link>Projects</Nav.Link>
                         </LinkContainer>
-                        <LinkContainer to={`/editions/${currentEdition}/students`}>
-                            <Nav.Link>Students</Nav.Link>
-                        </LinkContainer>
                     </EditionNavLink>
-                    <UsersDropdown currentEdition={currentEdition} />
+                    <StudentsDropdown
+                        isLoggedIn={isLoggedIn}
+                        currentEdition={currentEdition}
+                        role={role}
+                    />
+                    <UsersDropdown currentEdition={currentEdition} role={role} />
+                    <VerticalSep className={"vr d-none d-lg-block"} />
+                    <HorizontalSep className={"d-lg-none"} />
                     <LogoutButton />
                 </Nav>
             </BSNavbar.Collapse>

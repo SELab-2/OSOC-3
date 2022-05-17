@@ -26,6 +26,7 @@ export default function DeleteEditionModal(props: Props) {
     function handleClose() {
         props.setShow(false);
         setUnderstandClicked(false);
+        setDisableConfirm(true);
     }
 
     /**
@@ -38,9 +39,6 @@ export default function DeleteEditionModal(props: Props) {
         // Delete the request
         const statusCode = await deleteEdition(props.edition.name);
 
-        // Hide the modal
-        props.setShow(false);
-
         if (statusCode === 204) {
             // Remove the edition as current
             if (getCurrentEdition() === props.edition.name) {
@@ -50,6 +48,9 @@ export default function DeleteEditionModal(props: Props) {
             // Force-reload the page to re-request all data related to editions
             // (stored in various places such as auth, ...)
             window.location.reload();
+
+            // Hide the modal
+            props.setShow(false);
         }
     }
 

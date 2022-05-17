@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from asyncio import Queue
+
+from websockets.exceptions import ConnectionClosedOK
+from fastapi import APIRouter, Depends, WebSocket
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.app.logic import editions as logic_editions
@@ -12,10 +15,11 @@ from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-from ...utils.dependencies import require_admin, require_auth, require_coach
-
+from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws
 # Don't add the "Editions" tag here, because then it gets applied
 # to all child routes as well
+from ...utils.websockets import DataPublisher, get_publisher
+
 editions_router = APIRouter(prefix="/editions")
 
 # Register all child routers
@@ -31,61 +35,65 @@ for router in child_routers:
     editions_router.include_router(router, prefix="/{edition_name}")
 
 
-@editions_router.get("/", response_model=EditionList, tags=[Tags.EDITIONS])
-async def get_editions(db: Session = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
-    """Get a paginated list of all editions.
-    Args:
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-        user (User, optional): the current logged in user. Defaults to Depends(require_auth).
-        page (int): the page to return.
-
-    Returns:
-        EditionList: an object with a list of all the editions.
-    """
+@editions_router.get("", response_model=EditionList, tags=[Tags.EDITIONS])
+async def get_editions(db: AsyncSession = Depends(get_session), user: User = Depends(require_auth), page: int = 0):
+    """Get a paginated list of all editions."""
     if user.admin:
-        return logic_editions.get_editions_page(db, page)
+        return await logic_editions.get_editions_page(db, page)
 
     return EditionList(editions=user.editions)
 
 
-@editions_router.get("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS],
-                     dependencies=[Depends(require_coach)])
-async def get_edition_by_name(edition_name: str, db: Session = Depends(get_session)):
-    """Get a specific edition.
+@editions_router.get(
+    "/{edition_name}",
+    response_model=Edition,
+    tags=[Tags.EDITIONS],
+    dependencies=[Depends(require_coach)]
+)
+async def get_edition_by_name(edition_name: str, db: AsyncSession = Depends(get_session)):
+    """Get a specific edition."""
+    return await logic_editions.get_edition_by_name(db, edition_name)
 
-    Args:
-        edition_name (str): the name of the edition that you want to get.
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-        user (User, optional): the current logged in user. Defaults to Depends(get_current_active_user).
 
-    Returns:
-        Edition: an edition.
+@editions_router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    response_model=Edition,
+    tags=[Tags.EDITIONS],
+    dependencies=[Depends(require_admin)]
+)
+async def post_edition(edition: EditionBase, db: AsyncSession = Depends(get_session)):
+    """ Create a new edition."""
+    return await logic_editions.create_edition(db, edition)
+
+
+@editions_router.delete(
+    "/{edition_name}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=[Tags.EDITIONS],
+    dependencies=[Depends(require_admin)]
+)
+async def delete_edition(edition_name: str, db: AsyncSession = Depends(get_session)):
+    """Delete an existing edition."""
+    await logic_editions.delete_edition(db, edition_name)
+
+
+@editions_router.websocket('/{edition_name}/live')
+async def feed(
+        websocket: WebSocket,
+        publisher: DataPublisher = Depends(get_publisher),
+        _: User = Depends(require_coach_ws)
+):
+    """Handle websocket.
+    Events in the application are sent using this websocket
     """
-    return logic_editions.get_edition_by_name(db, edition_name)
-
-
-@editions_router.post("/", status_code=status.HTTP_201_CREATED, response_model=Edition, tags=[Tags.EDITIONS],
-                      dependencies=[Depends(require_admin)])
-async def post_edition(edition: EditionBase, db: Session = Depends(get_session)):
-    """ Create a new edition.
-
-    Args:
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-
-    Returns:
-        Edition: the newly made edition object.
-    """
-    return logic_editions.create_edition(db, edition)
-
-
-@editions_router.delete("/{edition_name}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.EDITIONS],
-                        dependencies=[Depends(require_admin)])
-async def delete_edition(edition_name: str, db: Session = Depends(get_session)):
-    """Delete an existing edition.
-
-    Args:
-        edition_name (str): the name of the edition that needs to be deleted, if found.
-        db (Session, optional): connection with the database. Defaults to Depends(get_session).
-
-    """
-    logic_editions.delete_edition(db, edition_name)
+    await websocket.accept()
+    queue: Queue = await publisher.subscribe()
+    try:
+        while True:
+            data: dict = await queue.get()
+            await websocket.send_json(data)
+    except ConnectionClosedOK:
+        pass
+    finally:
+        await publisher.unsubscribe(queue)

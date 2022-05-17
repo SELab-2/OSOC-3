@@ -1,10 +1,10 @@
 import { Request } from "../../../../utils/api/users/requests";
-import { AcceptRejectTh, RequestsTable, SpinnerContainer } from "../styles";
-import { Spinner } from "react-bootstrap";
+import { AcceptRejectTh, RequestsTable } from "../styles";
 import React from "react";
 import RequestListItem from "./RequestListItem";
 import InfiniteScroll from "react-infinite-scroller";
-import { ListDiv } from "../../Coaches/styles";
+import LoadSpinner from "../../../Common/LoadSpinner";
+import { ListDiv } from "../../../Common/Users/styles";
 
 /**
  * A list of [[RequestListItem]]s.
@@ -17,7 +17,7 @@ export default function RequestList(props: {
     requests: Request[];
     removeRequest: (coachAdded: boolean, request: Request) => void;
     moreRequestsAvailable: boolean;
-    getMoreRequests: (page: number) => void;
+    getMoreRequests: () => void;
 }) {
     return (
         <ListDiv>
@@ -25,15 +25,11 @@ export default function RequestList(props: {
                 pageStart={0}
                 loadMore={props.getMoreRequests}
                 hasMore={props.moreRequestsAvailable}
-                loader={
-                    <SpinnerContainer key={"spinner"}>
-                        <Spinner animation="border" />
-                    </SpinnerContainer>
-                }
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >
-                <RequestsTable variant="dark">
+                <RequestsTable>
                     <thead>
                         <tr>
                             <th>Name</th>

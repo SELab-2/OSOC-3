@@ -12,6 +12,7 @@ export const FooterTitle = styled.h3`
 export const FooterLink = styled.a`
     color: white;
     transition: 200ms ease-out;
+    text-decoration: none;
 
     &:hover {
         color: var(--osoc_green);

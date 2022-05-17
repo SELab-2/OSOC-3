@@ -3,6 +3,7 @@ import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
 import { User } from "../data/interfaces";
 import { setCurrentEdition } from "../utils/session-storage";
+import { setAccessToken, setRefreshToken } from "../utils/local-storage";
 
 /**
  * Interface that holds the data stored in the AuthContext.
@@ -91,6 +92,10 @@ export function logOut(authContext: AuthContextState) {
     authContext.setUserId(null);
     authContext.setRole(null);
     authContext.setEditions([]);
+
+    // Remove tokens from LocalStorage
+    setAccessToken(null);
+    setRefreshToken(null);
 
     // Remove current edition from SessionStorage
     setCurrentEdition(null);

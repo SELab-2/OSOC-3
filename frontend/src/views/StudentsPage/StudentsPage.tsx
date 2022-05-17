@@ -1,8 +1,11 @@
 import React from "react";
-import "./StudentsPage.css";
+import { StudentListFilters } from "../../components/StudentsComponents";
 
-function Students() {
-    return <div>This is the students page</div>;
+/**
+ * @returns Page where admins and coaches can filter on students.
+ */
+function StudentsPage() {
+    return <StudentListFilters />;
 }
 
-export default Students;
+export default StudentsPage;

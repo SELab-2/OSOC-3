@@ -2,15 +2,16 @@ import { User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
-import { ModalContentWarning } from "./styles";
-import { Error } from "../UsersComponents/Requests/styles";
+import { RemoveAdminBody } from "./styles";
+import { Error } from "../Common/Users/styles";
+import { ModalContentWarning } from "../Common/styles";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
  * @param props.admin The user which can be removed.
- * @param props.refresh A function which is called when the user is removed as admin.
+ * @param props.removeAdmin A function which is called when the user is removed as admin.
  */
-export default function RemoveAdmin(props: { admin: User; refresh: () => void }) {
+export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [error, setError] = useState("");
 
@@ -20,17 +21,17 @@ export default function RemoveAdmin(props: { admin: User; refresh: () => void })
         setError("");
     };
 
-    async function removeUserAsAdmin(userId: number, removeCoach: boolean) {
+    async function removeUserAsAdmin(removeCoach: boolean) {
         try {
             let removed;
             if (removeCoach) {
-                removed = await removeAdminAndCoach(userId);
+                removed = await removeAdminAndCoach(props.admin.userId);
             } else {
-                removed = await removeAdmin(userId);
+                removed = await removeAdmin(props.admin.userId);
             }
 
             if (removed) {
-                props.refresh();
+                props.removeAdmin(props.admin);
             } else {
                 setError("Something went wrong. Failed to remove admin");
             }
@@ -51,17 +52,17 @@ export default function RemoveAdmin(props: { admin: User; refresh: () => void })
                         <Modal.Title>Remove Admin</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>{props.admin.name}</h4>
-                        <p>{props.admin.auth.email}</p>
-                        <p>
-                            Remove admin: {props.admin.name} will stay coach for assigned editions
-                        </p>
+                        <RemoveAdminBody>
+                            <h4>{props.admin.name}</h4>
+                            <p>{props.admin.auth.email}</p>
+                            <p>Remove admin: This admin will stay coach for assigned editions</p>
+                        </RemoveAdminBody>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeUserAsAdmin(props.admin.userId, false);
+                                removeUserAsAdmin(false);
                                 if (!error) {
                                     handleClose();
                                 }
@@ -72,7 +73,7 @@ export default function RemoveAdmin(props: { admin: User; refresh: () => void })
                         <Button
                             variant="primary"
                             onClick={() => {
-                                removeUserAsAdmin(props.admin.userId, true);
+                                removeUserAsAdmin(true);
                                 if (!error) {
                                     handleClose();
                                 }

@@ -15,7 +15,7 @@ alembic = "1.7.6"
 environs = "9.5.0"
 
 # FastAPI: API framework
-fastapi = "0.74.1"
+fastapi = "0.75.2"
 
 # MariaDB: Python MariaDB connector
 mariadb = "1.0.10"
@@ -43,6 +43,16 @@ sqlalchemy-utils = "0.38.2"
 
 # Uvicorn: ASGI web server implementation
 uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
+aiohttp = "^3.8.1"
+
+# AioSQLite: async connector for SQLite
+aiosqlite = "^0.17.0"
+
+# Asyncmy: async connector for MariaDB
+asyncmy = "^0.2.5"
+
+# Httpx: send async HTTP requests
+httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 # Coverage: generate code coverage reports
@@ -63,6 +73,9 @@ pylint-pytest = "1.1.2"
 # Pytest: Python testing framework
 # (more advanced than the built-in unittest module)
 pytest = "7.0.1"
+
+# Pytest-asyncio: plugin for pytest to support async tests & fixtures
+pytest-asyncio = "^0.18.3"
 
 # Pytest-cov: coverage plugin for pytest
 pytest-cov = "3.0.0"
@@ -103,12 +116,26 @@ extension-pkg-whitelist = "pydantic"
 [tool.pylint.format]
 max-line-length = 120
 
+[tool.pylint.similarities]
+min-similarity-lines=10
+
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*The distutils package is deprecated:DeprecationWarning",
 ]
 env = [
     "DB_USE_SQLITE = 1",
+    "GITHUB_CLIENT_ID = 25",
+    "GITHUB_CLIENT_SECRET = secret"
+]
+
+[tool.coverage.run]
+concurrency = [
+    "greenlet"
+]
+include = [
+    "src/*"
 ]
 
 [build-system]

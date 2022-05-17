@@ -2,11 +2,9 @@ import styled from "styled-components";
 import { Button, Table } from "react-bootstrap";
 
 export const CoachesContainer = styled.div`
-    min-width: 450px;
-    width: 80%;
-    max-width: 700px;
-    height: 500px;
-    margin: 10px auto auto;
+    width: 50em;
+    height: fit-content;
+    margin: 10px auto 20px auto;
 `;
 
 export const CoachesTitle = styled.div`
@@ -16,9 +14,12 @@ export const CoachesTitle = styled.div`
     font-size: 25px;
 `;
 
-export const CoachesTable = styled(Table)`
-    // TODO: make all tables in site uniform
-`;
+export const CoachesTable = styled(Table).attrs({
+    striped: true,
+    bordered: true,
+    variant: "dark",
+    hover: false,
+})``;
 
 export const ModalContent = styled.div`
     border: 3px solid var(--osoc_red);
@@ -35,13 +36,24 @@ export const RemoveTd = styled.td`
     vertical-align: middle;
 `;
 
-export const ListDiv = styled.div`
-    width: 100%;
-    height: 400px;
-    overflow: auto;
-    margin-top: 10px;
+export const DialogButtonDiv = styled.div`
+    margin-right: 4px;
+    margin-bottom: 4px;
 `;
 
-export const DialogButton = styled(Button)`
-    margin-right: 4px;
+export const DialogButtonContainer = styled.div`
+    width: 100%;
+`;
+
+export const CancelButton = styled(Button)`
+    float: right;
+`;
+
+export const EmailDiv = styled.div`
+    overflow: auto;
+`;
+
+export const CredsDiv = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
