@@ -12,9 +12,9 @@ import {
     DialogButtonDiv,
     ModalContent,
 } from "../styles";
-import { Error } from "../../Requests/styles";
 import LoadSpinner from "../../../Common/LoadSpinner";
 import DeleteButton from "../../../Common/Buttons/DeleteButton";
+import { Error } from "../../../Common/Users/styles";
 
 /**
  * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.

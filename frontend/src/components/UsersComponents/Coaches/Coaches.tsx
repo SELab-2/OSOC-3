@@ -1,9 +1,9 @@
 import React from "react";
-import { CoachesTitle, CoachesContainer, SearchFieldDiv, TableDiv } from "./styles";
+import { CoachesTitle, CoachesContainer } from "./styles";
 import { User } from "../../../utils/api/users/users";
-import { Error } from "../Requests/styles";
 import { CoachList, AddCoach } from "./CoachesComponents";
 import { SearchBar } from "../../Common/Forms";
+import { Error, SearchFieldDiv, TableDiv } from "../../Common/Users/styles";
 
 /**
  * List of coaches of the given edition.

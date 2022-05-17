@@ -1,7 +1,7 @@
 from asyncio import Queue
 
-import websockets.exceptions
-from fastapi import APIRouter, Depends, WebSocket, websockets
+from websockets.exceptions import ConnectionClosedOK
+from fastapi import APIRouter, Depends, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -93,7 +93,7 @@ async def feed(
         while True:
             data: dict = await queue.get()
             await websocket.send_json(data)
-    except websockets.exceptions.ConnectionClosedOK:
+    except ConnectionClosedOK:
         pass
     finally:
         await publisher.unsubscribe(queue)

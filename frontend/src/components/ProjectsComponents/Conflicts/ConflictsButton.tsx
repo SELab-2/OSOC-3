@@ -28,7 +28,11 @@ export default function ConflictsButton(props: { editionId: string }) {
     }, [props.editionId]);
 
     if (conflicts === undefined) {
-        return <LoadSpinner show={true} />;
+        return (
+            <ConflictButtonDiv>
+                <LoadSpinner show={true} />
+            </ConflictButtonDiv>
+        );
     }
     if (show) {
         return (

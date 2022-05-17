@@ -2,8 +2,9 @@ import { User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
-import { ModalContentWarning, RemoveAdminBody } from "./styles";
-import { Error } from "../UsersComponents/Requests/styles";
+import { RemoveAdminBody } from "./styles";
+import { Error } from "../Common/Users/styles";
+import { ModalContentWarning } from "../Common/styles";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
