@@ -88,7 +88,7 @@ export default function ProjectDetailPage() {
     const handleAdd = async (motivation: string, result: DropResult) => {
         setShowAddModal(false);
 
-        const student = await getStudent(editionId, result.draggableId);
+        const student = await getStudent(editionId, parseInt(result.draggableId));
         await toast.promise(
             addStudentToProject(
                 editionId,
@@ -225,10 +225,11 @@ export default function ProjectDetailPage() {
         } else {
             const student = await getStudent(
                 editionId,
+                parseInt(
                 result.draggableId.substring(
                     0,
                     result.draggableId.length - source.droppableId.length
-                )
+                ))
             );
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.projectRoleId.toString() === destination?.droppableId) {
