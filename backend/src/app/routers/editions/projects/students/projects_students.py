@@ -4,7 +4,7 @@ from starlette import status
 
 import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
-from src.app.schemas.projects import InputArgumentation
+from src.app.schemas.projects import InputArgumentation, ReturnProjectRoleSuggestion
 from src.app.utils.dependencies import (
     require_coach, get_latest_edition, get_student,
     get_project_role
@@ -51,7 +51,8 @@ async def change_project_role(
 @project_students_router.post(
     "/{student_id}",
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_latest_edition), Depends(live)]
+    dependencies=[Depends(get_latest_edition), Depends(live)],
+    response_model=ReturnProjectRoleSuggestion
 )
 async def add_student_to_project(
         argumentation: InputArgumentation,
@@ -64,4 +65,4 @@ async def add_student_to_project(
 
     This is not a definitive decision, but represents a coach drafting the student.
     """
-    await logic.add_student_project(db, project_role, student, user, argumentation)
+    return await logic.add_student_project(db, project_role, student, user, argumentation)
