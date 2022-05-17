@@ -4,7 +4,7 @@ import { Button, Table } from "react-bootstrap";
 export const CoachesContainer = styled.div`
     width: 50em;
     height: fit-content;
-    margin: 10px auto auto;
+    margin: 10px auto 20px auto;
 `;
 
 export const CoachesTitle = styled.div`
@@ -36,13 +36,6 @@ export const RemoveTd = styled.td`
     vertical-align: middle;
 `;
 
-export const ListDiv = styled.div`
-    width: 100%;
-    height: 40em;
-    overflow: auto;
-    margin-top: 10px;
-`;
-
 export const DialogButtonDiv = styled.div`
     margin-right: 4px;
     margin-bottom: 4px;
@@ -63,14 +56,4 @@ export const EmailDiv = styled.div`
 export const CredsDiv = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
-`;
-
-export const SearchFieldDiv = styled.div`
-    float: left;
-    width: 15em;
-`;
-
-export const TableDiv = styled.div`
-    width: 100%;
-    clear: left;
 `;
