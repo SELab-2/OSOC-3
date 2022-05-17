@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from settings import FormMapping
 from src.app.exceptions.webhooks import WebhookProcessException
 from src.app.schemas.webhooks import WebhookEvent, Question, Form, QuestionUpload, QuestionOption
-from src.database.enums import QuestionEnum as QE
+from src.database.crud.students import create_email
+from src.database.enums import QuestionEnum as QE, EmailStatusEnum
 from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
 
 
@@ -66,6 +67,7 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
 
     try:
         await database.commit()
+        await create_email(database, student, EmailStatusEnum.APPLIED)
     except sqlalchemy.exc.IntegrityError as error:
         raise WebhookProcessException('Unique Check Failed') from error
 
