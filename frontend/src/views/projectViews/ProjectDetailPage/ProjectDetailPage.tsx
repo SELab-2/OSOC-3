@@ -31,11 +31,15 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
+import { useSockets } from "../../../contexts/socket-context";
+
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
 export default function ProjectDetailPage() {
+    const { socket } = useSockets();
+
     const params = useParams();
     const projectId = parseInt(params.projectId!);
     const editionId = params.editionId!;
@@ -49,6 +53,18 @@ export default function ProjectDetailPage() {
 
     const navigate = useNavigate();
     const { role } = useAuth();
+
+    useEffect(() => {
+        socket?.addEventListener("message", function (data: object) {
+            console.log(data);
+        });
+
+        function onUnmount() {
+            console.log("unmounting");
+        }
+
+        return onUnmount;
+    }, [socket]);
 
     useEffect(() => {
         async function callProjects(): Promise<void> {

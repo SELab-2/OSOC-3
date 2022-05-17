@@ -12,7 +12,12 @@ export enum EventType {
 /**
  * Enum for the request method used when triggering this websocket event
  */
-export enum RequestMethod {}
+export enum RequestMethod {
+    DELETE = "DELETE",
+    GET = "GET",
+    PATCH = "PATCH",
+    POST = "POST",
+}
 
 /**
  * Interface for an event sent over a websocket
