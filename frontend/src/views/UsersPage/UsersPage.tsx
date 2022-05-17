@@ -44,34 +44,32 @@ function UsersPage() {
         }
 
         setLoading(true);
-        try {
-            const response = await getCoaches(params.editionId as string, searchTerm, page);
+        const response = await toast.promise(
+            getCoaches(params.editionId as string, searchTerm, page),
+            { error: "Failed to receive coaches" }
+        );
+        if (response.users.length === 0) {
+            setMoreCoachesAvailable(false);
+        }
+        if (page === 0) {
+            setCoaches(response.users);
+        } else {
+            setCoaches(coaches.concat(response.users));
+        }
+
+        if (searchTerm === "") {
             if (response.users.length === 0) {
-                setMoreCoachesAvailable(false);
+                setAllCoachesFetched(true);
             }
             if (page === 0) {
-                setCoaches(response.users);
+                setAllCoaches(response.users);
             } else {
-                setCoaches(coaches.concat(response.users));
+                setAllCoaches(allCoaches.concat(response.users));
             }
-
-            if (searchTerm === "") {
-                if (response.users.length === 0) {
-                    setAllCoachesFetched(true);
-                }
-                if (page === 0) {
-                    setAllCoaches(response.users);
-                } else {
-                    setAllCoaches(allCoaches.concat(response.users));
-                }
-            }
-
-            setPage(page + 1);
-        } catch (exception) {
-            toast.error("Failed to receive coaches", {
-                toastId: "fetch_coaches_failed",
-            });
         }
+
+        setPage(page + 1);
+
         setGotData(true);
         setLoading(false);
     }

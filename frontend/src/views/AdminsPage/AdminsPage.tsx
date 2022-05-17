@@ -16,27 +16,24 @@ export default function AdminsPage() {
     const [gotData, setGotData] = useState(false);
 
     const getData = useCallback(async () => {
-        try {
-            let adminsAvailable = true;
-            let page = 0;
-            let newAdmins: User[] = [];
-            while (adminsAvailable) {
-                const response = await getAdmins(page, searchTerm);
-                if (page === 0) {
-                    newAdmins = response.users;
-                } else {
-                    newAdmins = newAdmins.concat(response.users);
-                }
-                adminsAvailable = response.users.length !== 0;
-                page += 1;
-            }
-            setAdmins(newAdmins);
-            setAllAdmins(newAdmins);
-        } catch (exception) {
-            toast.error("Failed to receive admins", {
-                toastId: "fetch_admins_failed",
+        let adminsAvailable = true;
+        let page = 0;
+        let newAdmins: User[] = [];
+        while (adminsAvailable) {
+            const response = await toast.promise(getAdmins(page, searchTerm), {
+                error: "Failed to receive admins",
             });
+            if (page === 0) {
+                newAdmins = response.users;
+            } else {
+                newAdmins = newAdmins.concat(response.users);
+            }
+            adminsAvailable = response.users.length !== 0;
+            page += 1;
         }
+        setAdmins(newAdmins);
+        setAllAdmins(newAdmins);
+
         setGotData(true);
         setLoading(false);
     }, [searchTerm]);

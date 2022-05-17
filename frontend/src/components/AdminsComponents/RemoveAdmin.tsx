@@ -20,22 +20,24 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
     };
 
     async function removeUserAsAdmin(removeCoach: boolean) {
-        try {
-            let removed;
-            if (removeCoach) {
-                removed = await removeAdminAndCoach(props.admin.userId);
-            } else {
-                removed = await removeAdmin(props.admin.userId);
-            }
+        let removed;
+        if (removeCoach) {
+            removed = await toast.promise(removeAdminAndCoach(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
+        } else {
+            removed = await toast.promise(removeAdmin(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
+        }
 
-            if (removed) {
-                props.removeAdmin(props.admin);
-            } else {
-                toast.error("Failed to remove admin", {
-                    toastId: "remove_admin_failed",
-                });
-            }
-        } catch (error) {
+        if (removed) {
+            props.removeAdmin(props.admin);
+        } else {
             toast.error("Failed to remove admin", {
                 toastId: "remove_admin_failed",
             });

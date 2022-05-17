@@ -42,14 +42,15 @@ export default function StudentInformation(props: { studentId: number; editionId
      * Get all the suggestion that were made on this student.
      */
     async function getData() {
-        try {
-            const studentResponse = await getStudent(props.editionId, props.studentId);
-            const suggenstionsResponse = await getSuggestions(props.editionId, props.studentId);
-            setStudent(studentResponse);
-            setSuggestions(suggenstionsResponse.suggestions);
-        } catch (error) {
-            toast.error("Failed to get details", { toastId: "fetch_student_details_failed" });
-        }
+        const studentResponse = await toast.promise(getStudent(props.editionId, props.studentId), {
+            error: "Failed to get details",
+        });
+        const suggestionsResponse = await toast.promise(
+            getSuggestions(props.editionId, props.studentId),
+            { error: "Failed to get suggestions" }
+        );
+        setStudent(studentResponse);
+        setSuggestions(suggestionsResponse.suggestions);
     }
 
     /**

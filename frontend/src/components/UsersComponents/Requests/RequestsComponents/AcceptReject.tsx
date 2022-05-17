@@ -1,6 +1,5 @@
 import { Request, acceptRequest, rejectRequest } from "../../../../utils/api/users/requests";
-import React, { useState } from "react";
-import LoadSpinner from "../../../Common/LoadSpinner";
+import React from "react";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 import DeleteButton from "../../../Common/Buttons/DeleteButton";
 import { Spacing } from "../styles";
@@ -15,52 +14,36 @@ export default function AcceptReject(props: {
     request: Request;
     removeRequest: (coachAdded: boolean, request: Request) => void;
 }) {
-    const [loading, setLoading] = useState(false);
-
     async function accept() {
-        setLoading(true);
-        let success = false;
-        try {
-            success = await acceptRequest(props.request.requestId);
-            if (!success) {
-                toast.error("Failed to accept request", {
-                    toastId: "accept_request_failed",
-                });
-            }
-        } catch (exception) {
+        const success = await toast.promise(acceptRequest(props.request.requestId), {
+            error: "Failed to accept request",
+            pending: "Accepting request",
+        });
+        if (!success) {
             toast.error("Failed to accept request", {
                 toastId: "accept_request_failed",
             });
         }
-        setLoading(false);
+
         if (success) {
             props.removeRequest(true, props.request);
         }
     }
 
     async function reject() {
-        setLoading(true);
-        let success = false;
-        try {
-            success = await rejectRequest(props.request.requestId);
-            if (!success) {
-                toast.error("Failed to reject request", {
-                    toastId: "reject_request_failed",
-                });
-            }
-        } catch (exception) {
+        const success = await toast.promise(rejectRequest(props.request.requestId), {
+            error: "Failed to reject request",
+            pending: "Rejecting request",
+        });
+        if (!success) {
             toast.error("Failed to reject request", {
                 toastId: "reject_request_failed",
             });
         }
-        setLoading(false);
+
         if (success) {
             props.removeRequest(false, props.request);
         }
-    }
-
-    if (loading) {
-        return <LoadSpinner show={true} />;
     }
 
     return (

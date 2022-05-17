@@ -2,7 +2,7 @@ import { getUsersNonAdmin, User } from "../../utils/api/users/users";
 import { createRef, useEffect, useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
 import { AddButtonDiv, EmailDiv, Warning } from "./styles";
-import { Button, Modal, Spinner } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import { StyledMenuItem } from "../Common/Users/styles";
 import UserMenuItem from "../Common/Users/MenuItem";
@@ -20,7 +20,6 @@ import { toast } from "react-toastify";
 export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
-    const [loading, setLoading] = useState(false);
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
@@ -42,21 +41,16 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
             filter = searchTerm;
         }
         setGettingData(true);
-        try {
-            const response = await getUsersNonAdmin(filter, page);
-            if (page === 0) {
-                setUsers(response.users);
-            } else {
-                setUsers(users.concat(response.users));
-            }
-
-            setGettingData(false);
-        } catch (exception) {
-            toast.error("Failed to receive users", {
-                toastId: "add_admins_failed",
-            });
-            setGettingData(false);
+        const response = await toast.promise(getUsersNonAdmin(filter, page), {
+            error: "Failed to receive users",
+        });
+        if (page === 0) {
+            setUsers(response.users);
+        } else {
+            setUsers(users.concat(response.users));
         }
+
+        setGettingData(false);
     }
 
     function filterData(searchTerm: string) {
@@ -74,47 +68,23 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     };
 
     async function addUserAsAdmin(user: User) {
-        setLoading(true);
-        let success = false;
-        try {
-            success = await addAdmin(user.userId);
-            if (!success) {
-                toast.error("Failed to add admin", {
-                    toastId: "add_admins_failed",
-                });
-            }
-        } catch (error) {
+        const success = await toast.promise(addAdmin(user.userId), {
+            pending: "Adding admin",
+            success: "Admin successfully added",
+            error: "Failed to add admin",
+        });
+        if (!success) {
             toast.error("Failed to add admin", {
                 toastId: "add_admins_failed",
             });
         }
-        setLoading(false);
+
         if (success) {
             props.adminAdded(user);
             setSearchTerm("");
-            getData(0, "");
             setSelected(undefined);
             setClearRef(true);
         }
-    }
-
-    let addButton;
-    if (loading) {
-        addButton = <Spinner animation="border" />;
-    } else {
-        addButton = (
-            <Button
-                variant="primary"
-                onClick={() => {
-                    if (selected !== undefined) {
-                        addUserAsAdmin(selected);
-                    }
-                }}
-                disabled={selected === undefined}
-            >
-                Add admin
-            </Button>
-        );
     }
 
     let warning;
@@ -185,7 +155,17 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                         {warning}
                     </Modal.Body>
                     <Modal.Footer>
-                        {addButton}
+                        <Button
+                            variant="primary"
+                            onClick={() => {
+                                if (selected !== undefined) {
+                                    addUserAsAdmin(selected);
+                                }
+                            }}
+                            disabled={selected === undefined}
+                        >
+                            Add admin
+                        </Button>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>

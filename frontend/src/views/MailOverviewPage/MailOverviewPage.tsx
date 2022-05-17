@@ -13,7 +13,6 @@ import {
     SearchDiv,
     FilterDiv,
     SearchAndFilterDiv,
-    EmailsTable,
     CenterDiv,
     MessageDiv,
 } from "./styles";
@@ -22,6 +21,7 @@ import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
 import { toast } from "react-toastify";
+import { StyledTable } from "../../components/Common/Tables/styles";
 
 interface EmailRow {
     email: StudentEmail;
@@ -55,38 +55,36 @@ export default function MailOverviewPage() {
 
         setLoading(true);
 
-        try {
-            const response = await getMailOverview(editionId, page, searchTerm, filters);
-            if (response.studentEmails.length === 0) {
-                setMoreEmailsAvailable(false);
-            }
-            if (page === 0) {
-                setEmailRows(
+        const response = await toast.promise(
+            getMailOverview(editionId, page, searchTerm, filters),
+            { error: "Failed to receive states" }
+        );
+        if (response.studentEmails.length === 0) {
+            setMoreEmailsAvailable(false);
+        }
+        if (page === 0) {
+            setEmailRows(
+                response.studentEmails.map(email => {
+                    return {
+                        email: email,
+                        checked: false,
+                    };
+                })
+            );
+        } else {
+            setEmailRows(
+                emailRows.concat(
                     response.studentEmails.map(email => {
                         return {
                             email: email,
                             checked: false,
                         };
                     })
-                );
-            } else {
-                setEmailRows(
-                    emailRows.concat(
-                        response.studentEmails.map(email => {
-                            return {
-                                email: email,
-                                checked: false,
-                            };
-                        })
-                    )
-                );
-            }
-            setPage(page + 1);
-        } catch (exception) {
-            toast.error("Failed to receive states", {
-                toastId: "fetch_emails_failed",
-            });
+                )
+            );
         }
+        setPage(page + 1);
+
         setGotEmails(true);
         setLoading(false);
     }
@@ -139,22 +137,18 @@ export default function MailOverviewPage() {
             .filter(row => row.checked)
             .map(row => row.email.student.studentId);
 
-        try {
-            await setStateRequest(eventKey, editionId, selectedStudents);
-            setEmailRows(
-                emailRows.map(row => {
-                    row.checked = false;
-                    return row;
-                })
-            );
-            setAllSelected(false);
-            alert("Successful changed");
-            refresh();
-        } catch {
-            toast.error("Failed to change state", {
-                toastId: "change_emails_failed",
-            });
-        }
+        await toast.promise(setStateRequest(eventKey, editionId, selectedStudents), {
+            error: "Failed to change state",
+            pending: "Changing state",
+        });
+        setEmailRows(
+            emailRows.map(row => {
+                row.checked = false;
+                return row;
+            })
+        );
+        setAllSelected(false);
+        refresh();
     }
 
     let table;
@@ -175,7 +169,7 @@ export default function MailOverviewPage() {
                     useWindow={false}
                     getScrollParent={() => document.getElementById("root")}
                 >
-                    <EmailsTable variant="dark">
+                    <StyledTable>
                         <thead>
                             <tr>
                                 <th>
@@ -219,7 +213,7 @@ export default function MailOverviewPage() {
                                 </tr>
                             ))}
                         </tbody>
-                    </EmailsTable>
+                    </StyledTable>
                 </InfiniteScroll>
             </TableDiv>
         );

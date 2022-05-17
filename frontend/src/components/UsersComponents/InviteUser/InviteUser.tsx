@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 export default function InviteUser(props: { edition: string }) {
     const [email, setEmail] = useState(""); // The email address which is entered
     const [valid, setValid] = useState(true); // The given email address is valid (or still being typed)
-    const [loading, setLoading] = useState(false); // The invite link is being created
     const [message, setMessage] = useState(""); // A message to confirm link created
 
     /**
@@ -38,25 +37,19 @@ export default function InviteUser(props: { edition: string }) {
      */
     const sendInvite = async (copyInvite: boolean) => {
         if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
-            setLoading(true);
-            try {
-                const response = await getInviteLink(props.edition, email);
-                if (copyInvite) {
-                    await navigator.clipboard.writeText(response.inviteLink);
-                    setMessage("Copied invite link for " + email);
-                } else {
-                    window.open(response.mailTo);
-                    setMessage("Created email for " + email);
-                }
-                setLoading(false);
-                setEmail("");
-            } catch (error) {
-                setLoading(false);
-                toast.error("Failed to create invite", {
-                    toastId: "send_invite_failed",
-                });
-                setMessage("");
+            const response = await toast.promise(getInviteLink(props.edition, email), {
+                error: "Failed to create invite",
+                pending: "Creating invite",
+                success: "Invite successfully created",
+            });
+            if (copyInvite) {
+                await navigator.clipboard.writeText(response.inviteLink);
+                setMessage("Copied invite link for " + email);
+            } else {
+                window.open(response.mailTo);
+                setMessage("Created email for " + email);
             }
+            setEmail("");
         } else {
             setValid(false);
             toast.error("Invalid email address", {
@@ -77,7 +70,7 @@ export default function InviteUser(props: { edition: string }) {
                         placeholder="Email address"
                     />
                 </InputContainer>
-                <ButtonsDiv loading={loading} sendInvite={sendInvite} />
+                <ButtonsDiv sendInvite={sendInvite} />
             </InviteContainer>
             <MessageDiv>{message}</MessageDiv>
         </div>

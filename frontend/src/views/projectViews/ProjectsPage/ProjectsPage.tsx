@@ -52,40 +52,38 @@ export default function ProjectPage() {
         }
 
         setLoading(true);
-        try {
-            const response = await getProjects(editionId, searchString, ownProjects, page);
-            if (response) {
+        const response = await toast.promise(
+            getProjects(editionId, searchString, ownProjects, page),
+            { error: "Failed to receive projects" }
+        );
+        if (response) {
+            if (response.projects.length === 0) {
+                setMoreProjectsAvailable(false);
+            }
+            if (page === 0) {
+                setProjects(response.projects);
+            } else {
+                setProjects(projects.concat(response.projects));
+            }
+
+            if (searchString === "") {
                 if (response.projects.length === 0) {
-                    setMoreProjectsAvailable(false);
+                    setAllProjectsFetched(true);
                 }
                 if (page === 0) {
-                    setProjects(response.projects);
+                    setAllProjects(response.projects);
                 } else {
-                    setProjects(projects.concat(response.projects));
+                    setAllProjects(allProjects.concat(response.projects));
                 }
-
-                if (searchString === "") {
-                    if (response.projects.length === 0) {
-                        setAllProjectsFetched(true);
-                    }
-                    if (page === 0) {
-                        setAllProjects(response.projects);
-                    } else {
-                        setAllProjects(allProjects.concat(response.projects));
-                    }
-                }
-
-                setPage(page + 1);
-            } else {
-                toast.error("Failed to receive projects", {
-                    toastId: "fetch_projects_failed",
-                });
             }
-        } catch (exception) {
+
+            setPage(page + 1);
+        } else {
             toast.error("Failed to receive projects", {
                 toastId: "fetch_projects_failed",
             });
         }
+
         setGotProjects(true);
         setLoading(false);
     }

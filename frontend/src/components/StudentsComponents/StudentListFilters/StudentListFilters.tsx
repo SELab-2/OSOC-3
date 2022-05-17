@@ -75,46 +75,45 @@ export default function StudentListFilters() {
 
         setLoading(true);
 
-        try {
-            const response = await getStudents(
+        const response = await toast.promise(
+            getStudents(
                 params.editionId!,
                 nameFilter,
                 rolesFilter,
                 alumniFilter,
                 studentCoachVolunteerFilter,
                 requestedPage
-            );
+            ),
+            { error: "Failed to receive students" }
+        );
 
-            if (response.students.length === 0 && !filterChanged) {
-                setMoreDataAvailable(false);
-            }
-            if (page === 0 || filterChanged) {
-                setStudents(response.students);
-            } else {
-                setStudents(students.concat(response.students));
-            }
-
-            // If no filters are set, allStudents can be changed
-            if (
-                nameFilter === "" &&
-                rolesFilter.length === 0 &&
-                !alumniFilter &&
-                !studentCoachVolunteerFilter
-            ) {
-                if (response.students.length === 0) {
-                    setAllDataFetched(true);
-                }
-                if (page === 0) {
-                    setAllStudents(response.students);
-                } else {
-                    setAllStudents(allStudents.concat(response.students));
-                }
-            }
-
-            setPage(page + 1);
-        } catch (error) {
-            toast.error("Failed to get students.", { toastId: "fetch_students_failed" });
+        if (response.students.length === 0 && !filterChanged) {
+            setMoreDataAvailable(false);
         }
+        if (page === 0 || filterChanged) {
+            setStudents(response.students);
+        } else {
+            setStudents(students.concat(response.students));
+        }
+
+        // If no filters are set, allStudents can be changed
+        if (
+            nameFilter === "" &&
+            rolesFilter.length === 0 &&
+            !alumniFilter &&
+            !studentCoachVolunteerFilter
+        ) {
+            if (response.students.length === 0) {
+                setAllDataFetched(true);
+            }
+            if (page === 0) {
+                setAllStudents(response.students);
+            } else {
+                setAllStudents(allStudents.concat(response.students));
+            }
+        }
+
+        setPage(page + 1);
         setLoading(false);
     }
 

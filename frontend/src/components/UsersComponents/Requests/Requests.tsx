@@ -67,34 +67,33 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         }
 
         setLoading(true);
-        try {
-            const response = await getRequests(props.edition, searchTerm, page);
+
+        const response = await toast.promise(getRequests(props.edition, searchTerm, page), {
+            error: "Failed to receive requests",
+        });
+
+        if (response.requests.length === 0) {
+            setMoreRequestsAvailable(false);
+        }
+        if (page === 0) {
+            setRequests(response.requests);
+        } else {
+            setRequests(requests.concat(response.requests));
+        }
+
+        if (searchTerm === "") {
             if (response.requests.length === 0) {
-                setMoreRequestsAvailable(false);
+                setAllRequestsFetched(true);
             }
             if (page === 0) {
-                setRequests(response.requests);
+                setAllRequests(response.requests);
             } else {
-                setRequests(requests.concat(response.requests));
+                setAllRequests(allRequests.concat(response.requests));
             }
-
-            if (searchTerm === "") {
-                if (response.requests.length === 0) {
-                    setAllRequestsFetched(true);
-                }
-                if (page === 0) {
-                    setAllRequests(response.requests);
-                } else {
-                    setAllRequests(allRequests.concat(response.requests));
-                }
-            }
-
-            setPage(page + 1);
-        } catch (exception) {
-            toast.error("Failed to receive requests", {
-                toastId: "fetch_requests_failed",
-            });
         }
+
+        setPage(page + 1);
+
         setGotData(true);
         setLoading(false);
     }

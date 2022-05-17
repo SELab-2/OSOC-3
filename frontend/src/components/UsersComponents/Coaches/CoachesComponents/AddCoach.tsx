@@ -44,21 +44,16 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
             filter = searchTerm;
         }
         setGettingData(true);
-        try {
-            const response = await getUsersExcludeEdition(props.edition, filter, page);
-            if (page === 0) {
-                setUsers(response.users);
-            } else {
-                setUsers(users.concat(response.users));
-            }
-
-            setGettingData(false);
-        } catch (exception) {
-            toast.error("Failed to receive users", {
-                toastId: "fetch_users_failed",
-            });
-            setGettingData(false);
+        const response = await toast.promise(getUsersExcludeEdition(props.edition, filter, page), {
+            error: "Failed to receive users",
+        });
+        if (page === 0) {
+            setUsers(response.users);
+        } else {
+            setUsers(users.concat(response.users));
         }
+
+        setGettingData(false);
     }
 
     function filterData(searchTerm: string) {
@@ -77,19 +72,17 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     async function addCoach(user: User) {
         setLoading(true);
-        let success = false;
-        try {
-            success = await addCoachToEdition(user.userId, props.edition);
-            if (!success) {
-                toast.error("Failed to add coach", {
-                    toastId: "add_coach_failed",
-                });
-            }
-        } catch (error) {
+        const success = await toast.promise(addCoachToEdition(user.userId, props.edition), {
+            error: "Failed to add coach",
+            pending: "Adding coach",
+            success: "Coach successfully added",
+        });
+        if (!success) {
             toast.error("Failed to add coach", {
                 toastId: "add_coach_failed",
             });
         }
+
         setLoading(false);
         if (success) {
             props.refreshCoaches();

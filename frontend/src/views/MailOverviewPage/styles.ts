@@ -1,4 +1,3 @@
-import { Table } from "react-bootstrap";
 import styled from "styled-components";
 
 export const TableDiv = styled.div`
@@ -36,10 +35,6 @@ export const FilterDiv = styled.div`
 export const SearchAndFilterDiv = styled.div`
     margin: auto;
     width: fit-content;
-`;
-
-export const EmailsTable = styled(Table)`
-    // TODO: Make all tables uniform
 `;
 
 export const CenterDiv = styled.div`
