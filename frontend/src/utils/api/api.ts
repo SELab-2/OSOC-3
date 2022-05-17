@@ -62,6 +62,10 @@ axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => 
             }
             setRefreshTokenLock(false);
         }
+    } else if (error.response?.status === 403) {
+        window.location.replace("/403-forbidden");
+    } else if (error.response?.status === 404) {
+        window.location.replace("/404-not-found");
     }
 
     throw error;

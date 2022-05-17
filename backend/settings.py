@@ -41,6 +41,8 @@ GITHUB_CLIENT_SECRET: str | None = env.str("GITHUB_CLIENT_SECRET", None)
 FRONTEND_URL: str = env.str("FRONTEND_URL", "http://localhost:3000")
 
 
+"""Tally form"""
+# ID's for specific questions & information
 @enum.unique
 class FormMapping(enum.Enum):
     FIRST_NAME = "question_3ExXkL"
@@ -57,3 +59,18 @@ class FormMapping(enum.Enum):
     @classmethod
     def _missing_(cls, value: object) -> Any:
         return FormMapping.UNKNOWN
+
+
+# Skills that should be added into the database when starting the API
+REQUIRED_SKILLS = [
+    "Front-end Developer",
+    "Back-end Developer",
+    "UX / UI Designer",
+    "Graphic Designer",
+    "Business Modeller",
+    "Storyteller",
+    "Marketer",
+    "Copywriter",
+    "Video Editor",
+    "Photographer"
+]

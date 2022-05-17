@@ -95,6 +95,11 @@ async def get_user_from_refresh_token(db: AsyncSession = Depends(get_session), t
     return await _get_user_from_token(TokenType.REFRESH, db, token)
 
 
+async def get_user_from_ws_token(token: str, db: AsyncSession = Depends(get_session)) -> User:
+    """Check which user is making a request by decoding its access token passed as query parameter"""
+    return await _get_user_from_token(TokenType.ACCESS, db, token)
+
+
 async def require_auth(user: User = Depends(get_user_from_access_token)) -> User:
     """Dependency to check if a user is at least a coach
     This dependency should be used to check for resources that aren't linked to
@@ -136,6 +141,13 @@ async def require_coach(edition: Edition = Depends(get_edition),
         raise MissingPermissionsException()
 
     return user
+
+
+async def require_coach_ws(
+        edition: Edition = Depends(get_edition),
+        user: User = Depends(get_user_from_ws_token)) -> User:
+    """Wrapper for require coach dependency for websockets"""
+    return await require_coach(edition, user)
 
 
 async def get_invite_link(invite_uuid: str, db: AsyncSession = Depends(get_session)) -> InviteLink:

@@ -1,6 +1,6 @@
 import { AuthTypeDiv, EmailAndAuthDiv, EmailDiv } from "./styles";
 import AuthTypeIcon from "./AuthTypeIcon";
-import { User } from "../../utils/api/users/users";
+import { User } from "../../../utils/api/users/users";
 
 /**
  * Email adress + auth type icon of a given user.

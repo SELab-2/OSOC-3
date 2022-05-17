@@ -2,7 +2,7 @@ import { Request } from "../../../../utils/api/users/requests";
 import React from "react";
 import AcceptReject from "./AcceptReject";
 import { AcceptRejectTd } from "../styles";
-import { EmailAndAuth } from "../../../GeneralComponents";
+import { EmailAndAuth } from "../../../Common/Users";
 
 /**
  * An item from [[RequestList]] which represents one request.

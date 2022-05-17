@@ -42,6 +42,12 @@ export default function Navbar() {
     // Matched /editions/new path
     if (editionId === "new") {
         editionId = null;
+    } else if (editionId && !editions.includes(editionId)) {
+        // If the edition was not found in the user's list of editions,
+        // don't display it in the navbar!
+        // This will lead to a 404 or 403 re-route either way, so keep
+        // the previous/the best edition displayed in the dropdown
+        editionId = null;
     }
 
     // If the current URL contains an edition, use that
@@ -71,7 +77,11 @@ export default function Navbar() {
                             <Nav.Link>Projects</Nav.Link>
                         </LinkContainer>
                     </EditionNavLink>
-                    <StudentsDropdown isLoggedIn={isLoggedIn} currentEdition={currentEdition} />
+                    <StudentsDropdown
+                        isLoggedIn={isLoggedIn}
+                        currentEdition={currentEdition}
+                        role={role}
+                    />
                     <UsersDropdown currentEdition={currentEdition} role={role} />
                     <VerticalSep className={"vr d-none d-lg-block"} />
                     <HorizontalSep className={"d-lg-none"} />

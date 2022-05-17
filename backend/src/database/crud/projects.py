@@ -16,11 +16,7 @@ def _get_projects_for_edition_query(edition: Edition) -> Select:
 async def get_projects_for_edition(db: AsyncSession, edition: Edition) -> list[Project]:
     """Returns a list of all projects from a certain edition from the database"""
     result = await db.execute(_get_projects_for_edition_query(edition).order_by(Project.name))
-    projects: list[Project] = result.unique().scalars().all()
-    for project in projects:
-        await db.refresh(project, attribute_names=["project_roles"])
-
-    return projects
+    return result.unique().scalars().all()
 
 
 async def get_projects_for_edition_page(
@@ -34,12 +30,7 @@ async def get_projects_for_edition_page(
     if search_params.coach:
         query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
     result = await db.execute(paginate(query.order_by(Project.name), search_params.page))
-    projects: list[Project] = result.unique().scalars().all()
-    # projects need refreshing
-    for project in projects:
-        await db.refresh(project, attribute_names=["project_roles"])
-
-    return projects
+    return result.unique().scalars().all()
 
 
 async def create_project(
@@ -75,7 +66,6 @@ async def get_project(db: AsyncSession, project_id: int) -> Project:
     result = await db.execute(query)
     project = result.unique().scalars().one()
     # refresh to see updated relations
-    await db.refresh(project)
     return project
 
 
@@ -107,7 +97,7 @@ async def patch_project(
 
 async def get_project_role(db: AsyncSession, project_role_id: int) -> ProjectRole:
     """Get a project role by id"""
-    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique()\
+    return (await db.execute(select(ProjectRole).where(ProjectRole.project_role_id == project_role_id))).unique() \
         .scalar_one()
 
 
