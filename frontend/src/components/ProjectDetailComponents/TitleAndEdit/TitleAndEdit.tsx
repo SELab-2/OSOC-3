@@ -1,19 +1,17 @@
-import React from "react";
 import {
     Title,
     TitleContainer,
     Save,
     Cancel,
-    Delete,
     TitleInput,
     Edit,
     EditDeleteContainer,
 } from "./styles";
 
 import { MdOutlineEditNote } from "react-icons/md";
-import { HiOutlineTrash } from "react-icons/hi";
 import { Role } from "../../../data/enums/role";
 import { Project } from "../../../data/interfaces/projects";
+import { DeleteButton } from "../../Common/Buttons";
 
 export default function TitleAndEdit({
     editing,
@@ -73,9 +71,7 @@ export default function TitleAndEdit({
                             </Cancel>
                         </>
                     )}
-                    <Delete onClick={handleShow}>
-                        <HiOutlineTrash size={"20px"} />
-                    </Delete>
+                    <DeleteButton onClick={handleShow} />
                 </EditDeleteContainer>
             )}
         </TitleContainer>

@@ -22,14 +22,15 @@ import {
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import {
     TitleAndEdit,
-    StudentList,
     ProjectRoles,
     ProjectCoaches,
     ProjectPartners,
     AddStudentModal,
+    StudentList,
 } from "../../../components/ProjectDetailComponents";
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
 import { toast } from "react-toastify";
+import { StudentListFilters } from "../../../components/StudentsComponents";
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
@@ -134,7 +135,8 @@ export default function ProjectDetailPage() {
     return (
         <DragDropContext onDragEnd={result => onDragDrop(result)}>
             <ProjectPageContainer>
-                <StudentList />
+                <StudentList/>
+                <StudentListFilters/>
 
                 <ProjectContainer>
                     <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>

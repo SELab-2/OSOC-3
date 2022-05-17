@@ -50,14 +50,3 @@ export const Cancel = styled.button`
     margin-left: 5px;
     border-radius: 5px;
 `;
-
-export const Delete = styled.button`
-    background-color: #f14a3b;
-    padding: 5px 5px;
-    border: 0;
-    border-radius: 1px;
-    max-height: 30;
-    margin-left: 5px;
-    display: flex;
-    align-items: center;
-`;

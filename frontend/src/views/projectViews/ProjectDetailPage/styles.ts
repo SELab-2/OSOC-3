@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ProjectPageContainer = styled.div`
     display: flex;
-    height: 90vh;
+    height: 100vh;
 `;
 
 export const ProjectContainer = styled.div`
