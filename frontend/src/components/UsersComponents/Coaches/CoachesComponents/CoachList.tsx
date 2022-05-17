@@ -1,10 +1,9 @@
 import { User } from "../../../../utils/api/users/users";
-import { SpinnerContainer } from "../../Requests/styles";
-import { Spinner } from "react-bootstrap";
 import { CoachesTable, ListDiv, RemoveTh } from "../styles";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { CoachListItem } from "./index";
+import LoadSpinner from "../../../Common/LoadSpinner";
 
 /**
  * A list of [[CoachListItem]]s.
@@ -27,15 +26,11 @@ export default function CoachList(props: {
                 pageStart={0}
                 loadMore={props.getMoreCoaches}
                 hasMore={props.moreCoachesAvailable}
-                loader={
-                    <SpinnerContainer key={"spinner"}>
-                        <Spinner animation="border" />
-                    </SpinnerContainer>
-                }
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >
-                <CoachesTable variant="dark">
+                <CoachesTable>
                     <thead>
                         <tr>
                             <th>Name</th>

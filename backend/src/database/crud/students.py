@@ -1,37 +1,41 @@
 from datetime import datetime
-from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.expression import func, and_
+
+from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
+
 from src.database.crud.util import paginate
 from src.database.enums import DecisionEnum, EmailStatusEnum
 from src.database.models import Edition, Skill, Student, DecisionEmail
-from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
 
-def get_student_by_id(db: Session, student_id: int) -> Student:
+async def get_student_by_id(db: AsyncSession, student_id: int) -> Student:
     """Get a student by id"""
+    query = select(Student).where(Student.student_id == student_id)
+    result = await db.execute(query)
+    return result.unique().scalars().one()
 
-    return db.query(Student).where(Student.student_id == student_id).one()
 
-
-def set_definitive_decision_on_student(db: Session, student: Student, decision: DecisionEnum) -> None:
+async def set_definitive_decision_on_student(db: AsyncSession, student: Student, decision: DecisionEnum) -> None:
     """set a definitive decision on a student"""
 
     student.decision = decision
-    db.commit()
+    await db.commit()
 
 
-def delete_student(db: Session, student: Student) -> None:
+async def delete_student(db: AsyncSession, student: Student) -> None:
     """Delete a student from the database"""
-    db.delete(student)
-    db.commit()
+    await db.delete(student)
+    await db.commit()
 
 
-def get_students(db: Session, edition: Edition,
-                 commons: CommonQueryParams, skills: list[Skill] = None) -> list[Student]:
+async def get_students(db: AsyncSession, edition: Edition,
+                       commons: CommonQueryParams, skills: list[Skill] = None) -> list[Student]:
     """Get students"""
-    query = db.query(Student)\
-        .where(Student.edition == edition)\
-        .where((Student.first_name + ' ' + Student.last_name).contains(commons.name))\
+    query = select(Student) \
+        .where(Student.edition == edition) \
+        .where((Student.first_name + ' ' + Student.last_name).contains(commons.name))
 
     if commons.alumni:
         query = query.where(Student.alumni)
@@ -45,37 +49,42 @@ def get_students(db: Session, edition: Edition,
     for skill in skills:
         query = query.where(Student.skills.contains(skill))
 
-    return paginate(query, commons.page).all()
+    query = query.order_by(Student.first_name, Student.last_name)
+    return (await db.execute(paginate(query, commons.page))).unique().scalars().all()
 
 
-def get_emails(db: Session, student: Student) -> list[DecisionEmail]:
+async def get_emails(db: AsyncSession, student: Student) -> list[DecisionEmail]:
     """Get all emails send to a student"""
-    return db.query(DecisionEmail).where(DecisionEmail.student_id == student.student_id).all()
+    query = select(DecisionEmail).where(DecisionEmail.student_id == student.student_id)
+    result = await db.execute(query)
+    return result.unique().scalars().all()
 
 
-def create_email(db: Session, student: Student, email_status: EmailStatusEnum) -> DecisionEmail:
+async def create_email(db: AsyncSession, student: Student, email_status: EmailStatusEnum) -> DecisionEmail:
     """Create a new email in the database"""
     email: DecisionEmail = DecisionEmail(
         student=student, decision=email_status, date=datetime.now())
     db.add(email)
-    db.commit()
+    await db.commit()
     return email
 
 
-def get_last_emails_of_students(db: Session, edition: Edition, commons: EmailsSearchQueryParams) -> list[DecisionEmail]:
+async def get_last_emails_of_students(db: AsyncSession, edition: Edition, commons: EmailsSearchQueryParams) -> list[
+    DecisionEmail]:
     """get last email of all students that got an email"""
-    last_emails = db.query(DecisionEmail.email_id, func.max(DecisionEmail.date))\
-                    .join(Student)\
-                    .where(Student.edition == edition)\
-                    .where((Student.first_name + ' ' + Student.last_name).contains(commons.name))\
-                    .group_by(DecisionEmail.student_id).subquery()
+    last_emails = select(DecisionEmail.student_id, func.max(DecisionEmail.date).label("maxdate")) \
+        .join(Student) \
+        .where(Student.edition == edition) \
+        .where((Student.first_name + ' ' + Student.last_name).contains(commons.name)) \
+        .group_by(DecisionEmail.student_id).subquery()
 
-    emails = db.query(DecisionEmail).join(
-                last_emails, DecisionEmail.email_id == last_emails.c.email_id
-             )
+    emails = select(DecisionEmail).join(
+        last_emails, and_(DecisionEmail.student_id == last_emails.c.student_id,
+                                  DecisionEmail.date == last_emails.c.maxdate)
+    )
 
     if commons.email_status:
         emails = emails.where(DecisionEmail.decision.in_(commons.email_status))
 
-    emails = emails.order_by(DecisionEmail.student_id)
-    return paginate(emails, commons.page).all()
+    emails = emails.join(Student, DecisionEmail.student).order_by(Student.first_name, Student.last_name)
+    return (await db.execute(paginate(emails, commons.page))).unique().scalars().all()

@@ -1,0 +1,11 @@
+#green-progress {
+    background-color: var(--osoc_green);
+}
+
+#orange-progress {
+    background-color: var(--osoc_orange);
+}
+
+#red-progress {
+    background-color: var(--osoc_red);
+}

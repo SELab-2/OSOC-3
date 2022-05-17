@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { Error } from "../../Requests/styles";
-import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/styles";
+import { AddCoachButtonDiv, ModalContentConfirm } from "../../../AdminsComponents/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import UserMenuItem from "../../../GeneralComponents/MenuItem";
-import { StyledMenuItem } from "../../../GeneralComponents/styles";
-import { EmailAndAuth } from "../../../GeneralComponents";
+import UserMenuItem from "../../../Common/Users/MenuItem";
+import { StyledMenuItem } from "../../../Common/Users/styles";
+import { EmailAndAuth } from "../../../Common/Users";
+import { EmailDiv } from "../styles";
+import CreateButton from "../../../Common/Buttons/CreateButton";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -84,8 +86,8 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
         addButton = <Spinner animation="border" />;
     } else {
         addButton = (
-            <Button
-                variant="primary"
+            <CreateButton
+                showIcon={false}
                 onClick={() => {
                     if (selected !== undefined) {
                         addCoach(selected);
@@ -93,16 +95,18 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                 }}
                 disabled={selected === undefined}
             >
-                Add {selected?.name} as coach
-            </Button>
+                Add coach
+            </CreateButton>
         );
     }
 
     return (
         <>
-            <AddAdminButton variant="primary" onClick={handleShow}>
-                Add coach
-            </AddAdminButton>
+            <AddCoachButtonDiv>
+                <CreateButton showIcon={false} onClick={handleShow}>
+                    Add coach
+                </CreateButton>
+            </AddCoachButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -149,7 +153,9 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                                 );
                             }}
                         />
-                        <EmailAndAuth user={selected} />
+                        <EmailDiv>
+                            <EmailAndAuth user={selected} />
+                        </EmailDiv>
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}
