@@ -6,7 +6,6 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm.exc import NoResultFound
 
 import settings
 import src.database.crud.projects as crud_projects
@@ -38,7 +37,7 @@ async def get_student(student_id: int, database: AsyncSession = Depends(get_sess
     """Get the student from the database, given the id in the path"""
     student: Student = await get_student_by_id(database, student_id)
     if student.edition != edition:
-        raise NoResultFound
+        raise NotFound()
     return student
 
 
@@ -47,7 +46,7 @@ async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(ge
     """Get the suggestion from the database, given the id in the path"""
     suggestion: Suggestion = await get_suggestion_by_id(database, suggestion_id)
     if suggestion.student != student:
-        raise NoResultFound
+        raise NotFound()
     return suggestion
 
 
