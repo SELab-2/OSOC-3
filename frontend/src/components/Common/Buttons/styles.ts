@@ -18,6 +18,7 @@ export const GreenButton = styled(Button)`
         background-color: var(--osoc_orange);
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);
+        box-shadow: none;
     }
 `;
 
@@ -31,9 +32,10 @@ export const DropdownToggle = styled(Dropdown.Toggle)`
     &:hover,
     &:active,
     &:focus {
-        background-color: var(--osoc_orange);
+        background-color: var(--osoc_orange) !important;
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);
+        box-shadow: none !important;
     }
 `;
 
