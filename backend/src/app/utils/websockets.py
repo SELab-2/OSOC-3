@@ -120,7 +120,7 @@ def install_middleware(app: FastAPI):
                 del path_ids['edition_name']
                 live_event: LiveEventParameters = LiveEventParameters(
                     request.method,
-                    request.path_params
+                    path_ids
                 )
                 await publisher.broadcast(live_event)
 
