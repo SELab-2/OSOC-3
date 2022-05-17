@@ -12,6 +12,12 @@ export const GreenButton = styled(Button)`
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
 
+    &:disabled {
+        background-color: var(--osoc_green);
+        border-color: var(--osoc_green);
+        color: var(--osoc_blue);
+    }
+
     &:hover,
     &:active,
     &:focus {
@@ -28,6 +34,12 @@ export const DropdownToggle = styled(Dropdown.Toggle)`
     background-color: var(--osoc_green);
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
+
+    &:disabled {
+        background-color: var(--osoc_green);
+        border-color: var(--osoc_green);
+        color: var(--osoc_blue);
+    }
 
     &:hover,
     &:active,
@@ -73,6 +85,11 @@ export const RedButton = styled(Button)<AnimatedButton>`
 
     background-color: var(--osoc_red);
     border-color: var(--osoc_red);
+
+    &:disabled {
+        background-color: var(--osoc_red);
+        border-color: var(--osoc_red);
+    }
 
     &:hover {
         background-color: var(--osoc_red_darkened);
