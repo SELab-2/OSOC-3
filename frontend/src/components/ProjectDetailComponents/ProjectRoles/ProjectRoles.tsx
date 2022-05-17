@@ -6,6 +6,7 @@ import { deleteProjectRole } from "../../../utils/api/projectRoles";
 import { DeleteButton } from "../../Common/Buttons";
 import { NoStudents, ProjectRoleContainer, Suggestions, TitleDeleteContainer } from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
+import AddNewSkill from "./AddNewSkill";
 
 export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRole[] }) {
     const params = useParams();
@@ -65,6 +66,7 @@ export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRo
                     </Droppable>
                 </ProjectRoleContainer>
             ))}
+            <AddNewSkill />
         </div>
     );
 }
