@@ -127,7 +127,7 @@ export default function CreateEditionPage() {
                     <FormControl
                         type="text"
                         value={name}
-                        placeholder="Edition name"
+                        placeholder={"Ex. OSOC-" + currentYear.toString()}
                         isInvalid={nameError}
                         onChange={e => {
                             setName(e.target.value);
@@ -141,7 +141,7 @@ export default function CreateEditionPage() {
                     <FormControl
                         type="number"
                         value={year}
-                        placeholder="Edition year"
+                        placeholder={"Ex. " + currentYear.toString()}
                         isInvalid={yearError}
                         onChange={e => {
                             setYear(e.target.value);
