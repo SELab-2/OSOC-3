@@ -32,13 +32,15 @@ async def test_add_pr_suggestion(database_session: AsyncSession, auth_client: Au
             f"/editions/{edition.name}/projects/{project.project_id}/roles/{project_role.project_role_id}/students/{student.student_id}",
             json={"argumentation": "argumentation"}
         )
-    
         assert resp.status_code == status.HTTP_201_CREATED
+        json1 = resp.json()
+        assert json1["projectRoleSuggestion"]["projectRoleSuggestionId"] == 1
+        assert json1["projectRoleSuggestion"]["argumentation"] == 'argumentation'
         response2 = await auth_client.get(f'/editions/{edition.name}/projects/{project.project_id}')
-        json = response2.json()
-        assert len(json['projectRoles']) == 1
-        assert len(json['projectRoles'][0]['suggestions']) == 1
-        assert json['projectRoles'][0]['suggestions'][0]['argumentation'] == 'argumentation'
+        json2 = response2.json()
+        assert len(json2['projectRoles']) == 1
+        assert len(json2['projectRoles'][0]['suggestions']) == 1
+        assert json2['projectRoles'][0]['suggestions'][0]['argumentation'] == 'argumentation'
 
 
 async def test_add_pr_suggestion_non_existing_student(database_session: AsyncSession, auth_client: AuthClient):
