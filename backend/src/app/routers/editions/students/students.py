@@ -10,7 +10,7 @@ from src.app.routers.tags import Tags
 from src.app.schemas.students import (NewDecision, CommonQueryParams, ReturnStudent, ReturnStudentList,
                                       ReturnStudentMailList, NewEmail, EmailsSearchQueryParams,
                                       ListReturnStudentMailList)
-from src.app.utils.dependencies import get_student, get_edition, require_admin, require_auth
+from src.app.utils.dependencies import get_latest_edition, get_student, get_edition, require_admin, require_auth
 from src.database.database import get_session
 from src.database.models import Student, Edition
 from .suggestions import students_suggestions_router
@@ -33,7 +33,7 @@ async def get_students(db: AsyncSession = Depends(get_session),
 @students_router.post("/emails", dependencies=[Depends(require_admin)],
                       status_code=status.HTTP_201_CREATED, response_model=ListReturnStudentMailList)
 async def send_emails(new_email: NewEmail, db: AsyncSession = Depends(get_session),
-                      edition: Edition = Depends(get_edition)):
+                      edition: Edition = Depends(get_latest_edition)):
     """
     Send a email to a list of students.
     """
@@ -66,7 +66,7 @@ async def get_student_by_id(edition: Edition = Depends(get_edition), student: St
     return get_student_return(student, edition)
 
 
-@students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin)],
+@students_router.put("/{student_id}/decision", dependencies=[Depends(require_admin), Depends(get_latest_edition)],
                      status_code=status.HTTP_204_NO_CONTENT)
 async def make_decision(decision: NewDecision, student: Student = Depends(get_student),
                         db: AsyncSession = Depends(get_session)):
