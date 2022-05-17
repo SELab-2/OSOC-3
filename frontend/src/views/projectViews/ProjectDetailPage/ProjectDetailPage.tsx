@@ -58,7 +58,7 @@ export default function ProjectDetailPage() {
 
     // WebSocket listener
     useEffect(() => {
-        const listener = socket?.addEventListener("message", function (event: MessageEvent) {
+        function listener(event: MessageEvent) {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
             // Ignore events that aren't targeted towards projects
@@ -82,12 +82,13 @@ export default function ProjectDetailPage() {
                 // to fetch the project again
                 setGotProject(false);
             }
-        });
+        }
+
+        socket?.addEventListener("message", listener);
 
         function removeListener() {
-            if (socket && listener) {
+            if (socket) {
                 socket.removeEventListener("message", listener);
-                console.log("removed the listener :)");
             }
         }
 
