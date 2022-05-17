@@ -1,5 +1,5 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
-import { useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
 import { EmailDiv, ModalContentConfirm, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
@@ -9,6 +9,7 @@ import { StyledMenuItem } from "../GeneralComponents/styles";
 import UserMenuItem from "../GeneralComponents/MenuItem";
 import { EmailAndAuth } from "../GeneralComponents";
 import CreateButton from "../Common/Buttons/CreateButton";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -23,6 +24,18 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [clearRef, setClearRef] = useState(false); // The ref must be cleared
+
+    const typeaheadRef = createRef<Typeahead>();
+
+    useEffect(() => {
+        // For some obscure reason the ref can only be cleared in here & not somewhere else
+        if (clearRef) {
+            // This triggers itself, but only once, so it doesn't really matter
+            setClearRef(false);
+            typeaheadRef.current?.clear();
+        }
+    }, [clearRef, typeaheadRef]);
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
@@ -78,6 +91,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
             setSearchTerm("");
             getData(0, "");
             setSelected(undefined);
+            setClearRef(true);
         }
     }
 
@@ -129,6 +143,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             minLength={1}
                             onSearch={filterData}
                             options={users}
+                            ref={typeaheadRef}
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
