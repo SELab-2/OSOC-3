@@ -33,3 +33,27 @@ export const DropdownEmailDiv = styled.div`
     font-size: small;
     margin-bottom: 5px;
 `;
+
+export const ListDiv = styled.div`
+    width: 100%;
+    height: fit-content;
+    max-height: 40em;
+    overflow: auto;
+    margin-top: 10px;
+`;
+
+export const Error = styled.div`
+    color: var(--osoc_red);
+    width: 100%;
+    margin: auto;
+`;
+
+export const SearchFieldDiv = styled.div`
+    float: left;
+    width: 15em;
+`;
+
+export const TableDiv = styled.div`
+    width: 100%;
+    clear: left;
+`;

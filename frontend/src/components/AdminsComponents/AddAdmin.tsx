@@ -1,14 +1,14 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
-import { EmailDiv, ModalContentConfirm, Warning } from "./styles";
+import { AddButtonDiv, EmailDiv, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import { Error } from "../UsersComponents/Requests/styles";
-import { StyledMenuItem } from "../Common/Users/styles";
+import { Error, StyledMenuItem } from "../Common/Users/styles";
 import UserMenuItem from "../Common/Users/MenuItem";
 import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../Common/styles";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -109,9 +109,11 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
     return (
         <>
-            <CreateButton showIcon={false} onClick={handleShow}>
-                Add admin
-            </CreateButton>
+            <AddButtonDiv>
+                <CreateButton showIcon={false} onClick={handleShow}>
+                    Add admin
+                </CreateButton>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>

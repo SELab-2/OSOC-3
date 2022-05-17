@@ -6,7 +6,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import InfiniteScroll from "react-infinite-scroller";
 import { Multiselect } from "multiselect-react-dropdown";
-import { Form, Spinner } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import {
     TableDiv,
     DropDownButtonDiv,
@@ -18,9 +18,10 @@ import {
     MessageDiv,
 } from "./styles";
 import { EmailType } from "../../data/enums";
-import { SpinnerContainer, Error } from "../../components/UsersComponents/Requests/styles";
 import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
+import LoadSpinner from "../../components/Common/LoadSpinner";
+import { Error } from "../../components/Common/Users/styles";
 
 interface EmailRow {
     email: StudentEmail;
@@ -172,11 +173,7 @@ export default function MailOverviewPage() {
                 <InfiniteScroll
                     loadMore={updateMailOverview}
                     hasMore={moreEmailsAvailable}
-                    loader={
-                        <SpinnerContainer key={"spinner"}>
-                            <Spinner animation="border" />
-                        </SpinnerContainer>
-                    }
+                    loader={<LoadSpinner show={true} />}
                     initialLoad={true}
                     useWindow={false}
                     getScrollParent={() => document.getElementById("root")}
