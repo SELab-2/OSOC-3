@@ -32,6 +32,7 @@ export default function NameFilter({
                     value={nameFilter}
                     onChange={e => {
                         setNameFilter(e.target.value);
+                        sessionStorage.setItem("nameFilter", e.target.value);
                     }}
                 />
             </FilterStudentNameInputContainer>

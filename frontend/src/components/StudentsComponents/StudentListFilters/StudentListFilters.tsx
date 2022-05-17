@@ -5,7 +5,7 @@ import { StudentListSideMenu, StudentListLinebreak, FilterControls, MessageDiv }
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
-import RolesFilter from "./RolesFilter/RolesFilter";
+import RolesFilter, { DropdownRole } from "./RolesFilter/RolesFilter";
 import "./StudentListFilters.css";
 import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
 import { Student } from "../../../data/interfaces/students";
@@ -26,11 +26,29 @@ export default function StudentListFilters() {
     const [allDataFetched, setAllDataFetched] = useState(false);
     const [page, setPage] = useState(0);
 
-    const [nameFilter, setNameFilter] = useState("");
-    const [rolesFilter, setRolesFilter] = useState<number[]>([]);
-    const [alumniFilter, setAlumniFilter] = useState(false);
-    const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
-    const [suggestedFilter, setSuggestedFilter] = useState(false);
+    const [nameFilter, setNameFilter] = useState(
+        sessionStorage.getItem("nameFilter") === null ? "" : sessionStorage.getItem("nameFilter")
+    );
+    const [rolesFilter, setRolesFilter] = useState<DropdownRole[]>(
+        sessionStorage.getItem("rolesFilter") === null
+            ? []
+            : JSON.parse(sessionStorage.getItem("rolesFilter")!)
+    );
+    const [alumniFilter, setAlumniFilter] = useState(
+        sessionStorage.getItem("alumniFilter") === null
+            ? false
+            : sessionStorage.getItem("alumniFilter") === "true"
+    );
+    const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(
+        sessionStorage.getItem("studentCoachVolunteerFilter") === null
+            ? false
+            : sessionStorage.getItem("studentCoachVolunteerFilter") === "true"
+    );
+    const [suggestedFilter, setSuggestedFilter] = useState(
+        sessionStorage.getItem("suggestedFilter") === null
+            ? false
+            : sessionStorage.getItem("suggestedFilter") === "true"
+    );
 
     /**
      * Request all students with selected filters
@@ -48,7 +66,7 @@ export default function StudentListFilters() {
                 .filter(student =>
                     (student.firstName + " " + student.lastName)
                         .toUpperCase()
-                        .includes(nameFilter.toUpperCase())
+                        .includes(nameFilter!.toUpperCase())
                 )
                 .filter(student => !alumniFilter || student.alumni === alumniFilter)
                 .filter(
@@ -63,10 +81,11 @@ export default function StudentListFilters() {
                 const newStudents: Student[] = [];
                 for (const student of tempStudents) {
                     for (const skill of student.skills) {
-                        if (rolesFilter.includes(skill.skillId)) {
-                            newStudents.push(student);
-                            break;
-                        }
+                        rolesFilter.forEach(dropdownValue => {
+                            if (dropdownValue.value === skill.skillId) {
+                                newStudents.push(student);
+                            }
+                        });
                     }
                 }
                 setStudents(newStudents);
@@ -80,11 +99,11 @@ export default function StudentListFilters() {
         try {
             const response = await getStudents(
                 params.editionId!,
-                nameFilter,
+                nameFilter!,
                 rolesFilter,
                 alumniFilter,
                 studentCoachVolunteerFilter,
-                suggestedFilter,
+                suggestedFilter!,
                 requestedPage
             );
 
@@ -147,12 +166,12 @@ export default function StudentListFilters() {
 
     return (
         <StudentListSideMenu>
-            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
-            <RolesFilter setRolesFilter={setRolesFilter} />
+            <NameFilter nameFilter={nameFilter!} setNameFilter={setNameFilter} />
+            <RolesFilter rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} />
             <Form.Group>
                 <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
                 <SuggestedForFilter
-                    suggestedFilter={suggestedFilter}
+                    suggestedFilter={suggestedFilter!}
                     setSuggestedFilter={setSuggestedFilter}
                 />
                 <StudentCoachVolunteerFilter
@@ -163,8 +182,10 @@ export default function StudentListFilters() {
             <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
+                    setRolesFilter={setRolesFilter}
                     setNameFilter={setNameFilter}
                     setAlumniFilter={setAlumniFilter}
+                    setSuggestedFilter={setSuggestedFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                 />
             </FilterControls>

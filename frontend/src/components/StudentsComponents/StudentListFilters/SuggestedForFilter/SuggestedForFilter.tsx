@@ -22,6 +22,7 @@ export default function SuggestedForFilter({
                 checked={suggestedFilter}
                 onChange={e => {
                     setSuggestedFilter(e.target.checked);
+                    sessionStorage.setItem("suggestedFilter", String(e.target.checked));
                     e.target.checked = suggestedFilter;
                 }}
             />

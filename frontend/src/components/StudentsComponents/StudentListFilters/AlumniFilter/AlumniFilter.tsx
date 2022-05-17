@@ -22,6 +22,7 @@ export default function AlumniFilter({
                 checked={alumniFilter}
                 onChange={e => {
                     setAlumniFilter(e.target.checked);
+                    sessionStorage.setItem("alumniFilter", String(e.target.checked));
                     e.target.checked = alumniFilter;
                 }}
             />

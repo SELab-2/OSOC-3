@@ -22,6 +22,7 @@ export default function StudentCoachVolunteerFilter({
                 checked={studentCoachVolunteerFilter}
                 onChange={e => {
                     setStudentCoachVolunteerFilter(e.target.checked);
+                    sessionStorage.setItem("studentCoachVolunteerFilter", String(e.target.checked));
                     e.target.checked = studentCoachVolunteerFilter;
                 }}
             />

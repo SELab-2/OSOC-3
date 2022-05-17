@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Student, Students } from "../../data/interfaces/students";
 import { axiosInstance } from "./api";
+import { DropdownRole } from "../../components/StudentsComponents/StudentListFilters/RolesFilter/RolesFilter";
 
 /**
  * API call to get students (and filter them).
@@ -9,12 +10,13 @@ import { axiosInstance } from "./api";
  * @param rolesFilter roles to filter on.
  * @param alumniFilter check to filter on.
  * @param studentCoachVolunteerFilter check to filter on.
+ * @param suggestedFilter check to filter on.
  * @param page The page to fetch.
  */
 export async function getStudents(
     edition: string,
     nameFilter: string,
-    rolesFilter: number[],
+    rolesFilter: DropdownRole[],
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean,
     suggestedFilter: boolean,
@@ -22,7 +24,7 @@ export async function getStudents(
 ): Promise<Students> {
     let rolesRequestField: string = "";
     for (const role of rolesFilter) {
-        rolesRequestField += "skill_ids=" + role.toString() + "&";
+        rolesRequestField += "skill_ids=" + role.value.toString() + "&";
     }
     const response = await axiosInstance.get(
         "/editions/" +
