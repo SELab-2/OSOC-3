@@ -28,7 +28,8 @@ async def get_projects_for_edition_page(
     query = _get_projects_for_edition_query(edition).where(
         Project.name.contains(search_params.name))
     if search_params.coach:
-        query = query.where(Project.project_id.in_([user_project.project_id for user_project in user.projects]))
+        query = query.where(Project.project_id.in_(
+            [user_project.project_id for user_project in user.projects]))
     result = await db.execute(paginate(query.order_by(Project.name), search_params.page))
     return result.unique().scalars().all()
 
@@ -148,3 +149,10 @@ async def get_conflict_students(db: AsyncSession, edition: Edition) -> list[Stud
         s for s in (await db.execute(select(Student).where(Student.edition == edition))).unique().scalars().all()
         if len(s.pr_suggestions) > 1
     ]
+
+
+async def delete_project_role(db: AsyncSession, project_role_id: int) -> None:
+    """delete a project role"""
+    project_role: ProjectRole = await get_project_role(db, project_role_id)
+    await db.delete(project_role)
+    await db.commit()

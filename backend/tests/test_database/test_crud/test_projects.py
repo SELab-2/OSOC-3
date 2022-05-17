@@ -196,6 +196,21 @@ async def test_delete_project_with_project_roles(database_session: AsyncSession)
     assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 0
 
 
+async def test_delete_project_role(database_session: AsyncSession):
+    """test delete a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    project: Project = Project(
+        name="project 1",
+        edition=edition,
+        project_roles=[ProjectRole(slots=1, skill=Skill(name="skill"))]
+    )
+    database_session.add(project)
+    await database_session.commit()
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 1
+    await crud.delete_project_role(database_session, 1)
+    assert len((await database_session.execute(select(ProjectRole))).unique().scalars().all()) == 0
+
+
 async def test_patch_project(database_session: AsyncSession):
     """tests patch a project"""
     edition: Edition = Edition(year=2022, name="ed2022")
