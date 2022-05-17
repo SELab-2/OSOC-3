@@ -114,42 +114,42 @@ async def test_delete_student(database_with_data: AsyncSession):
 async def test_get_all_students(database_with_data: AsyncSession):
     """test get all students"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams())
+    students = await get_students(database_with_data, edition, CommonQueryParams(), None)
     assert len(students) == 2
 
 
 async def test_search_students_on_first_name(database_with_data: AsyncSession):
     """test"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(name="Jos"))
+    students = await get_students(database_with_data, edition, CommonQueryParams(name="Jos"), None)
     assert len(students) == 1
 
 
 async def test_search_students_on_last_name(database_with_data: AsyncSession):
     """tests search on last name"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(name="Vermeulen"))
+    students = await get_students(database_with_data, edition, CommonQueryParams(name="Vermeulen"), None)
     assert len(students) == 1
 
 
 async def test_search_students_on_between_first_and_last_name(database_with_data: AsyncSession):
     """tests search on between first- and last name"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(name="os V"))
+    students = await get_students(database_with_data, edition, CommonQueryParams(name="os V"), None)
     assert len(students) == 1
 
 
 async def test_search_students_alumni(database_with_data: AsyncSession):
     """tests search on alumni"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(alumni=True))
+    students = await get_students(database_with_data, edition, CommonQueryParams(alumni=True), None)
     assert len(students) == 1
 
 
 async def test_search_students_student_coach(database_with_data: AsyncSession):
     """tests search on student coach"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(student_coach=True))
+    students = await get_students(database_with_data, edition, CommonQueryParams(student_coach=True), None)
     assert len(students) == 1
 
 
@@ -157,7 +157,7 @@ async def test_search_students_one_skill(database_with_data: AsyncSession):
     """tests search on one skill"""
     edition: Edition = (await database_with_data.execute(select(Edition).where(Edition.edition_id == 1))).scalar_one()
     skill: Skill = (await database_with_data.execute(select(Skill).where(Skill.name == "skill1"))).scalar_one()
-    students = await get_students(database_with_data, edition, CommonQueryParams(), skills=[skill])
+    students = await get_students(database_with_data, edition, CommonQueryParams(), None, skills=[skill])
     assert len(students) == 1
 
 
@@ -168,7 +168,7 @@ async def test_search_students_multiple_skills(database_with_data: AsyncSession)
         (await database_with_data.execute(select(Skill).where(Skill.name == "skill4"))).scalar_one(),
         (await database_with_data.execute(select(Skill).where(Skill.name == "skill5"))).scalar_one(),
     ]
-    students = await get_students(database_with_data, edition, CommonQueryParams(), skills=skills)
+    students = await get_students(database_with_data, edition, CommonQueryParams(), None, skills=skills)
     assert len(students) == 1
 
 

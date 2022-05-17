@@ -16,7 +16,7 @@ from src.app.schemas.students import (
 from src.app.utils.dependencies import get_student, get_edition, require_admin, require_auth
 from src.app.utils.websockets import live
 from src.database.database import get_session
-from src.database.models import Student, Edition
+from src.database.models import Student, Edition, User
 from .suggestions import students_suggestions_router
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
@@ -24,15 +24,14 @@ students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
 
 
-@students_router.get("", dependencies=[Depends(require_auth)], response_model=ReturnStudentList)
-async def get_students(
-        db: AsyncSession = Depends(get_session),
-        commons: CommonQueryParams = Depends(CommonQueryParams),
-        edition: Edition = Depends(get_edition)):
+@students_router.get("", response_model=ReturnStudentList)
+async def get_students(db: AsyncSession = Depends(get_session),
+                       commons: CommonQueryParams = Depends(CommonQueryParams),
+                       edition: Edition = Depends(get_edition), user: User = Depends(require_auth)):
     """
     Get a list of all students.
     """
-    return await get_students_search(db, edition, commons)
+    return await get_students_search(db, edition, commons, user)
 
 
 @students_router.post(
