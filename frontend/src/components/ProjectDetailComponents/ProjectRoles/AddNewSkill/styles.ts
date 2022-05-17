@@ -25,6 +25,7 @@ export const NewSkill = styled.div`
     background-color: #323252;
     box-shadow: 5px 5px 15px #131329;
     display: flex;
+    align-items: center;
     height: max-content;
 `;
 
