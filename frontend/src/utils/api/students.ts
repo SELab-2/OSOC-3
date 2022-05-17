@@ -17,8 +17,13 @@ export async function getStudents(
     rolesFilter: number[],
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean,
+    suggestedFilter: boolean,
     page: number
 ): Promise<Students> {
+    let rolesRequestField: string = "";
+    for (const role of rolesFilter) {
+        rolesRequestField += "skill_ids=" + role.toString() + "&";
+    }
     const response = await axiosInstance.get(
         "/editions/" +
             edition +
@@ -26,6 +31,10 @@ export async function getStudents(
             nameFilter +
             "&alumni=" +
             alumniFilter +
+            "&own_suggestions=" +
+            suggestedFilter +
+            "&" +
+            rolesRequestField +
             "&student_coach=" +
             studentCoachVolunteerFilter +
             "&page=" +

@@ -5,7 +5,7 @@ import {
     FilterRolesLabel,
     FilterRolesLabelContainer,
 } from "../styles";
-import Select from "react-select";
+import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
 import "./RolesFilter.css";
 
@@ -39,9 +39,9 @@ export default function RolesFilter({
         fetchRoles();
     }, []);
 
-    function handleRolesChange(): void {
+    function handleRolesChange(event: MultiValue<DropdownRole>): void {
         const newRoles: number[] = [];
-        for (const role of roles) {
+        for (const role of event) {
             newRoles.push(role.value);
         }
         setRolesFilter(newRoles);
@@ -59,7 +59,7 @@ export default function RolesFilter({
                     isMulti
                     isSearchable
                     placeholder="Choose roles..."
-                    onChange={handleRolesChange}
+                    onChange={e => handleRolesChange(e)}
                 />
             </FilterRolesDropdownContainer>
         </FilterRoles>
