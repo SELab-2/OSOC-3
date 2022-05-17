@@ -8,7 +8,7 @@ import {
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { useAuth } from "../../../contexts/auth-context";
+import { useAuth } from "../../../contexts";
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import {
@@ -32,6 +32,8 @@ import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
 import { useSockets } from "../../../contexts/socket-context";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { toast } from "react-toastify";
 
 
 /**
@@ -54,18 +56,45 @@ export default function ProjectDetailPage() {
     const navigate = useNavigate();
     const { role } = useAuth();
 
+    // WebSocket listener
     useEffect(() => {
-        socket?.addEventListener("message", function (data: object) {
-            console.log(data);
+        const listener = socket?.addEventListener("message", function (event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Ignore events that aren't targeted towards projects
+            if (data.eventType !== EventType.PROJECT) return;
+
+            const idString = projectId.toString();
+
+            // Ignore events targeted towards other projects
+            if (data.pathIds.project_id !== idString) return;
+
+            // This project was deleted
+            if (data.method === RequestMethod.DELETE) {
+                navigate(`/editions/${editionId}/projects`);
+                toast.info("This project was deleted by an admin.");
+                return;
+            }
+
+            // Project was edited
+            if (data.method === RequestMethod.PATCH) {
+                // By setting this one to False we force the other useEffect
+                // to fetch the project again
+                setGotProject(false);
+            }
         });
 
-        function onUnmount() {
-            console.log("unmounting");
+        function removeListener() {
+            if (socket && listener) {
+                socket.removeEventListener("message", listener);
+                console.log("removed the listener :)");
+            }
         }
 
-        return onUnmount;
-    }, [socket]);
+        return removeListener;
+    }, [socket, editionId, projectId, navigate]);
 
+    // Get project details
     useEffect(() => {
         async function callProjects(): Promise<void> {
             if (projectId) {

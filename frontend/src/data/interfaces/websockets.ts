@@ -20,10 +20,12 @@ export enum RequestMethod {
 }
 
 /**
- * Interface for an event sent over a websocket
+ * Basic interface for an event sent over a websocket
  */
-export interface WebsocketEvent {
-    method: string;
-    pathIds: object;
+export interface WebSocketEvent {
+    method: RequestMethod;
+    pathIds: {
+        project_id?: string;
+    };
     eventType: EventType;
 }
