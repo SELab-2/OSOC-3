@@ -136,7 +136,7 @@ async def test_get_suggestions_of_student(database_with_data: AsyncSession, auth
         assert (await auth_client.post("/editions/ed2022/students/2/suggestions", json={
             "suggestion": 3, "argumentation": "Neen"})).status_code == status.HTTP_201_CREATED
         res = await auth_client.get(
-            "/editions/1/students/2/suggestions")
+            "/editions/ed2022/students/2/suggestions")
         assert res.status_code == status.HTTP_200_OK
         res_json = res.json()
         assert len(res_json["suggestions"]) == 2

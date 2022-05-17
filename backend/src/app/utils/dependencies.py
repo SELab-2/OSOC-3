@@ -6,6 +6,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, ExpiredSignatureError, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm.exc import NoResultFound
 
 import settings
 import src.database.crud.projects as crud_projects
@@ -32,9 +33,14 @@ async def get_edition(edition_name: str, database: AsyncSession = Depends(get_se
     return await get_edition_by_name(database, edition_name)
 
 
-async def get_student(student_id: int, database: AsyncSession = Depends(get_session)) -> Student:
+async def get_student(student_id: int, database: AsyncSession = Depends(get_session),
+                      edition: Edition = Depends(get_edition)) -> Student:
     """Get the student from the database, given the id in the path"""
-    return await get_student_by_id(database, student_id)
+    # return await get_student_by_id(database, student_id)
+    student: Student = await get_student_by_id(database, student_id)
+    if student.edition != edition:
+        raise NoResultFound
+    return student
 
 
 async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
@@ -57,7 +63,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")
 async def _get_user_from_token(token_type: TokenType, db: AsyncSession, token: str) -> User:
     """Check which user is making a request by decoding its token, and verifying the token type"""
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY,
+                             algorithms=[ALGORITHM])
         user_id: int | None = payload.get("sub")
         type_in_token: int | None = payload.get("type")
 

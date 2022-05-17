@@ -66,10 +66,7 @@ async def get_students_search(db: AsyncSession, edition: Edition, commons: Commo
 
 def get_student_return(student: Student, edition: Edition) -> ReturnStudent:
     """return a student"""
-    if student.edition == edition:
-        return ReturnStudent(student=student)
-
-    raise NoResultFound
+    return ReturnStudent(student=student)
 
 
 async def get_emails_of_student(db: AsyncSession, edition: Edition, student: Student) -> ReturnStudentMailList:
