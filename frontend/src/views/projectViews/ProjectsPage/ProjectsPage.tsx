@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../../../utils/api/projects";
+import { getProject, getProjects } from "../../../utils/api/projects";
 import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
@@ -137,6 +137,19 @@ export default function ProjectPage() {
     }
 
     /**
+     * Find a project with a specific id and update its data
+     */
+    function updateProject(project: Project, list: Project[]): Project[] {
+        const index = list.findIndex(pr => pr.projectId === project.projectId);
+        const copy = [...list];
+        if (index > -1) {
+            copy[index] = project;
+        }
+
+        return copy;
+    }
+
+    /**
      * Filter the projects by name
      * @param searchTerm
      */
@@ -172,7 +185,11 @@ export default function ProjectPage() {
                 setAllProjects(findAndRemoveProject(data.pathIds.project_id!, allProjects));
                 setProjects(findAndRemoveProject(data.pathIds.project_id!, projects));
             } else if (data.method === RequestMethod.PATCH) {
-                console.log("TODO patch :)");
+                // Fetch the new version of the project & replace in the two lists
+                getProject(editionId, parseInt(data.pathIds.project_id!)).then(project => {
+                    setAllProjects(updateProject(project!, allProjects));
+                    setProjects(updateProject(project!, projects));
+                });
             }
         }
 
@@ -185,7 +202,7 @@ export default function ProjectPage() {
         }
 
         return removeListener;
-    }, [socket, allProjects, projects]);
+    }, [socket, allProjects, projects, editionId]);
 
     return (
         <div>
