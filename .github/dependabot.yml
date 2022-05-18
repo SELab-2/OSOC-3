@@ -2,9 +2,11 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: "/backend"
+    open-pull-requests-limit: 100
     schedule:
       interval: weekly
   - package-ecosystem: npm
     directory: "/frontend"
+    open-pull-requests-limit: 100
     schedule:
       interval: weekly
