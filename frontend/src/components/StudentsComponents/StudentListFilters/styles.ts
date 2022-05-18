@@ -8,12 +8,7 @@ export const StudentListSideMenu = styled.div`
     min-width: 35vh;
     max-width: 50vh;
     height: 100vh;
-    border-right: 2px solid #163542;
-`;
-
-export const StudentListTitle = styled.span`
-    align-self: center;
-    font-size: 5vh;
+    border-right: 2px solid var(--card-color);
 `;
 
 export const StudentListLinebreak = styled.div`

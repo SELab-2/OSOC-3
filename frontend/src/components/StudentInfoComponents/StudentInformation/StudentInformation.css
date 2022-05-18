@@ -1,6 +1,9 @@
 .CardContainer {
     width: 100%;
-    border-color: var(--osoc_orange_darkened) !important;
+    background-color: var(--card-color) !important;
+    box-shadow: 5px 5px 15px #131329 !important;
+    border-radius: 5px !important;
+    border: 2px solid #1a1a36 !important;
     margin-bottom: 2%;
 }
 

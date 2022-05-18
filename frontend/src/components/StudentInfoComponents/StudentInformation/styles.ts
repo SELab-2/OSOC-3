@@ -14,7 +14,7 @@ export const StudentInformationContainer = styled.div`
 export const PersonIcon = styled(BsPersonFill)`
     width: 15%;
     height: 15%;
-    background: var(--osoc_red_darkened);
+    background: var(--background_color);
 `;
 
 export const NameContainer = styled.div`
