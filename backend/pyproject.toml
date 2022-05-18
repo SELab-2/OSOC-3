@@ -87,7 +87,7 @@ pytest-env = "0.6.2"
 pytest-mock = "3.7.0"
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
-sqlalchemy2-stubs="0.0.2a20"
+sqlalchemy2-stubs="0.0.2a22"
 
 # Types for the passlib library
 types-passlib="1.7.5"
