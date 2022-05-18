@@ -4,6 +4,7 @@ from enum import Enum
 from queue import Queue
 
 from fastapi import Depends, Request, Response, FastAPI
+from humps import camelize
 
 from src.app.utils.dependencies import get_edition
 from src.database.models import Edition
@@ -54,7 +55,7 @@ class LiveEventParameters:
         """Generate json dict for live event"""
         return {
             'method': self.method,
-            'pathIds': self.path_ids,
+            'pathIds': {camelize(k): v for k, v in self.path_ids},
             'eventType': self.event_type.value
         }
 
