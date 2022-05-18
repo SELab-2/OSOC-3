@@ -29,7 +29,7 @@ export default function StudentsDropdown(props: Props) {
                 <LinkContainer to={`/editions/${props.currentEdition}/students`}>
                     <StyledDropdownItem>Students</StyledDropdownItem>
                 </LinkContainer>
-                <LinkContainer to={`/editions/${props.currentEdition}/students/emails`}>
+                <LinkContainer to={`/editions/${props.currentEdition}/students/states`}>
                     <StyledDropdownItem>State History</StyledDropdownItem>
                 </LinkContainer>
             </NavDropdown>
