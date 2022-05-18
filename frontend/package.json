@@ -9,7 +9,7 @@
         "axios": "^0.27.2",
         "bootstrap": "5.1.3",
         "buffer": "^6.0.3",
-        "multiselect-react-dropdown": "^2.0.21",
+        "multiselect-react-dropdown": "^2.0.22",
         "react": "^17.0.2",
         "react-bootstrap": "^2.2.1",
         "react-bootstrap-typeahead": "^6.0.0-alpha.11",
