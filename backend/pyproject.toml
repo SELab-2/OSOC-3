@@ -27,7 +27,7 @@ passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
 python-jose = { "version" = "3.3.0", extras = ["cryptography"] }
 
 # Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
-pyhumps = "3.5.3"
+pyhumps = "3.7.1"
 
 # OAuth2 form data
 python-multipart = "0.0.5"

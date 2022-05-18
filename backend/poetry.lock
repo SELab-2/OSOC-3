@@ -602,7 +602,7 @@ email = ["email-validator (>=1.0.3)"]
 
 [[package]]
 name = "pyhumps"
-version = "3.5.3"
+version = "3.7.1"
 description = "🐫  Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python. Inspired by Humps for Node"
 category = "main"
 optional = false
@@ -1043,7 +1043,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2a5921ec8d0797eb25105b30ed3fad5dc42e42b7c9d5a4dbf3d07d5d47953090"
+content-hash = "d33bc97b65db6cf940b95d1b7118978dea355ee7b47ec574629f1616095b1444"
 
 [metadata.files]
 aiohttp = [
@@ -1788,8 +1788,8 @@ pydantic = [
     {file = "pydantic-1.9.0.tar.gz", hash = "sha256:742645059757a56ecd886faf4ed2441b9c0cd406079c2b4bee51bcc3fbcd510a"},
 ]
 pyhumps = [
-    {file = "pyhumps-3.5.3-py3-none-any.whl", hash = "sha256:8d7e9865d6ddb6e64a2e97d951b78b5cc827d3d66cda1297310fc83b2ddf51dc"},
-    {file = "pyhumps-3.5.3.tar.gz", hash = "sha256:0ecf7fee84503b45afdd3841ec769b529d32dfaed855e07046ff8babcc0ab831"},
+    {file = "pyhumps-3.7.1-py3-none-any.whl", hash = "sha256:c6f2d833f2c7afae039d71b7dc0aba5412ae5b8c8c33d4a208c1d412de17229e"},
+    {file = "pyhumps-3.7.1.tar.gz", hash = "sha256:5616f0afdbc73ef479fa9999f4abdcb336a0232707ff1a0b86e29fc9339e18da"},
 ]
 pylint = [
     {file = "pylint-2.13.9-py3-none-any.whl", hash = "sha256:705c620d388035bdd9ff8b44c5bcdd235bfb49d276d488dd2c8ff1736aa42526"},
