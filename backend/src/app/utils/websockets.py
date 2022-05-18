@@ -55,7 +55,7 @@ class LiveEventParameters:
         """Generate json dict for live event"""
         return {
             'method': self.method,
-            'pathIds': {camelize(k): v for k, v in self.path_ids},
+            'pathIds': {camelize(k): v for k, v in self.path_ids.items()},
             'eventType': self.event_type.value
         }
 
