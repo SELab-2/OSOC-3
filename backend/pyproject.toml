@@ -62,7 +62,7 @@ coverage = { "version" = "6.3.3", extras = ["toml"] }
 faker = "13.11.1"
 
 # Mypy: check type usage in code
-mypy = "0.940"
+mypy = "0.950"
 
 # Pylint: Python linter
 pylint = "2.13.9"
