@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useState } from "react";
-import { BE_DOMAIN } from "../settings";
+import { BE_DOMAIN, secure } from "../settings";
 import { getAccessToken } from "../utils/local-storage";
 
 export interface SocketState {
@@ -28,7 +28,7 @@ export function useSockets(): SocketState {
 
 function createSocketUrl(edition: string): string {
     const token = getAccessToken();
-    return `ws://${BE_DOMAIN}/editions/${edition}/live?token=${token}`;
+    return `ws${secure}://${BE_DOMAIN}/editions/${edition}/live?token=${token}`;
 }
 
 export function SocketProvider({ children }: { children: ReactNode }) {

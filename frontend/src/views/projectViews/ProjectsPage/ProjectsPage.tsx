@@ -4,12 +4,11 @@ import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
 import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
-import { useSockets } from "../../../contexts/socket-context";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
 import { CreateButton } from "../../../components/Common/Buttons";

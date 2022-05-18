@@ -2,10 +2,9 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "./contexts";
+import { AuthProvider, SocketProvider } from "./contexts";
 import { ToastContainer } from "react-toastify";
 import Router from "./Router";
-import { SocketProvider } from "./contexts/socket-context";
 
 /**
  * Main application component. Wraps the [[Router]] in an [[AuthProvider]] so that

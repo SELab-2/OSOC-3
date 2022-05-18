@@ -31,9 +31,8 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
-import { useSockets } from "../../../contexts/socket-context";
+import { useSockets } from "../../../contexts";
 import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
-import { toast } from "react-toastify";
 
 
 /**
@@ -62,7 +61,14 @@ export default function ProjectDetailPage() {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
             // Ignore events that aren't targeted towards projects
-            if (data.eventType !== EventType.PROJECT) return;
+            if (
+                ![
+                    EventType.PROJECT,
+                    EventType.PROJECT_ROLE,
+                    EventType.PROJECT_ROLE_SUGGESTION,
+                ].includes(data.eventType)
+            )
+                return;
 
             const idString = projectId.toString();
 
@@ -71,17 +77,17 @@ export default function ProjectDetailPage() {
 
             // This project was deleted
             if (data.method === RequestMethod.DELETE) {
-                navigate(`/editions/${editionId}/projects`);
-                toast.info("This project was deleted by an admin.");
-                return;
+                if (data.eventType === EventType.PROJECT) {
+                    navigate(`/editions/${editionId}/projects`);
+                    toast.info("This project was deleted by an admin.");
+                    return;
+                }
             }
 
-            // Project was edited
-            if (data.method === RequestMethod.PATCH) {
-                // By setting this one to False we force the other useEffect
-                // to fetch the project again
-                setGotProject(false);
-            }
+            // Project was edited in some way (either a PATCH or adding/deleting suggestions)
+            // By setting this one to False we force the other useEffect
+            // to fetch the project again
+            setGotProject(false);
         }
 
         socket?.addEventListener("message", listener);
