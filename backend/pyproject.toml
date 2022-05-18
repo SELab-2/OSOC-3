@@ -36,7 +36,7 @@ python-multipart = "0.0.5"
 requests = "2.27.1"
 
 # SQLAlchemy: ORM and database toolkit
-SQLAlchemy = "1.4.31"
+SQLAlchemy = "1.4.36"
 
 # SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
 sqlalchemy-utils = "0.38.2"
