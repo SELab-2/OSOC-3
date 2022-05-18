@@ -42,7 +42,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
         }
         setGettingData(true);
         const response = await toast.promise(getUsersNonAdmin(filter, page), {
-            error: "Failed to receive users",
+            error: "Failed to retrieve users",
         });
         if (page === 0) {
             setUsers(response.users);

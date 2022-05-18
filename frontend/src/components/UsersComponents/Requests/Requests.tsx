@@ -69,7 +69,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         setLoading(true);
 
         const response = await toast.promise(getRequests(props.edition, searchTerm, page), {
-            error: "Failed to receive requests",
+            error: "Failed to retrieve requests",
         });
 
         if (response.requests.length === 0) {

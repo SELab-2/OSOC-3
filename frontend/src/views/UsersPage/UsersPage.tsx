@@ -46,7 +46,7 @@ function UsersPage() {
         setLoading(true);
         const response = await toast.promise(
             getCoaches(params.editionId as string, searchTerm, page),
-            { error: "Failed to receive coaches" }
+            { error: "Failed to retrieve coaches" }
         );
         if (response.users.length === 0) {
             setMoreCoachesAvailable(false);

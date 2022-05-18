@@ -45,7 +45,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
         }
         setGettingData(true);
         const response = await toast.promise(getUsersExcludeEdition(props.edition, filter, page), {
-            error: "Failed to receive users",
+            error: "Failed to retrieve users",
         });
         if (page === 0) {
             setUsers(response.users);

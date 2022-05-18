@@ -54,7 +54,7 @@ export default function ProjectPage() {
         setLoading(true);
         const response = await toast.promise(
             getProjects(editionId, searchString, ownProjects, page),
-            { error: "Failed to receive projects" }
+            { error: "Failed to retrieve projects" }
         );
         if (response) {
             if (response.projects.length === 0) {

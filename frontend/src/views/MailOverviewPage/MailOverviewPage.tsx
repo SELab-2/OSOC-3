@@ -57,7 +57,7 @@ export default function MailOverviewPage() {
 
         const response = await toast.promise(
             getMailOverview(editionId, page, searchTerm, filters),
-            { error: "Failed to receive states" }
+            { error: "Failed to retrieve states" }
         );
         if (response.studentEmails.length === 0) {
             setMoreEmailsAvailable(false);

@@ -84,7 +84,7 @@ export default function StudentListFilters() {
                 studentCoachVolunteerFilter,
                 requestedPage
             ),
-            { error: "Failed to receive students" }
+            { error: "Failed to retrieve students" }
         );
 
         if (response.students.length === 0 && !filterChanged) {
