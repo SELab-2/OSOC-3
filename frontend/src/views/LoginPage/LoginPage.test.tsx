@@ -11,19 +11,19 @@ jest.mock("react-router-dom", () => ({
     useNavigate: () => mockedUsedNavigate,
 }));
 
-test("has an email field and it changes", () => {
+test("has an email field and it changes", async () => {
     render(<LoginPage />);
     const emailField = screen.getByPlaceholderText("name@example.com");
     expect(emailField).toHaveValue("");
-    userEvent.type(emailField, "email@email.com");
+    await userEvent.type(emailField, "email@email.com");
     expect(emailField).toHaveValue("email@email.com");
 });
 
-test("has an password field and it changes", () => {
+test("has an password field and it changes", async () => {
     render(<LoginPage />);
     const passwordField = screen.getByPlaceholderText("Password");
     expect(passwordField).toHaveValue("");
-    userEvent.type(passwordField, "wachtwoord");
+    await userEvent.type(passwordField, "wachtwoord");
     expect(passwordField).toHaveValue("wachtwoord");
 });
 
