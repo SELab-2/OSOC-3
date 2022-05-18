@@ -89,7 +89,6 @@ export const PersonalInfoFieldSubject = styled.p`
 export const PersonalInfoFieldValue = styled.p``;
 
 export const RoleValue = styled.p`
-    margin-left: 2%;
     font-size: 100%;
     margin-bottom: 1%;
 `;
