@@ -1,9 +1,11 @@
-import { Button, ButtonGroup, Form, Modal } from "react-bootstrap";
+import { Button, ButtonGroup, Modal } from "react-bootstrap";
 import React, { useState } from "react";
 import { Student } from "../../../../data/interfaces/students";
 import { makeSuggestion } from "../../../../utils/api/students";
 import { useParams } from "react-router-dom";
-import { SuggestionActionTitle } from "./styles";
+import { SuggestionActionTitle, YesButton, MaybeButton, NoButton } from "./styles";
+import { CreateButton } from "../../../Common/Buttons";
+import { FormControl } from "../../../Common/Forms";
 
 interface Props {
     student: Student;
@@ -62,9 +64,8 @@ export default function CoachSuggestionContainer(props: Props) {
                 </Modal.Header>
                 <Modal.Body>
                     Why are you giving this decision for this student?
-                    <Form.Control
+                    <FormControl
                         type="text"
-                        name="nameFilter"
                         value={argumentation}
                         onChange={e => {
                             setArgumentation(e.target.value);
@@ -74,25 +75,35 @@ export default function CoachSuggestionContainer(props: Props) {
                     * This field isn't required
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-info" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={doSuggestion}>
-                        Save Suggestion
-                    </Button>
+                    <CreateButton onClick={doSuggestion}>Save Suggestion</CreateButton>
                 </Modal.Footer>
             </Modal>
             <SuggestionActionTitle>Make a suggestion on this student</SuggestionActionTitle>
             <ButtonGroup className="grid gap-sm-1">
-                <Button variant="success" size="lg" onClick={e => handleShow(e)}>
+                <YesButton
+                    variant="success"
+                    size="lg"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
+                >
                     Yes
-                </Button>
-                <Button variant="warning" size="lg" onClick={e => handleShow(e)}>
+                </YesButton>
+                <MaybeButton
+                    variant="warning"
+                    size="lg"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
+                >
                     Maybe
-                </Button>
-                <Button variant="danger" size="lg" onClick={e => handleShow(e)}>
+                </MaybeButton>
+                <NoButton
+                    variant="danger"
+                    size="lg"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
+                >
                     No
-                </Button>
+                </NoButton>
             </ButtonGroup>
         </div>
     );

@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-    FilterRoles,
-    FilterRolesDropdownContainer,
-    FilterRolesLabel,
-    FilterRolesLabelContainer,
-} from "../styles";
+import { FilterRoles, FilterRolesDropdownContainer } from "../styles";
 import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
 import "./RolesFilter.css";
@@ -50,9 +45,6 @@ export default function RolesFilter({
 
     return (
         <FilterRoles>
-            <FilterRolesLabelContainer>
-                <FilterRolesLabel>Roles: </FilterRolesLabel>
-            </FilterRolesLabelContainer>
             <FilterRolesDropdownContainer>
                 <Select
                     className="RolesFilterDropdown"

@@ -4,6 +4,7 @@ import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
 import { SuggestionButtons, ConfirmButton, ConfirmActionTitle } from "./styles";
 import { confirmStudent } from "../../../../utils/api/suggestions";
 import { useParams } from "react-router-dom";
+import { CreateButton } from "../../../Common/Buttons";
 
 /**
  * Make definitive decision on the current student based on the selected decision value.
@@ -88,27 +89,27 @@ export default function AdminDecisionContainer() {
                     </SuggestionButtons>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="outline-info" onClick={handleClose}>
                         Close
                     </Button>
                     <div>
                         {clickedButtonText ? (
-                            <Button variant="primary" onClick={makeDecision}>
+                            <CreateButton onClick={makeDecision}>
                                 Confirm {clickedButtonText}?
-                            </Button>
+                            </CreateButton>
                         ) : (
-                            <Button variant="primary" onClick={makeDecision} disabled={true}>
+                            <CreateButton onClick={makeDecision} disabled={true}>
                                 Confirm
-                            </Button>
+                            </CreateButton>
                         )}
                     </div>
                 </Modal.Footer>
             </Modal>
             <ConfirmActionTitle>Definitive decision by admin</ConfirmActionTitle>
             <DefinitiveDecisionContainer>
-                <Button onClick={handleShow} variant="success" size="lg">
+                <CreateButton onClick={handleShow} variant="success" size="lg">
                     Confirm
-                </Button>
+                </CreateButton>
             </DefinitiveDecisionContainer>
         </div>
     );

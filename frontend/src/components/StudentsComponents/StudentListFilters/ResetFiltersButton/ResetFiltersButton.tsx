@@ -1,6 +1,6 @@
 import React from "react";
-import { FilterResetButton } from "../styles";
 import { DropdownRole } from "../RolesFilter/RolesFilter";
+import { DeleteButton } from "../../../Common/Buttons";
 
 interface Props {
     setNameFilter: (name: string) => void;
@@ -31,5 +31,9 @@ export default function ResetFiltersButton(props: Props) {
         sessionStorage.removeItem("rolesFilter");
     }
 
-    return <FilterResetButton onClick={() => resetFilters()}>Reset filters</FilterResetButton>;
+    return (
+        <>
+            <DeleteButton onClick={() => resetFilters()}>Reset filters</DeleteButton>
+        </>
+    );
 }

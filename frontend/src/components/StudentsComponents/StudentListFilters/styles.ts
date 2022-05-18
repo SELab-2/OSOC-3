@@ -40,7 +40,6 @@ export const FilterStudentNameLabel = styled.span`
 `;
 
 export const FilterStudentNameInputContainer = styled.div`
-    margin-left: 15px;
     width: 100%;
 `;
 
@@ -67,7 +66,6 @@ export const FilterRolesLabel = styled.span`
 `;
 
 export const FilterRolesDropdownContainer = styled.div`
-    margin-left: 15px;
     width: 100%;
 `;
 
