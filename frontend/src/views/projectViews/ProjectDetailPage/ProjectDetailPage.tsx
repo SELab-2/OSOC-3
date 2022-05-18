@@ -88,7 +88,6 @@ export default function ProjectDetailPage() {
     const handleAdd = async (motivation: string, result: DropResult) => {
         setShowAddModal(false);
 
-        const student = await getStudent(editionId, parseInt(result.draggableId));
         const newProjectRole = await toast.promise(
             addStudentToProject(
                 editionId,
@@ -114,7 +113,7 @@ export default function ProjectDetailPage() {
                     projectRoleSuggestionId: index,
                     argumentation: motivation,
                     drafter: newProjectRole.drafter,
-                    student: student,
+                    student: newProjectRole.student,
                 });
                 return { ...projectRole, suggestions: newSuggestions };
             } else return projectRole;
@@ -196,10 +195,20 @@ export default function ProjectDetailPage() {
         </DragDropContext>
     );
 
+    function deleteStudentFromList(result: DropResult): ProjectRole[] {
+        return projectRoles.map(projectRole => {
+            if (projectRole.projectRoleId.toString() === result.source.droppableId) {
+                const newSuggestions = [...projectRole.suggestions];
+                newSuggestions.splice(result.source.index, 1);
+                return { ...projectRole, suggestions: newSuggestions };
+            } else return projectRole;
+        });
+    }
+
     async function onDragDrop(result: DropResult) {
         const { source, destination } = result;
 
-        if (!destination || destination.droppableId === "student") {
+        if (!destination) {
             if (source.droppableId === "students") return;
             else {
                 deleteStudentFromProject(
@@ -211,14 +220,7 @@ export default function ProjectDetailPage() {
                         result.draggableId.length - source.droppableId.length
                     )
                 );
-                const newProjectRoles = projectRoles.map((projectRole, index) => {
-                    if (projectRole.projectRoleId.toString() === source.droppableId) {
-                        const newSuggestions = [...projectRole.suggestions];
-                        newSuggestions.splice(source.index, 1);
-                        return { ...projectRole, suggestions: newSuggestions };
-                    } else return projectRole;
-                });
-                setProjectRoles(newProjectRoles);
+                setProjectRoles(deleteStudentFromList(result));
             }
         }
 
