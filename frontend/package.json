@@ -57,7 +57,7 @@
         "eslint-plugin-standard": "^5.0.0",
         "jest": "^27.5.1",
         "prettier": "^2.6.2",
-        "typedoc": "^0.22.13"
+        "typedoc": "^0.22.15"
     },
     "scripts": {
         "start": "react-scripts start",
