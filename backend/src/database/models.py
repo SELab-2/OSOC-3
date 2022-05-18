@@ -247,7 +247,7 @@ class Student(Base):
     pr_suggestions: list[ProjectRoleSuggestion] = \
         relationship("ProjectRoleSuggestion", back_populates="student", lazy="selectin")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="selectin")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", lazy="selectin")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", cascade="all, delete-orphan", lazy="selectin")
     questions: list[Question] = relationship("Question", back_populates="student", lazy="selectin",
                                              cascade="all, delete-orphan")
     edition: Edition = relationship("Edition", back_populates="students", uselist=False, lazy="selectin")
