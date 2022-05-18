@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.10"
 
 # Alembic: Database migrations extension for SQLAlchemy
-alembic = "1.7.6"
+alembic = "1.7.7"
 
 # Environs: simplified environment variable parsing
 environs = "9.5.0"
