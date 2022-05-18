@@ -8,6 +8,7 @@ import {
 import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
 import "./RolesFilter.css";
+import { setRolesFilterStorage } from "../../../../utils/session-storage/student-filters";
 
 export interface DropdownRole {
     label: string;
@@ -45,7 +46,7 @@ export default function RolesFilter({
         const allCheckedRoles: DropdownRole[] = [];
         event.forEach(dropdownRole => allCheckedRoles.push(dropdownRole));
         setRolesFilter(allCheckedRoles);
-        sessionStorage.setItem("rolesFilter", JSON.stringify(allCheckedRoles));
+        setRolesFilterStorage(JSON.stringify(allCheckedRoles));
     }
 
     return (

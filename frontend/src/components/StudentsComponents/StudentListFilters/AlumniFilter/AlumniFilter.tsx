@@ -1,5 +1,6 @@
 import { Form } from "react-bootstrap";
 import React from "react";
+import { setAlumniFilterStorage } from "../../../../utils/session-storage/student-filters";
 
 /**
  * Component that filters the students list based on the alumni field.
@@ -22,7 +23,7 @@ export default function AlumniFilter({
                 checked={alumniFilter}
                 onChange={e => {
                     setAlumniFilter(e.target.checked);
-                    sessionStorage.setItem("alumniFilter", String(e.target.checked));
+                    setAlumniFilterStorage(String(e.target.checked));
                     e.target.checked = alumniFilter;
                 }}
             />

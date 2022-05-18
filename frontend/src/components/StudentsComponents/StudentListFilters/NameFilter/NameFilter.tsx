@@ -6,6 +6,7 @@ import {
     FilterStudentNameLabelContainer,
 } from "../styles";
 import { Form } from "react-bootstrap";
+import { setNameFilterStorage } from "../../../../utils/session-storage/student-filters";
 
 /**
  * Component that filters the students list based on the name inserted in the input field.
@@ -32,7 +33,7 @@ export default function NameFilter({
                     value={nameFilter}
                     onChange={e => {
                         setNameFilter(e.target.value);
-                        sessionStorage.setItem("nameFilter", e.target.value);
+                        setNameFilterStorage(e.target.value);
                     }}
                 />
             </FilterStudentNameInputContainer>
