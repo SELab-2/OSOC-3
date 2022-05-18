@@ -41,16 +41,14 @@ export async function getRequests(
  * Accept a coach request.
  * @param {number} requestId The id of the request.
  */
-export async function acceptRequest(requestId: number): Promise<boolean> {
-    const response = await axiosInstance.post(`/users/requests/${requestId}/accept`);
-    return response.status === 204;
+export async function acceptRequest(requestId: number) {
+    await axiosInstance.post(`/users/requests/${requestId}/accept`);
 }
 
 /**
  * Reject a coach request.
  * @param {number} requestId The id of the request.s
  */
-export async function rejectRequest(requestId: number): Promise<boolean> {
-    const response = await axiosInstance.post(`/users/requests/${requestId}/reject`);
-    return response.status === 204;
+export async function rejectRequest(requestId: number) {
+    await axiosInstance.post(`/users/requests/${requestId}/reject`);
 }

@@ -56,33 +56,27 @@ export default function ProjectPage() {
             getProjects(editionId, searchString, ownProjects, page),
             { error: "Failed to retrieve projects" }
         );
-        if (response) {
+        if (response.projects.length === 0) {
+            setMoreProjectsAvailable(false);
+        }
+        if (page === 0) {
+            setProjects(response.projects);
+        } else {
+            setProjects(projects.concat(response.projects));
+        }
+
+        if (searchString === "") {
             if (response.projects.length === 0) {
-                setMoreProjectsAvailable(false);
+                setAllProjectsFetched(true);
             }
             if (page === 0) {
-                setProjects(response.projects);
+                setAllProjects(response.projects);
             } else {
-                setProjects(projects.concat(response.projects));
+                setAllProjects(allProjects.concat(response.projects));
             }
-
-            if (searchString === "") {
-                if (response.projects.length === 0) {
-                    setAllProjectsFetched(true);
-                }
-                if (page === 0) {
-                    setAllProjects(response.projects);
-                } else {
-                    setAllProjects(allProjects.concat(response.projects));
-                }
-            }
-
-            setPage(page + 1);
-        } else {
-            toast.error("Failed to receive projects", {
-                toastId: "fetch_projects_failed",
-            });
         }
+
+        setPage(page + 1);
 
         setGotProjects(true);
         setLoading(false);

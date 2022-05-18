@@ -104,7 +104,7 @@ export default function RemoveCoach(props: {
 
     return (
         <>
-            <DeleteButton onClick={handleShow} showIcon={false}>
+            <DeleteButton onClick={handleShow} size="sm" showIcon={false}>
                 Remove
             </DeleteButton>
 

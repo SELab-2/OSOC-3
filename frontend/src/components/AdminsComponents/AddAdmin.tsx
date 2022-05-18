@@ -68,23 +68,16 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     };
 
     async function addUserAsAdmin(user: User) {
-        const success = await toast.promise(addAdmin(user.userId), {
+        await toast.promise(addAdmin(user.userId), {
             pending: "Adding admin",
             success: "Admin successfully added",
             error: "Failed to add admin",
         });
-        if (!success) {
-            toast.error("Failed to add admin", {
-                toastId: "add_admins_failed",
-            });
-        }
 
-        if (success) {
-            props.adminAdded(user);
-            setSearchTerm("");
-            setSelected(undefined);
-            setClearRef(true);
-        }
+        props.adminAdded(user);
+        setSearchTerm("");
+        setSelected(undefined);
+        setClearRef(true);
     }
 
     let warning;
@@ -155,8 +148,8 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                         {warning}
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
+                        <CreateButton
+                            showIcon={false}
                             onClick={() => {
                                 if (selected !== undefined) {
                                     addUserAsAdmin(selected);
@@ -165,7 +158,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             disabled={selected === undefined}
                         >
                             Add admin
-                        </Button>
+                        </CreateButton>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>

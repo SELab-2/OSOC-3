@@ -5,6 +5,7 @@ import { Button, Modal } from "react-bootstrap";
 import { RemoveAdminBody } from "./styles";
 import { ModalContentWarning } from "../Common/styles";
 import { toast } from "react-toastify";
+import DeleteButton from "../Common/Buttons/DeleteButton";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
@@ -20,35 +21,28 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
     };
 
     async function removeUserAsAdmin(removeCoach: boolean) {
-        let removed;
         if (removeCoach) {
-            removed = await toast.promise(removeAdminAndCoach(props.admin.userId), {
+            await toast.promise(removeAdminAndCoach(props.admin.userId), {
                 pending: "Removing admin",
                 success: "Admin successfully removed",
                 error: "Failed to remove admin",
             });
         } else {
-            removed = await toast.promise(removeAdmin(props.admin.userId), {
+            await toast.promise(removeAdmin(props.admin.userId), {
                 pending: "Removing admin",
                 success: "Admin successfully removed",
                 error: "Failed to remove admin",
             });
         }
 
-        if (removed) {
-            props.removeAdmin(props.admin);
-        } else {
-            toast.error("Failed to remove admin", {
-                toastId: "remove_admin_failed",
-            });
-        }
+        props.removeAdmin(props.admin);
     }
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={handleShow}>
+            <DeleteButton showIcon={false} size="sm" onClick={handleShow}>
                 Remove
-            </Button>
+            </DeleteButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentWarning>
@@ -63,22 +57,22 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                         </RemoveAdminBody>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 removeUserAsAdmin(false);
                             }}
                         >
                             Remove admin
-                        </Button>
-                        <Button
-                            variant="primary"
+                        </DeleteButton>
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 removeUserAsAdmin(true);
                             }}
                         >
                             Remove as admin and coach
-                        </Button>
+                        </DeleteButton>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>

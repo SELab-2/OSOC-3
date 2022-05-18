@@ -15,44 +15,30 @@ export default function AcceptReject(props: {
     removeRequest: (coachAdded: boolean, request: Request) => void;
 }) {
     async function accept() {
-        const success = await toast.promise(acceptRequest(props.request.requestId), {
+        await toast.promise(acceptRequest(props.request.requestId), {
             error: "Failed to accept request",
             pending: "Accepting request",
         });
-        if (!success) {
-            toast.error("Failed to accept request", {
-                toastId: "accept_request_failed",
-            });
-        }
 
-        if (success) {
-            props.removeRequest(true, props.request);
-        }
+        props.removeRequest(true, props.request);
     }
 
     async function reject() {
-        const success = await toast.promise(rejectRequest(props.request.requestId), {
+        await toast.promise(rejectRequest(props.request.requestId), {
             error: "Failed to reject request",
             pending: "Rejecting request",
         });
-        if (!success) {
-            toast.error("Failed to reject request", {
-                toastId: "reject_request_failed",
-            });
-        }
 
-        if (success) {
-            props.removeRequest(false, props.request);
-        }
+        props.removeRequest(false, props.request);
     }
 
     return (
         <div>
-            <CreateButton onClick={accept} showIcon={false}>
+            <CreateButton onClick={accept} size="sm" showIcon={false}>
                 Accept
             </CreateButton>
             <Spacing />
-            <DeleteButton onClick={reject} showIcon={false}>
+            <DeleteButton onClick={reject} size="sm" showIcon={false}>
                 Reject
             </DeleteButton>
         </div>
