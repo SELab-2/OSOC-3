@@ -19,5 +19,5 @@ def validate_edition(edition: str):
     An edition should not contain any spaces in order for us to use it in
     the path of various resources, this function checks that.
     """
-    if not re.fullmatch(r"\w+", edition):
+    if not re.fullmatch(r"[a-zA-Z0-9_-]+", edition):
         raise ValidationException("Spaces detected in the edition name")
