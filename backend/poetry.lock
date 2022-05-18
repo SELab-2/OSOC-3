@@ -938,7 +938,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "types-passlib"
-version = "1.7.0"
+version = "1.7.5"
 description = "Typing stubs for passlib"
 category = "dev"
 optional = false
@@ -1043,7 +1043,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f4906a3af80b882d70fab98c072dcbb61b4c93194c40b83ad07c745164c77a92"
+content-hash = "fba5df22e0c558e8e73294cdbf5807289e46dcfc0c095b471136e1233a2219a6"
 
 [metadata.files]
 aiohttp = [
@@ -1928,8 +1928,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 types-passlib = [
-    {file = "types-passlib-1.7.0.tar.gz", hash = "sha256:b069e428b601216e7220f5d3972c57706d85bdf2cd715be28c2a31ae4e5deaec"},
-    {file = "types_passlib-1.7.0-py3-none-any.whl", hash = "sha256:e7d09757cd56343806cba44a1857809c0e594294badd83404c2138349b0ea8ec"},
+    {file = "types-passlib-1.7.5.tar.gz", hash = "sha256:810ce820882a900429b2cbe6554851182370337c7246b0e0728ff4145db0edcf"},
+    {file = "types_passlib-1.7.5-py3-none-any.whl", hash = "sha256:8366c5e31bbff65c0a6d1a0f10e84fba567797680c643b485b072691bc0908db"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},

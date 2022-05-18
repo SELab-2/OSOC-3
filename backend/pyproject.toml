@@ -90,7 +90,7 @@ pytest-mock = "3.7.0"
 sqlalchemy2-stubs="0.0.2a20"
 
 # Types for the passlib library
-types-passlib="1.7.0"
+types-passlib="1.7.5"
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin"]
