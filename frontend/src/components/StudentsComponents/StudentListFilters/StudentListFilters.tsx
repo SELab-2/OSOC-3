@@ -13,6 +13,13 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getStudents } from "../../../utils/api/students";
 import SuggestedForFilter from "./SuggestedForFilter/SuggestedForFilter";
+import {
+    getAlumniFilter,
+    getNameFilter,
+    getRolesFilter,
+    getStudentCoachVolunteerFilter,
+    getSuggestedFilter,
+} from "../../../utils/session-storage/student-filters";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -26,29 +33,13 @@ export default function StudentListFilters() {
     const [allDataFetched, setAllDataFetched] = useState(false);
     const [page, setPage] = useState(0);
 
-    const [nameFilter, setNameFilter] = useState(
-        sessionStorage.getItem("nameFilter") === null ? "" : sessionStorage.getItem("nameFilter")
-    );
-    const [rolesFilter, setRolesFilter] = useState<DropdownRole[]>(
-        sessionStorage.getItem("rolesFilter") === null
-            ? []
-            : JSON.parse(sessionStorage.getItem("rolesFilter")!)
-    );
-    const [alumniFilter, setAlumniFilter] = useState(
-        sessionStorage.getItem("alumniFilter") === null
-            ? false
-            : sessionStorage.getItem("alumniFilter") === "true"
-    );
+    const [nameFilter, setNameFilter] = useState(getNameFilter());
+    const [rolesFilter, setRolesFilter] = useState<DropdownRole[]>(getRolesFilter());
+    const [alumniFilter, setAlumniFilter] = useState(getAlumniFilter());
     const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(
-        sessionStorage.getItem("studentCoachVolunteerFilter") === null
-            ? false
-            : sessionStorage.getItem("studentCoachVolunteerFilter") === "true"
+        getStudentCoachVolunteerFilter()
     );
-    const [suggestedFilter, setSuggestedFilter] = useState(
-        sessionStorage.getItem("suggestedFilter") === null
-            ? false
-            : sessionStorage.getItem("suggestedFilter") === "true"
-    );
+    const [suggestedFilter, setSuggestedFilter] = useState(getSuggestedFilter());
 
     /**
      * Request all students with selected filters
@@ -99,11 +90,11 @@ export default function StudentListFilters() {
         try {
             const response = await getStudents(
                 params.editionId!,
-                nameFilter!,
+                nameFilter,
                 rolesFilter,
                 alumniFilter,
                 studentCoachVolunteerFilter,
-                suggestedFilter!,
+                suggestedFilter,
                 requestedPage
             );
 
@@ -166,12 +157,12 @@ export default function StudentListFilters() {
 
     return (
         <StudentListSideMenu>
-            <NameFilter nameFilter={nameFilter!} setNameFilter={setNameFilter} />
+            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
             <RolesFilter rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} />
             <Form.Group>
                 <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
                 <SuggestedForFilter
-                    suggestedFilter={suggestedFilter!}
+                    suggestedFilter={suggestedFilter}
                     setSuggestedFilter={setSuggestedFilter}
                 />
                 <StudentCoachVolunteerFilter
