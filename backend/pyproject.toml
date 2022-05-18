@@ -59,7 +59,7 @@ httpx = "^0.22.0"
 coverage = { "version" = "6.3.1", extras = ["toml"] }
 
 # faker: Generate dummy data
-faker = "13.3.1"
+faker = "13.11.1"
 
 # Mypy: check type usage in code
 mypy = "0.940"
