@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import cast
 
 import sqlalchemy.exc
@@ -6,8 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from settings import FormMapping
 from src.app.exceptions.webhooks import WebhookProcessException
 from src.app.schemas.webhooks import WebhookEvent, Question, Form, QuestionUpload, QuestionOption
-from src.database.enums import QuestionEnum as QE
-from src.database.models import Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition
+from src.database.enums import QuestionEnum as QE, EmailStatusEnum
+from src.database.models import (
+    Question as QuestionModel, QuestionAnswer, QuestionFileAnswer, Student, Edition, DecisionEmail)
 
 
 async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncSession):
@@ -56,11 +58,16 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
 
     diff = set(attributes.keys()).symmetric_difference(needed)
     if len(diff) != 0:
-        raise WebhookProcessException(f'Missing questions for Attributes {diff}')
+        raise WebhookProcessException(
+            f'Missing questions for Attributes {diff}')
 
     student: Student = Student(**attributes)
 
     database.add(student)
+    email: DecisionEmail = DecisionEmail(
+        student=student, decision=EmailStatusEnum.APPLIED, date=datetime.now())
+
+    database.add(email)
 
     process_remaining_questions(student, extra_questions, database)
 
