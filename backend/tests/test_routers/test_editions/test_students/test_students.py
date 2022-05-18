@@ -38,7 +38,8 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
                                  wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3, skill6])
     student30: Student = Student(first_name="Marta", last_name="Marquez", preferred_name="Marta",
                                  email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=False,
-                                 wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill4, skill5])
+                                 decision=DecisionEnum.YES, wants_to_be_student_coach=False, edition=edition,
+                                 skills=[skill2, skill4, skill5])
 
     database_session.add(student01)
     database_session.add(student30)
@@ -423,6 +424,30 @@ async def test_get_one_real_one_ghost_skill_students(database_with_data: AsyncSe
             "/editions/ed2022/students?skill_ids=4&skill_ids=100", follow_redirects=True)
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()["students"]) == 0
+
+
+async def test_get_students_filter_decisions_one(database_with_data: AsyncSession, auth_client: AuthClient):
+    """tests get students based on query parameter decisions"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        response = await auth_client.get(
+            "/editions/ed2022/students?decisions=0", follow_redirects=True)
+        print(response.content)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+async def test_get_students_filter_decisions_multiple(database_with_data: AsyncSession, auth_client: AuthClient):
+    """tests get students based on multiple decisions"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        response = await auth_client.get(
+            "/editions/ed2022/students?decisions=0&decisions=1", follow_redirects=True)
+        print(response.content)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 2
 
 
 async def test_get_students_own_suggestion(database_with_data: AsyncSession, auth_client: AuthClient):
