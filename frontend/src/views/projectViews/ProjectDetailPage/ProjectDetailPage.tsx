@@ -104,7 +104,8 @@ export default function ProjectDetailPage() {
             },
             { toastId: "addStudentToProject" }
         );
-        if (!newProjectRole) return
+        if (!newProjectRole) return;
+        setGotProject(false);
 
         const newProjectRoles = projectRoles.map((projectRole, index) => {
             if (projectRole.projectRoleId.toString() === result.destination?.droppableId) {
@@ -137,8 +138,7 @@ export default function ProjectDetailPage() {
     return (
         <DragDropContext onDragEnd={result => onDragDrop(result)}>
             <ProjectPageContainer>
-                <StudentList/>
-                
+                <StudentList />
 
                 <ProjectContainer>
                     <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
@@ -230,10 +230,11 @@ export default function ProjectDetailPage() {
             const student = await getStudent(
                 editionId,
                 parseInt(
-                result.draggableId.substring(
-                    0,
-                    result.draggableId.length - source.droppableId.length
-                ))
+                    result.draggableId.substring(
+                        0,
+                        result.draggableId.length - source.droppableId.length
+                    )
+                )
             );
             const newProjectRoles = projectRoles.map((projectRole, index) => {
                 if (projectRole.projectRoleId.toString() === destination?.droppableId) {
@@ -241,7 +242,7 @@ export default function ProjectDetailPage() {
                     newSuggestions.splice(destination.index, 0, {
                         projectRoleSuggestionId: index,
                         argumentation: "arg",
-                        drafter: {userId: 1, name: "Fix this"},
+                        drafter: { userId: 1, name: "Fix this" },
                         student: student,
                     });
                     return { ...projectRole, suggestions: newSuggestions };

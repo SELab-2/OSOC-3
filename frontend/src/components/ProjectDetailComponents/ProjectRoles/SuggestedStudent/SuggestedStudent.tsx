@@ -4,13 +4,8 @@ import { useAuth } from "../../../../contexts";
 import { Role } from "../../../../data/enums";
 import { ProjectRole, ProjectRoleSuggestion } from "../../../../data/interfaces/projects";
 import { deleteStudentFromProject } from "../../../../utils/api/projectStudents";
-import { CreateButton, DeleteButton } from "../../../Common/Buttons";
-import {
-    ConfirmContainer,
-    DrafterContainer,
-    NameDeleteContainer,
-    SuggestionContainer,
-} from "./styles";
+import { DeleteButton } from "../../../Common/Buttons";
+import { DrafterContainer, NameDeleteContainer, SuggestionContainer } from "./styles";
 
 export default function SuggestedStudent({
     suggestion,
@@ -25,7 +20,7 @@ export default function SuggestedStudent({
     const projectId = parseInt(params.projectId!);
     const editionId = params.editionId!;
 
-    const { role } = useAuth();
+    const { role, userId } = useAuth();
 
     return (
         <Draggable
@@ -43,31 +38,28 @@ export default function SuggestedStudent({
                 >
                     <NameDeleteContainer>
                         {suggestion.student.firstName + " " + suggestion.student.lastName}
-                        <DeleteButton
-                            onClick={() => {
-                                deleteStudentFromProject(
-                                    editionId,
-                                    projectId.toString(),
-                                    projectRole.projectRoleId.toString(),
-                                    suggestion.student.studentId.toString()
-                                );
-                            }}
-                        />
+                        {(role === Role.ADMIN || userId === suggestion.drafter.userId) && (
+                            <DeleteButton
+                                onClick={() => {
+                                    deleteStudentFromProject(
+                                        editionId,
+                                        projectId.toString(),
+                                        projectRole.projectRoleId.toString(),
+                                        suggestion.student.studentId.toString()
+                                    );
+                                }}
+                            />
+                        )}
                     </NameDeleteContainer>
                     <DrafterContainer>
-                        {suggestion.argumentation !== "" ? (
+                        {suggestion.drafter && suggestion.argumentation !== "" ? (
                             <>
                                 By {suggestion.drafter.name}:{" " + suggestion.argumentation}
                             </>
                         ) : (
-                            <>By {suggestion.drafter.name}</>
+                            suggestion.drafter && <>By {suggestion.drafter.name}</>
                         )}
                     </DrafterContainer>
-                    {role === Role.ADMIN && (
-                        <ConfirmContainer>
-                            <CreateButton label="Confirm" />
-                        </ConfirmContainer>
-                    )}
                 </SuggestionContainer>
             )}
         </Draggable>

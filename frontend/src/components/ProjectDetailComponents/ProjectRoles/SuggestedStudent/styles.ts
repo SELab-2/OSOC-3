@@ -26,7 +26,3 @@ export const DrafterContainer = styled.div`
     display: flex;
     margin-bottom: 5px;
 `;
-
-export const ConfirmContainer = styled.div`
-    display: flex;
-`;
