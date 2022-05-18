@@ -105,20 +105,6 @@ export default function ProjectDetailPage() {
         );
         if (!newProjectRole) return;
         setGotProject(false);
-
-        const newProjectRoles = projectRoles.map((projectRole, index) => {
-            if (projectRole.projectRoleId.toString() === result.destination?.droppableId) {
-                const newSuggestions = [...projectRole.suggestions];
-                newSuggestions.splice(result.destination.index, 0, {
-                    projectRoleSuggestionId: index,
-                    argumentation: motivation,
-                    drafter: newProjectRole.drafter,
-                    student: newProjectRole.student,
-                });
-                return { ...projectRole, suggestions: newSuggestions };
-            } else return projectRole;
-        });
-        setProjectRoles(newProjectRoles);
     };
 
     async function editProject() {
@@ -195,23 +181,13 @@ export default function ProjectDetailPage() {
         </DragDropContext>
     );
 
-    function deleteStudentFromList(result: DropResult): ProjectRole[] {
-        return projectRoles.map(projectRole => {
-            if (projectRole.projectRoleId.toString() === result.source.droppableId) {
-                const newSuggestions = [...projectRole.suggestions];
-                newSuggestions.splice(result.source.index, 1);
-                return { ...projectRole, suggestions: newSuggestions };
-            } else return projectRole;
-        });
-    }
-
     async function onDragDrop(result: DropResult) {
         const { source, destination } = result;
 
         if (!destination) {
             if (source.droppableId === "students") return;
             else {
-                deleteStudentFromProject(
+                await deleteStudentFromProject(
                     editionId,
                     projectId.toString(),
                     source.droppableId,
@@ -220,7 +196,7 @@ export default function ProjectDetailPage() {
                         result.draggableId.length - source.droppableId.length
                     )
                 );
-                setProjectRoles(deleteStudentFromList(result));
+                setGotProject(false);
             }
         }
 
