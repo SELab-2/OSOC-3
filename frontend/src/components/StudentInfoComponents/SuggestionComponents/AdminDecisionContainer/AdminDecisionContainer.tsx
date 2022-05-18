@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
-import { SuggestionButtons, ConfirmButton } from "./styles";
+import { SuggestionButtons, ConfirmButton, ConfirmActionTitle } from "./styles";
 import { confirmStudent } from "../../../../utils/api/suggestions";
 import { useParams } from "react-router-dom";
 
@@ -104,7 +104,7 @@ export default function AdminDecisionContainer() {
                     </div>
                 </Modal.Footer>
             </Modal>
-            <h4>Definitive decision by admin</h4>
+            <ConfirmActionTitle>Definitive decision by admin</ConfirmActionTitle>
             <DefinitiveDecisionContainer>
                 <Button onClick={handleShow} variant="success" size="lg">
                     Confirm

@@ -1,0 +1,14 @@
+.CardContainer {
+    width: 100%;
+    border-color: var(--osoc_orange_darkened) !important;
+    margin-bottom: 2%;
+}
+
+.CardHeader {
+    background-color: var(--card-color);
+    font-size: 30px;
+}
+
+.CardBody {
+    background-color: var(--card-color);
+}

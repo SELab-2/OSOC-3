@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Student } from "../../../../data/interfaces/students";
 import { makeSuggestion } from "../../../../utils/api/students";
 import { useParams } from "react-router-dom";
+import { SuggestionActionTitle } from "./styles";
 
 interface Props {
     student: Student;
@@ -81,7 +82,7 @@ export default function CoachSuggestionContainer(props: Props) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <h4>Make a suggestion on this student</h4>
+            <SuggestionActionTitle>Make a suggestion on this student</SuggestionActionTitle>
             <ButtonGroup className="grid gap-sm-1">
                 <Button variant="success" size="lg" onClick={e => handleShow(e)}>
                     Yes
