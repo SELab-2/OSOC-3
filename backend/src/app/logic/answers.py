@@ -9,7 +9,8 @@ async def gives_question_and_answers(student: Student) -> Questions:
     for question in student.questions:
         answers: list[str] = []
         for answer in question.answers:
-            answers.append(answer.answer)
+            if answer.answer:
+                answers.append(answer.answer)
 
         files: list[File] = []
         for file in question.files:
