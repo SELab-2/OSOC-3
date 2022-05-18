@@ -42,7 +42,7 @@ SQLAlchemy = "1.4.36"
 sqlalchemy-utils = "0.38.2"
 
 # Uvicorn: ASGI web server implementation
-uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
+uvicorn = { "version" = ">=0.12.0,<0.18.0", extras = ["standard"] }
 aiohttp = "^3.8.1"
 
 # AioSQLite: async connector for SQLite
