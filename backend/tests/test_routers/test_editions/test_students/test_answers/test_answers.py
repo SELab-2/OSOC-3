@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.database.models import Edition, User, Skill, Student, Question, QuestionAnswer
+from src.database.models import Edition, QuestionFileAnswer, User, Skill, Student, Question, QuestionAnswer
 from src.database.enums import QuestionEnum
 from tests.utils.authorization import AuthClient
 
@@ -30,11 +30,24 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
     database_session.add(student01)
     database_session.add(student02)
     question1: Question = Question(
-        type=QuestionEnum.INPUT_EMAIL, question="Email", student=student01, answers=[], files=[])
+        type=QuestionEnum.INPUT_TEXT, question="Tell me something", student=student01, answers=[], files=[])
+    question2: Question = Question(
+        type=QuestionEnum.MULTIPLE_CHOICE, question="Favorite drink", student=student01, answers=[], files=[])
     database_session.add(question1)
+    database_session.add(question2)
     question_answer1: QuestionAnswer = QuestionAnswer(
-        answer="josvermeulen@mail.com", question=question1)
+        answer="I like pizza", question=question1)
+    question_answer2: QuestionAnswer = QuestionAnswer(
+        answer="ICE TEA", question=question2)
+    question_answer3: QuestionAnswer = QuestionAnswer(
+        answer="Cola", question=question2)
     database_session.add(question_answer1)
+    database_session.add(question_answer2)
+    database_session.add(question_answer3)
+    question_file_answer: QuestionFileAnswer = QuestionFileAnswer(
+        file_name="pizza.txt", url="een/link/naar/pizza.txt", mime_type="text/plain", size=16, question=question1
+    )
+    database_session.add(question_file_answer)
     await database_session.commit()
     return database_session
 
@@ -60,13 +73,19 @@ async def test_get_answers_as_coach(database_with_data: AsyncSession, auth_clien
         response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
-        assert len(json["questions"]) == 1
-        assert QuestionEnum(json["questions"][0]["type"]
-                            ) == QuestionEnum.INPUT_EMAIL
-        assert json["questions"][0]["question"] == "Email"
-        assert len(json["questions"][0]["answers"]) == 1
-        assert json["questions"][0]["answers"][0]["answer"] == "josvermeulen@mail.com"
-        assert len(json["questions"][0]["files"]) == 0
+        assert len(json["qAndA"]) == 2
+        assert json["qAndA"][0]["question"] == "Tell me something"
+        assert len(json["qAndA"][0]["answers"]) == 1
+        assert json["qAndA"][0]["answers"][0] == "I like pizza"
+        assert len(json["qAndA"][0]["files"]) == 1
+        assert json["qAndA"][0]["files"][0]["filename"] == "pizza.txt"
+        assert json["qAndA"][0]["files"][0]["mimeType"] == "text/plain"
+        assert json["qAndA"][0]["files"][0]["url"] == "een/link/naar/pizza.txt"
+        assert json["qAndA"][1]["question"] == "Favorite drink"
+        assert len(json["qAndA"][1]["answers"]) == 2
+        assert json["qAndA"][1]["answers"][0] == "ICE TEA"
+        assert json["qAndA"][1]["answers"][1] == "Cola"
+        assert len(json["qAndA"][1]["files"]) == 0
 
 
 async def test_get_answers_as_admin(database_with_data: AsyncSession, auth_client: AuthClient):
@@ -76,10 +95,16 @@ async def test_get_answers_as_admin(database_with_data: AsyncSession, auth_clien
         response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
-        assert len(json["questions"]) == 1
-        assert QuestionEnum(json["questions"][0]["type"]
-                            ) == QuestionEnum.INPUT_EMAIL
-        assert json["questions"][0]["question"] == "Email"
-        assert len(json["questions"][0]["answers"]) == 1
-        assert json["questions"][0]["answers"][0]["answer"] == "josvermeulen@mail.com"
-        assert len(json["questions"][0]["files"]) == 0
+        assert len(json["qAndA"]) == 2
+        assert json["qAndA"][0]["question"] == "Tell me something"
+        assert len(json["qAndA"][0]["answers"]) == 1
+        assert json["qAndA"][0]["answers"][0] == "I like pizza"
+        assert len(json["qAndA"][0]["files"]) == 1
+        assert json["qAndA"][0]["files"][0]["filename"] == "pizza.txt"
+        assert json["qAndA"][0]["files"][0]["mimeType"] == "text/plain"
+        assert json["qAndA"][0]["files"][0]["url"] == "een/link/naar/pizza.txt"
+        assert json["qAndA"][1]["question"] == "Favorite drink"
+        assert len(json["qAndA"][1]["answers"]) == 2
+        assert json["qAndA"][1]["answers"][0] == "ICE TEA"
+        assert json["qAndA"][1]["answers"][1] == "Cola"
+        assert len(json["qAndA"][1]["files"]) == 0
