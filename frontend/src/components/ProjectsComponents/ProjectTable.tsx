@@ -43,7 +43,7 @@ export default function ProjectTable(props: {
         <InfiniteScroll
             loadMore={props.getMoreProjects}
             hasMore={props.moreProjectsAvailable}
-            loader={<LoadSpinner show={true} />}
+            loader={<LoadSpinner show={true} key="Spinner" />}
             initialLoad={true}
             useWindow={false}
             getScrollParent={() => document.getElementById("root")}

@@ -10,7 +10,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 export default function WarningButton({
     label = "",
     showIcon = true,
-    animated = false,
+    animated = "false",
     children,
     ...props
 }: AnimatedButton) {
