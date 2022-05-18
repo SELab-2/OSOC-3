@@ -40,8 +40,7 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
                 if question.options is not None:
                     for option in question.options:
                         if option.id == question.value:
-                            attributes['wants_to_be_student_coach'] = "yes" in option.text.lower(
-                            )
+                            attributes['wants_to_be_student_coach'] = "yes" in option.text.lower()
                             break  # Only 2 options, Yes and No.
             case _:
                 extra_questions.append(question)
