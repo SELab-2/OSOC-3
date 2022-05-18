@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from typing import cast
 
 import sqlalchemy.exc
@@ -66,7 +66,7 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
 
     database.add(student)
     email: DecisionEmail = DecisionEmail(
-        student=student, decision=EmailStatusEnum.APPLIED, date=date.today())
+        student=student, decision=EmailStatusEnum.APPLIED, date=datetime.now())
 
     database.add(email)
 
