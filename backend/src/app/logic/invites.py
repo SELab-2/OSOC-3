@@ -34,7 +34,10 @@ async def create_mailto_link(db: AsyncSession, edition: Edition, email_address: 
     # Create endpoint for the user to click on
     link = f"{settings.FRONTEND_URL}/register/{encoded_link}"
 
+    with open('templates/invites.txt', 'r') as f:
+        message = f.read().format(invite_link=link)
+
     return NewInviteLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",
-        body=link
+        body=message
     ), invite_link=link)
