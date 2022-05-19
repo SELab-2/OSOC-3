@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
@@ -18,7 +19,7 @@ project_students_router = APIRouter(prefix="/students", tags=[Tags.PROJECTS, Tag
 
 @project_students_router.delete(
     "/{student_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(require_coach), Depends(get_edition), Depends(live)]
 )
 async def remove_student_from_project(
@@ -33,7 +34,7 @@ async def remove_student_from_project(
 
 @project_students_router.patch(
     "/{student_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(get_latest_edition), Depends(live)]
 )
 async def change_project_role(
