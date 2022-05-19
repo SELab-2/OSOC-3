@@ -11,7 +11,7 @@ from src.database.crud.students import (
 )
 from src.database.crud.suggestions import get_suggestions_of_student_by_type
 from src.database.enums import DecisionEnum
-from src.database.models import Edition, Student, Skill, DecisionEmail
+from src.database.models import Edition, Student, Skill, DecisionEmail, User
 from src.app.schemas.students import (
     ReturnStudentList, ReturnStudent, CommonQueryParams, ReturnStudentMailList,
     Student as StudentModel, Suggestions as SuggestionsModel,
@@ -29,7 +29,8 @@ async def remove_student(db: AsyncSession, student: Student) -> None:
     await delete_student(db, student)
 
 
-async def get_students_search(db: AsyncSession, edition: Edition, commons: CommonQueryParams) -> ReturnStudentList:
+async def get_students_search(db: AsyncSession, edition: Edition,
+                              commons: CommonQueryParams, user: User) -> ReturnStudentList:
     """return all students"""
     if commons.skill_ids:
         skills: list[Skill] = await get_skills_by_ids(db, commons.skill_ids)
@@ -37,7 +38,7 @@ async def get_students_search(db: AsyncSession, edition: Edition, commons: Commo
             return ReturnStudentList(students=[])
     else:
         skills = []
-    students_orm = await get_students(db, edition, commons, skills)
+    students_orm = await get_students(db, edition, commons, user, skills)
 
     students: list[StudentModel] = []
     for student in students_orm:
@@ -94,7 +95,7 @@ async def make_new_email(db: AsyncSession, edition: Edition, new_email: NewEmail
 
 
 async def last_emails_of_students(db: AsyncSession, edition: Edition,
-                            commons: EmailsSearchQueryParams) -> ListReturnStudentMailList:
+                                  commons: EmailsSearchQueryParams) -> ListReturnStudentMailList:
     """get last emails of students with search params"""
     emails: list[DecisionEmail] = await get_last_emails_of_students(
         db, edition, commons)

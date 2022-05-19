@@ -11,6 +11,7 @@ import CreateButton from "../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../Common/styles";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import { toast } from "react-toastify";
+import { StyledInput } from "../Common/Forms/styles";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -20,6 +21,8 @@ import { toast } from "react-toastify";
 export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
@@ -116,6 +119,15 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,

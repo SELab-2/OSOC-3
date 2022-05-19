@@ -68,3 +68,4 @@ async def remove_project_role_suggestion(db: AsyncSession, project_role: Project
     ))).scalar_one()
     await db.delete(project_role_suggestion)
     await db.commit()
+    await db.refresh(project_role)
