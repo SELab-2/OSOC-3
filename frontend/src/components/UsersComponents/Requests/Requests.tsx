@@ -24,6 +24,8 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     const [allRequestsFetched, setAllRequestsFetched] = useState(false);
     const [page, setPage] = useState(0); // The next page which needs to be fetched
 
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
+
     /**
      * Remove a request from the list of requests (Request is accepter or rejected).
      * When the request was accepted, the refreshCoaches will be called.
@@ -68,9 +70,18 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
 
         setLoading(true);
 
-        const response = await toast.promise(getRequests(props.edition, searchTerm, page), {
-            error: "Failed to retrieve requests",
-        });
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getRequests(props.edition, searchTerm, page, newController),
+            {
+                error: "Failed to retrieve requests",
+            }
+        );
 
         if (response.requests.length === 0) {
             setMoreRequestsAvailable(false);

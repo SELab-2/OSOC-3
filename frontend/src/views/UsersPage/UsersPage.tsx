@@ -21,6 +21,8 @@ function UsersPage() {
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
 
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
+
     const params = useParams();
     const navigate = useNavigate();
 
@@ -44,8 +46,15 @@ function UsersPage() {
         }
 
         setLoading(true);
+
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
         const response = await toast.promise(
-            getCoaches(params.editionId as string, searchTerm, page),
+            getCoaches(params.editionId as string, searchTerm, page, newController),
             { error: "Failed to retrieve coaches" }
         );
         if (response.users.length === 0) {

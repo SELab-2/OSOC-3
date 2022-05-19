@@ -6,16 +6,26 @@ import { axiosInstance } from "../api";
  * @param edition The edition name.
  * @param name The username to filter.
  * @param page The requested page.
+ * @param controller An optional AbortController to cancel the request
  */
-export async function getCoaches(edition: string, name: string, page: number): Promise<UsersList> {
-    if (name) {
+export async function getCoaches(
+    edition: string,
+    name: string,
+    page: number,
+    controller: AbortController | null = null
+): Promise<UsersList> {
+    if (controller === null) {
         const response = await axiosInstance.get(
             `/users?edition=${edition}&page=${page}&name=${name}`
         );
         return response.data as UsersList;
+    } else {
+        const response = await axiosInstance.get(
+            `/users?edition=${edition}&page=${page}&name=${name}`,
+            { signal: controller.signal }
+        );
+        return response.data as UsersList;
     }
-    const response = await axiosInstance.get(`/users?edition=${edition}&page=${page}`);
-    return response.data as UsersList;
 }
 
 /**

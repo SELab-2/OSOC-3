@@ -21,19 +21,18 @@ export interface GetRequestsResponse {
  * @param edition The edition's name.
  * @param name String which every request's user's name needs to contain
  * @param page The pagenumber to fetch.
+ * @param controller An optional AbortController to cancel the request
  */
 export async function getRequests(
     edition: string,
     name: string,
-    page: number
+    page: number,
+    controller: AbortController
 ): Promise<GetRequestsResponse> {
-    if (name) {
-        const response = await axiosInstance.get(
-            `/users/requests?edition=${edition}&page=${page}&user=${name}`
-        );
-        return response.data as GetRequestsResponse;
-    }
-    const response = await axiosInstance.get(`/users/requests?edition=${edition}&page=${page}`);
+    const response = await axiosInstance.get(
+        `/users/requests?edition=${edition}&page=${page}&user=${name}`,
+        { signal: controller.signal }
+    );
     return response.data as GetRequestsResponse;
 }
 
