@@ -75,7 +75,7 @@ export default function CoachSuggestionContainer(props: Props) {
                     * This field isn't required
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-info" onClick={handleClose}>
+                    <Button variant="info" onClick={handleClose}>
                         Close
                     </Button>
                     <CreateButton onClick={doSuggestion}>Save Suggestion</CreateButton>
