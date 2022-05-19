@@ -21,8 +21,6 @@ import { StyledInput } from "../Common/Forms/styles";
 export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter

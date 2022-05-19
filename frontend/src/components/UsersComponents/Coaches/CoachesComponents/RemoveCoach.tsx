@@ -59,6 +59,7 @@ export default function RemoveCoach(props: {
             });
         }
 
+        setLoading(false);
         if (removed) {
             props.removeCoach();
         } else {
@@ -66,7 +67,6 @@ export default function RemoveCoach(props: {
                 toastId: "remove_coach_failed",
             });
         }
-        setLoading(false);
     }
 
     let buttons;
