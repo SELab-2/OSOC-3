@@ -239,8 +239,6 @@ export default function StudentListFilters() {
         function listener(event: MessageEvent) {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
-            console.log(data);
-
             if (
                 data.eventType !== EventType.STUDENT &&
                 data.eventType !== EventType.STUDENT_SUGGESTION
@@ -250,15 +248,15 @@ export default function StudentListFilters() {
             // Student was deleted
             if (data.eventType === EventType.STUDENT) {
                 if (data.method === RequestMethod.DELETE) {
-                    setAllStudents(findAndDelete(data.pathIds.student_id!, allStudents));
-                    setStudents(findAndDelete(data.pathIds.student_id!, students));
+                    setAllStudents(findAndDelete(data.pathIds.studentId!, allStudents));
+                    setStudents(findAndDelete(data.pathIds.studentId!, students));
                     return;
                 }
             }
 
             // Everything else: the student was updated, or a suggestion was changed/deleted
             // Handle both of these as re-fetching the student
-            getStudent(params.editionId!, parseInt(data.pathIds.student_id!)).then(student => {
+            getStudent(params.editionId!, parseInt(data.pathIds.studentId!)).then(student => {
                 setAllStudents(findAndUpdate(allStudents, student));
                 setStudents(findAndUpdate(students, student));
             });

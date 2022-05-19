@@ -173,7 +173,7 @@ export default function ProjectPage() {
             // If the project from the event hasn't been loaded in the list, ignore the event as well
             if (
                 !allProjects.some(
-                    project => project.projectId.toString() === data.pathIds.project_id
+                    project => project.projectId.toString() === data.pathIds.projectId
                 )
             ) {
                 return;
@@ -181,11 +181,11 @@ export default function ProjectPage() {
 
             // Project was deleted: remove it from the list
             if (data.method === RequestMethod.DELETE) {
-                setAllProjects(findAndRemoveProject(data.pathIds.project_id!, allProjects));
-                setProjects(findAndRemoveProject(data.pathIds.project_id!, projects));
+                setAllProjects(findAndRemoveProject(data.pathIds.projectId!, allProjects));
+                setProjects(findAndRemoveProject(data.pathIds.projectId!, projects));
             } else if (data.method === RequestMethod.PATCH) {
                 // Fetch the new version of the project & replace in the two lists
-                getProject(editionId, parseInt(data.pathIds.project_id!)).then(project => {
+                getProject(editionId, parseInt(data.pathIds.projectId!)).then(project => {
                     setAllProjects(updateProject(project!, allProjects));
                     setProjects(updateProject(project!, projects));
                 });

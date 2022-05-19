@@ -25,8 +25,8 @@ export enum RequestMethod {
 export interface WebSocketEvent {
     method: RequestMethod;
     pathIds: {
-        project_id?: string;
-        student_id?: string;
+        projectId?: string;
+        studentId?: string;
     };
     eventType: EventType;
 }

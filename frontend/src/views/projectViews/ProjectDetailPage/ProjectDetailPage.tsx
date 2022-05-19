@@ -73,7 +73,7 @@ export default function ProjectDetailPage() {
             const idString = projectId.toString();
 
             // Ignore events targeted towards other projects
-            if (data.pathIds.project_id !== idString) return;
+            if (data.pathIds.projectId !== idString) return;
 
             // This project was deleted
             if (data.method === RequestMethod.DELETE) {
