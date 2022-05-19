@@ -105,7 +105,7 @@ export default function CreateProjectPage() {
             return;
         }
 
-        if (infoUrl !== "" && (!infoUrl.startsWith("https://") && !infoUrl.startsWith("http://"))) {
+        if (infoUrl !== "" && !infoUrl.startsWith("https://") && !infoUrl.startsWith("http://")) {
             toast.error("InfoUrl should start with https:// or http://", {
                 toastId: "createProjectBadUrl",
             });
