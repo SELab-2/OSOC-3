@@ -203,25 +203,16 @@ export default function ProjectDetailPage() {
 
     async function onDragDrop(result: DropResult) {
         const { source, destination, draggableId } = result;
-
-        if (destination === undefined) {
-            if (source.droppableId !== "students") {
-                await deleteStudentFromProject(
-                    editionId,
-                    projectId.toString(),
-                    source.droppableId,
-                    draggableId.substring(0, draggableId.length - source.droppableId.length)
+        if (destination) {
+            if (source.droppableId === "students") {
+                handleAddShow(destination.droppableId, draggableId, undefined);
+            } else if (source.droppableId !== destination.droppableId) {
+                handleAddShow(
+                    destination.droppableId,
+                    draggableId.substring(0, draggableId.length - source.droppableId.length),
+                    source.droppableId
                 );
-                setGotProject(false);
             }
-        } else if (source.droppableId === "students") {
-            handleAddShow(destination.droppableId, draggableId, undefined);
-        } else if (source.droppableId !== destination.droppableId) {
-            const studentId = draggableId.substring(
-                0,
-                draggableId.length - source.droppableId.length
-            );
-            handleAddShow(destination.droppableId, studentId, source.droppableId);
         }
     }
 }
