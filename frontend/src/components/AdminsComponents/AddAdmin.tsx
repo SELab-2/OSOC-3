@@ -10,6 +10,7 @@ import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../Common/styles";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
+import { StyledInput } from "../Common/Forms/styles";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -151,6 +152,15 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,
