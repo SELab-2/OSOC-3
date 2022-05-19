@@ -536,3 +536,40 @@ async def test_update_project_role_zero_slots(database_session: AsyncSession, au
             "slots": 0
         })
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+async def test_get_project_role(database_session: AsyncSession, auth_client: AuthClient):
+    """test get project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        assert response.status_code == status.HTTP_201_CREATED
+        response = await auth_client.get("/editions/ed2022/projects/1/roles")
+        json = response.json()
+        assert len(json["projectRoles"]) == 1
+        assert json["projectRoles"][0]["projectRoleId"] == 1
+        assert json["projectRoles"][0]["projectId"] == 1
+        assert json["projectRoles"][0]["description"] == "description"
+        assert json["projectRoles"][0]["skill"]["skillId"] == 1
+        assert json["projectRoles"][0]["slots"] == 1
