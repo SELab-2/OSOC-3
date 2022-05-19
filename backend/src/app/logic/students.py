@@ -65,10 +65,30 @@ async def get_students_search(db: AsyncSession, edition: Edition,
     return ReturnStudentList(students=students)
 
 
-def get_student_return(student: Student, edition: Edition) -> ReturnStudent:
+async def get_student_return(db: AsyncSession, student: Student, edition: Edition) -> ReturnStudent:
     """return a student"""
     if student.edition == edition:
-        return ReturnStudent(student=student)
+        nr_of_yes_suggestions = len(await get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.YES))
+        nr_of_no_suggestions = len(await get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.NO))
+        nr_of_maybe_suggestions = len(await get_suggestions_of_student_by_type(
+            db, student.student_id, DecisionEnum.MAYBE))
+        suggestions = SuggestionsModel(
+            yes=nr_of_yes_suggestions, no=nr_of_no_suggestions, maybe=nr_of_maybe_suggestions)
+        schema_student = StudentModel(student_id=student.student_id,
+                                      first_name=student.first_name,
+                                      last_name=student.last_name,
+                                      preferred_name=student.preferred_name,
+                                      email_address=student.email_address,
+                                      phone_number=student.phone_number,
+                                      alumni=student.alumni,
+                                      finalDecision=student.decision,
+                                      wants_to_be_student_coach=student.wants_to_be_student_coach,
+                                      edition_id=student.edition_id,
+                                      skills=student.skills,
+                                      nr_of_suggestions=suggestions)
+        return ReturnStudent(student=schema_student)
 
     raise NoResultFound
 
