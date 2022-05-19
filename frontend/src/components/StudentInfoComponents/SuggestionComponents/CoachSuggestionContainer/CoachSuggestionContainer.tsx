@@ -82,6 +82,7 @@ export default function CoachSuggestionContainer(props: Props) {
                 </Modal.Footer>
             </Modal>
             <SuggestionActionTitle>Make a suggestion on this student</SuggestionActionTitle>
+
             <ButtonGroup className="grid gap-sm-1">
                 <YesButton
                     variant="success"

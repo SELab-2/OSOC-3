@@ -1,5 +1,8 @@
 import React from "react";
-import { StudentLink } from "../StudentInformation/styles";
+import { StudentLink, CopyIcon, CopyLinkContainer } from "../StudentInformation/styles";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 /**
  * Copy URL of current selected student.
@@ -7,6 +10,12 @@ import { StudentLink } from "../StudentInformation/styles";
 export default function StudentCopyLink() {
     function copyStudentLink() {
         navigator.clipboard.writeText(window.location.href);
+        toast.info("Student URL copied to clipboard!", { autoClose: 1500 });
     }
-    return <StudentLink onClick={copyStudentLink}>copy student link</StudentLink>;
+    return (
+        <CopyLinkContainer>
+            <StudentLink onClick={copyStudentLink}>copy link</StudentLink>
+            <CopyIcon icon={faLink as IconProp} className={"me-2"} />
+        </CopyLinkContainer>
+    );
 }

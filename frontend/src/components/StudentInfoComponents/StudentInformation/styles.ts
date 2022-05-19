@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { BsPersonFill } from "react-icons/bs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const InfoHeadContainer = styled.div`
     width: 100%;
@@ -47,17 +48,31 @@ export const LastName = styled.span`
     color: white;
 `;
 
-export const PreferedName = styled.p`
-    margin-left: 1%;
-    font-size: 150%;
+export const CopyLinkContainer = styled.div`
+    display: flex;
+    height: 40%;
+    align-self: center;
+    align-items: center;
+    font-size: 12px;
+    &:hover {
+        cursor: pointer;
+        color: var(--osoc_green);
+        transition: 200ms ease-out;
+    }
 `;
 
 export const StudentLink = styled.p`
     font-size: 12px;
-    align-self: center;
-    &:hover {
-        cursor: pointer;
-    }
+    margin-top: 17%;
+`;
+
+export const CopyIcon = styled(FontAwesomeIcon)`
+    margin-left: 0.35vh;
+    margin-bottom: 8%;
+`;
+
+export const PreferedName = styled.p`
+    font-size: 20px;
 `;
 
 export const SuggestionField = styled.p`

@@ -1,6 +1,13 @@
 import React from "react";
 import { DropdownRole } from "../RolesFilter/RolesFilter";
 import { DeleteButton } from "../../../Common/Buttons";
+import {
+    setAlumniFilterStorage,
+    setNameFilterStorage,
+    setRolesFilterStorage,
+    setStudentCoachVolunteerFilterStorage,
+    setSuggestedFilterStorage,
+} from "../../../../utils/session-storage/student-filters";
 
 interface Props {
     setNameFilter: (name: string) => void;
@@ -24,11 +31,11 @@ export default function ResetFiltersButton(props: Props) {
         props.setStudentCoachVolunteerFilter(false);
         props.setSuggestedFilter(false);
         props.setRolesFilter([]);
-        sessionStorage.removeItem("suggestedFilter");
-        sessionStorage.removeItem("alumniFilter");
-        sessionStorage.removeItem("nameFilter");
-        sessionStorage.removeItem("studentCoachVolunteerFilter");
-        sessionStorage.removeItem("rolesFilter");
+        setNameFilterStorage(null);
+        setAlumniFilterStorage(null);
+        setStudentCoachVolunteerFilterStorage(null);
+        setSuggestedFilterStorage(null);
+        setRolesFilterStorage(null);
     }
 
     return (

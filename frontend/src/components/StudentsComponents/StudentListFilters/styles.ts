@@ -26,56 +26,27 @@ export const FilterStudentName = styled.div`
     align-items: center;
 `;
 
-export const FilterStudentNameLabelContainer = styled.div`
-    display: flex;
-    background-color: var(--osoc_orange);
-    border: 2px solid var(--osoc_orange);
-    width: 30%;
-    text-align: center;
-`;
-
-export const FilterStudentNameLabel = styled.span`
-    color: white;
-    width: 100%;
-`;
-
 export const FilterStudentNameInputContainer = styled.div`
     width: 100%;
+`;
+
+export const RolesTitle = styled.p`
+    margin-top: 2%;
+    margin-right: 2%;
+    font-size: 1.7vh;
 `;
 
 export const FilterRoles = styled.div`
     width: 90%;
     display: flex;
     align-self: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2%;
+    margin-bottom: 2%;
     align-items: center;
-`;
-
-export const FilterRolesLabelContainer = styled.div`
-    display: flex;
-    background-color: var(--osoc_green);
-    border: 2px solid var(--osoc_green);
-    width: 30%;
-    text-align: center;
-`;
-
-export const FilterRolesLabel = styled.span`
-    color: white;
-    width: 100%;
 `;
 
 export const FilterRolesDropdownContainer = styled.div`
     width: 100%;
-`;
-
-export const FilterResetButton = styled.button`
-    width: 50%;
-    align-self: center;
-    border: none;
-    height: 3vh;
-    background-color: var(--osoc_red);
-    color: white;
 `;
 
 export const FilterControls = styled.div`
