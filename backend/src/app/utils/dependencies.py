@@ -50,7 +50,7 @@ async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(ge
     return suggestion
 
 
-async def get_editable_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
+async def get_editable_edition(edition: Edition = Depends(get_edition)) \
         -> Edition:
     """Checks if the requested edition is editable, and returns it if it is"""
     if edition.readonly:

@@ -9,21 +9,10 @@ from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
 
 
-async def get_user_edition_names(db: AsyncSession, user: User) -> list[str]:
+async def get_user_editions(db: AsyncSession, user: User) -> list[Edition]:
     """Get all names of the editions this user can see"""
     # For admins: return all editions - otherwise, all editions this user is verified coach in
-    source = user.editions if not user.admin else await get_editions(db)
-
-    editions = []
-    # Name & year are non-nullable in the database, so it can never be None,
-    # but MyPy doesn't seem to grasp that concept just yet so we have to check it
-    # Could be a oneliner/list comp but that's a bit less readable
-    # Return from newest to oldest
-    for edition in sorted(source, key=lambda e: e.year or -1, reverse=True):
-        if edition.name is not None:
-            editions.append(edition.name)
-
-    return editions
+    return user.editions if not user.admin else await get_editions(db)
 
 
 async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):

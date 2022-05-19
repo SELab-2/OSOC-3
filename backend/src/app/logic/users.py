@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import src.database.crud.users as users_crud
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
     FilterParameters, UserRequest
-from src.database.models import User
+from src.database.models import User, Edition
 
 
 async def get_users_list(
@@ -20,9 +20,9 @@ async def get_users_list(
     return UsersListResponse(users=[user_model_to_schema(user) for user in users_orm])
 
 
-async def get_user_editions(db: AsyncSession, user: User) -> list[str]:
+async def get_user_editions(db: AsyncSession, user: User) -> list[Edition]:
     """Get all names of the editions this user is coach in"""
-    return await users_crud.get_user_edition_names(db, user)
+    return await users_crud.get_user_editions(db, user)
 
 
 async def edit_admin_status(db: AsyncSession, user_id: int, admin: AdminPatch):

@@ -1,7 +1,7 @@
 /** Context hook to maintain the authentication state of the user **/
 import { Role } from "../data/enums";
 import React, { useContext, ReactNode, useState } from "react";
-import { User } from "../data/interfaces";
+import { Edition, User } from "../data/interfaces";
 import { setCurrentEdition } from "../utils/session-storage";
 import { setAccessToken, setRefreshToken } from "../utils/local-storage";
 
@@ -15,8 +15,8 @@ export interface AuthContextState {
     setRole: (value: Role | null) => void;
     userId: number | null;
     setUserId: (value: number | null) => void;
-    editions: string[];
-    setEditions: (value: string[]) => void;
+    editions: Edition[];
+    setEditions: (value: Edition[]) => void;
 }
 
 /**
@@ -33,7 +33,7 @@ function authDefaultState(): AuthContextState {
         userId: null,
         setUserId: (_: number | null) => {},
         editions: [],
-        setEditions: (_: string[]) => {},
+        setEditions: (_: Edition[]) => {},
     };
 }
 
@@ -56,7 +56,7 @@ export function useAuth(): AuthContextState {
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
     const [role, setRole] = useState<Role | null>(null);
-    const [editions, setEditions] = useState<string[]>([]);
+    const [editions, setEditions] = useState<Edition[]>([]);
     const [userId, setUserId] = useState<number | null>(null);
 
     // Create AuthContext value

@@ -15,9 +15,9 @@ export async function getEditions(): Promise<EditionsResponse> {
 }
 
 /**
- * Get all edition names sorted the user can see
+ * Get all edition names sorted that the user can see
  */
-export async function getSortedEditions(): Promise<string[]> {
+export async function getSortedEditions(): Promise<Edition[]> {
     const response = await axiosInstance.get("/users/current");
     return response.data.editions;
 }

@@ -8,6 +8,7 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
 /**
  * @returns The projects overview page where you can see all the projects.
@@ -137,7 +138,7 @@ export default function ProjectPage() {
                     placeholder="project name"
                 />
 
-                {role === Role.ADMIN && editionId === editions[0] && (
+                {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >
