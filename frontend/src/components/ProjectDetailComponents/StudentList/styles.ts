@@ -4,7 +4,7 @@ export const StudentListContainer = styled.div`
     margin: 20px;
     padding: 20px;
     padding-left: 0;
-    max-width: 20%;
+    width: 20%;
     border-right: 5px solid #131329;
     overflow: auto;
 `;

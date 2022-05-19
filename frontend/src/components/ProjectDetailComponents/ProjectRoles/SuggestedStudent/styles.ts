@@ -22,9 +22,13 @@ export const DrafterContainer = styled.div`
     border-radius: 5px;
     padding: 15px;
     margin-right: auto;
-    background-color: #1a1a2f;
+    background-color: #0f0f30;
     display: flex;
     margin-bottom: 5px;
+    width: 100%;
+    overflow: auto;
+    text-align: left;
+    text-overflow: ellipsis;
 `;
 
 export const StudentName = styled.div`
