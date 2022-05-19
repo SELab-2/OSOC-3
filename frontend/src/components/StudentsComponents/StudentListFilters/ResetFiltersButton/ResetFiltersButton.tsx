@@ -1,9 +1,19 @@
 import React from "react";
 import { FilterResetButton } from "../styles";
+import { DropdownRole } from "../RolesFilter/RolesFilter";
+import {
+    setAlumniFilterStorage,
+    setNameFilterStorage,
+    setRolesFilterStorage,
+    setStudentCoachVolunteerFilterStorage,
+    setSuggestedFilterStorage,
+} from "../../../../utils/session-storage/student-filters";
 
 interface Props {
     setNameFilter: (name: string) => void;
+    setRolesFilter: (roles: DropdownRole[]) => void;
     setAlumniFilter: (alumni: boolean) => void;
+    setSuggestedFilter: (suggested: boolean) => void;
     setStudentCoachVolunteerFilter: (studentCoachVolunteer: boolean) => void;
 }
 
@@ -19,6 +29,13 @@ export default function ResetFiltersButton(props: Props) {
         props.setNameFilter("");
         props.setAlumniFilter(false);
         props.setStudentCoachVolunteerFilter(false);
+        props.setSuggestedFilter(false);
+        props.setRolesFilter([]);
+        setNameFilterStorage(null);
+        setAlumniFilterStorage(null);
+        setStudentCoachVolunteerFilterStorage(null);
+        setSuggestedFilterStorage(null);
+        setRolesFilterStorage(null);
     }
 
     return <FilterResetButton onClick={() => resetFilters()}>Reset filters</FilterResetButton>;

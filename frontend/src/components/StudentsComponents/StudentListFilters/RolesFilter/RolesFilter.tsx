@@ -8,8 +8,9 @@ import {
 import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
 import "./RolesFilter.css";
+import { setRolesFilterStorage } from "../../../../utils/session-storage/student-filters";
 
-interface DropdownRole {
+export interface DropdownRole {
     label: string;
     value: number;
 }
@@ -20,9 +21,11 @@ interface DropdownRole {
  * @param setRolesFilter
  */
 export default function RolesFilter({
+    rolesFilter,
     setRolesFilter,
 }: {
-    setRolesFilter: (value: number[]) => void;
+    rolesFilter: DropdownRole[];
+    setRolesFilter: (value: DropdownRole[]) => void;
 }) {
     const [roles, setRoles] = useState<DropdownRole[]>([]);
 
@@ -40,11 +43,10 @@ export default function RolesFilter({
     }, []);
 
     function handleRolesChange(event: MultiValue<DropdownRole>): void {
-        const newRoles: number[] = [];
-        for (const role of event) {
-            newRoles.push(role.value);
-        }
-        setRolesFilter(newRoles);
+        const allCheckedRoles: DropdownRole[] = [];
+        event.forEach(dropdownRole => allCheckedRoles.push(dropdownRole));
+        setRolesFilter(allCheckedRoles);
+        setRolesFilterStorage(JSON.stringify(allCheckedRoles));
     }
 
     return (
@@ -59,6 +61,7 @@ export default function RolesFilter({
                     isMulti
                     isSearchable
                     placeholder="Choose roles..."
+                    value={rolesFilter}
                     onChange={e => handleRolesChange(e)}
                 />
             </FilterRolesDropdownContainer>

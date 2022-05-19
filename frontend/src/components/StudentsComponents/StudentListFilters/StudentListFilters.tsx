@@ -5,7 +5,7 @@ import { StudentListSideMenu, StudentListLinebreak, FilterControls, MessageDiv }
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
-import RolesFilter from "./RolesFilter/RolesFilter";
+import RolesFilter, { DropdownRole } from "./RolesFilter/RolesFilter";
 import "./StudentListFilters.css";
 import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
 import { Student } from "../../../data/interfaces/students";
@@ -13,6 +13,13 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getStudents } from "../../../utils/api/students";
 import SuggestedForFilter from "./SuggestedForFilter/SuggestedForFilter";
+import {
+    getAlumniFilter,
+    getNameFilter,
+    getRolesFilter,
+    getStudentCoachVolunteerFilter,
+    getSuggestedFilter,
+} from "../../../utils/session-storage/student-filters";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -26,11 +33,13 @@ export default function StudentListFilters() {
     const [allDataFetched, setAllDataFetched] = useState(false);
     const [page, setPage] = useState(0);
 
-    const [nameFilter, setNameFilter] = useState("");
-    const [rolesFilter, setRolesFilter] = useState<number[]>([]);
-    const [alumniFilter, setAlumniFilter] = useState(false);
-    const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
-    const [suggestedFilter, setSuggestedFilter] = useState(false);
+    const [nameFilter, setNameFilter] = useState(getNameFilter());
+    const [rolesFilter, setRolesFilter] = useState<DropdownRole[]>(getRolesFilter());
+    const [alumniFilter, setAlumniFilter] = useState(getAlumniFilter());
+    const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(
+        getStudentCoachVolunteerFilter()
+    );
+    const [suggestedFilter, setSuggestedFilter] = useState(getSuggestedFilter());
 
     /**
      * Request all students with selected filters
@@ -48,7 +57,7 @@ export default function StudentListFilters() {
                 .filter(student =>
                     (student.firstName + " " + student.lastName)
                         .toUpperCase()
-                        .includes(nameFilter.toUpperCase())
+                        .includes(nameFilter!.toUpperCase())
                 )
                 .filter(student => !alumniFilter || student.alumni === alumniFilter)
                 .filter(
@@ -63,10 +72,11 @@ export default function StudentListFilters() {
                 const newStudents: Student[] = [];
                 for (const student of tempStudents) {
                     for (const skill of student.skills) {
-                        if (rolesFilter.includes(skill.skillId)) {
-                            newStudents.push(student);
-                            break;
-                        }
+                        rolesFilter.forEach(dropdownValue => {
+                            if (dropdownValue.value === skill.skillId) {
+                                newStudents.push(student);
+                            }
+                        });
                     }
                 }
                 setStudents(newStudents);
@@ -148,7 +158,7 @@ export default function StudentListFilters() {
     return (
         <StudentListSideMenu>
             <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
-            <RolesFilter setRolesFilter={setRolesFilter} />
+            <RolesFilter rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} />
             <Form.Group>
                 <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
                 <SuggestedForFilter
@@ -163,8 +173,10 @@ export default function StudentListFilters() {
             <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
+                    setRolesFilter={setRolesFilter}
                     setNameFilter={setNameFilter}
                     setAlumniFilter={setAlumniFilter}
+                    setSuggestedFilter={setSuggestedFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                 />
             </FilterControls>
