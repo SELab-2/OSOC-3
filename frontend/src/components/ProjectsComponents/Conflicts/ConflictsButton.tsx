@@ -84,7 +84,7 @@ export default function ConflictsButton(props: { editionId: string }) {
         <ConflictButtonDiv>
             <WarningButton
                 onClick={handleShow}
-                animated={true}
+                animated="true"
             >{`Conflicts (${conflicts.length})`}</WarningButton>
         </ConflictButtonDiv>
     );

@@ -49,6 +49,11 @@ class ProjectRoleSuggestion(CamelCaseModel):
         orm_mode = True
 
 
+class ReturnProjectRoleSuggestion(CamelCaseModel):
+    """return a project role suggestion"""
+    project_role_suggestion: ProjectRoleSuggestion
+
+
 class ProjectRole(CamelCaseModel):
     """Represents a ProjectRole from the database"""
     project_role_id: int

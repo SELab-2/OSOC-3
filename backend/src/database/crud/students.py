@@ -7,7 +7,7 @@ from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
 from src.database.crud.util import paginate
 from src.database.enums import DecisionEnum, EmailStatusEnum
-from src.database.models import Edition, Skill, Student, DecisionEmail
+from src.database.models import Edition, Skill, Student, DecisionEmail, Suggestion, User
 
 
 async def get_student_by_id(db: AsyncSession, student_id: int) -> Student:
@@ -31,7 +31,7 @@ async def delete_student(db: AsyncSession, student: Student) -> None:
 
 
 async def get_students(db: AsyncSession, edition: Edition,
-                       commons: CommonQueryParams, skills: list[Skill] = None) -> list[Student]:
+                       commons: CommonQueryParams, user: User, skills: list[Skill] = None) -> list[Student]:
     """Get students"""
     query = select(Student) \
         .where(Student.edition == edition) \
@@ -42,6 +42,13 @@ async def get_students(db: AsyncSession, edition: Edition,
 
     if commons.student_coach:
         query = query.where(Student.wants_to_be_student_coach)
+
+    if commons.own_suggestions:
+        subquery = select(Suggestion.student_id).where(Suggestion.coach == user)
+        query = query.filter(Student.student_id.in_(subquery))
+
+    if commons.decisions:
+        query = query.where(Student.decision.in_(commons.decisions))
 
     if skills is None:
         skills = []

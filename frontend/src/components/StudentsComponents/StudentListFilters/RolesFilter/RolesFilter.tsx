@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-    FilterRoles,
-    FilterRolesDropdownContainer,
-    FilterRolesLabel,
-    FilterRolesLabelContainer,
-} from "../styles";
-import Select from "react-select";
+import { FilterRoles, FilterRolesDropdownContainer, RolesTitle } from "../styles";
+import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
 import "./RolesFilter.css";
+import { setRolesFilterStorage } from "../../../../utils/session-storage/student-filters";
 
-interface DropdownRole {
+export interface DropdownRole {
     label: string;
     value: number;
 }
@@ -20,9 +16,11 @@ interface DropdownRole {
  * @param setRolesFilter
  */
 export default function RolesFilter({
+    rolesFilter,
     setRolesFilter,
 }: {
-    setRolesFilter: (value: number[]) => void;
+    rolesFilter: DropdownRole[];
+    setRolesFilter: (value: DropdownRole[]) => void;
 }) {
     const [roles, setRoles] = useState<DropdownRole[]>([]);
 
@@ -39,19 +37,16 @@ export default function RolesFilter({
         fetchRoles();
     }, []);
 
-    function handleRolesChange(): void {
-        const newRoles: number[] = [];
-        for (const role of roles) {
-            newRoles.push(role.value);
-        }
-        setRolesFilter(newRoles);
+    function handleRolesChange(event: MultiValue<DropdownRole>): void {
+        const allCheckedRoles: DropdownRole[] = [];
+        event.forEach(dropdownRole => allCheckedRoles.push(dropdownRole));
+        setRolesFilter(allCheckedRoles);
+        setRolesFilterStorage(JSON.stringify(allCheckedRoles));
     }
 
     return (
         <FilterRoles>
-            <FilterRolesLabelContainer>
-                <FilterRolesLabel>Roles: </FilterRolesLabel>
-            </FilterRolesLabelContainer>
+            <RolesTitle>Roles</RolesTitle>
             <FilterRolesDropdownContainer>
                 <Select
                     className="RolesFilterDropdown"
@@ -59,7 +54,8 @@ export default function RolesFilter({
                     isMulti
                     isSearchable
                     placeholder="Choose roles..."
-                    onChange={handleRolesChange}
+                    value={rolesFilter}
+                    onChange={e => handleRolesChange(e)}
                 />
             </FilterRolesDropdownContainer>
         </FilterRoles>

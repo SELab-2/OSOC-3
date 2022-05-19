@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 from src.app.logic.students import (
     definitive_decision_on_student, remove_student, get_student_return,
@@ -16,7 +17,7 @@ from src.app.schemas.students import (
 from src.app.utils.dependencies import get_latest_edition, get_student, get_edition, require_admin, require_auth
 from src.app.utils.websockets import live
 from src.database.database import get_session
-from src.database.models import Student, Edition
+from src.database.models import Student, Edition, User
 from .suggestions import students_suggestions_router
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
@@ -24,15 +25,14 @@ students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
 
 
-@students_router.get("", dependencies=[Depends(require_auth)], response_model=ReturnStudentList)
-async def get_students(
-        db: AsyncSession = Depends(get_session),
-        commons: CommonQueryParams = Depends(CommonQueryParams),
-        edition: Edition = Depends(get_edition)):
+@students_router.get("", response_model=ReturnStudentList)
+async def get_students(db: AsyncSession = Depends(get_session),
+                       commons: CommonQueryParams = Depends(CommonQueryParams),
+                       edition: Edition = Depends(get_edition), user: User = Depends(require_auth)):
     """
     Get a list of all students.
     """
-    return await get_students_search(db, edition, commons)
+    return await get_students_search(db, edition, commons, user)
 
 
 @students_router.post(
@@ -69,7 +69,7 @@ async def get_emails(
 @students_router.delete(
     "/{student_id}",
     dependencies=[Depends(require_admin), Depends(live)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
 )
 async def delete_student(student: Student = Depends(get_student), db: AsyncSession = Depends(get_session)):
     """
@@ -79,11 +79,12 @@ async def delete_student(student: Student = Depends(get_student), db: AsyncSessi
 
 
 @students_router.get("/{student_id}", dependencies=[Depends(require_auth)], response_model=ReturnStudent)
-async def get_student_by_id(student: Student = Depends(get_student)):
+async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student),
+                            db: AsyncSession = Depends(get_session)):
     """
     Get information about a specific student.
     """
-    return get_student_return(student)
+    return await get_student_return(db, student, edition)
 
 
 @students_router.put(

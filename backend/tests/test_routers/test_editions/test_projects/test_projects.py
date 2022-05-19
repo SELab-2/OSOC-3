@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from settings import DB_PAGE_SIZE
-from src.database.models import Edition, Project, User, Partner
+from src.database.models import Edition, Project, Skill, User, Partner
 from tests.utils.authorization import AuthClient
 
 
@@ -302,3 +302,36 @@ async def test_search_project_coach(database_session: AsyncSession, auth_client:
         assert len(json["projects"]) == 1
         assert json["projects"][0]["name"] == "project 2"
         assert json["projects"][0]["coaches"][0]["userId"] == auth_client.user.user_id
+
+
+async def test_delete_project_role(database_session: AsyncSession, auth_client: AuthClient):
+    """test delete a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        response = await auth_client.get("/editions/ed2022/projects/1/roles")
+        assert len(response.json()["projectRoles"]) == 1
+        await auth_client.delete("/editions/ed2022/projects/1/roles/1")
+        response = await auth_client.get("/editions/ed2022/projects/1/roles")
+        assert len(response.json()["projectRoles"]) == 0

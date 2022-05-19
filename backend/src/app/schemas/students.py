@@ -68,6 +68,8 @@ class CommonQueryParams:
     alumni: bool = False
     student_coach: bool = False
     skill_ids: list[int] = Query([])
+    own_suggestions: bool = False
+    decisions: list[DecisionEnum] = Query([])
     page: int = 0
 
 

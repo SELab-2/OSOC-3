@@ -8,5 +8,5 @@ export interface BasicButton extends ButtonProps {
 }
 
 export interface AnimatedButton extends BasicButton {
-    animated?: boolean;
+    animated?: string;
 }

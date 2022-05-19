@@ -38,7 +38,8 @@ async def database_with_data(database_session: AsyncSession) -> AsyncSession:
                                  wants_to_be_student_coach=True, edition=edition, skills=[skill1, skill3, skill6])
     student30: Student = Student(first_name="Marta", last_name="Marquez", preferred_name="Marta",
                                  email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=False,
-                                 wants_to_be_student_coach=False, edition=edition, skills=[skill2, skill4, skill5])
+                                 decision=DecisionEnum.YES, wants_to_be_student_coach=False, edition=edition,
+                                 skills=[skill2, skill4, skill5])
 
     database_session.add(student01)
     database_session.add(student30)
@@ -425,6 +426,44 @@ async def test_get_one_real_one_ghost_skill_students(database_with_data: AsyncSe
     assert len(response.json()["students"]) == 0
 
 
+async def test_get_students_filter_decisions_one(database_with_data: AsyncSession, auth_client: AuthClient):
+    """tests get students based on query parameter decisions"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        response = await auth_client.get(
+            "/editions/ed2022/students?decisions=0", follow_redirects=True)
+        print(response.content)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 1
+
+
+async def test_get_students_filter_decisions_multiple(database_with_data: AsyncSession, auth_client: AuthClient):
+    """tests get students based on multiple decisions"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        response = await auth_client.get(
+            "/editions/ed2022/students?decisions=0&decisions=1", follow_redirects=True)
+        print(response.content)
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["students"]) == 2
+
+
+async def test_get_students_own_suggestion(database_with_data: AsyncSession, auth_client: AuthClient):
+    """test get student based on query paramter for getting the students you wrote a suggestion for"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        await auth_client.post("/editions/ed2022/students/2/suggestions",
+                               json={"suggestion": 1, "argumentation": "test"})
+        response = await auth_client.get(
+            "/editions/ed2022/students?own_suggestions=true", follow_redirects=True)
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()["students"]) == 1
+        assert response.json()["students"][0]["studentId"] == 2
+
+
 async def test_get_emails_student_no_authorization(database_with_data: AsyncSession, auth_client: AuthClient):
     """tests that you can't get the mails of a student when you aren't logged in"""
     async with auth_client:
@@ -446,7 +485,7 @@ async def test_get_emails_student_admin(database_with_data: AsyncSession, auth_c
     await auth_client.admin()
     async with auth_client:
         await auth_client.post("/editions/ed2022/students/emails",
-                     json={"students_id": [1], "email_status": 1})
+                               json={"students_id": [1], "email_status": 1})
         response = await auth_client.get("/editions/ed2022/students/1/emails")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()["emails"]) == 1
@@ -478,7 +517,7 @@ async def test_post_email_applied(database_with_data: AsyncSession, auth_client:
     await auth_client.admin()
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
-                                json={"students_id": [2], "email_status": 0})
+                                          json={"students_id": [2], "email_status": 0})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
         response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.APPLIED
@@ -489,7 +528,7 @@ async def test_post_email_awaiting_project(database_with_data: AsyncSession, aut
     await auth_client.admin()
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
-                                json={"students_id": [2], "email_status": 1})
+                                          json={"students_id": [2], "email_status": 1})
     assert response.status_code == status.HTTP_201_CREATED
     assert EmailStatusEnum(
         response.json()["studentEmails"][0]["emails"][0]["decision"]) == EmailStatusEnum.AWAITING_PROJECT
@@ -623,7 +662,7 @@ async def test_emails_filter_last_name(database_with_data: AsyncSession, auth_cl
             "/editions/ed2022/students/emails?name=Vermeulen", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()[
-               "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
+        "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
 
 
 async def test_emails_filter_between_first_and_last_name(database_with_data: AsyncSession, auth_client: AuthClient):
@@ -638,9 +677,9 @@ async def test_emails_filter_between_first_and_last_name(database_with_data: Asy
             "/editions/ed2022/students/emails?name=os V", follow_redirects=True)
     assert len(response.json()["studentEmails"]) == 1
     assert response.json()[
-               "studentEmails"][0]["student"]["firstName"] == "Jos"
+        "studentEmails"][0]["student"]["firstName"] == "Jos"
     assert response.json()[
-               "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
+        "studentEmails"][0]["student"]["lastName"] == "Vermeulen"
 
 
 async def test_emails_filter_emailstatus(database_with_data: AsyncSession, auth_client: AuthClient):
