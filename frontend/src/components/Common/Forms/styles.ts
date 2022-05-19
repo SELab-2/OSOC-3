@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
 import Multiselect from "multiselect-react-dropdown";
-import "./styles.css";
+import "./formsStyles.css";
 import { Input } from "react-bootstrap-typeahead";
 
 export const StyledFormControl = styled(Form.Control)`

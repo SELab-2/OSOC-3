@@ -5,6 +5,7 @@ export const TableDiv = styled.div`
     margin-top: 5px;
     margin-bottom: 50px;
     width: fit-content;
+    min-width: 100%;
 `;
 
 export const DropDownButtonDiv = styled.div`
@@ -13,7 +14,7 @@ export const DropDownButtonDiv = styled.div`
 `;
 
 export const SearchDiv = styled.div`
-    margin: auto;
+    margin-top: 20px;
     width: 14em;
     display: inline-block;
 `;
@@ -41,6 +42,7 @@ export const MessageDiv = styled.div`
 `;
 
 export const MailOverviewDiv = styled.div`
+    min-width: 34em;
     width: fit-content;
     margin: auto;
 `;

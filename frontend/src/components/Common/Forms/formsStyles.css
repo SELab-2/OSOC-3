@@ -16,9 +16,30 @@
 }
 
 .multiSelectContainer input {
-    color: white
+    color: white;
 }
 
 .icon_down_dir {
     filter: invert(70%);
+}
+
+.multiSelectContainer li:hover {
+    background-color: #363649 !important;
+}
+
+.multiSelectContainer ul {
+    border: none;
+}
+
+.chip {
+    background-color: var(--osoc_green);
+    color: var(--osoc_blue);
+}
+
+.icon_cancel {
+    filter: invert(80%);
+}
+
+.highlightOption {
+    background-color: transparent;
 }
