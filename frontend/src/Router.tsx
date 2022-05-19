@@ -93,12 +93,12 @@ export default function Router() {
                                         {/* Students routes */}
                                         <Route path={"students"} element={<Outlet />}>
                                             <Route path={""} element={<StudentsPage />} />
-                                            <Route path={"emails"} element={<AdminRoute />}>
+                                            <Route path={"states"} element={<AdminRoute />}>
                                                 <Route path={""} element={<MailOverviewPage />} />
                                             </Route>
                                             <Route path={":id"} element={<StudentInfoPage />} />
                                             <Route
-                                                path={":id/emails"}
+                                                path={":id/states"}
                                                 element={<StudentMailHistoryPage />}
                                             />
                                         </Route>

@@ -32,6 +32,35 @@ body {
     color: white;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 7px;
+}
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+}
+::-webkit-scrollbar-thumb {
+    background: #88888d;
+    border: 0 none #ffffff;
+    border-radius: 50px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #bdbdc2;
+}
+::-webkit-scrollbar-thumb:active {
+    background: #bdbdc2;
+}
+::-webkit-scrollbar-track {
+    background: var(--osoc_blue);
+    border: 0 none #ffffff;
+    border-radius: 22px;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 /* All tables */
 .table-dark {
     --bs-table-bg: #0f0f30;

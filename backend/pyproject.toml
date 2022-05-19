@@ -15,7 +15,7 @@ alembic = "1.7.7"
 environs = "9.5.0"
 
 # FastAPI: API framework
-fastapi = "0.75.2"
+fastapi = "0.78.0"
 
 # MariaDB: Python MariaDB connector
 mariadb = "1.0.11"
@@ -27,7 +27,7 @@ passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
 python-jose = { "version" = "3.3.0", extras = ["cryptography"] }
 
 # Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
-pyhumps = "3.5.3"
+pyhumps = "3.7.1"
 
 # OAuth2 form data
 python-multipart = "0.0.5"
@@ -62,7 +62,7 @@ coverage = { "version" = "6.3.3", extras = ["toml"] }
 faker = "13.11.1"
 
 # Mypy: check type usage in code
-mypy = "0.940"
+mypy = "0.950"
 
 # Pylint: Python linter
 pylint = "2.13.9"
