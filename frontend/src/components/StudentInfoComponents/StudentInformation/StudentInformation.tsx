@@ -28,6 +28,7 @@ import { Student } from "../../../data/interfaces/students";
 import { getStudent } from "../../../utils/api/students";
 import LoadSpinner from "../../Common/LoadSpinner";
 import { toast } from "react-toastify";
+import StudentCopyLink from "../StudentCopyLink/StudentCopyLink";
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
@@ -85,6 +86,7 @@ export default function StudentInformation(props: { studentId: number; editionId
                     <FullName>
                         <FirstName>{student.firstName}</FirstName>
                         <LastName>{student.lastName}</LastName>
+                        <StudentCopyLink />
                     </FullName>
                     <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
                 </NameAndRemoveButtonContainer>
