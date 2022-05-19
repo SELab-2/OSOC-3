@@ -93,7 +93,7 @@ async def patch_project(
 @projects_router.get(
     "/{project_id}/roles",
     response_model=ProjectRoleResponseList,
-    dependencies=[Depends(require_coach), Depends(get_latest_edition)]
+    dependencies=[Depends(require_coach), Depends(get_edition)]
 )
 async def get_project_roles(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
     """List all project roles for a project"""
