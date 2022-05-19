@@ -30,7 +30,11 @@ export default function StudentList() {
                 {(provided, snapshot) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                         {students.map((student, index) => (
-                            <Draggable draggableId={student.studentId.toString()} index={index} key={index}>
+                            <Draggable
+                                draggableId={student.studentId.toString()}
+                                index={index}
+                                key={index}
+                            >
                                 {(provided, snapshot) => (
                                     <StudentContainer
                                         key={student.studentId}

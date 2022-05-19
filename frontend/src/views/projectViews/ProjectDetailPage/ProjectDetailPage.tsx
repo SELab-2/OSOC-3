@@ -106,8 +106,7 @@ export default function ProjectDetailPage() {
                 addStudent.studentId
             );
         }
-
-        const newProjectRole = await toast.promise(
+        await toast.promise(
             addStudentToProject(
                 editionId,
                 projectId.toString(),
@@ -122,7 +121,6 @@ export default function ProjectDetailPage() {
             },
             { toastId: "addStudentToProject" }
         );
-        if (!newProjectRole) return;
         setGotProject(false);
     };
 

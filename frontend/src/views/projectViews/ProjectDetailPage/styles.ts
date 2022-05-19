@@ -30,7 +30,6 @@ export const ClientsContainer = styled.div`
     overflow-x: auto;
 `;
 
-
 export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
