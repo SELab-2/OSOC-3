@@ -1,5 +1,5 @@
 import { Draggable } from "react-beautiful-dnd";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../../contexts";
 import { Role } from "../../../../data/enums";
@@ -25,6 +25,8 @@ export default function SuggestedStudent({
 
     const { role, userId } = useAuth();
 
+    const navigate = useNavigate();
+
     return (
         <Draggable
             draggableId={
@@ -40,7 +42,16 @@ export default function SuggestedStudent({
                     {...provided.dragHandleProps}
                 >
                     <NameDeleteContainer>
-                        <StudentName>
+                        <StudentName
+                            onClick={() =>
+                                navigate(
+                                    "/editions/" +
+                                        editionId +
+                                        "/students/" +
+                                        suggestion.student.studentId
+                                )
+                            }
+                        >
                             {suggestion.student.firstName + " " + suggestion.student.lastName}
                         </StudentName>
                         {(role === Role.ADMIN || userId === suggestion.drafter.userId) && (
