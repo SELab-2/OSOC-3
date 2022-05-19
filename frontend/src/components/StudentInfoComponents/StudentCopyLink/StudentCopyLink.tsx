@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 export default function StudentCopyLink() {
     function copyStudentLink() {
         navigator.clipboard.writeText(window.location.href);
-        toast.info("Student URL copied to clipboard!", { autoClose: 1500 });
+        toast.info("Student URL copied to clipboard!");
     }
     return (
         <CopyLinkContainer>
