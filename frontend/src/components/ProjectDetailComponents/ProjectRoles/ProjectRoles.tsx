@@ -35,7 +35,7 @@ export default function ProjectRoles({
                                     ),
                                     {
                                         pending: "Deleting project role",
-                                        success: "Successfully deleted project role",
+                                        success: "Successfully deleted skill",
                                         error: "Something went wrong",
                                     },
                                     {

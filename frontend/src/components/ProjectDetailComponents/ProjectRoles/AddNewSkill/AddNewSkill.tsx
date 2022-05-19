@@ -93,7 +93,13 @@ export default function AddNewSkill({
                                     addSkillToProject();
                                 }}
                             />
-                            <CancelButton onClick={() => setAddingSkill(false)}>
+                            <CancelButton
+                                onClick={() => {
+                                    setAddingSkill(false);
+                                    setSlots(1);
+                                    setDescription("");
+                                }}
+                            >
                                 Cancel
                             </CancelButton>
                         </NewSKillRight>
@@ -131,6 +137,8 @@ export default function AddNewSkill({
             );
             setGotProject(false);
             setAddingSkill(false);
+            setSlots(1);
+            setDescription("");
         }
     }
 }

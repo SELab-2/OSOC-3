@@ -74,7 +74,15 @@ export default function ProjectDetailPage() {
     const handleDeleteShow = () => setShowDeleteModal(true);
     const handleDelete = () => {
         // What to do when deleting a project.
-        deleteProject(editionId, project!.projectId);
+        toast.promise(
+            deleteProject(editionId, project!.projectId),
+            {
+                pending: "Deleting project",
+                success: "Successfully deleted project",
+                error: "Something went wrong",
+            },
+            { toastId: "deleteProject" }
+        );
         setShowDeleteModal(false);
         navigate("/editions/" + editionId + "/projects/");
     };
@@ -126,12 +134,20 @@ export default function ProjectDetailPage() {
 
     async function editProject() {
         const newProject: EditProject = projectToEditProject(editedProject!);
-        await patchProject(
-            editionId,
-            projectId,
-            newProject!.name,
-            newProject!.partners,
-            newProject!.coaches
+        await toast.promise(
+            patchProject(
+                editionId,
+                projectId,
+                newProject!.name,
+                newProject!.partners,
+                newProject!.coaches
+            ),
+            {
+                pending: "Updating project",
+                success: "Successfully updated project",
+                error: "Something went wrong",
+            },
+            { toastId: "UpdateProject" }
         );
         setGotProject(false);
     }

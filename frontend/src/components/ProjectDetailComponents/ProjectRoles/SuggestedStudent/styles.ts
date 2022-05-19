@@ -26,3 +26,9 @@ export const DrafterContainer = styled.div`
     display: flex;
     margin-bottom: 5px;
 `;
+
+export const StudentName = styled.div`
+    overflow: auto;
+    text-overflow: ellipsis;
+    max-width: 80%;
+`;

@@ -6,7 +6,7 @@ import { Role } from "../../../../data/enums";
 import { ProjectRole, ProjectRoleSuggestion } from "../../../../data/interfaces/projects";
 import { deleteStudentFromProject } from "../../../../utils/api/projectStudents";
 import { DeleteButton } from "../../../Common/Buttons";
-import { DrafterContainer, NameDeleteContainer, SuggestionContainer } from "./styles";
+import { DrafterContainer, NameDeleteContainer, SuggestionContainer, StudentName } from "./styles";
 
 export default function SuggestedStudent({
     suggestion,
@@ -40,7 +40,9 @@ export default function SuggestedStudent({
                     {...provided.dragHandleProps}
                 >
                     <NameDeleteContainer>
-                        {suggestion.student.firstName + " " + suggestion.student.lastName}
+                        <StudentName>
+                            {suggestion.student.firstName + " " + suggestion.student.lastName}
+                        </StudentName>
                         {(role === Role.ADMIN || userId === suggestion.drafter.userId) && (
                             <DeleteButton
                                 onClick={async () => {
