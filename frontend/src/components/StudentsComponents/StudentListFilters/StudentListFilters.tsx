@@ -12,6 +12,7 @@ import { Student } from "../../../data/interfaces/students";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getStudents } from "../../../utils/api/students";
+import SuggestedForFilter from "./SuggestedForFilter/SuggestedForFilter";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -29,6 +30,7 @@ export default function StudentListFilters() {
     const [rolesFilter, setRolesFilter] = useState<number[]>([]);
     const [alumniFilter, setAlumniFilter] = useState(false);
     const [studentCoachVolunteerFilter, setStudentCoachVolunteerFilter] = useState(false);
+    const [suggestedFilter, setSuggestedFilter] = useState(false);
 
     /**
      * Request all students with selected filters
@@ -82,6 +84,7 @@ export default function StudentListFilters() {
                 rolesFilter,
                 alumniFilter,
                 studentCoachVolunteerFilter,
+                suggestedFilter,
                 requestedPage
             );
 
@@ -99,7 +102,8 @@ export default function StudentListFilters() {
                 nameFilter === "" &&
                 rolesFilter.length === 0 &&
                 !alumniFilter &&
-                !studentCoachVolunteerFilter
+                !studentCoachVolunteerFilter &&
+                !suggestedFilter
             ) {
                 if (response.students.length === 0) {
                     setAllDataFetched(true);
@@ -126,7 +130,7 @@ export default function StudentListFilters() {
         setMoreDataAvailable(true);
         getData(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter]);
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, suggestedFilter]);
 
     let list;
     if (students.length === 0) {
@@ -147,12 +151,14 @@ export default function StudentListFilters() {
             <RolesFilter setRolesFilter={setRolesFilter} />
             <Form.Group>
                 <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
-                <Form.Check type="checkbox" label="Only students you've suggested for" />
+                <SuggestedForFilter
+                    suggestedFilter={suggestedFilter}
+                    setSuggestedFilter={setSuggestedFilter}
+                />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={studentCoachVolunteerFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                 />
-                <Form.Check type="checkbox" label="Only available students" />
             </Form.Group>
             <StudentListLinebreak />
             <FilterControls>
