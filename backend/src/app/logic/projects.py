@@ -76,7 +76,9 @@ async def create_project_role(db: AsyncSession, project: Project, input_project_
 async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) \
         -> ProjectRole:
     """Update a project role"""
-    return await crud.patch_project_role(db, project_role_id, input_project_role)
+    if(input_project_role.slots) > 0:
+        return await crud.patch_project_role(db, project_role_id, input_project_role)
+    raise NoneStrictPostiveNumberOfSlots
 
 
 async def get_conflicts(db: AsyncSession, edition: Edition) -> ConflictStudentList:

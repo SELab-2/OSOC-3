@@ -334,7 +334,8 @@ async def test_delete_project_role(database_session: AsyncSession, auth_client: 
         })
         response = await auth_client.get("/editions/ed2022/projects/1/roles")
         assert len(response.json()["projectRoles"]) == 1
-        await auth_client.delete("/editions/ed2022/projects/1/roles/1")
+        response = await auth_client.delete("/editions/ed2022/projects/1/roles/1")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
         response = await auth_client.get("/editions/ed2022/projects/1/roles")
         assert len(response.json()["projectRoles"]) == 0
 
@@ -366,3 +367,172 @@ async def test_make_project_role(database_session: AsyncSession, auth_client: Au
             "slots": 1
         })
         assert response.status_code == status.HTTP_201_CREATED
+        json = response.json()
+        assert json["projectRoleId"] == 1
+        assert json["projectId"] == 1
+        assert json["description"] == "description"
+        assert json["skill"]["skillId"] == 1
+        assert json["slots"] == 1
+
+
+async def test_make_project_role_negative_slots(database_session: AsyncSession, auth_client: AuthClient):
+    """test make a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": -1
+        })
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+async def test_make_project_role_zero_slots(database_session: AsyncSession, auth_client: AuthClient):
+    """test make a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 0
+        })
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+async def test_update_project_role(database_session: AsyncSession, auth_client: AuthClient):
+    """test update a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        assert response.status_code == status.HTTP_201_CREATED
+        response = await auth_client.patch("/editions/ed2022/projects/1/roles/1", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 2
+        })
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+async def test_update_project_role_negative_slots(database_session: AsyncSession, auth_client: AuthClient):
+    """test update a project role with negative slots"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        assert response.status_code == status.HTTP_201_CREATED
+        response = await auth_client.patch("/editions/ed2022/projects/1/roles/1", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": -1
+        })
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+async def test_update_project_role_zero_slots(database_session: AsyncSession, auth_client: AuthClient):
+    """test update a project role with zero slots"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        assert response.status_code == status.HTTP_201_CREATED
+        response = await auth_client.patch("/editions/ed2022/projects/1/roles/1", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 0
+        })
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
