@@ -74,17 +74,15 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     async function addCoach(user: User) {
         setLoading(true);
-        const success = await toast.promise(addCoachToEdition(user.userId, props.edition), {
+        await toast.promise(addCoachToEdition(user.userId, props.edition), {
             error: "Failed to add coach",
             pending: "Adding coach",
             success: "Coach successfully added",
         });
 
         setLoading(false);
-        if (success) {
-            setSelected(undefined);
-            setClearRef(true);
-        }
+        setSelected(undefined);
+        setClearRef(true);
     }
 
     let addButton;

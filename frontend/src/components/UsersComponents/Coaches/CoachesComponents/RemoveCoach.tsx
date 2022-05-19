@@ -44,15 +44,14 @@ export default function RemoveCoach(props: {
      */
     async function removeCoach(userId: number, allEditions: boolean) {
         setLoading(true);
-        let removed;
         if (allEditions) {
-            removed = await toast.promise(removeCoachFromAllEditions(userId), {
+            await toast.promise(removeCoachFromAllEditions(userId), {
                 error: "Failed to remove coach",
                 pending: "Removing coach",
                 success: "Coach successfully removed",
             });
         } else {
-            removed = await toast.promise(removeCoachFromEdition(userId, props.edition), {
+            await toast.promise(removeCoachFromEdition(userId, props.edition), {
                 error: "Failed to remove coach",
                 pending: "Removing coach",
                 success: "Coach successfully removed",
@@ -60,13 +59,7 @@ export default function RemoveCoach(props: {
         }
 
         setLoading(false);
-        if (removed) {
-            props.removeCoach();
-        } else {
-            toast.error("Failed to remove coach", {
-                toastId: "remove_coach_failed",
-            });
-        }
+        props.removeCoach();
     }
 
     let buttons;
