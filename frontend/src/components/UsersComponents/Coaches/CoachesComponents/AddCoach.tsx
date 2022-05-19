@@ -65,6 +65,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     const handleClose = () => {
         setSelected(undefined);
+        props.refreshCoaches();
         setShow(false);
     };
     const handleShow = () => {
@@ -78,17 +79,9 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
             pending: "Adding coach",
             success: "Coach successfully added",
         });
-        if (!success) {
-            toast.error("Failed to add coach", {
-                toastId: "add_coach_failed",
-            });
-        }
 
         setLoading(false);
         if (success) {
-            props.refreshCoaches();
-            setSearchTerm("");
-            getData(0, "");
             setSelected(undefined);
             setClearRef(true);
         }
