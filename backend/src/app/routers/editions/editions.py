@@ -1,5 +1,6 @@
 from asyncio import Queue
 
+from starlette.responses import Response
 from websockets.exceptions import ConnectionClosedOK
 from fastapi import APIRouter, Depends, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -69,7 +70,7 @@ async def post_edition(edition: EditionBase, db: AsyncSession = Depends(get_sess
 
 @editions_router.delete(
     "/{edition_name}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     tags=[Tags.EDITIONS],
     dependencies=[Depends(require_admin)]
 )

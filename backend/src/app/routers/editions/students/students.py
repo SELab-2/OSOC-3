@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 from src.app.logic.students import (
     definitive_decision_on_student, remove_student, get_student_return,
@@ -68,7 +69,7 @@ async def get_emails(
 @students_router.delete(
     "/{student_id}",
     dependencies=[Depends(require_admin), Depends(live)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
 )
 async def delete_student(student: Student = Depends(get_student), db: AsyncSession = Depends(get_session)):
     """
@@ -88,7 +89,7 @@ async def get_student_by_id(edition: Edition = Depends(get_edition), student: St
 @students_router.put(
     "/{student_id}/decision",
     dependencies=[Depends(require_admin), Depends(live)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
 )
 async def make_decision(
         decision: NewDecision,
