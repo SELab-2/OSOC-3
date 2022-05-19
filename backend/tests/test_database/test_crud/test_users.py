@@ -200,9 +200,8 @@ async def test_get_user_editions_coach(database_session: AsyncSession):
     database_session.add(user)
     await database_session.commit()
 
-    # No editions yet
     editions = await users_crud.get_user_editions(database_session, user)
-    assert editions == [edition.name]
+    assert editions[0].name == edition.name
 
 
 async def test_get_all_users_from_edition(database_session: AsyncSession, data: dict[str, str]):
