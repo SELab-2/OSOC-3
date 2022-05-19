@@ -24,7 +24,8 @@ async def test_get_projects_paginated(database_session: AsyncSession, auth_clien
         assert len(response.json()['projects']) == DB_PAGE_SIZE
         response = await auth_client.get("/editions/ed2022/projects?page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.json()['projects']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+        assert len(response.json()['projects']) == round(
+            DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 async def test_get_project(database_session: AsyncSession, auth_client: AuthClient):
@@ -55,7 +56,7 @@ async def test_delete_project(database_session: AsyncSession, auth_client: AuthC
 
     await auth_client.admin()
     endpoint = f"/editions/{edition.name}/projects/{project.project_id}"
-    
+
     async with auth_client:
         response = await auth_client.get(endpoint)
         assert response.status_code == status.HTTP_200_OK
@@ -93,7 +94,7 @@ async def test_create_project(database_session: AsyncSession, auth_client: AuthC
             "partners": ["ugent"],
             "coaches": [user.user_id]
         })
-    
+
         assert response.status_code == status.HTTP_201_CREATED
         json: dict = response.json()
         assert "projectId" in json
@@ -115,7 +116,7 @@ async def test_create_project_same_partner(database_session: AsyncSession, auth_
 
     await auth_client.admin()
     async with auth_client:
-        
+
         await auth_client.post(f"/editions/{edition.name}/projects", json={
             "name": "test",
             "partners": ["ugent"],
@@ -148,7 +149,6 @@ async def test_create_project_non_existing_coach(database_session: AsyncSession,
         })
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-
         response = await auth_client.get(f"/editions/{edition.name}/projects/")
         assert len(response.json()['projects']) == 0
 
@@ -167,9 +167,9 @@ async def test_create_project_no_name(database_session: AsyncSession, auth_clien
             "partners": [],
             "coaches": []
         })
-    
+
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    
+
         response = await auth_client.get(f"/editions/{edition.name}/projects/", follow_redirects=True)
         assert len(response.json()['projects']) == 0
 
@@ -179,7 +179,8 @@ async def test_patch_project(database_session: AsyncSession, auth_client: AuthCl
     edition: Edition = Edition(year=2022, name="ed2022")
     partner: Partner = Partner(name="partner 1")
     user: User = User(name="user 1")
-    project: Project = Project(name="project 1", edition=edition, partners=[partner], coaches=[user])
+    project: Project = Project(name="project 1", edition=edition, partners=[
+                               partner], coaches=[user])
     database_session.add(project)
     await database_session.commit()
 
@@ -293,7 +294,8 @@ async def test_search_project_coach(database_session: AsyncSession, auth_client:
     await auth_client.coach(edition)
 
     database_session.add(Project(name="project 1", edition=edition))
-    database_session.add(Project(name="project 2", edition=edition, coaches=[auth_client.user]))
+    database_session.add(
+        Project(name="project 2", edition=edition, coaches=[auth_client.user]))
     await database_session.commit()
 
     async with auth_client:
@@ -335,3 +337,32 @@ async def test_delete_project_role(database_session: AsyncSession, auth_client: 
         await auth_client.delete("/editions/ed2022/projects/1/roles/1")
         response = await auth_client.get("/editions/ed2022/projects/1/roles")
         assert len(response.json()["projectRoles"]) == 0
+
+
+async def test_make_project_role(database_session: AsyncSession, auth_client: AuthClient):
+    """test make a project role"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    user: User = User(name="coach 1")
+    skill: Skill = Skill(name="Skill1")
+    database_session.add(edition)
+    database_session.add(user)
+    database_session.add(skill)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post("/editions/ed2022/projects", json={
+            "name": "test",
+            "partners": ["ugent"],
+            "coaches": [user.user_id]
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.json()["projectId"] == 1
+        response = await auth_client.post("/editions/ed2022/projects/1/roles", json={
+            "skill_id": 1,
+            "description": "description",
+            "slots": 1
+        })
+        assert response.status_code == status.HTTP_201_CREATED
