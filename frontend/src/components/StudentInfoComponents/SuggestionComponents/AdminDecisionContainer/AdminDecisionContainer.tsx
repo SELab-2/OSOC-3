@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { DefinitiveDecisionContainer } from "../../StudentInformation/styles";
-import { SuggestionButtons, ConfirmButton } from "./styles";
+import { SuggestionButtons, ConfirmActionTitle } from "./styles";
+import { YesButton, MaybeButton, NoButton } from "../CoachSuggestionContainer/styles";
 import { confirmStudent } from "../../../../utils/api/suggestions";
 import { useParams } from "react-router-dom";
+import { CreateButton } from "../../../Common/Buttons";
 import { toast } from "react-toastify";
 
 /**
@@ -69,51 +71,51 @@ export default function AdminDecisionContainer() {
                 <Modal.Body>
                     Click on one of the buttons to mark your decision
                     <SuggestionButtons>
-                        <ConfirmButton
+                        <YesButton
                             value={0}
                             variant="success"
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
                         >
                             Yes
-                        </ConfirmButton>
-                        <ConfirmButton
+                        </YesButton>
+                        <MaybeButton
                             value={1}
                             variant="warning"
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
                         >
                             Maybe
-                        </ConfirmButton>
-                        <ConfirmButton
+                        </MaybeButton>
+                        <NoButton
                             value={2}
                             variant="danger"
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClick(e)}
                         >
                             No
-                        </ConfirmButton>
+                        </NoButton>
                     </SuggestionButtons>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="info" onClick={handleClose}>
                         Close
                     </Button>
                     <div>
                         {clickedButtonText ? (
-                            <Button variant="primary" onClick={makeDecision}>
+                            <CreateButton onClick={makeDecision}>
                                 Confirm {clickedButtonText}?
-                            </Button>
+                            </CreateButton>
                         ) : (
-                            <Button variant="primary" onClick={makeDecision} disabled={true}>
+                            <CreateButton onClick={makeDecision} disabled={true}>
                                 Confirm
-                            </Button>
+                            </CreateButton>
                         )}
                     </div>
                 </Modal.Footer>
             </Modal>
-            <h4>Definitive decision by admin</h4>
+            <ConfirmActionTitle>Definitive decision by admin</ConfirmActionTitle>
             <DefinitiveDecisionContainer>
-                <Button onClick={handleShow} variant="success" size="lg">
+                <CreateButton onClick={handleShow} variant="success" size="lg">
                     Confirm
-                </Button>
+                </CreateButton>
             </DefinitiveDecisionContainer>
         </div>
     );
