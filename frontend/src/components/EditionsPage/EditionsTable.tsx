@@ -5,7 +5,7 @@ import EditionRow from "./EditionRow";
 import EmptyEditionsTableMessage from "./EmptyEditionsTableMessage";
 import { Edition } from "../../data/interfaces";
 import { toast } from "react-toastify";
-import { useAuth } from "../../contexts";
+import { updateEditionState, useAuth } from "../../contexts";
 import { Role } from "../../data/enums";
 
 /**
@@ -15,21 +15,22 @@ import { Role } from "../../data/enums";
  * If the user is an admin, this will also render a delete button.
  */
 export default function EditionsTable() {
-    const { role } = useAuth();
+    const authCtx = useAuth();
     const [loading, setLoading] = useState(true);
     const [rows, setRows] = useState<React.ReactNode[]>([]);
 
     async function handleClick(edition: Edition) {
-        if (role !== Role.ADMIN) return;
+        if (authCtx.role !== Role.ADMIN) return;
 
         await toast.promise(async () => await patchEdition(edition.name, !edition.readonly), {
             pending: "Changing edition status",
             error: "Error changing status",
             success: `Successfully changed status to ${
-                edition.readonly ? '"editable"' : '"read-only"'
+                edition.readonly ? "editable" : "read-only"
             }.`,
         });
 
+        updateEditionState(authCtx, edition);
         await loadEditions();
     }
 

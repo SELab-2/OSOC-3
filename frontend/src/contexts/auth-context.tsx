@@ -100,3 +100,18 @@ export function logOut(authContext: AuthContextState) {
     // Remove current edition from SessionStorage
     setCurrentEdition(null);
 }
+
+/**
+ * Update the state of an edition in the AuthContext
+ */
+export function updateEditionState(authContext: AuthContextState, edition: Edition) {
+    const index = authContext.editions.findIndex(e => e.name === edition.name);
+    if (index === -1) return;
+
+    // Flip the state of the element
+    const copy = [...authContext.editions];
+    copy[index].readonly = !copy[index].readonly;
+
+    // Call the setter to update the state
+    authContext.setEditions(copy);
+}
