@@ -23,6 +23,16 @@ export async function getStudents(
     page: number
 ): Promise<Students> {
     let rolesRequestField: string = "";
+
+    console.log([
+        nameFilter,
+        rolesFilter,
+        alumniFilter,
+        studentCoachVolunteerFilter,
+        suggestedFilter,
+        page,
+    ]);
+
     for (const role of rolesFilter) {
         rolesRequestField += "skill_ids=" + role.value.toString() + "&";
     }

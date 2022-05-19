@@ -156,17 +156,27 @@ export default function StudentListFilters() {
 
     return (
         <StudentListSideMenu>
-            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
-            <RolesFilter rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} />
+            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} setPage={setPage} />
+            <RolesFilter
+                rolesFilter={rolesFilter}
+                setRolesFilter={setRolesFilter}
+                setPage={setPage}
+            />
             <Form.Group>
-                <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
+                <AlumniFilter
+                    alumniFilter={alumniFilter}
+                    setAlumniFilter={setAlumniFilter}
+                    setPage={setPage}
+                />
                 <SuggestedForFilter
                     suggestedFilter={suggestedFilter}
                     setSuggestedFilter={setSuggestedFilter}
+                    setPage={setPage}
                 />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={studentCoachVolunteerFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                    setPage={setPage}
                 />
             </Form.Group>
             <StudentListLinebreak />
@@ -177,6 +187,7 @@ export default function StudentListFilters() {
                     setAlumniFilter={setAlumniFilter}
                     setSuggestedFilter={setSuggestedFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                    setPage={setPage}
                 />
             </FilterControls>
             {list}
