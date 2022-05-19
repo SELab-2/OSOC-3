@@ -188,7 +188,10 @@ export default function ProjectDetailPage() {
                         editing={editing}
                     />
 
-                    <ProjectRoles projectRoles={project.projectRoles} />
+                    <ProjectRoles
+                        projectRoles={project.projectRoles}
+                        setGotProject={setGotProject}
+                    />
                     <AddStudentModal
                         visible={showAddModal}
                         handleConfirm={handleAdd}

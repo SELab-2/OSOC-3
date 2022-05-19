@@ -1,5 +1,6 @@
 import { Draggable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAuth } from "../../../../contexts";
 import { Role } from "../../../../data/enums";
 import { ProjectRole, ProjectRoleSuggestion } from "../../../../data/interfaces/projects";
@@ -11,10 +12,12 @@ export default function SuggestedStudent({
     suggestion,
     projectRole,
     index,
+    setGotProject,
 }: {
     suggestion: ProjectRoleSuggestion;
     projectRole: ProjectRole;
     index: number;
+    setGotProject: (value: boolean) => void;
 }) {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
@@ -40,13 +43,21 @@ export default function SuggestedStudent({
                         {suggestion.student.firstName + " " + suggestion.student.lastName}
                         {(role === Role.ADMIN || userId === suggestion.drafter.userId) && (
                             <DeleteButton
-                                onClick={() => {
-                                    deleteStudentFromProject(
-                                        editionId,
-                                        projectId.toString(),
-                                        projectRole.projectRoleId.toString(),
-                                        suggestion.student.studentId.toString()
+                                onClick={async () => {
+                                    await toast.promise(
+                                        deleteStudentFromProject(
+                                            editionId,
+                                            projectId.toString(),
+                                            projectRole.projectRoleId.toString(),
+                                            suggestion.student.studentId.toString()
+                                        ),
+                                        {
+                                            pending: "Deleting student from project",
+                                            success: "Successfully removed student",
+                                            error: "Something went wrong",
+                                        }
                                     );
+                                    setGotProject(false);
                                 }}
                             />
                         )}

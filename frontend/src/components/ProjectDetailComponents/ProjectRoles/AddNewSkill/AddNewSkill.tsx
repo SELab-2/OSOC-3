@@ -19,7 +19,11 @@ import {
     NewSkillBottom,
 } from "./styles";
 
-export default function AddNewSkill() {
+export default function AddNewSkill({
+    setGotProject,
+}: {
+    setGotProject: (value: boolean) => void;
+}) {
     const [addingSkill, setAddingSkill] = useState(false);
 
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
@@ -51,6 +55,7 @@ export default function AddNewSkill() {
                     <NewSkillTop>
                         <NewSkillLeft>
                             <StyledFormSelect
+                                value={chosenSkill?.name}
                                 as="select"
                                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                                     let skillToAdd: Skill | undefined;
@@ -124,6 +129,8 @@ export default function AddNewSkill() {
                     error: "Something went wrong",
                 }
             );
+            setGotProject(false);
+            setAddingSkill(false);
         }
     }
 }

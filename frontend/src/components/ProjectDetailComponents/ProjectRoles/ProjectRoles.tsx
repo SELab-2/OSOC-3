@@ -8,7 +8,13 @@ import { NoStudents, ProjectRoleContainer, Suggestions, TitleDeleteContainer } f
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
 
-export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRole[] }) {
+export default function ProjectRoles({
+    projectRoles,
+    setGotProject,
+}: {
+    projectRoles: ProjectRole[];
+    setGotProject: (value: boolean) => void;
+}) {
     const params = useParams();
     const projectId = params.projectId!;
     const editionId = params.editionId!;
@@ -38,6 +44,7 @@ export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRo
                                             projectRole.projectRoleId.toString(),
                                     }
                                 );
+                                setGotProject(false);
                             }}
                         />
                     </TitleDeleteContainer>
@@ -56,6 +63,7 @@ export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRo
                                         suggestion={sug}
                                         projectRole={projectRole}
                                         index={_index2}
+                                        setGotProject={setGotProject}
                                     />
                                 ))}
                                 {projectRole.suggestions.length === 0 && (
@@ -67,7 +75,7 @@ export default function ProjectRoles({ projectRoles }: { projectRoles: ProjectRo
                     </Droppable>
                 </ProjectRoleContainer>
             ))}
-            <AddNewSkill />
+            <AddNewSkill setGotProject={setGotProject} />
         </div>
     );
 }
