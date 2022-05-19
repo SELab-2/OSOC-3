@@ -8,14 +8,17 @@ import { axiosInstance } from "./api";
  * @param name To filter on project name.
  * @param ownProjects To filter on your own projects.
  * @param page The requested page.
+ * @param controller An optional AbortController to cancel the request
  * @returns
  */
 export async function getProjects(
     edition: string,
     name: string,
     ownProjects: boolean,
-    page: number
+    page: number,
+    controller: AbortController
 ): Promise<Projects> {
+    // eslint-disable-next-line promise/param-names
     const response = await axiosInstance.get(
         "/editions/" +
             edition +
@@ -24,7 +27,8 @@ export async function getProjects(
             "&coach=" +
             ownProjects.toString() +
             "&page=" +
-            page.toString()
+            page.toString(),
+        { signal: controller.signal }
     );
     return response.data as Projects;
 }

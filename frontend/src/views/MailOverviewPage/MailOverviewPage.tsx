@@ -39,6 +39,8 @@ export default function MailOverviewPage() {
     const [page, setPage] = useState(0);
     const [allSelected, setAllSelected] = useState(false);
 
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
+
     // Keep track of the set filters
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState<EmailType[]>([]);
@@ -55,8 +57,14 @@ export default function MailOverviewPage() {
 
         setLoading(true);
 
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
         const response = await toast.promise(
-            getMailOverview(editionId, page, searchTerm, filters),
+            getMailOverview(editionId, page, searchTerm, filters, newController),
             { error: "Failed to retrieve states" }
         );
         if (response.studentEmails.length === 0) {

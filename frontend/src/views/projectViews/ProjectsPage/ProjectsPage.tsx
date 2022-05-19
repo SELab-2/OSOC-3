@@ -21,6 +21,8 @@ export default function ProjectPage() {
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
 
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
+
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
     const [ownProjects, setOwnProjects] = useState(false);
@@ -52,8 +54,15 @@ export default function ProjectPage() {
         }
 
         setLoading(true);
+
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
         const response = await toast.promise(
-            getProjects(editionId, searchString, ownProjects, page),
+            getProjects(editionId, searchString, ownProjects, page, newController),
             { error: "Failed to retrieve projects" }
         );
         if (response.projects.length === 0) {
