@@ -182,10 +182,10 @@ async def test_get_invite_present(database_session: AsyncSession, auth_client: A
     assert json["email"] == "test@ema.il"
 
 
-async def test_create_invite_valid_old_edition(database_session: AsyncSession, auth_client: AuthClient):
+async def test_create_invite_valid_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
     """Test endpoint for creating invites when data is valid, but the edition is read-only"""
     await auth_client.admin()
-    edition = Edition(year=2022, name="ed2022")
+    edition = Edition(year=2022, name="ed2022", readonly=True)
     edition2 = Edition(year=2023, name="ed2023")
     database_session.add(edition)
     database_session.add(edition2)

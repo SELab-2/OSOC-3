@@ -8,7 +8,7 @@ from websockets.exceptions import ConnectionClosedOK
 
 from src.app.logic import editions as logic_editions
 from src.app.routers.tags import Tags
-from src.app.schemas.editions import EditionBase, Edition, EditionList
+from src.app.schemas.editions import EditionBase, Edition, EditionList, EditEdition
 from src.database.database import get_session
 from src.database.models import User
 from .invites import invites_router
@@ -16,11 +16,11 @@ from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws
-# Don't add the "Editions" tag here, because then it gets applied
-# to all child routes as well
+from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws, get_editable_edition
 from ...utils.websockets import DataPublisher, get_publisher
 
+# Don't add the "Editions" tag here, because then it gets applied
+# to all child routes as well
 editions_router = APIRouter(prefix="/editions")
 
 # Register all child routers
@@ -43,6 +43,12 @@ async def get_editions(db: AsyncSession = Depends(get_session), user: User = Dep
         return await logic_editions.get_editions_page(db, page)
 
     return EditionList(editions=user.editions)
+
+
+@editions_router.patch("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
+async def patch_edition(edit_edition: EditEdition, edition: Edition = Depends(get_editable_edition), db: AsyncSession = Depends(get_session)):
+    """Change the readonly status of an edition"""
+    return await logic_editions.patch_edition(db, edition, edit_edition.readonly)
 
 
 @editions_router.get(

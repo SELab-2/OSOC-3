@@ -95,6 +95,7 @@ class Edition(Base):
     edition_id = Column(Integer, primary_key=True)
     name: str = Column(Text, unique=True, nullable=False)
     year: int = Column(Integer, nullable=False)
+    readonly: bool = Column(Boolean, nullable=False, default=False)
 
     invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition", cascade="all, delete-orphan")
     projects: list[Project] = relationship("Project", back_populates="edition", cascade="all, delete-orphan")

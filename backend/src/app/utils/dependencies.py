@@ -18,7 +18,7 @@ from src.app.exceptions.authentication import (
 from src.app.exceptions.editions import ReadOnlyEditionException
 from src.app.exceptions.util import NotFound
 from src.app.logic.security import ALGORITHM, TokenType
-from src.database.crud.editions import get_edition_by_name, latest_edition
+from src.database.crud.editions import get_edition_by_name
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.crud.students import get_student_by_id
 from src.database.crud.suggestions import get_suggestion_by_id
@@ -50,13 +50,12 @@ async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(ge
     return suggestion
 
 
-async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
+async def get_editable_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
         -> Edition:
-    """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
-    latest = await latest_edition(database)
-    if edition != latest:
+    """Checks if the requested edition is editable, and returns it if it is"""
+    if edition.readonly:
         raise ReadOnlyEditionException
-    return latest
+    return edition
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")
