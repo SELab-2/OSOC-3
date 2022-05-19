@@ -16,7 +16,7 @@ from .projects import projects_router
 from .register import registration_router
 from .students import students_router
 from .webhooks import webhooks_router
-from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws, get_editable_edition
+from ...utils.dependencies import require_admin, require_auth, require_coach, require_coach_ws, get_edition
 from ...utils.websockets import DataPublisher, get_publisher
 
 # Don't add the "Editions" tag here, because then it gets applied
@@ -45,10 +45,15 @@ async def get_editions(db: AsyncSession = Depends(get_session), user: User = Dep
     return EditionList(editions=user.editions)
 
 
-@editions_router.patch("/{edition_name}", response_model=Edition, tags=[Tags.EDITIONS], dependencies=[Depends(require_admin)])
-async def patch_edition(edit_edition: EditEdition, edition: Edition = Depends(get_editable_edition), db: AsyncSession = Depends(get_session)):
-    """Change the readonly status of an edition"""
-    return await logic_editions.patch_edition(db, edition, edit_edition.readonly)
+@editions_router.patch("/{edition_name}", response_class=Response, tags=[Tags.EDITIONS],
+                       dependencies=[Depends(require_admin)], status_code=status.HTTP_204_NO_CONTENT)
+async def patch_edition(edit_edition: EditEdition, edition: Edition = Depends(get_edition),
+                        db: AsyncSession = Depends(get_session)):
+    """Change the readonly status of an edition
+    Note that this route is not behind "get_editable_edition", because otherwise you'd never be able
+    to change the status back to False
+    """
+    await logic_editions.patch_edition(db, edition, edit_edition.readonly)
 
 
 @editions_router.get(
