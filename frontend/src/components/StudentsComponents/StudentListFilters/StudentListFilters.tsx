@@ -20,6 +20,7 @@ import {
     getStudentCoachVolunteerFilter,
     getSuggestedFilter,
 } from "../../../utils/session-storage/student-filters";
+import LoadSpinner from "../../Common/LoadSpinner";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -142,7 +143,9 @@ export default function StudentListFilters() {
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, suggestedFilter]);
 
     let list;
-    if (students.length === 0) {
+    if (loading) {
+        list = <LoadSpinner show={true} />;
+    } else if (students.length === 0) {
         list = <MessageDiv>No students found</MessageDiv>;
     } else {
         list = (
