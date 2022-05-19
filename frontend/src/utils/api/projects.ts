@@ -75,7 +75,7 @@ export async function createProject(
 ): Promise<Project | null> {
     const payload: CreateProject = {
         name: name,
-        infoUrl: infoUrl,
+        info_url: infoUrl,
         partners: partners,
         coaches: coaches,
     };

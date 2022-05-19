@@ -90,7 +90,7 @@ export interface CreateProject {
     name: string;
 
     /** An url with more info */
-    infoUrl: string;
+    info_url: string;
 
     /** The partners that belong to this project */
     partners: string[];
