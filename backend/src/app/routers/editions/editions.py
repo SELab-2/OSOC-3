@@ -1,10 +1,10 @@
 from asyncio import Queue
 
-from starlette.responses import Response
-from websockets.exceptions import ConnectionClosedOK
 from fastapi import APIRouter, Depends, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
+from websockets.exceptions import ConnectionClosedOK
 
 from src.app.logic import editions as logic_editions
 from src.app.routers.tags import Tags
