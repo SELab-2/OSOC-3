@@ -61,7 +61,7 @@ async def current_edition(database_with_data: AsyncSession) -> Edition:
 async def test_get_answers_not_logged_in(database_with_data: AsyncSession, auth_client: AuthClient):
     """test get answers when not logged in"""
     async with auth_client:
-        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
+        response = await auth_client.get("/editions/ed2022/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -70,7 +70,7 @@ async def test_get_answers_as_coach(database_with_data: AsyncSession, auth_clien
     """test get answers when logged in as coach"""
     await auth_client.coach(current_edition)
     async with auth_client:
-        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
+        response = await auth_client.get("/editions/ed2022/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
         assert len(json["qAndA"]) == 2
@@ -92,7 +92,7 @@ async def test_get_answers_as_admin(database_with_data: AsyncSession, auth_clien
     """test get answers when logged in as coach"""
     await auth_client.admin()
     async with auth_client:
-        response = await auth_client.get("/editions/ed2023/students/1/answers", follow_redirects=True)
+        response = await auth_client.get("/editions/ed2022/students/1/answers", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
         assert len(json["qAndA"]) == 2
