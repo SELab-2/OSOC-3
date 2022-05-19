@@ -57,22 +57,19 @@ export default function CreateEditionPage() {
         event.preventDefault();
         let correct = true;
 
-        // Edition name can't contain spaces and must be at least 5 long.
-        if (!/^([^ ]{5,})$/.test(name)) {
-            if (name.includes(" ")) {
-                setNameError(true);
-                toast.error("Edition name can't contain spaces.", {
-                    toastId: "createEditionNoSpaces",
-                });
-            } else if (name.length < 5) {
-                setNameError(true);
-                toast.error("Edition name must be longer than 4 characters.", {
-                    toastId: "createEditionBadName",
-                });
-            } else {
-                setNameError(true);
-                toast.error("Invalid edition name", { toastId: "createEditionBadName" });
-            }
+        const newName = name.replaceAll(" ", "_");
+        if (newName !== name) {
+            toast.info("Edition name can't contain spaces");
+            setName(newName);
+
+            correct = false;
+        }
+        if (!/^[A-Za-z0-9\-_]+$/.test(newName)) {
+            setNameError(true);
+            toast.error("Invalid edition name. Allowed characters: a-Z, 0-9, - and _", {
+                toastId: "createEditionBadName",
+            });
+
             correct = false;
         }
 
@@ -80,18 +77,18 @@ export default function CreateEditionPage() {
         if (isNaN(yearNumber)) {
             correct = false;
             setYearError(true);
-            toast.error("Invalid year.", { toastId: "createEditionYearNoNumber" });
+            toast.error("Invalid year", { toastId: "createEditionYearNoNumber" });
         } else {
             if (yearNumber < currentYear) {
                 correct = false;
                 setYearError(true);
-                toast.error("New editions can't be in the past.", {
+                toast.error("New editions can't be in the past", {
                     toastId: "createEditionPastYear",
                 });
             } else if (yearNumber > 3000) {
                 correct = false;
                 setYearError(true);
-                toast.error("Invalid year.", { toastId: "createEditionYearName" });
+                toast.error("Invalid year", { toastId: "createEditionYearName" });
             }
         }
 
