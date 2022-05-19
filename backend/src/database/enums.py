@@ -6,7 +6,7 @@ from typing import Any
 
 
 @enum.unique
-class DecisionEnum(enum.Enum):
+class DecisionEnum(enum.IntEnum):
     """Enum for a decision made by a coach or admin"""
     UNDECIDED = 0
     YES = 1

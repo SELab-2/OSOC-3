@@ -3,8 +3,8 @@ import { AcceptRejectTh, RequestsTable } from "../styles";
 import React from "react";
 import RequestListItem from "./RequestListItem";
 import InfiniteScroll from "react-infinite-scroller";
-import { ListDiv } from "../../Coaches/styles";
 import LoadSpinner from "../../../Common/LoadSpinner";
+import { ListDiv } from "../../../Common/Users/styles";
 
 /**
  * A list of [[RequestListItem]]s.

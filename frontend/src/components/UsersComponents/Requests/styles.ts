@@ -55,19 +55,6 @@ export const Spacing = styled.div`
     width: 5px;
 `;
 
-export const SpinnerContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
-`;
-
-export const Error = styled.div`
-    color: var(--osoc_red);
-    width: 100%;
-    margin: auto;
-`;
-
 export const RequestListContainer = styled.div`
     height: fit-content;
     width: 100%;

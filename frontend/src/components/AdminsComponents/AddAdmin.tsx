@@ -1,14 +1,16 @@
 import { getUsersNonAdmin, User } from "../../utils/api/users/users";
-import React, { useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
-import { EmailDiv, ModalContentConfirm, Warning } from "./styles";
+import { AddButtonDiv, EmailDiv, Warning } from "./styles";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import { Error } from "../UsersComponents/Requests/styles";
-import { StyledMenuItem } from "../Common/Users/styles";
+import { Error, StyledMenuItem } from "../Common/Users/styles";
 import UserMenuItem from "../Common/Users/MenuItem";
 import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../Common/styles";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
+import { StyledInput } from "../Common/Forms/styles";
 
 /**
  * Button and popup to add an existing user as admin.
@@ -23,6 +25,18 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [clearRef, setClearRef] = useState(false); // The ref must be cleared
+
+    const typeaheadRef = createRef<Typeahead>();
+
+    useEffect(() => {
+        // For some obscure reason the ref can only be cleared in here & not somewhere else
+        if (clearRef) {
+            // This triggers itself, but only once, so it doesn't really matter
+            setClearRef(false);
+            typeaheadRef.current?.clear();
+        }
+    }, [clearRef, typeaheadRef]);
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
@@ -75,7 +89,10 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
         setLoading(false);
         if (success) {
             props.adminAdded(user);
-            handleClose();
+            setSearchTerm("");
+            getData(0, "");
+            setSelected(undefined);
+            setClearRef(true);
         }
     }
 
@@ -109,9 +126,11 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
     return (
         <>
-            <CreateButton showIcon={false} onClick={handleShow}>
-                Add admin
-            </CreateButton>
+            <AddButtonDiv>
+                <CreateButton showIcon={false} onClick={handleShow}>
+                    Add admin
+                </CreateButton>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -127,11 +146,21 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             minLength={1}
                             onSearch={filterData}
                             options={users}
+                            ref={typeaheadRef}
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,

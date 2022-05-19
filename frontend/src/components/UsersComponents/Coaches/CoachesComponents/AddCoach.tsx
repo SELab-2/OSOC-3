@@ -1,15 +1,17 @@
 import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users";
-import React, { useState } from "react";
+import { useState, createRef, useEffect } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { Error } from "../../Requests/styles";
-import { AddCoachButtonDiv, ModalContentConfirm } from "../../../AdminsComponents/styles";
-import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
+import { AddButtonDiv } from "../../../AdminsComponents/styles";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../Common/Users/MenuItem";
-import { StyledMenuItem } from "../../../Common/Users/styles";
+import { Error, StyledMenuItem } from "../../../Common/Users/styles";
 import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../../../Common/styles";
+import { StyledInput } from "../../../Common/Forms/styles";
+import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -25,6 +27,18 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [clearRef, setClearRef] = useState(false); // The ref must be cleared
+
+    const typeaheadRef = createRef<Typeahead>();
+
+    useEffect(() => {
+        // For some obscure reason the ref can only be cleared in here & not somewhere else
+        if (clearRef) {
+            // This triggers itself, but only once, so it doesn't really matter
+            setClearRef(false);
+            typeaheadRef.current?.clear();
+        }
+    }, [clearRef, typeaheadRef]);
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
@@ -77,7 +91,10 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
         setLoading(false);
         if (success) {
             props.refreshCoaches();
-            handleClose();
+            setSearchTerm("");
+            getData(0, "");
+            setSelected(undefined);
+            setClearRef(true);
         }
     }
 
@@ -102,11 +119,11 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     return (
         <>
-            <AddCoachButtonDiv>
+            <AddButtonDiv>
                 <CreateButton showIcon={false} onClick={handleShow}>
-                    Add coach
+                    Add coach to current edition
                 </CreateButton>
-            </AddCoachButtonDiv>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -122,11 +139,21 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                             minLength={1}
                             onSearch={filterData}
                             options={users}
+                            ref={typeaheadRef}
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,

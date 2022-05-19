@@ -16,20 +16,6 @@ export const AdminsTable = styled(Table).attrs({
     margin-top: 10px;
 `;
 
-export const AdminsTableDiv = styled.div`
-    overflow: auto;
-`;
-
-export const ModalContentConfirm = styled.div`
-    border: 3px solid var(--osoc_green);
-    background-color: var(--osoc_blue);
-`;
-
-export const ModalContentWarning = styled.div`
-    border: 3px solid var(--osoc_red);
-    background-color: var(--osoc_blue);
-`;
-
 export const EmailDiv = styled.div`
     overflow: auto;
 `;
@@ -38,7 +24,7 @@ export const RemoveAdminBody = styled.div`
     overflow: hidden;
 `;
 
-export const AddCoachButtonDiv = styled.div`
+export const AddButtonDiv = styled.div`
     float: right;
     margin-bottom: 5px;
 `;

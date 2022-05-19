@@ -12,12 +12,19 @@ export const GreenButton = styled(Button)`
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
 
+    &:disabled {
+        background-color: #3a6453;
+        border-color: #3a6453;
+        color: white;
+    }
+
     &:hover,
     &:active,
     &:focus {
         background-color: var(--osoc_orange);
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);
+        box-shadow: none !important;
     }
 `;
 
@@ -28,12 +35,19 @@ export const DropdownToggle = styled(Dropdown.Toggle)`
     border-color: var(--osoc_green);
     color: var(--osoc_blue);
 
+    &:disabled {
+        background-color: var(--osoc_green);
+        border-color: var(--osoc_green);
+        color: var(--osoc_blue);
+    }
+
     &:hover,
     &:active,
     &:focus {
-        background-color: var(--osoc_orange);
+        background-color: var(--osoc_orange) !important;
         border-color: var(--osoc_orange);
         color: var(--osoc_blue);
+        box-shadow: none !important;
     }
 `;
 
@@ -72,8 +86,16 @@ export const RedButton = styled(Button)<AnimatedButton>`
     background-color: var(--osoc_red);
     border-color: var(--osoc_red);
 
-    &:hover {
+    &:disabled {
+        background-color: #8a4944;
+        border-color: #8a4944;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
         background-color: var(--osoc_red_darkened);
         border-color: var(--osoc_red_darkened);
+        box-shadow: none !important;
     }
 `;

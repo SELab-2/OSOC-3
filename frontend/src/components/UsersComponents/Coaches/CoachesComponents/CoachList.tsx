@@ -1,9 +1,10 @@
 import { User } from "../../../../utils/api/users/users";
-import { CoachesTable, ListDiv, RemoveTh } from "../styles";
+import { CoachesTable, RemoveTh } from "../styles";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { CoachListItem } from "./index";
 import LoadSpinner from "../../../Common/LoadSpinner";
+import { ListDiv } from "../../../Common/Users/styles";
 
 /**
  * A list of [[CoachListItem]]s.

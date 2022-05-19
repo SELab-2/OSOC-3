@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AdminsContainer, AdminsHeader } from "./styles";
+import { AdminsContainer } from "./styles";
 import { getAdmins } from "../../utils/api/users/admins";
-import { Error, SpinnerContainer } from "../../components/UsersComponents/Requests/styles";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
-import { Spinner } from "react-bootstrap";
 import { User } from "../../utils/api/users/users";
-import { SearchInput } from "../../components/styles";
+import { SearchBar } from "../../components/Common/Forms";
+import { Error, SearchFieldDiv, TableDiv } from "../../components/Common/Users/styles";
+import LoadSpinner from "../../components/Common/LoadSpinner";
 
 export default function AdminsPage() {
     const [allAdmins, setAllAdmins] = useState<User[]>([]);
@@ -73,11 +73,7 @@ export default function AdminsPage() {
     let list;
     if (admins.length === 0) {
         if (loading) {
-            list = (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
+            list = <LoadSpinner show={true} />;
         } else if (gotData) {
             list = <div>No admins found</div>;
         } else {
@@ -96,16 +92,15 @@ export default function AdminsPage() {
 
     return (
         <AdminsContainer>
-            <AdminsHeader>
-                <SearchInput
+            <SearchFieldDiv>
+                <SearchBar
+                    onChange={e => filter(e.target.value)}
                     value={searchTerm}
-                    onChange={e => {
-                        filter(e.target.value);
-                    }}
+                    placeholder="Search name..."
                 />
-                <AddAdmin adminAdded={addAdmin} />
-            </AdminsHeader>
-            {list}
+            </SearchFieldDiv>
+            <AddAdmin adminAdded={addAdmin} />
+            <TableDiv>{list}</TableDiv>
         </AdminsContainer>
     );
 }

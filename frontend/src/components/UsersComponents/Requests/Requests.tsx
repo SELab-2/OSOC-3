@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Collapsible from "react-collapsible";
-import { RequestsContainer, Error, RequestListContainer } from "./styles";
+import { RequestsContainer, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
-import { SearchFieldDiv } from "../Coaches/styles";
 import SearchBar from "../../Common/Forms/SearchBar";
+import { Error, SearchFieldDiv } from "../../Common/Users/styles";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
