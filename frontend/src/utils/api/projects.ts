@@ -69,17 +69,19 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
 export async function createProject(
     edition: string,
     name: string,
+    infoUrl: string,
     partners: string[],
     coaches: number[]
 ): Promise<Project | null> {
     const payload: CreateProject = {
         name: name,
+        infoUrl: infoUrl,
         partners: partners,
         coaches: coaches,
     };
 
     try {
-        const response = await axiosInstance.post("editions/" + edition + "/projects/", payload);
+        const response = await axiosInstance.post("editions/" + edition + "/projects", payload);
         const project = response.data as Project;
 
         return project;

@@ -50,6 +50,9 @@ export interface Project {
     /** The name of the project */
     name: string;
 
+    /** An url with more info */
+    infoUrl: string;
+
     /** The coaches of this project */
     coaches: Coach[];
 
@@ -85,6 +88,9 @@ export interface SkillProject {
 export interface CreateProject {
     /** The name of the new project */
     name: string;
+
+    /** An url with more info */
+    infoUrl: string;
 
     /** The partners that belong to this project */
     partners: string[];
