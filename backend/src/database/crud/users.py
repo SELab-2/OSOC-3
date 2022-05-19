@@ -12,18 +12,14 @@ from src.database.models import user_editions, User, Edition, CoachRequest, Auth
 async def get_user_editions(db: AsyncSession, user: User) -> list[Edition]:
     """Get all names of the editions this user can see"""
     # For admins: return all editions - otherwise, all editions this user is verified coach in
-    return user.editions if not user.admin else await get_editions(db)
+    # Sort by year first, id second, descending
+    return sorted(user.editions, key=lambda x: (x.year, x.edition_id), reverse=True) if not user.admin else await get_editions(
+        db)
 
 
 async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):
     """
     Get users and filter by optional parameters:
-    :param admin: only return admins / only return non-admins
-    :param edition_name: only return users who are coach of the given edition
-    :param exclude_edition_name: only return users who are not coach of the given edition
-    :param name: a string which the user's name must contain
-    :param page: the page to return
-
     Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
 

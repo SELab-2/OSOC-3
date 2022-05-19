@@ -24,7 +24,7 @@ async def get_edition_by_name(db: AsyncSession, edition_name: str) -> Edition:
 
 
 def _get_editions_query() -> Select:
-    return select(Edition).order_by(desc(Edition.edition_id))
+    return select(Edition).order_by(desc(Edition.year), desc(Edition.edition_id))
 
 
 async def get_editions(db: AsyncSession) -> list[Edition]:
