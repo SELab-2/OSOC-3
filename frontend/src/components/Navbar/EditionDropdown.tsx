@@ -50,7 +50,7 @@ export default function EditionDropdown(props: Props) {
                 active={currentEdition === edition.name}
                 onClick={() => handleSelect(edition.name)}
             >
-                {edition}
+                {edition.name}
             </StyledDropdownItem>
         );
     });
