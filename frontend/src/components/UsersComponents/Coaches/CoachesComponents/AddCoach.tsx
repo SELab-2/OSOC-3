@@ -3,7 +3,6 @@ import { useState, createRef, useEffect } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AddButtonDiv } from "../../../AdminsComponents/styles";
-import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../Common/Users/MenuItem";
 import { Error, StyledMenuItem } from "../../../Common/Users/styles";
@@ -11,6 +10,8 @@ import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../../../Common/styles";
+import { StyledInput } from "../../../Common/Forms/styles";
+import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -144,6 +145,15 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                                 setSelected(selected[0] as User);
                                 setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,

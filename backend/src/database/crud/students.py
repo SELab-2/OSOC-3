@@ -47,6 +47,9 @@ async def get_students(db: AsyncSession, edition: Edition,
         subquery = select(Suggestion.student_id).where(Suggestion.coach == user)
         query = query.filter(Student.student_id.in_(subquery))
 
+    if commons.decisions:
+        query = query.where(Student.decision.in_(commons.decisions))
+
     if skills is None:
         skills = []
 
