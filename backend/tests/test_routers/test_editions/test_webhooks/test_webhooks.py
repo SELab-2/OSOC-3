@@ -6,6 +6,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from src.app.schemas.skills import Skill
 
 from src.database.models import Edition, WebhookURL, Student
 from tests.utils.authorization import AuthClient
@@ -45,6 +46,24 @@ async def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edi
 
 
 async def test_webhook(test_client: AsyncClient, webhook: WebhookURL, database_session: AsyncSession):
+    """test webhook"""
+    database_session.add(Skill(name="Front-end developer"))
+    database_session.add(Skill(name="Back-end developer"))
+    database_session.add(Skill(name="UX / UI designer"))
+    database_session.add(Skill(name="Graphic designer"))
+    database_session.add(Skill(name="Business Modeller"))
+    database_session.add(Skill(name="Storyteller"))
+    database_session.add(Skill(name="Marketer"))
+    database_session.add(Skill(name="Copywriter"))
+    database_session.add(Skill(name="Video editor"))
+    database_session.add(Skill(name="Photographer"))
+    database_session.add(Skill(name="Other"))
+    await database_session.commit()
+
+
+    test = (await database_session.execute(select(Skill).where(Skill.name == "Video editior"))).one()
+    print(test)
+
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
         first_name="Bob",
@@ -65,67 +84,71 @@ async def test_webhook(test_client: AsyncClient, webhook: WebhookURL, database_s
     assert student.preferred_name == "Jhon"
     assert student.wants_to_be_student_coach is False
     assert student.phone_number == "0477002266"
+    for skill in student.skills:
+        print(skill.name)
+    assert False
 
 
-async def test_webhook_bad_format(test_client: AsyncClient, webhook: WebhookURL):
-    """Test a badly formatted webhook input"""
-    async with test_client:
-        response = await test_client.post(
-            f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",
-            json=WEBHOOK_EVENT_BAD_FORMAT
-        )
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-
-async def test_webhook_duplicate_email(test_client: AsyncClient, webhook: WebhookURL, mocker):
-    """Test entering a duplicate email address"""
-    mocker.patch('builtins.open', new_callable=mock_open())
-    event: dict = create_webhook_event(
-        email_address="test@gmail.com",
-    )
-    async with test_client:
-        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
-        assert response.status_code == status.HTTP_201_CREATED
-    
-        event: dict = create_webhook_event(
-            email_address="test@gmail.com",
-        )
-        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-
-async def test_webhook_duplicate_phone(test_client: AsyncClient, webhook: WebhookURL, mocker):
-    """Test entering a duplicate phone number"""
-    mocker.patch('builtins.open', new_callable=mock_open())
-    event: dict = create_webhook_event(
-        phone_number="0477002266",
-    )
-    async with test_client:
-        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
-        assert response.status_code == status.HTTP_201_CREATED
-    
-        event: dict = create_webhook_event(
-            phone_number="0477002266",
-        )
-        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-
-async def test_webhook_missing_question(test_client: AsyncClient, webhook: WebhookURL, mocker):
-    """Test submitting a form with a question missing"""
-    mocker.patch('builtins.open', new_callable=mock_open())
-    async with test_client:
-        response = await test_client.post(
-            f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",
-            json=WEBHOOK_MISSING_QUESTION
-        )
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
-
-async def test_new_webhook_old_edition(database_session: AsyncSession, auth_client: AuthClient, edition: Edition):
-    database_session.add(Edition(year=2023, name="ed2023"))
-    await database_session.commit()
-    async with auth_client:
-        await auth_client.admin()
-        response = await auth_client.post(f"/editions/{edition.name}/webhooks")
-        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+#async def test_webhook_bad_format(test_client: AsyncClient, webhook: WebhookURL):
+#    """Test a badly formatted webhook input"""
+#    async with test_client:
+#        response = await test_client.post(
+#            f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",
+#            json=WEBHOOK_EVENT_BAD_FORMAT
+#        )
+#        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+#
+#
+#async def test_webhook_duplicate_email(test_client: AsyncClient, webhook: WebhookURL, mocker):
+#    """Test entering a duplicate email address"""
+#    mocker.patch('builtins.open', new_callable=mock_open())
+#    event: dict = create_webhook_event(
+#        email_address="test@gmail.com",
+#    )
+#    async with test_client:
+#        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+#        assert response.status_code == status.HTTP_201_CREATED
+#    
+#        event: dict = create_webhook_event(
+#            email_address="test@gmail.com",
+#        )
+#        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+#        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+#
+#
+#async def test_webhook_duplicate_phone(test_client: AsyncClient, webhook: WebhookURL, mocker):
+#    """Test entering a duplicate phone number"""
+#    mocker.patch('builtins.open', new_callable=mock_open())
+#    event: dict = create_webhook_event(
+#        phone_number="0477002266",
+#    )
+#    async with test_client:
+#        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+#        assert response.status_code == status.HTTP_201_CREATED
+#    
+#        event: dict = create_webhook_event(
+#            phone_number="0477002266",
+#        )
+#        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+#        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+#
+#
+#async def test_webhook_missing_question(test_client: AsyncClient, webhook: WebhookURL, mocker):
+#    """Test submitting a form with a question missing"""
+#    mocker.patch('builtins.open', new_callable=mock_open())
+#    async with test_client:
+#        response = await test_client.post(
+#            f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}",
+#            json=WEBHOOK_MISSING_QUESTION
+#        )
+#        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+#
+#
+#async def test_new_webhook_old_edition(database_session: AsyncSession, auth_client: AuthClient, edition: Edition):
+#    database_session.add(Edition(year=2023, name="ed2023"))
+#    await database_session.commit()
+#    async with auth_client:
+#        await auth_client.admin()
+#        response = await auth_client.post(f"/editions/{edition.name}/webhooks")
+#        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

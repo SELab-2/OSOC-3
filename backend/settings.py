@@ -53,6 +53,7 @@ class FormMapping(enum.Enum):
     PHONE_NUMBER = "question_mea6qo"
     # CV = "question_wa26Qy"
     STUDENT_COACH = "question_wz7qEE"
+    ROLES = "question_3yJ6PW"
 
     UNKNOWN = None  # Returned when no specific question can be matched
 
