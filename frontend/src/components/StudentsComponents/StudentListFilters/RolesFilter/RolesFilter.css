@@ -1,4 +1,32 @@
 .RolesFilterDropdown {
     color: black;
-    accent-color: green;
+}
+
+.css-1pahdxg-control {
+    background-color: var(--osoc_blue) !important;
+    border: none !important;
+}
+
+.css-1pahdxg-control:hover {
+    background-color: var(--osoc_blue) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.css-1rhbuit-multiValue {
+    background-color: var(--card-color) !important;
+    color: white;
+}
+
+.css-12jo7m5 {
+    color: white !important;
+}
+
+.css-6j8wv5-Input {
+    background-color: var(--osoc_blue) !important;
+}
+
+.css-1s2u09g-control {
+    background-color: var(--osoc_blue) !important;
+    border: none !important;
 }

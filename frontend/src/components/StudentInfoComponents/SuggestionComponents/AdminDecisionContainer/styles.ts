@@ -13,3 +13,8 @@ export const ConfirmButton = styled(Button)`
     margin-left: 2%;
     margin-right: 2%;
 `;
+
+export const ConfirmActionTitle = styled.p`
+    margin-top: 2%;
+    font-size: 20px;
+`;
