@@ -3,7 +3,7 @@ import { FormControl } from "../../Common/Forms";
 import { StyledModal, ModalHeader, ModalFooter, Button } from "./styles";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import { useState } from "react";
-import { DropResult } from "react-beautiful-dnd";
+import { AddStudentRole } from "../../../data/interfaces/projects";
 
 export default function AddStudentModal({
     visible,
@@ -13,8 +13,8 @@ export default function AddStudentModal({
 }: {
     visible: boolean;
     handleClose: () => void;
-    handleConfirm: (motivation: string, result: DropResult) => void;
-    result: DropResult;
+    handleConfirm: (motivation: string, addStudentRole: AddStudentRole) => void;
+    result: AddStudentRole;
 }) {
     const [motivation, setMotivation] = useState("");
     return (

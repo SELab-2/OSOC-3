@@ -48,6 +48,12 @@ export interface AddRoleSuggestion {
     argumentation: string;
 }
 
+export interface AddStudentRole {
+    projectRoleId: string;
+    studentId: string;
+    switchProjectRoleId: string | undefined;
+}
+
 /**
  * Data about a project role
  */

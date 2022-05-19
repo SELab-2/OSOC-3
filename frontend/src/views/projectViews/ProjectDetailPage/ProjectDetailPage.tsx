@@ -4,11 +4,10 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import {
     Project,
     CreateProject as EditProject,
-    ProjectRole,
+    AddStudentRole,
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { getStudent } from "../../../utils/api/students";
 import { useAuth } from "../../../contexts/auth-context";
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
@@ -30,37 +29,40 @@ import {
 } from "../../../components/ProjectDetailComponents";
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
 import { toast } from "react-toastify";
+
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
-
 export default function ProjectDetailPage() {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
     const editionId = params.editionId!;
+
     const [project, setProject] = useState<Project>();
     const [editedProject, setEditedProject] = useState<Project>();
     const [gotProject, setGotProject] = useState(false);
-    const navigate = useNavigate();
-    const { role } = useAuth(); // const [students, setStudents] = useState<StudentPlace[]>([]);
-
     const [editing, setEditing] = useState(false);
+    const [studentAmount, setStudentAmount] = useState(0);
 
-    const [projectRoles, setProjectRoles] = useState<ProjectRole[]>([]);
+    const navigate = useNavigate();
+    const { role } = useAuth();
+
     useEffect(() => {
         async function callProjects(): Promise<void> {
             if (projectId) {
                 setGotProject(true);
                 const response = await getProject(editionId, projectId);
-
                 if (response) {
                     setProject(response);
-                    setProjectRoles(response.projectRoles);
                     setEditedProject(response);
+                    let countStudents = 0;
+                    response.projectRoles.forEach(projectRole => {
+                        countStudents += projectRole.slots;
+                    });
+                    setStudentAmount(countStudents);
                 } else navigate("/404-not-found");
             }
         }
-
         if (!gotProject) {
             callProjects();
         }
@@ -79,21 +81,38 @@ export default function ProjectDetailPage() {
 
     // Used for the Add modal.
     const [showAddModal, setShowAddModal] = useState(false);
-    const [resultModal, setResult] = useState<DropResult>();
+    const [resultModal, setResult] = useState<AddStudentRole>();
     const handleAddClose = () => setShowAddModal(false);
-    const handleAddShow = (result: DropResult) => {
+    const handleAddShow = (
+        projectRoleId: string,
+        studentId: string,
+        switchProjectRoleId: string | undefined
+    ) => {
+        setResult({
+            projectRoleId: projectRoleId,
+            studentId: studentId,
+            switchProjectRoleId: switchProjectRoleId,
+        });
         setShowAddModal(true);
-        setResult(result);
     };
-    const handleAdd = async (motivation: string, result: DropResult) => {
+
+    const handleAdd = async (motivation: string, addStudent: AddStudentRole) => {
         setShowAddModal(false);
+        if (addStudent.switchProjectRoleId) {
+            await deleteStudentFromProject(
+                editionId,
+                projectId.toString(),
+                addStudent.switchProjectRoleId,
+                addStudent.studentId
+            );
+        }
 
         const newProjectRole = await toast.promise(
             addStudentToProject(
                 editionId,
                 projectId.toString(),
-                result.destination!.droppableId,
-                result.draggableId,
+                addStudent.projectRoleId,
+                addStudent.studentId,
                 motivation
             ),
             {
@@ -157,7 +176,7 @@ export default function ProjectDetailPage() {
                             editing={editing}
                         />
                         <NumberOfStudents>
-                            10
+                            {studentAmount}
                             <BsPersonFill />
                         </NumberOfStudents>
                     </ClientsContainer>
@@ -169,7 +188,7 @@ export default function ProjectDetailPage() {
                         editing={editing}
                     />
 
-                    <ProjectRoles projectRoles={projectRoles} />
+                    <ProjectRoles projectRoles={project.projectRoles} />
                     <AddStudentModal
                         visible={showAddModal}
                         handleConfirm={handleAdd}
@@ -182,55 +201,26 @@ export default function ProjectDetailPage() {
     );
 
     async function onDragDrop(result: DropResult) {
-        const { source, destination } = result;
+        const { source, destination, draggableId } = result;
 
-        if (!destination) {
-            if (source.droppableId === "students") return;
-            else {
+        if (destination === undefined) {
+            if (source.droppableId !== "students") {
                 await deleteStudentFromProject(
                     editionId,
                     projectId.toString(),
                     source.droppableId,
-                    result.draggableId.substring(
-                        0,
-                        result.draggableId.length - source.droppableId.length
-                    )
+                    draggableId.substring(0, draggableId.length - source.droppableId.length)
                 );
                 setGotProject(false);
             }
-        }
-
-        if (destination?.droppableId === source.droppableId) return;
-
-        if (source.droppableId === "students") {
-            handleAddShow(result);
-        } else {
-            const student = await getStudent(
-                editionId,
-                parseInt(
-                    result.draggableId.substring(
-                        0,
-                        result.draggableId.length - source.droppableId.length
-                    )
-                )
+        } else if (source.droppableId === "students") {
+            handleAddShow(destination.droppableId, draggableId, undefined);
+        } else if (source.droppableId !== destination.droppableId) {
+            const studentId = draggableId.substring(
+                0,
+                draggableId.length - source.droppableId.length
             );
-            const newProjectRoles = projectRoles.map((projectRole, index) => {
-                if (projectRole.projectRoleId.toString() === destination?.droppableId) {
-                    const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.splice(destination.index, 0, {
-                        projectRoleSuggestionId: index,
-                        argumentation: "arg",
-                        drafter: { userId: 1, name: "Fix this" },
-                        student: student,
-                    });
-                    return { ...projectRole, suggestions: newSuggestions };
-                } else if (projectRole.projectRoleId.toString() === source.droppableId) {
-                    const newSuggestions = [...projectRole.suggestions];
-                    newSuggestions.splice(source.index, 1);
-                    return { ...projectRole, suggestions: newSuggestions };
-                } else return projectRole;
-            });
-            setProjectRoles(newProjectRoles);
+            handleAddShow(destination.droppableId, studentId, source.droppableId);
         }
     }
 }
