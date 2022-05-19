@@ -61,3 +61,11 @@ export const MessageDiv = styled.div`
     text-align: center;
     margin-top: 20px;
 `;
+
+export const ConfirmButtonsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: 90%;
+    margin-bottom: 2%;
+`;

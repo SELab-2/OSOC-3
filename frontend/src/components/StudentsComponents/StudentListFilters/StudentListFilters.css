@@ -2,3 +2,34 @@
     margin-left: 5%;
     margin-bottom: 1vh;
 }
+
+.ButtonGroupContainer {
+}
+
+.YesToggle {
+    margin-right: 4%;
+    margin-bottom: 2.5%;
+    width: 10%;
+    color: var(--osoc_green);
+    border: 1px solid var(--osoc_green) !important;
+}
+
+.MaybeToggle {
+    margin-bottom: 2.5%;
+    width: 10%;
+    color: var(--osoc_orange);
+    border: 1px solid var(--osoc_orange) !important;
+}
+
+.NoToggle {
+    margin-right: 4%;
+    width: 10%;
+    color: var(--osoc_red);
+    border: 1px solid var(--osoc_red) !important;
+}
+
+.UndecidedToggle {
+    width: 10%;
+    color: lightgrey;
+    border: 1px solid lightgrey !important;
+}

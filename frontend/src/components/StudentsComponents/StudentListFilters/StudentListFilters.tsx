@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import StudentList from "../StudentList";
-import { Form } from "react-bootstrap";
-import { StudentListSideMenu, StudentListLinebreak, FilterControls, MessageDiv } from "./styles";
+import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
+import {
+    StudentListSideMenu,
+    StudentListLinebreak,
+    FilterControls,
+    MessageDiv,
+    ConfirmButtonsContainer,
+} from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
@@ -170,6 +176,39 @@ export default function StudentListFilters() {
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                 />
             </Form.Group>
+            <ConfirmButtonsContainer>
+                <ButtonGroup className="ButtonGroupContainer">
+                    <ToggleButton
+                        className="YesToggle"
+                        variant="outline-success"
+                        value={1}
+                        size="sm"
+                    >
+                        Yes
+                    </ToggleButton>
+                    <ToggleButton
+                        className="MaybeToggle"
+                        variant="outline-warning"
+                        value={2}
+                        size="sm"
+                    >
+                        Maybe
+                    </ToggleButton>
+                </ButtonGroup>
+                <ButtonGroup className="ButtonGroupContainer">
+                    <ToggleButton className="NoToggle" variant="outline-danger" value={3} size="sm">
+                        No
+                    </ToggleButton>
+                    <ToggleButton
+                        className="UndecidedToggle"
+                        variant="outline-light"
+                        value={0}
+                        size="sm"
+                    >
+                        Undecided
+                    </ToggleButton>
+                </ButtonGroup>
+            </ConfirmButtonsContainer>
             <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
