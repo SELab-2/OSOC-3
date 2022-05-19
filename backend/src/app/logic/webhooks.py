@@ -51,7 +51,7 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
                     for value in answers:
                         options = cast(list[QuestionOption], question.options)
                         for option in options:
-                            if option.id == value:
+                            if option.id == value and option.text != "Other":
                                 skill: Skill = await get_skill_by_name(database, option.text)
                                 skills.append(skill)
             case _:

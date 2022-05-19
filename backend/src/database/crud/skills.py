@@ -29,7 +29,7 @@ async def get_skill_by_id(db: AsyncSession, skill_id: int) -> Skill:
 
 async def get_skill_by_name(db: AsyncSession, skill_name: str) -> Skill:
     """Get a skill by name"""
-    return (await db.execute(select(Skill).where(Skill.name == skill_name))).one()
+    return (await db.execute(select(Skill).where(Skill.name == skill_name))).scalar_one()
 
 async def create_skill(db: AsyncSession, skill: SkillBase) -> Skill:
     """Add a new skill into the database."""
