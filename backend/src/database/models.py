@@ -134,6 +134,7 @@ class Project(Base):
 
     project_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
+    info_url = Column(Text, nullable=True)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     edition: Edition = relationship("Edition", back_populates="projects", uselist=False, lazy="selectin")
