@@ -17,12 +17,12 @@ export default function RequestList(props: {
     requests: Request[];
     removeRequest: (coachAdded: boolean, request: Request) => void;
     moreRequestsAvailable: boolean;
-    getMoreRequests: (page: number) => void;
+    getMoreRequests: (page: number, reset: boolean) => void;
 }) {
     return (
         <ListDiv>
             <InfiniteScroll
-                loadMore={props.getMoreRequests}
+                loadMore={(page: number) => props.getMoreRequests(page, false)}
                 hasMore={props.moreRequestsAvailable}
                 loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}

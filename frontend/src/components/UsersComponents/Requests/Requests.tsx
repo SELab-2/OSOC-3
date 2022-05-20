@@ -53,7 +53,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
      * Request the next page from the list of requests.
      * The set searchterm will be used.
      */
-    async function getData(requested: number) {
+    async function getData(requested: number, reset: boolean) {
         const filterChanged = requested === -1;
         const requestedPage = requested === -1 ? 0 : page;
 
@@ -61,7 +61,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
             return;
         }
 
-        if (allRequestsFetched) {
+        if (allRequestsFetched && !reset) {
             setRequests(
                 allRequests.filter(request =>
                     request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
@@ -80,7 +80,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         setController(newController);
 
         const response = await toast.promise(
-            getRequests(props.edition, searchTerm, page, newController),
+            getRequests(props.edition, searchTerm, requestedPage, newController),
             {
                 error: "Failed to retrieve requests",
             }
@@ -97,7 +97,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
             }
 
             if (searchTerm === "") {
-                if (response.requests.length === 0) {
+                if (response.requests.length === 0 && !filterChanged) {
                     setAllRequestsFetched(true);
                 }
                 if (requestedPage === 0) {
@@ -107,7 +107,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 }
             }
 
-            setPage(page + 1);
+            setPage(requestedPage + 1);
         } else {
             setMoreRequestsAvailable(false);
         }
@@ -115,13 +115,18 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     }
 
     useEffect(() => {
-        setPage(0);
-        setMoreRequestsAvailable(true);
         if (props.edition !== requestedEdition) {
-            setAllRequestsFetched(false);
             setRequests([]);
+            setPage(0);
+            setAllRequestsFetched(false);
+            setMoreRequestsAvailable(true);
+            getData(-1, true);
+            setRequestedEdition(props.edition);
+        } else {
+            setPage(0);
+            setMoreRequestsAvailable(true);
+            getData(-1, false);
         }
-        getData(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, props.edition]);
 

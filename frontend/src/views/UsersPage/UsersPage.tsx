@@ -11,19 +11,20 @@ import { toast } from "react-toastify";
  * Page for admins to manage coach and admin settings.
  */
 function UsersPage() {
+    const params = useParams();
+
     // Note: The coaches are not in the coaches component because accepting a request needs to refresh the coaches list.
     const [allCoaches, setAllCoaches] = useState<User[]>([]);
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
-    const [requestedEdition, setRequestedEdition] = useState(params.editionId)
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId);
     const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
 
     const [controller, setController] = useState<AbortController | undefined>(undefined);
 
-    const params = useParams();
     const navigate = useNavigate();
 
     /**
@@ -92,6 +93,7 @@ function UsersPage() {
 
     useEffect(() => {
         if (params.editionId !== requestedEdition) {
+            setRequestedEdition(params.editionId);
             refreshCoaches();
         } else {
             setPage(0);
