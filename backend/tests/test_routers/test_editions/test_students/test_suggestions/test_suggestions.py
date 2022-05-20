@@ -74,6 +74,26 @@ async def test_new_suggestion(database_with_data: AsyncSession, auth_client: Aut
                "suggestion"]["argumentation"] == suggestions[0].argumentation
 
 
+async def test_new_suggestion_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
+    """Tests creating a new suggestion when the edition is read-only"""
+    edition = Edition(year=2022, name="ed2022", readonly=True)
+    await auth_client.admin()
+
+    student: Student = Student(first_name="Marta", last_name="Marquez", preferred_name="Marta",
+                               email_address="marta.marquez@example.com", phone_number="967-895-285", alumni=False,
+                               decision=DecisionEnum.YES, wants_to_be_student_coach=False, edition=edition,
+                               skills=[])
+
+    database_session.add(edition)
+    database_session.add(student)
+    await database_session.commit()
+
+    async with auth_client:
+        response = await auth_client.post(f"/editions/{edition.name}/students/{student.student_id}/suggestions",
+                                          json={"suggestion": 1, "argumentation": "test"})
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
 async def test_overwrite_suggestion(database_with_data: AsyncSession, auth_client: AuthClient):
     """Tests that when you've already made a suggestion earlier, the existing one is replaced"""
     # Create initial suggestion
@@ -155,8 +175,8 @@ async def test_delete_ghost_suggestion(database_with_data: AsyncSession, auth_cl
             "/editions/ed2022/students/1/suggestions/8000")).status_code == status.HTTP_404_NOT_FOUND
 
 
-async def test_delete_not_autorized(database_with_data: AsyncSession, auth_client: AuthClient):
-    """Tests that you have to be loged in for deleating a suggestion"""
+async def test_delete_not_authorized(database_with_data: AsyncSession, auth_client: AuthClient):
+    """Tests that you have to be logged in in order to delete a suggestion"""
     async with auth_client:
         assert (await auth_client.delete(
             "/editions/ed2022/students/1/suggestions/8000")).status_code == status.HTTP_401_UNAUTHORIZED

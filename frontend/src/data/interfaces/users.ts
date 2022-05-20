@@ -1,3 +1,5 @@
+import { Edition } from "./editions";
+
 /**
  * Data about a user using the application.
  * Contains a list of edition names so that we can quickly check if
@@ -7,5 +9,5 @@ export interface User {
     userId: number;
     name: string;
     admin: boolean;
-    editions: string[];
+    editions: Edition[];
 }

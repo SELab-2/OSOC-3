@@ -4,9 +4,10 @@ import { StyledDropdownItem } from "./styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
 import { getBestRedirect } from "../../utils/logic";
+import { Edition } from "../../data/interfaces";
 
 interface Props {
-    editions: string[];
+    editions: Edition[];
 }
 
 /**
@@ -27,7 +28,7 @@ export default function EditionDropdown(props: Props) {
     // found in the list of editions
     // This shouldn't happen, but just in case
     // The list can never be empty because then we return null above ^
-    const currentEdition = getCurrentEdition() || props.editions[0];
+    const currentEdition = getCurrentEdition() || props.editions[0].name;
 
     /**
      * Change the route based on the edition
@@ -42,14 +43,14 @@ export default function EditionDropdown(props: Props) {
     }
 
     // Load dropdown items dynamically
-    props.editions.forEach((edition: string) => {
+    props.editions.forEach((edition: Edition) => {
         navItems.push(
             <StyledDropdownItem
-                key={edition}
-                active={currentEdition === edition}
-                onClick={() => handleSelect(edition)}
+                key={edition.name}
+                active={currentEdition === edition.name}
+                onClick={() => handleSelect(edition.name)}
             >
-                {edition}
+                {edition.name}
             </StyledDropdownItem>
         );
     });

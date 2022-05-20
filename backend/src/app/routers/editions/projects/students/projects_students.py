@@ -7,7 +7,7 @@ import src.app.logic.projects_students as logic
 from src.app.routers.tags import Tags
 from src.app.schemas.projects import InputArgumentation, ReturnProjectRoleSuggestion
 from src.app.utils.dependencies import (
-    require_coach, get_latest_edition, get_student,
+    require_coach, get_editable_edition, get_student,
     get_project_role, get_edition
 )
 from src.app.utils.websockets import live
@@ -35,7 +35,7 @@ async def remove_student_from_project(
 @project_students_router.patch(
     "/{student_id}",
     status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-    dependencies=[Depends(get_latest_edition), Depends(live)]
+    dependencies=[Depends(get_editable_edition), Depends(live)]
 )
 async def change_project_role(
         argumentation: InputArgumentation,
@@ -52,7 +52,7 @@ async def change_project_role(
 @project_students_router.post(
     "/{student_id}",
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(get_latest_edition), Depends(live)],
+    dependencies=[Depends(get_editable_edition), Depends(live)],
     response_model=ReturnProjectRoleSuggestion
 )
 async def add_student_to_project(

@@ -28,6 +28,23 @@ export const GreenButton = styled(Button)`
     }
 `;
 
+export const OrangeButton = styled(Button)`
+    ${HoverAnimation};
+
+    background-color: var(--osoc_orange);
+    border-color: var(--osoc_orange);
+    color: var(--osoc_blue);
+
+    &:hover,
+    &:active,
+    &:focus {
+        background-color: var(--osoc_orange_darkened);
+        border-color: var(--osoc_orange_darkened);
+        color: var(--osoc_blue);
+        box-shadow: none !important;
+    }
+`;
+
 export const DropdownToggle = styled(Dropdown.Toggle)`
     ${HoverAnimation};
 
