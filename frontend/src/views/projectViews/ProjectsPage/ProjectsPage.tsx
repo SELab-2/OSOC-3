@@ -14,9 +14,12 @@ import { toast } from "react-toastify";
  * You can filter on your own projects or filter on project name.
  */
 export default function ProjectPage() {
+    const params = useParams();
+
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(false);
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId)
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
 
@@ -29,7 +32,6 @@ export default function ProjectPage() {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
 
-    const params = useParams();
     const editionId = params.editionId!;
 
     const { role, editions, userId } = useAuth();
@@ -107,9 +109,13 @@ export default function ProjectPage() {
     useEffect(() => {
         setPage(0);
         setMoreProjectsAvailable(true);
+        if (params.editionId !== requestedEdition) {
+            setProjects([]);
+            setAllProjectsFetched(false);
+        }
         loadProjects(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchString, ownProjects]);
+    }, [searchString, ownProjects, params.editionId]);
 
     /**
      * Remove a project in local list.
