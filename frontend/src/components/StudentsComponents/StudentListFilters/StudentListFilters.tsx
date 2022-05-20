@@ -184,11 +184,11 @@ export default function StudentListFilters() {
         }
     } else {
         list = (
-                <StudentList
-                    students={students}
-                    getMoreData={getData}
-                    moreDataAvailable={moreDataAvailable}
-                />
+            <StudentList
+                students={students}
+                getMoreData={getData}
+                moreDataAvailable={moreDataAvailable}
+            />
         );
     }
 

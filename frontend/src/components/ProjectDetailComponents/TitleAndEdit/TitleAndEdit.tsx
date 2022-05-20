@@ -1,11 +1,4 @@
-import {
-    Title,
-    TitleContainer,
-    Cancel,
-    TitleInput,
-    Edit,
-    EditDeleteContainer,
-} from "./styles";
+import { Title, TitleContainer, Cancel, TitleInput, Edit, EditDeleteContainer } from "./styles";
 
 import { MdOutlineEditNote } from "react-icons/md";
 import { Role } from "../../../data/enums/role";
