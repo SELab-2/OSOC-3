@@ -14,7 +14,7 @@ from src.app.schemas.students import (
     ReturnStudentMailList, NewEmail, EmailsSearchQueryParams,
     ListReturnStudentMailList
 )
-from src.app.utils.dependencies import get_latest_edition, get_student, get_edition, require_admin, require_auth
+from src.app.utils.dependencies import get_editable_edition, get_student, get_edition, require_admin, require_auth
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, Edition, User
@@ -47,7 +47,7 @@ async def get_students(db: AsyncSession = Depends(get_session),
 async def send_emails(
         new_email: NewEmail,
         db: AsyncSession = Depends(get_session),
-        edition: Edition = Depends(get_latest_edition)):
+        edition: Edition = Depends(get_editable_edition)):
     """
     Send a email to a list of students.
     """
@@ -92,7 +92,7 @@ async def get_student_by_id(edition: Edition = Depends(get_edition), student: St
 
 @students_router.put(
     "/{student_id}/decision",
-    dependencies=[Depends(require_admin), Depends(live), Depends(get_latest_edition)],
+    dependencies=[Depends(require_admin), Depends(live), Depends(get_editable_edition)],
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def make_decision(
