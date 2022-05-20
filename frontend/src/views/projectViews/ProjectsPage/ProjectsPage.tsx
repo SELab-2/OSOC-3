@@ -143,10 +143,10 @@ export default function ProjectPage() {
      */
     function updateProject(project: Project, list: Project[]): Project[] {
         const index = list.findIndex(pr => pr.projectId === project.projectId);
+        if (index === -1) return list;
+
         const copy = [...list];
-        if (index > -1) {
-            copy[index] = project;
-        }
+        copy[index] = project;
 
         return copy;
     }

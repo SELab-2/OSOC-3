@@ -74,8 +74,8 @@ export default function ProjectDetailPage() {
             // This project was deleted
             if (data.method === RequestMethod.DELETE) {
                 if (data.eventType === EventType.PROJECT) {
-                    navigate(`/editions/${editionId}/projects`);
                     toast.info("This project was deleted by an admin.");
+                    navigate(`/editions/${editionId}/projects`);
                     return;
                 }
             }
@@ -120,7 +120,9 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    }, [editionId, gotProject, navigate, projectId]);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editionId, gotProject, projectId]);
 
     // Used for the delete modal.
     const [showDeleteModal, setShowDeleteModal] = useState(false);

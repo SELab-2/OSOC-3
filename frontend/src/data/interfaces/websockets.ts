@@ -27,6 +27,7 @@ export interface WebSocketEvent {
     pathIds: {
         projectId?: string;
         studentId?: string;
+        suggestionId?: string;
     };
     eventType: EventType;
 }

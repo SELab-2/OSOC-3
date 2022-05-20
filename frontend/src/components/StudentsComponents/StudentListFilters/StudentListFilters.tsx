@@ -223,11 +223,10 @@ export default function StudentListFilters() {
      */
     function findAndUpdate(list: Student[], student: Student): Student[] {
         const index = list.findIndex(s => s.studentId === student.studentId);
-        const copy = [...list];
-        if (index > -1) {
-            copy[index] = student;
-        }
+        if (index === -1) return list;
 
+        const copy = [...list];
+        copy[index] = student;
         return copy;
     }
 

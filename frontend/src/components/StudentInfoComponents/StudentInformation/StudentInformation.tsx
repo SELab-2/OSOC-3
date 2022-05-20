@@ -22,9 +22,9 @@ import {
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
-import { getSuggestions } from "../../../utils/api/suggestions";
+import { getSuggestionById, getSuggestions } from "../../../utils/api/suggestions";
 import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
 import { Role } from "../../../data/enums";
 import { Student } from "../../../data/interfaces/students";
 import { getStudent } from "../../../utils/api/students";
@@ -37,12 +37,18 @@ import StudentStateHistoryButton from "../StudentStateHistoryButton";
 import QuestionsAndAnswers from "../QuestionsAndAnswers";
 import { getQuestions } from "../../../utils/api/questions";
 import { Question } from "../../../data/interfaces/questions";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { useNavigate } from "react-router-dom";
+
+const wsEventTypes = [EventType.STUDENT, EventType.STUDENT_SUGGESTION];
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
  */
 export default function StudentInformation(props: { studentId: number; editionId: string }) {
     const { role } = useAuth();
+    const { socket } = useSockets();
+    const navigate = useNavigate();
 
     const [questions, setQuestions] = useState<Question[]>([]);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -88,6 +94,89 @@ export default function StudentInformation(props: { studentId: number; editionId
         getData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.studentId, props.editionId]);
+
+    /**
+     * Delete a suggestion from the list
+     */
+    function deleteSuggestion(id: string, suggestions: Suggestion[]): Suggestion[] {
+        return suggestions.filter(s => s.suggestionId.toString() !== id);
+    }
+
+    /**
+     * Find a suggestion in the list & update it
+     */
+    function findAndUpdateSuggestion(suggestion: Suggestion, list: Suggestion[]): Suggestion[] {
+        const index = list.findIndex(s => s.suggestionId === suggestion.suggestionId);
+        if (index === -1) return list;
+
+        const copy = [...list];
+        copy[index] = suggestion;
+        return copy;
+    }
+
+    /**
+     * Add a suggestion to the list
+     */
+    function insertSuggestion(suggestion: Suggestion, list: Suggestion[]): Suggestion[] {
+        return [...list, suggestion];
+    }
+
+    /**
+     * Websockets
+     */
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+            // Wrong type of event
+            if (!wsEventTypes.includes(data.eventType)) return;
+            // Event for another student
+            if (data.pathIds.studentId !== props.studentId.toString()) return;
+
+            // This student was deleted => go back to the /students page
+            if (data.eventType === EventType.STUDENT && data.method === RequestMethod.DELETE) {
+                toast.info("This student was deleted by an admin.");
+                navigate(`/editions/${props.editionId}/students`);
+                return;
+            }
+
+            if (data.eventType === EventType.STUDENT_SUGGESTION) {
+                if (data.method === RequestMethod.DELETE) {
+                    // Suggestion deleted
+                    setSuggestions(deleteSuggestion(data.pathIds.suggestionId!, suggestions));
+                } else if (data.method === RequestMethod.PATCH) {
+                    // Suggestion edited
+                    // Fetch the updated suggestion & update it in the list
+                    getSuggestionById(
+                        props.editionId,
+                        props.studentId.toString(),
+                        data.pathIds.suggestionId!
+                    ).then(suggestion =>
+                        setSuggestions(findAndUpdateSuggestion(suggestion, suggestions))
+                    );
+                } else if (data.method === RequestMethod.POST) {
+                    // Suggestion created
+                    getSuggestionById(
+                        props.editionId,
+                        props.studentId.toString(),
+                        data.pathIds.suggestionId!
+                    ).then(suggestion => {
+                        setSuggestions(insertSuggestion(suggestion, suggestions));
+                    });
+                }
+            }
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket, props.editionId, props.studentId, suggestions]);
 
     if (student === undefined) {
         return <LoadSpinner show={true} />;
