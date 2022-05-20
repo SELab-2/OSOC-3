@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getMailOverview, setStateRequest, StudentEmail } from "../../utils/api/mail_overview";
 import Dropdown from "react-bootstrap/Dropdown";
 import InfiniteScroll from "react-infinite-scroller";
@@ -12,6 +12,7 @@ import {
     MessageDiv,
     MailOverviewDiv,
     SearchAndChangeDiv,
+    ClearDiv,
 } from "./styles";
 import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
@@ -33,7 +34,6 @@ interface EmailRow {
  */
 export default function MailOverviewPage() {
     const [emailRows, setEmailRows] = useState<EmailRow[]>([]);
-    const [gotEmails, setGotEmails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emailRows available
     const [page, setPage] = useState(0);
@@ -44,14 +44,18 @@ export default function MailOverviewPage() {
     // Keep track of the set filters
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState<EmailType[]>([]);
+    const [filtersChanged, setFiltersChanged] = useState(0);
 
     const { editionId } = useParams();
 
     /**
      * update the table with new values
      */
-    async function updateMailOverview() {
-        if (loading) {
+    async function updateMailOverview(requested: number) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
             return;
         }
 
@@ -64,56 +68,48 @@ export default function MailOverviewPage() {
         setController(newController);
 
         const response = await toast.promise(
-            getMailOverview(editionId, page, searchTerm, filters, newController),
+            getMailOverview(editionId, requestedPage, searchTerm, filters, newController),
             { error: "Failed to retrieve states" }
         );
-        if (response.studentEmails.length === 0) {
-            setMoreEmailsAvailable(false);
-        }
-        if (page === 0) {
-            setEmailRows(
-                response.studentEmails.map(email => {
-                    return {
-                        email: email,
-                        checked: false,
-                    };
-                })
-            );
-        } else {
-            setEmailRows(
-                emailRows.concat(
+
+        if (response !== null) {
+            if (response.studentEmails.length === 0 && !filterChanged) {
+                setMoreEmailsAvailable(false);
+            }
+            if (requestedPage === 0) {
+                setEmailRows(
                     response.studentEmails.map(email => {
                         return {
                             email: email,
                             checked: false,
                         };
                     })
-                )
-            );
+                );
+            } else {
+                setEmailRows(
+                    emailRows.concat(
+                        response.studentEmails.map(email => {
+                            return {
+                                email: email,
+                                checked: false,
+                            };
+                        })
+                    )
+                );
+            }
+            setPage(page + 1);
+        } else {
+            setMoreEmailsAvailable(false);
         }
-        setPage(page + 1);
-
-        setGotEmails(true);
         setLoading(false);
     }
 
-    function refresh() {
+    useEffect(() => {
         setPage(0);
-        setGotEmails(false);
         setMoreEmailsAvailable(true);
-        setEmailRows([]);
-        setAllSelected(false);
-    }
-
-    function searchName(newSearchTerm: string) {
-        setSearchTerm(newSearchTerm);
-        refresh();
-    }
-
-    function changeFilter(newFilter: EmailType[]) {
-        setFilters(newFilter);
-        refresh();
-    }
+        updateMailOverview(-1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, filtersChanged]);
 
     /**
      * Keeps the selectedRows list up-to-date when a student is selected/unselected in the table
@@ -156,74 +152,70 @@ export default function MailOverviewPage() {
             })
         );
         setAllSelected(false);
-        refresh();
     }
 
     let table;
-    if (gotEmails && emailRows.length === 0) {
-        table = (
-            <CenterDiv>
-                <MessageDiv>No students found.</MessageDiv>
-            </CenterDiv>
-        );
+    if (emailRows.length === 0) {
+        if (loading) {
+            table = <LoadSpinner show={true} />;
+        } else {
+            table = (
+                <CenterDiv>
+                    <MessageDiv>No students found.</MessageDiv>
+                </CenterDiv>
+            );
+        }
     } else {
         table = (
-            <TableDiv>
-                <InfiniteScroll
-                    loadMore={updateMailOverview}
-                    hasMore={moreEmailsAvailable}
-                    loader={<LoadSpinner show={true} key="spinner" />}
-                    initialLoad={true}
-                    useWindow={false}
-                    getScrollParent={() => document.getElementById("root")}
-                >
-                    <StyledTable>
-                        <thead>
-                            <tr>
-                                <th>
+            <InfiniteScroll
+                loadMore={updateMailOverview}
+                hasMore={moreEmailsAvailable}
+                loader={<LoadSpinner show={true} key="spinner" />}
+                initialLoad={true}
+                useWindow={false}
+                getScrollParent={() => document.getElementById("root")}
+            >
+                <StyledTable>
+                    <thead>
+                        <tr>
+                            <th>
+                                <Form.Check
+                                    type="checkbox"
+                                    onChange={e => selectAll(e.target.checked)}
+                                    checked={allSelected}
+                                />
+                            </th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Current State</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {emailRows.map(row => (
+                            <tr key={row.email.student.studentId}>
+                                <td>
                                     <Form.Check
                                         type="checkbox"
-                                        onChange={e => selectAll(e.target.checked)}
-                                        checked={allSelected}
+                                        onChange={e =>
+                                            selectNewStudent(row.email.student, e.target.checked)
+                                        }
+                                        checked={row.checked}
                                     />
-                                </th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Current State</th>
-                                <th>Date</th>
+                                </td>
+                                <td>{row.email.student.firstName}</td>
+                                <td>{row.email.student.lastName}</td>
+                                <td>{Object.values(EmailType)[row.email.emails[0].decision]}</td>
+                                <td>
+                                    {new Date(String(row.email.emails[0].date)).toLocaleString(
+                                        "nl-be"
+                                    )}
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {emailRows.map(row => (
-                                <tr key={row.email.student.studentId}>
-                                    <td>
-                                        <Form.Check
-                                            type="checkbox"
-                                            onChange={e =>
-                                                selectNewStudent(
-                                                    row.email.student,
-                                                    e.target.checked
-                                                )
-                                            }
-                                            checked={row.checked}
-                                        />
-                                    </td>
-                                    <td>{row.email.student.firstName}</td>
-                                    <td>{row.email.student.lastName}</td>
-                                    <td>
-                                        {Object.values(EmailType)[row.email.emails[0].decision]}
-                                    </td>
-                                    <td>
-                                        {new Date(String(row.email.emails[0].date)).toLocaleString(
-                                            "nl-be"
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </StyledTable>
-                </InfiniteScroll>
-            </TableDiv>
+                        ))}
+                    </tbody>
+                </StyledTable>
+            </InfiniteScroll>
         );
     }
 
@@ -232,7 +224,8 @@ export default function MailOverviewPage() {
             <SearchDiv>
                 <SearchBar
                     onChange={e => {
-                        searchName(e.target.value);
+                        setPage(0);
+                        setSearchTerm(e.target.value);
                     }}
                     value={searchTerm}
                     placeholder="Search a student"
@@ -245,8 +238,16 @@ export default function MailOverviewPage() {
                         placeholder="  Filter on State"
                         showArrow={true}
                         isObject={false}
-                        onRemove={changeFilter}
-                        onSelect={changeFilter}
+                        onRemove={e => {
+                            setPage(0);
+                            setFilters(e);
+                            setFiltersChanged(filtersChanged + 1);
+                        }}
+                        onSelect={e => {
+                            setPage(0);
+                            setFilters(e);
+                            setFiltersChanged(filtersChanged + 1);
+                        }}
                         options={Object.values(EmailType)}
                     />
                 </FilterDiv>
@@ -267,7 +268,8 @@ export default function MailOverviewPage() {
                     </CommonDropdownButton>
                 </DropDownButtonDiv>
             </SearchAndChangeDiv>
-            {table}
+            <ClearDiv />
+            <TableDiv>{table}</TableDiv>
         </MailOverviewDiv>
     );
 }

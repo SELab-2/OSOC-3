@@ -2,9 +2,7 @@ import { User } from "../../utils/api/users/users";
 import { AdminsTable } from "./styles";
 import React from "react";
 import { AdminListItem } from "./index";
-import LoadSpinner from "../Common/LoadSpinner";
 import { ListDiv } from "../Common/Users/styles";
-import { SpinnerContainer } from "../Common/LoadSpinner/styles";
 import { RemoveTh } from "../Common/Tables/styles";
 
 /**
@@ -21,20 +19,6 @@ export default function AdminList(props: {
     gotData: boolean;
     removeAdmin: (user: User) => void;
 }) {
-    if (props.loading) {
-        return (
-            <SpinnerContainer>
-                <LoadSpinner show={true} />
-            </SpinnerContainer>
-        );
-    } else if (props.admins.length === 0) {
-        if (props.gotData) {
-            return <div>No admins</div>;
-        } else {
-            return null;
-        }
-    }
-
     return (
         <ListDiv>
             <AdminsTable>
