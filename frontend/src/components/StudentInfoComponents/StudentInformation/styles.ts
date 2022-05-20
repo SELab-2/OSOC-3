@@ -3,6 +3,7 @@ import { BsPersonFill } from "react-icons/bs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const InfoHeadContainer = styled.div`
+    display: flex;
     width: 100%;
     margin-bottom: 1.5%;
 `;
@@ -13,9 +14,8 @@ export const StudentInformationContainer = styled.div`
 `;
 
 export const PersonIcon = styled(BsPersonFill)`
-    width: 15%;
-    height: 15%;
-    background: var(--background_color);
+    width: 20%;
+    height: 90%;
 `;
 
 export const NameContainer = styled.div`
@@ -23,7 +23,15 @@ export const NameContainer = styled.div`
     align-items: center;
     margin-top: 1%;
     margin-left: 1%;
-    width: 98%;
+    width: 100%;
+`;
+
+export const ActionContainer = styled.div`
+    align-items: flex-end;
+    flex-direction: column;
+    display: flex;
+    margin-top: 1%;
+    width: 100%;
 `;
 
 export const AllName = styled.div`
