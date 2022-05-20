@@ -142,10 +142,10 @@ async def test_webhook_missing_question(database_session_skills: AsyncSession, t
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-async def test_new_webhook_old_edition(database_session_skills: AsyncSession, database_session: AsyncSession, auth_client: AuthClient, edition: Edition):
+async def test_new_webhook_old_editest_new_webhook_readonly_editiontion(database_session_skills: AsyncSession, auth_client: AuthClient, edition: Edition):
     """Test new webhook to an old edition"""
-    database_session.add(Edition(year=2023, name="ed2023"))
-    await database_session.commit()
+    database_session_skills.add(Edition(year=2023, name="ed2023"))
+    await database_session_skills.commit()
     async with auth_client:
         await auth_client.admin()
         response = await auth_client.post(f"/editions/{edition.name}/webhooks")
