@@ -14,7 +14,7 @@ import {
 } from "../styles";
 import LoadSpinner from "../../../Common/LoadSpinner";
 import DeleteButton from "../../../Common/Buttons/DeleteButton";
-import { Error } from "../../../Common/Users/styles";
+import { toast } from "react-toastify";
 
 /**
  * A button (part of [[CoachListItem]]) and popup to remove a user as coach from the given edition or all editions.
@@ -29,14 +29,12 @@ export default function RemoveCoach(props: {
     removeCoach: () => void;
 }) {
     const [show, setShow] = useState(false);
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleClose = () => setShow(false);
 
     const handleShow = () => {
         setShow(true);
-        setError("");
     };
 
     /**
@@ -46,24 +44,22 @@ export default function RemoveCoach(props: {
      */
     async function removeCoach(userId: number, allEditions: boolean) {
         setLoading(true);
-        let removed = false;
-        try {
-            if (allEditions) {
-                removed = await removeCoachFromAllEditions(userId);
-            } else {
-                removed = await removeCoachFromEdition(userId, props.edition);
-            }
-
-            if (removed) {
-                props.removeCoach();
-            } else {
-                setError("Something went wrong. Failed to remove coach");
-                setLoading(false);
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to remove coach");
-            setLoading(false);
+        if (allEditions) {
+            await toast.promise(removeCoachFromAllEditions(userId), {
+                error: "Failed to remove coach",
+                pending: "Removing coach",
+                success: "Coach successfully removed",
+            });
+        } else {
+            await toast.promise(removeCoachFromEdition(userId, props.edition), {
+                error: "Failed to remove coach",
+                pending: "Removing coach",
+                success: "Coach successfully removed",
+            });
         }
+
+        setLoading(false);
+        props.removeCoach();
     }
 
     let buttons;
@@ -101,7 +97,7 @@ export default function RemoveCoach(props: {
 
     return (
         <>
-            <DeleteButton onClick={handleShow} showIcon={false}>
+            <DeleteButton onClick={handleShow} size="sm" showIcon={false}>
                 Remove
             </DeleteButton>
 
@@ -116,10 +112,7 @@ export default function RemoveCoach(props: {
                             {props.coach.auth.email}
                         </CredsDiv>
                     </Modal.Body>
-                    <Modal.Footer>
-                        {buttons}
-                        <Error> {error} </Error>
-                    </Modal.Footer>
+                    <Modal.Footer>{buttons}</Modal.Footer>
                 </ModalContent>
             </Modal>
         </>

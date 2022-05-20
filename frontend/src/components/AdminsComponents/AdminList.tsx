@@ -5,6 +5,7 @@ import { AdminListItem } from "./index";
 import LoadSpinner from "../Common/LoadSpinner";
 import { ListDiv } from "../Common/Users/styles";
 import { SpinnerContainer } from "../Common/LoadSpinner/styles";
+import { RemoveTh } from "../Common/Tables/styles";
 
 /**
  * List of [[AdminListItem]]s which represents all admins.
@@ -41,7 +42,7 @@ export default function AdminList(props: {
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Remove</th>
+                        <RemoveTh>Remove</RemoveTh>
                     </tr>
                 </thead>
                 <tbody>

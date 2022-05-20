@@ -4,8 +4,9 @@ import { getAdmins } from "../../utils/api/users/admins";
 import { AddAdmin, AdminList } from "../../components/AdminsComponents";
 import { User } from "../../utils/api/users/users";
 import { SearchBar } from "../../components/Common/Forms";
-import { Error, SearchFieldDiv, TableDiv } from "../../components/Common/Users/styles";
+import { SearchFieldDiv, TableDiv } from "../../components/Common/Users/styles";
 import LoadSpinner from "../../components/Common/LoadSpinner";
+import { toast } from "react-toastify";
 
 export default function AdminsPage() {
     const [allAdmins, setAllAdmins] = useState<User[]>([]);
@@ -13,39 +14,36 @@ export default function AdminsPage() {
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [gotData, setGotData] = useState(false);
-    const [error, setError] = useState("");
 
     const getData = useCallback(async () => {
-        setError("");
-        try {
-            let adminsAvailable = true;
-            let page = 0;
-            let newAdmins: User[] = [];
-            while (adminsAvailable) {
-                const response = await getAdmins(page, searchTerm);
-                if (page === 0) {
-                    newAdmins = response.users;
-                } else {
-                    newAdmins = newAdmins.concat(response.users);
-                }
-                adminsAvailable = response.users.length !== 0;
-                page += 1;
+        let adminsAvailable = true;
+        let page = 0;
+        let newAdmins: User[] = [];
+        while (adminsAvailable) {
+            const response = await toast.promise(getAdmins(page, searchTerm), {
+                error: "Failed to receive admins",
+            });
+            if (page === 0) {
+                newAdmins = response.users;
+            } else {
+                newAdmins = newAdmins.concat(response.users);
             }
-            setGotData(true);
-            setAdmins(newAdmins);
-            setAllAdmins(newAdmins);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
+            adminsAvailable = response.users.length !== 0;
+            page += 1;
         }
+        setAdmins(newAdmins);
+        setAllAdmins(newAdmins);
+
+        setGotData(true);
         setLoading(false);
     }, [searchTerm]);
 
     useEffect(() => {
-        if (!gotData && !loading && !error) {
+        if (!gotData && !loading) {
             setLoading(true);
             getData();
         }
-    }, [gotData, loading, error, getData]);
+    }, [gotData, loading, getData]);
 
     function addAdmin(user: User) {
         setAllAdmins(allAdmins.concat([user]));
@@ -74,10 +72,8 @@ export default function AdminsPage() {
     if (admins.length === 0) {
         if (loading) {
             list = <LoadSpinner show={true} />;
-        } else if (gotData) {
-            list = <div>No admins found</div>;
         } else {
-            list = <Error>{error}</Error>;
+            list = <div>No admins found</div>;
         }
     } else {
         list = (

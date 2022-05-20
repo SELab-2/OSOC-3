@@ -1,8 +1,8 @@
 import { User } from "../../../../utils/api/users/users";
 import React from "react";
 import RemoveCoach from "./RemoveCoach";
-import { RemoveTd } from "../styles";
 import { EmailAndAuth } from "../../../Common/Users";
+import { RemoveTd } from "../../../Common/Tables/styles";
 
 /**
  * An item from [[CoachList]] which represents one coach.

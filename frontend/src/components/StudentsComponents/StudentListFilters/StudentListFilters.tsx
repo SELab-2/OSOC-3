@@ -20,6 +20,7 @@ import {
     getStudentCoachVolunteerFilter,
     getSuggestedFilter,
 } from "../../../utils/session-storage/student-filters";
+import LoadSpinner from "../../Common/LoadSpinner";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -87,8 +88,8 @@ export default function StudentListFilters() {
 
         setLoading(true);
 
-        try {
-            const response = await getStudents(
+        const response = await toast.promise(
+            getStudents(
                 params.editionId!,
                 nameFilter,
                 rolesFilter,
@@ -96,39 +97,38 @@ export default function StudentListFilters() {
                 studentCoachVolunteerFilter,
                 suggestedFilter,
                 requestedPage
-            );
+            ),
+            { error: "Failed to retrieve students" }
+        );
 
-            if (response.students.length === 0 && !filterChanged) {
-                setMoreDataAvailable(false);
-            }
-            if (page === 0 || filterChanged) {
-                setStudents(response.students);
-            } else {
-                setStudents(students.concat(response.students));
-            }
-
-            // If no filters are set, allStudents can be changed
-            if (
-                nameFilter === "" &&
-                rolesFilter.length === 0 &&
-                !alumniFilter &&
-                !studentCoachVolunteerFilter &&
-                !suggestedFilter
-            ) {
-                if (response.students.length === 0) {
-                    setAllDataFetched(true);
-                }
-                if (page === 0) {
-                    setAllStudents(response.students);
-                } else {
-                    setAllStudents(allStudents.concat(response.students));
-                }
-            }
-
-            setPage(page + 1);
-        } catch (error) {
-            toast.error("Failed to get students.", { toastId: "fetch_students_failed" });
+        if (response.students.length === 0 && !filterChanged) {
+            setMoreDataAvailable(false);
         }
+        if (page === 0 || filterChanged) {
+            setStudents(response.students);
+        } else {
+            setStudents(students.concat(response.students));
+        }
+
+        // If no filters are set, allStudents can be changed
+        if (
+            nameFilter === "" &&
+            rolesFilter.length === 0 &&
+            !alumniFilter &&
+            !studentCoachVolunteerFilter &&
+            !suggestedFilter
+        ) {
+            if (response.students.length === 0) {
+                setAllDataFetched(true);
+            }
+            if (page === 0) {
+                setAllStudents(response.students);
+            } else {
+                setAllStudents(allStudents.concat(response.students));
+            }
+        }
+
+        setPage(page + 1);
         setLoading(false);
     }
 
@@ -143,7 +143,9 @@ export default function StudentListFilters() {
     }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, suggestedFilter]);
 
     let list;
-    if (students.length === 0) {
+    if (loading) {
+        list = <LoadSpinner show={true} />;
+    } else if (students.length === 0) {
         list = <MessageDiv>No students found</MessageDiv>;
     } else {
         list = (
@@ -157,17 +159,27 @@ export default function StudentListFilters() {
 
     return (
         <StudentListSideMenu>
-            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
-            <RolesFilter rolesFilter={rolesFilter} setRolesFilter={setRolesFilter} />
+            <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} setPage={setPage} />
+            <RolesFilter
+                rolesFilter={rolesFilter}
+                setRolesFilter={setRolesFilter}
+                setPage={setPage}
+            />
             <Form.Group>
-                <AlumniFilter alumniFilter={alumniFilter} setAlumniFilter={setAlumniFilter} />
+                <AlumniFilter
+                    alumniFilter={alumniFilter}
+                    setAlumniFilter={setAlumniFilter}
+                    setPage={setPage}
+                />
                 <SuggestedForFilter
                     suggestedFilter={suggestedFilter}
                     setSuggestedFilter={setSuggestedFilter}
+                    setPage={setPage}
                 />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={studentCoachVolunteerFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                    setPage={setPage}
                 />
             </Form.Group>
             <StudentListLinebreak />
@@ -178,6 +190,7 @@ export default function StudentListFilters() {
                     setAlumniFilter={setAlumniFilter}
                     setSuggestedFilter={setSuggestedFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                    setPage={setPage}
                 />
             </FilterControls>
             {list}

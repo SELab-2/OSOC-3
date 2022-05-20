@@ -6,13 +6,16 @@ import { setAlumniFilterStorage } from "../../../../utils/session-storage/studen
  * Component that filters the students list based on the alumni field.
  * @param alumniFilter
  * @param setAlumniFilter
+ * @param setPage Function to set the page to fetch next
  */
 export default function AlumniFilter({
     alumniFilter,
     setAlumniFilter,
+    setPage,
 }: {
     alumniFilter: boolean;
     setAlumniFilter: (value: boolean) => void;
+    setPage: (page: number) => void;
 }) {
     return (
         <div>
@@ -25,6 +28,7 @@ export default function AlumniFilter({
                     setAlumniFilter(e.target.checked);
                     setAlumniFilterStorage(String(e.target.checked));
                     e.target.checked = alumniFilter;
+                    setPage(0);
                 }}
             />
         </div>

@@ -2,14 +2,15 @@ import { getUsersNonAdmin, User } from "../../utils/api/users/users";
 import { createRef, useEffect, useState } from "react";
 import { addAdmin } from "../../utils/api/users/admins";
 import { AddButtonDiv, EmailDiv, Warning } from "./styles";
-import { Button, Modal, Spinner } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import { Error, StyledMenuItem } from "../Common/Users/styles";
+import { StyledMenuItem } from "../Common/Users/styles";
 import UserMenuItem from "../Common/Users/MenuItem";
 import { EmailAndAuth } from "../Common/Users";
 import CreateButton from "../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../Common/styles";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
+import { toast } from "react-toastify";
 import { StyledInput } from "../Common/Forms/styles";
 
 /**
@@ -20,8 +21,6 @@ import { StyledInput } from "../Common/Forms/styles";
 export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
@@ -43,20 +42,16 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
             filter = searchTerm;
         }
         setGettingData(true);
-        setError("");
-        try {
-            const response = await getUsersNonAdmin(filter, page);
-            if (page === 0) {
-                setUsers(response.users);
-            } else {
-                setUsers(users.concat(response.users));
-            }
-
-            setGettingData(false);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
-            setGettingData(false);
+        const response = await toast.promise(getUsersNonAdmin(filter, page), {
+            error: "Failed to retrieve users",
+        });
+        if (page === 0) {
+            setUsers(response.users);
+        } else {
+            setUsers(users.concat(response.users));
         }
+
+        setGettingData(false);
     }
 
     function filterData(searchTerm: string) {
@@ -67,7 +62,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
 
     const handleClose = () => {
         setSelected(undefined);
-        setError("");
         setShow(false);
     };
     const handleShow = () => {
@@ -75,44 +69,16 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
     };
 
     async function addUserAsAdmin(user: User) {
-        setLoading(true);
-        setError("");
-        let success = false;
-        try {
-            success = await addAdmin(user.userId);
-            if (!success) {
-                setError("Something went wrong. Failed to add admin");
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to add admin");
-        }
-        setLoading(false);
-        if (success) {
-            props.adminAdded(user);
-            setSearchTerm("");
-            getData(0, "");
-            setSelected(undefined);
-            setClearRef(true);
-        }
-    }
+        await toast.promise(addAdmin(user.userId), {
+            pending: "Adding admin",
+            success: "Admin successfully added",
+            error: "Failed to add admin",
+        });
 
-    let addButton;
-    if (loading) {
-        addButton = <Spinner animation="border" />;
-    } else {
-        addButton = (
-            <Button
-                variant="primary"
-                onClick={() => {
-                    if (selected !== undefined) {
-                        addUserAsAdmin(selected);
-                    }
-                }}
-                disabled={selected === undefined}
-            >
-                Add admin
-            </Button>
-        );
+        props.adminAdded(user);
+        setSearchTerm("");
+        setSelected(undefined);
+        setClearRef(true);
     }
 
     let warning;
@@ -150,7 +116,6 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
-                                setError("");
                             }}
                             renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
                                 <StyledInput
@@ -193,11 +158,20 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                         {warning}
                     </Modal.Body>
                     <Modal.Footer>
-                        {addButton}
+                        <CreateButton
+                            showIcon={false}
+                            onClick={() => {
+                                if (selected !== undefined) {
+                                    addUserAsAdmin(selected);
+                                }
+                            }}
+                            disabled={selected === undefined}
+                        >
+                            Add admin
+                        </CreateButton>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentConfirm>
             </Modal>

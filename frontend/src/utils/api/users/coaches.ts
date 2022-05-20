@@ -6,16 +6,26 @@ import { axiosInstance } from "../api";
  * @param edition The edition name.
  * @param name The username to filter.
  * @param page The requested page.
+ * @param controller An optional AbortController to cancel the request
  */
-export async function getCoaches(edition: string, name: string, page: number): Promise<UsersList> {
-    if (name) {
+export async function getCoaches(
+    edition: string,
+    name: string,
+    page: number,
+    controller: AbortController | null = null
+): Promise<UsersList> {
+    if (controller === null) {
         const response = await axiosInstance.get(
             `/users?edition=${edition}&page=${page}&name=${name}`
         );
         return response.data as UsersList;
+    } else {
+        const response = await axiosInstance.get(
+            `/users?edition=${edition}&page=${page}&name=${name}`,
+            { signal: controller.signal }
+        );
+        return response.data as UsersList;
     }
-    const response = await axiosInstance.get(`/users?edition=${edition}&page=${page}`);
-    return response.data as UsersList;
 }
 
 /**
@@ -23,18 +33,16 @@ export async function getCoaches(edition: string, name: string, page: number): P
  * @param {number} userId The user's id.
  * @param {string} edition The edition's name.
  */
-export async function removeCoachFromEdition(userId: number, edition: string): Promise<boolean> {
-    const response = await axiosInstance.delete(`/users/${userId}/editions/${edition}`);
-    return response.status === 204;
+export async function removeCoachFromEdition(userId: number, edition: string) {
+    await axiosInstance.delete(`/users/${userId}/editions/${edition}`);
 }
 
 /**
  * Remove a user as coach from all editions.
  * @param {number} userId The user's id.
  */
-export async function removeCoachFromAllEditions(userId: number): Promise<boolean> {
-    const response = await axiosInstance.delete(`/users/${userId}/editions`);
-    return response.status === 204;
+export async function removeCoachFromAllEditions(userId: number) {
+    await axiosInstance.delete(`/users/${userId}/editions`);
 }
 
 /**
@@ -42,7 +50,6 @@ export async function removeCoachFromAllEditions(userId: number): Promise<boolea
  * @param {number} userId The user's id.
  * @param {string} edition The edition's name.
  */
-export async function addCoachToEdition(userId: number, edition: string): Promise<boolean> {
-    const response = await axiosInstance.post(`/users/${userId}/editions/${edition}`);
-    return response.status === 204;
+export async function addCoachToEdition(userId: number, edition: string) {
+    await axiosInstance.post(`/users/${userId}/editions/${edition}`);
 }

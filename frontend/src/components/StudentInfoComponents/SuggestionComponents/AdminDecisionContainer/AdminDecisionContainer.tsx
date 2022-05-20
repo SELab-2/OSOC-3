@@ -6,6 +6,7 @@ import { YesButton, MaybeButton, NoButton } from "../CoachSuggestionContainer/st
 import { confirmStudent } from "../../../../utils/api/suggestions";
 import { useParams } from "react-router-dom";
 import { CreateButton } from "../../../Common/Buttons";
+import { toast } from "react-toastify";
 
 /**
  * Make definitive decision on the current student based on the selected decision value.
@@ -52,7 +53,11 @@ export default function AdminDecisionContainer() {
         } else {
             decisionNum = 3;
         }
-        await confirmStudent(params.editionId!, params.id!, decisionNum);
+        await toast.promise(confirmStudent(params.editionId!, params.id!, decisionNum), {
+            error: "Failed to send decision",
+            pending: "Sending decision",
+            success: "Decision successfully sent",
+        });
         setClickedButtonText("");
         setShow(false);
     }
