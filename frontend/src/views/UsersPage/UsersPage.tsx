@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
@@ -15,7 +15,6 @@ function UsersPage() {
     const [allCoaches, setAllCoaches] = useState<User[]>([]);
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
-    const [gotData, setGotData] = useState(false); // Received data
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
     const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
@@ -30,8 +29,11 @@ function UsersPage() {
      * Request the next page from the list of coaches.
      * The set searchterm will be used.
      */
-    async function getCoachesData() {
-        if (loading) {
+    async function getCoachesData(requested: number) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
             return;
         }
 
@@ -54,47 +56,45 @@ function UsersPage() {
         setController(newController);
 
         const response = await toast.promise(
-            getCoaches(params.editionId as string, searchTerm, page, newController),
+            getCoaches(params.editionId as string, searchTerm, requestedPage, newController),
             { error: "Failed to retrieve coaches" }
         );
-        if (response.users.length === 0) {
+
+        if (response !== null) {
+            if (response.users.length === 0 && !filterChanged) {
+                setMoreCoachesAvailable(false);
+            }
+            if (requestedPage === 0 || filterChanged) {
+                setCoaches(response.users);
+            } else {
+                setCoaches(coaches.concat(response.users));
+            }
+
+            if (searchTerm === "") {
+                if (response.users.length === 0) {
+                    setAllCoachesFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllCoaches(response.users);
+                } else {
+                    setAllCoaches(allCoaches.concat(response.users));
+                }
+            }
+
+            setPage(page + 1);
+        } else {
             setMoreCoachesAvailable(false);
         }
-        if (page === 0) {
-            setCoaches(response.users);
-        } else {
-            setCoaches(coaches.concat(response.users));
-        }
 
-        if (searchTerm === "") {
-            if (response.users.length === 0) {
-                setAllCoachesFetched(true);
-            }
-            if (page === 0) {
-                setAllCoaches(response.users);
-            } else {
-                setAllCoaches(allCoaches.concat(response.users));
-            }
-        }
-
-        setPage(page + 1);
-
-        setGotData(true);
         setLoading(false);
     }
 
-    /**
-     * Set the searchTerm and request the first page with this filter.
-     * The current list of coaches will be resetted.
-     * @param searchTerm The string to filter coaches with by username.
-     */
-    function filterCoachesData(searchTerm: string) {
+    useEffect(() => {
         setPage(0);
-        setGotData(false);
         setMoreCoachesAvailable(true);
-        setSearchTerm(searchTerm);
-        setCoaches([]);
-    }
+        getCoachesData(-1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm]);
 
     /**
      * Reset the list of coaches and get the first page.
@@ -104,8 +104,8 @@ function UsersPage() {
         setCoaches([]);
         setPage(0);
         setAllCoachesFetched(false);
-        setGotData(false);
         setMoreCoachesAvailable(true);
+        getCoachesData(-1);
     }
 
     /**
@@ -136,9 +136,10 @@ function UsersPage() {
                 <Coaches
                     edition={params.editionId}
                     coaches={coaches}
-                    gotData={gotData}
+                    loading={loading}
                     getMoreCoaches={getCoachesData}
-                    searchCoaches={filterCoachesData}
+                    searchCoaches={setSearchTerm}
+                    setPage={setPage}
                     moreCoachesAvailable={moreCoachesAvailable}
                     searchTerm={searchTerm}
                     refreshCoaches={refreshCoaches}
