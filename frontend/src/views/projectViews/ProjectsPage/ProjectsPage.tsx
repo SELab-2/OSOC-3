@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
 import { CreateButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 export default function ProjectPage() {
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
@@ -38,12 +37,17 @@ export default function ProjectPage() {
     /**
      * Used to fetch the projects
      */
-    async function loadProjects() {
-        if (loading) {
+    async function loadProjects(requested: number) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
             return;
         }
 
-        if (allProjectsFetched) {
+        if (ownProjects) {
+            setAllProjectsFetched(false);
+        } else if (allProjectsFetched) {
             setProjects(
                 allProjects.filter(project =>
                     project.name.toUpperCase().includes(searchString.toUpperCase())
@@ -62,45 +66,44 @@ export default function ProjectPage() {
         setController(newController);
 
         const response = await toast.promise(
-            getProjects(editionId, searchString, ownProjects, page, newController),
+            getProjects(editionId, searchString, ownProjects, requestedPage, newController),
             { error: "Failed to retrieve projects" }
         );
-        if (response.projects.length === 0) {
+
+        if (response !== null) {
+            if (response.projects.length === 0 && !filterChanged) {
+                setMoreProjectsAvailable(false);
+            }
+            if (requestedPage === 0 || filterChanged) {
+                setProjects(response.projects);
+            } else {
+                setProjects(projects.concat(response.projects));
+            }
+
+            if (searchString === "" && !ownProjects) {
+                if (response.projects.length === 0) {
+                    setAllProjectsFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllProjects(response.projects);
+                } else {
+                    setAllProjects(allProjects.concat(response.projects));
+                }
+            }
+
+            setPage(requestedPage + 1);
+        } else {
             setMoreProjectsAvailable(false);
         }
-        if (page === 0) {
-            setProjects(response.projects);
-        } else {
-            setProjects(projects.concat(response.projects));
-        }
-
-        if (searchString === "") {
-            if (response.projects.length === 0) {
-                setAllProjectsFetched(true);
-            }
-            if (page === 0) {
-                setAllProjects(response.projects);
-            } else {
-                setAllProjects(allProjects.concat(response.projects));
-            }
-        }
-
-        setPage(page + 1);
-
-        setGotProjects(true);
         setLoading(false);
     }
 
-    /**
-     * Reset fetched projects
-     */
-    function refreshProjects() {
-        setProjects([]);
+    useEffect(() => {
         setPage(0);
         setMoreProjectsAvailable(true);
-        setAllProjectsFetched(false);
-        setGotProjects(false);
-    }
+        loadProjects(-1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchString, ownProjects]);
 
     /**
      * Remove a project in local list.
@@ -114,25 +117,14 @@ export default function ProjectPage() {
         );
     }
 
-    /**
-     * Filter the projects by name
-     * @param searchTerm
-     */
-    function filter(searchTerm: string) {
-        setPage(0);
-        setGotProjects(false);
-        setMoreProjectsAvailable(true);
-        setSearchString(searchTerm);
-        setProjects([]);
-    }
-
     return (
         <div>
             <div>
                 <SearchField
                     value={searchString}
                     onChange={e => {
-                        filter(e.target.value);
+                        setPage(0);
+                        setSearchString(e.target.value);
                     }}
                     placeholder="project name"
                 />
@@ -152,14 +144,13 @@ export default function ProjectPage() {
                 label="Only own projects"
                 checked={ownProjects}
                 onChange={() => {
+                    setPage(0);
                     setOwnProjects(!ownProjects);
-                    refreshProjects();
                 }}
             />
             <ProjectTable
                 projects={projects}
                 loading={loading}
-                gotData={gotProjects}
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}
