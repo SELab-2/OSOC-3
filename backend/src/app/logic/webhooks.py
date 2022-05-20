@@ -25,8 +25,28 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
 
     attributes: dict = {'edition': edition}
 
-    skills: list[Skill] = []
+    attributes["skills"] = []
 
+    await process_main_questions(questions, extra_questions, attributes, database)
+
+    student: Student = Student(**attributes)
+    database.add(student)
+    email: DecisionEmail = DecisionEmail(
+        student=student, decision=EmailStatusEnum.APPLIED, date=datetime.now())
+
+    database.add(email)
+
+    process_remaining_questions(student, extra_questions, database)
+
+    try:
+        await database.commit()
+    except sqlalchemy.exc.IntegrityError as error:
+        raise WebhookProcessException('Unique Check Failed') from error
+
+
+async def process_main_questions(questions: list[Question], extra_questions: list[Question],
+                                attributes: dict, database: AsyncSession):
+    """Process main questions"""
     for question in questions:
         match FormMapping(question.key):
             case FormMapping.FIRST_NAME:
@@ -53,10 +73,9 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
                         for option in options:
                             if option.id == value and option.text != "Other":
                                 skill: Skill = await get_skill_by_name(database, option.text)
-                                skills.append(skill)
+                                attributes["skills"].append(skill)
             case _:
                 extra_questions.append(question)
-
     # Check all attributes are included and not None
     needed = {
         'first_name',
@@ -65,26 +84,13 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
         'email_address',
         'phone_number',
         'wants_to_be_student_coach',
-        'edition'
+        'edition',
+        'skills'
     }
 
     diff = set(attributes.keys()).symmetric_difference(needed)
     if len(diff) != 0:
         raise WebhookProcessException(f'Missing questions for Attributes {diff}')
-    attributes["skills"] = skills
-    student: Student = Student(**attributes)
-    database.add(student)
-    email: DecisionEmail = DecisionEmail(
-        student=student, decision=EmailStatusEnum.APPLIED, date=datetime.now())
-
-    database.add(email)
-
-    process_remaining_questions(student, extra_questions, database)
-
-    try:
-        await database.commit()
-    except sqlalchemy.exc.IntegrityError as error:
-        raise WebhookProcessException('Unique Check Failed') from error
 
 
 def process_remaining_questions(student: Student, questions: list[Question], database: AsyncSession):
