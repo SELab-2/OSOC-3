@@ -120,6 +120,9 @@ _**Note**: This dropdown is hidden if you cannot see any editions, as it would b
 
 You have now set another edition as your "current edition". This means that navigating through the navbar will show results for that specific edition.
 
+### Making an edition read-only
+
+Old editions can be made read-and-delete-only by clicking on the 'editable' label on the Editions page. This can be undone by clicking the label again.
 
 ## Projects
 
