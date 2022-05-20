@@ -24,8 +24,7 @@ async def test_get_projects_paginated(database_session: AsyncSession, auth_clien
         assert len(response.json()['projects']) == DB_PAGE_SIZE
         response = await auth_client.get("/editions/ed2022/projects?page=1", follow_redirects=True)
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.json()['projects']) == round(
-            DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
+        assert len(response.json()['projects']) == round(DB_PAGE_SIZE * 1.5) - DB_PAGE_SIZE
 
 
 async def test_get_project(database_session: AsyncSession, auth_client: AuthClient):
