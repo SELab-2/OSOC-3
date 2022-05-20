@@ -134,6 +134,7 @@ class Project(Base):
 
     project_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
+    info_url = Column(Text, nullable=True)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
     edition: Edition = relationship("Edition", back_populates="projects", uselist=False, lazy="selectin")
@@ -247,7 +248,8 @@ class Student(Base):
     pr_suggestions: list[ProjectRoleSuggestion] = \
         relationship("ProjectRoleSuggestion", back_populates="student", lazy="selectin")
     skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="selectin")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", lazy="selectin")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", cascade="all, delete-orphan",
+                                                 lazy="selectin")
     questions: list[Question] = relationship("Question", back_populates="student", lazy="selectin",
                                              cascade="all, delete-orphan")
     edition: Edition = relationship("Edition", back_populates="students", uselist=False, lazy="selectin")
@@ -327,7 +329,7 @@ class User(Base):
     coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False,
                                                cascade="all, delete-orphan", lazy="selectin")
     drafted_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="drafter",
-                                                    cascade="all, delete-orphan", lazy="selectin")
+                                                              cascade="all, delete-orphan", lazy="selectin")
     editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches",
                                            lazy="selectin")
     projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches",

@@ -24,7 +24,8 @@ export async function getMailOverview(
     edition: string | undefined,
     page: number,
     name: string,
-    filters: EmailType[]
+    filters: EmailType[],
+    controller: AbortController
 ): Promise<StudentEmails> {
     const FormatFilters: string[] = filters.map(filter => {
         return `&email_status=${Object.values(EmailType).indexOf(filter)}`;
@@ -32,7 +33,8 @@ export async function getMailOverview(
     const concatted: string = FormatFilters.join("");
 
     const response = await axiosInstance.get(
-        `/editions/${edition}/students/emails?page=${page}&name=${name}${concatted}`
+        `/editions/${edition}/students/emails?page=${page}&name=${name}${concatted}`,
+        { signal: controller.signal }
     );
     return response.data as StudentEmails;
 }

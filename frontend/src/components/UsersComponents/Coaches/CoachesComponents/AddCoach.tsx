@@ -3,14 +3,16 @@ import { useState, createRef, useEffect } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { AddButtonDiv } from "../../../AdminsComponents/styles";
-import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
 import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
 import UserMenuItem from "../../../Common/Users/MenuItem";
-import { Error, StyledMenuItem } from "../../../Common/Users/styles";
+import { StyledMenuItem } from "../../../Common/Users/styles";
 import { EmailAndAuth } from "../../../Common/Users";
 import { EmailDiv } from "../styles";
 import CreateButton from "../../../Common/Buttons/CreateButton";
 import { ModalContentConfirm } from "../../../Common/styles";
+import { StyledInput } from "../../../Common/Forms/styles";
+import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -22,7 +24,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
@@ -44,20 +45,16 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
             filter = searchTerm;
         }
         setGettingData(true);
-        setError("");
-        try {
-            const response = await getUsersExcludeEdition(props.edition, filter, page);
-            if (page === 0) {
-                setUsers(response.users);
-            } else {
-                setUsers(users.concat(response.users));
-            }
-
-            setGettingData(false);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
-            setGettingData(false);
+        const response = await toast.promise(getUsersExcludeEdition(props.edition, filter, page), {
+            error: "Failed to retrieve users",
+        });
+        if (page === 0) {
+            setUsers(response.users);
+        } else {
+            setUsers(users.concat(response.users));
         }
+
+        setGettingData(false);
     }
 
     function filterData(searchTerm: string) {
@@ -68,7 +65,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     const handleClose = () => {
         setSelected(undefined);
-        setError("");
+        props.refreshCoaches();
         setShow(false);
     };
     const handleShow = () => {
@@ -77,24 +74,15 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     async function addCoach(user: User) {
         setLoading(true);
-        setError("");
-        let success = false;
-        try {
-            success = await addCoachToEdition(user.userId, props.edition);
-            if (!success) {
-                setError("Something went wrong. Failed to add coach");
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to add coach");
-        }
+        await toast.promise(addCoachToEdition(user.userId, props.edition), {
+            error: "Failed to add coach",
+            pending: "Adding coach",
+            success: "Coach successfully added",
+        });
+
         setLoading(false);
-        if (success) {
-            props.refreshCoaches();
-            setSearchTerm("");
-            getData(0, "");
-            setSelected(undefined);
-            setClearRef(true);
-        }
+        setSelected(undefined);
+        setClearRef(true);
     }
 
     let addButton;
@@ -142,8 +130,16 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                             placeholder={"user's name"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
-                                setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,
@@ -179,7 +175,6 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentConfirm>
             </Modal>

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 import src.app.logic.projects as logic
 from src.app.routers.tags import Tags
@@ -56,7 +57,7 @@ async def get_conflicts(db: AsyncSession = Depends(get_session), edition: Editio
 
 @projects_router.delete(
     "/{project_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(require_admin), Depends(live)]
 )
 async def delete_project(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
@@ -77,7 +78,7 @@ async def get_project_route(project: ProjectModel = Depends(get_project)):
 
 @projects_router.patch(
     "/{project_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(live)]
 )
 async def patch_project(
@@ -93,7 +94,7 @@ async def patch_project(
 @projects_router.get(
     "/{project_id}/roles",
     response_model=ProjectRoleResponseList,
-    dependencies=[Depends(require_coach), Depends(get_latest_edition)]
+    dependencies=[Depends(require_coach), Depends(get_edition)]
 )
 async def get_project_roles(project: ProjectModel = Depends(get_project), db: AsyncSession = Depends(get_session)):
     """List all project roles for a project"""
@@ -130,7 +131,7 @@ async def patch_project_role(
 
 @projects_router.delete(
     "/{project_id}/roles/{project_role_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(require_admin), Depends(get_project), Depends(live)]
 )
 async def delete_project_role(

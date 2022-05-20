@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from src.app.schemas.skills import Skill
 from src.app.schemas.utils import CamelCaseModel
+from src.app.schemas.validators import validate_url
 
 
 class User(CamelCaseModel):
@@ -49,6 +50,11 @@ class ProjectRoleSuggestion(CamelCaseModel):
         orm_mode = True
 
 
+class ReturnProjectRoleSuggestion(CamelCaseModel):
+    """return a project role suggestion"""
+    project_role_suggestion: ProjectRoleSuggestion
+
+
 class ProjectRole(CamelCaseModel):
     """Represents a ProjectRole from the database"""
     project_role_id: int
@@ -77,6 +83,7 @@ class Project(CamelCaseModel):
     """Represents a Project from the database to return when a GET request happens"""
     project_id: int
     name: str
+    info_url: str | None
 
     coaches: list[User]
     partners: list[Partner]
@@ -96,6 +103,7 @@ class ConflictProject(CamelCaseModel):
     """A project to be used in ConflictStudent"""
     project_id: int
     name: str
+    info_url: str | None
 
     class Config:
         """Config Class"""
@@ -149,8 +157,15 @@ class InputProjectRole(BaseModel):
 class InputProject(BaseModel):
     """Used for passing the details of a project when creating/patching a project"""
     name: str
+    info_url: str | None
     partners: list[str]
     coaches: list[int]
+
+    @validator('info_url')
+    @classmethod
+    def is_url(cls, info_url: str | None):
+        """Validate url"""
+        return validate_url(info_url)
 
 
 class InputArgumentation(BaseModel):
