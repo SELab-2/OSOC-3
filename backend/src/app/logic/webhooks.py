@@ -23,9 +23,10 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
     questions: list[Question] = form.fields
     extra_questions: list[Question] = []
 
-    attributes: dict = {'edition': edition}
-
-    attributes["skills"] = []
+    attributes: dict = {
+        'edition': edition
+        'skills': []
+    }
 
     await process_main_questions(questions, extra_questions, attributes, database)
 
