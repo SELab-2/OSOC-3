@@ -164,6 +164,7 @@ class InputProject(BaseModel):
     @validator('info_url')
     @classmethod
     def is_url(cls, info_url: str | None):
+        """Validate url"""
         return validate_url(info_url)
 
 
