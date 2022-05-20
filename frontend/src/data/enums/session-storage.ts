@@ -12,4 +12,5 @@ export const enum SessionStorageKey {
     NAME_FILTER = "nameFilter",
     STUDENT_COACH_VOLUNTEER_FILTER = "studentCoachVolunteerFilter",
     ROLES_FILTER = "rolesFilter",
+    CONFIRM_FILTER = "confirmFilter",
 }

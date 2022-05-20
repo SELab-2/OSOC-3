@@ -13,8 +13,8 @@ export default function StudentCopyLink() {
         toast.info("Student URL copied to clipboard!");
     }
     return (
-        <CopyLinkContainer>
-            <StudentLink onClick={copyStudentLink}>copy link</StudentLink>
+        <CopyLinkContainer onClick={copyStudentLink}>
+            <StudentLink>copy link</StudentLink>
             <CopyIcon icon={faLink as IconProp} className={"me-2"} />
         </CopyLinkContainer>
     );

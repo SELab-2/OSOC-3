@@ -14,8 +14,9 @@ import {
     SubjectValues,
     PersonalInformation,
     InfoHeadContainer,
-    PersonIcon,
     AllName,
+    ActionContainer,
+    ActionsCard,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
@@ -86,7 +87,6 @@ export default function StudentInformation(props: { studentId: number; editionId
             <StudentInformationContainer>
                 <InfoHeadContainer>
                     <NameContainer>
-                        <PersonIcon />
                         <AllName>
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
@@ -98,6 +98,15 @@ export default function StudentInformation(props: { studentId: number; editionId
                             </div>
                         </AllName>
                     </NameContainer>
+                    <ActionContainer>
+                        <ActionsCard className="CardContainer" border="primary">
+                            <Card.Header className="CardHeader">Actions</Card.Header>
+                            <Card.Body className="CardBody">
+                                <CoachSuggestionContainer student={student} />
+                                {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
+                            </Card.Body>
+                        </ActionsCard>
+                    </ActionContainer>
                 </InfoHeadContainer>
                 <Card className="CardContainer" border="primary">
                     <Card.Header className="CardHeader">Suggestions</Card.Header>
@@ -145,13 +154,6 @@ export default function StudentInformation(props: { studentId: number; editionId
                         {student.skills.map(skill => (
                             <RoleValue key={skill.skillId}>{skill.name}</RoleValue>
                         ))}
-                    </Card.Body>
-                </Card>
-                <Card className="CardContainer" border="primary">
-                    <Card.Header className="CardHeader">Actions</Card.Header>
-                    <Card.Body className="CardBody">
-                        <CoachSuggestionContainer student={student} />
-                        {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
                     </Card.Body>
                 </Card>
                 <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
