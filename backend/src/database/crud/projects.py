@@ -48,6 +48,7 @@ async def create_project(
 
     project = Project(
         name=input_project.name,
+        info_url=input_project.info_url,
         edition_id=edition.edition_id,
         coaches=coaches,
         partners=partners
@@ -89,6 +90,7 @@ async def patch_project(
     coaches = [await get_user_by_id(db, coach) for coach in input_project.coaches]
 
     project.name = input_project.name
+    project.info_url = input_project.info_url
     project.coaches = coaches
     project.partners = partners
 

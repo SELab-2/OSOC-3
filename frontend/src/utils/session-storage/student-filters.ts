@@ -28,6 +28,11 @@ export function getRolesFilter(): DropdownRole[] {
     return rolesFilter === null ? [] : JSON.parse(rolesFilter);
 }
 
+export function getConfirmFilter(): DropdownRole[] {
+    const confirmFilter = sessionStorage.getItem(SessionStorageKey.CONFIRM_FILTER);
+    return confirmFilter === null ? [] : JSON.parse(confirmFilter);
+}
+
 export function setNameFilterStorage(nameFilter: string | null) {
     if (nameFilter === null) {
         sessionStorage.removeItem(SessionStorageKey.NAME_FILTER);
@@ -68,5 +73,13 @@ export function setRolesFilterStorage(rolesFilter: string | null) {
         sessionStorage.removeItem(SessionStorageKey.ROLES_FILTER);
     } else {
         sessionStorage.setItem(SessionStorageKey.ROLES_FILTER, rolesFilter);
+    }
+}
+
+export function setConfirmFilterStorage(confirmFilter: string | null) {
+    if (confirmFilter === null) {
+        sessionStorage.removeItem(SessionStorageKey.CONFIRM_FILTER);
+    } else {
+        sessionStorage.setItem(SessionStorageKey.CONFIRM_FILTER, confirmFilter);
     }
 }

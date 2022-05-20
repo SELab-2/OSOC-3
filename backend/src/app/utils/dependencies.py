@@ -18,7 +18,7 @@ from src.app.exceptions.authentication import (
 from src.app.exceptions.editions import ReadOnlyEditionException
 from src.app.exceptions.util import NotFound
 from src.app.logic.security import ALGORITHM, TokenType
-from src.database.crud.editions import get_edition_by_name, latest_edition
+from src.database.crud.editions import get_edition_by_name
 from src.database.crud.invites import get_invite_link_by_uuid
 from src.database.crud.students import get_student_by_id
 from src.database.crud.suggestions import get_suggestion_by_id
@@ -32,23 +32,30 @@ async def get_edition(edition_name: str, database: AsyncSession = Depends(get_se
     return await get_edition_by_name(database, edition_name)
 
 
-async def get_student(student_id: int, database: AsyncSession = Depends(get_session)) -> Student:
+async def get_student(student_id: int, database: AsyncSession = Depends(get_session),
+                      edition: Edition = Depends(get_edition)) -> Student:
     """Get the student from the database, given the id in the path"""
-    return await get_student_by_id(database, student_id)
+    student: Student = await get_student_by_id(database, student_id)
+    if student.edition != edition:
+        raise NotFound()
+    return student
 
 
-async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
+async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session),
+                         student: Student = Depends(get_student)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
-    return await get_suggestion_by_id(database, suggestion_id)
+    suggestion: Suggestion = await get_suggestion_by_id(database, suggestion_id)
+    if suggestion.student != student:
+        raise NotFound()
+    return suggestion
 
 
-async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \
+async def get_editable_edition(edition: Edition = Depends(get_edition)) \
         -> Edition:
-    """Checks if the given edition is the latest one (others are read-only) and returns it if it is"""
-    latest = await latest_edition(database)
-    if edition != latest:
+    """Checks if the requested edition is editable, and returns it if it is"""
+    if edition.readonly:
         raise ReadOnlyEditionException
-    return latest
+    return edition
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token/email")

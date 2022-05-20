@@ -1,10 +1,11 @@
 import { User } from "../../../../utils/api/users/users";
-import { CoachesTable, RemoveTh } from "../styles";
+import { CoachesTable } from "../styles";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { CoachListItem } from "./index";
 import LoadSpinner from "../../../Common/LoadSpinner";
 import { ListDiv } from "../../../Common/Users/styles";
+import { RemoveTh } from "../../../Common/Tables/styles";
 
 /**
  * A list of [[CoachListItem]]s.

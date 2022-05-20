@@ -101,9 +101,9 @@ async def test_duplicate_user(database_session: AsyncSession, test_client: Async
         assert response.status_code == status.HTTP_409_CONFLICT
 
 
-async def test_old_edition(database_session: AsyncSession, test_client: AsyncClient):
+async def test_readonly_edition(database_session: AsyncSession, test_client: AsyncClient):
     """Tests trying to make a registration for a read-only edition"""
-    edition: Edition = Edition(year=2022, name="ed2022")
+    edition: Edition = Edition(year=2022, name="ed2022", readonly=True)
     edition3: Edition = Edition(year=2023, name="ed2023")
     invite_link: InviteLink = InviteLink(
         edition=edition, target_email="jw@gmail.com")

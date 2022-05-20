@@ -11,7 +11,9 @@ import { DropdownRole } from "../../components/StudentsComponents/StudentListFil
  * @param alumniFilter check to filter on.
  * @param studentCoachVolunteerFilter check to filter on.
  * @param suggestedFilter check to filter on.
+ * @param confirmFilter confirmation state to filter on.
  * @param page The page to fetch.
+ * @param controller An optional AbortController to cancel the request
  */
 export async function getStudents(
     edition: string,
@@ -20,29 +22,47 @@ export async function getStudents(
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean,
     suggestedFilter: boolean,
-    page: number
-): Promise<Students> {
+    confirmFilter: DropdownRole[],
+    page: number,
+    controller: AbortController
+): Promise<Students | null> {
     let rolesRequestField: string = "";
+
     for (const role of rolesFilter) {
         rolesRequestField += "skill_ids=" + role.value.toString() + "&";
     }
-    const response = await axiosInstance.get(
-        "/editions/" +
-            edition +
-            "/students?name=" +
-            nameFilter +
-            "&alumni=" +
-            alumniFilter +
-            "&own_suggestions=" +
-            suggestedFilter +
-            "&" +
-            rolesRequestField +
-            "&student_coach=" +
-            studentCoachVolunteerFilter +
-            "&page=" +
-            page
-    );
-    return response.data as Students;
+    let confirmRequestField: string = "";
+    for (const confirmField of confirmFilter) {
+        confirmRequestField += "decisions=" + confirmField.value.toString() + "&";
+    }
+    try {
+        const response = await axiosInstance.get(
+            "/editions/" +
+                edition +
+                "/students?name=" +
+                nameFilter +
+                "&alumni=" +
+                alumniFilter +
+                "&own_suggestions=" +
+                suggestedFilter +
+                "&" +
+                rolesRequestField +
+                "&student_coach=" +
+                studentCoachVolunteerFilter +
+                "&" +
+                confirmRequestField +
+                "&page=" +
+                page,
+            { signal: controller.signal }
+        );
+        return response.data as Students;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**
@@ -88,19 +108,10 @@ export async function makeSuggestion(
     suggestionArg: number,
     argumentationArg: string
 ): Promise<number> {
-    try {
-        const request =
-            "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions";
-        await axiosInstance.post(request, {
-            suggestion: suggestionArg,
-            argumentation: argumentationArg,
-        });
-        return 201;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return 422;
-        } else {
-            throw error;
-        }
-    }
+    const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions";
+    await axiosInstance.post(request, {
+        suggestion: suggestionArg,
+        argumentation: argumentationArg,
+    });
+    return 201;
 }

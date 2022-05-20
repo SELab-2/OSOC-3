@@ -55,7 +55,7 @@ async def test_delete_project(database_session: AsyncSession, auth_client: AuthC
 
     await auth_client.admin()
     endpoint = f"/editions/{edition.name}/projects/{project.project_id}"
-    
+
     async with auth_client:
         response = await auth_client.get(endpoint)
         assert response.status_code == status.HTTP_200_OK
@@ -90,14 +90,16 @@ async def test_create_project(database_session: AsyncSession, auth_client: AuthC
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/projects", json={
             "name": "test",
+            "info_url": "https://info.com",
             "partners": ["ugent"],
             "coaches": [user.user_id]
         })
-    
+
         assert response.status_code == status.HTTP_201_CREATED
         json: dict = response.json()
         assert "projectId" in json
         assert json["name"] == "test"
+        assert json["infoUrl"] == "https://info.com"
         assert json["partners"][0]["name"] == "ugent"
         assert json["coaches"][0]["name"] == user.name
         assert len(json["projectRoles"]) == 0
@@ -115,14 +117,15 @@ async def test_create_project_same_partner(database_session: AsyncSession, auth_
 
     await auth_client.admin()
     async with auth_client:
-        
         await auth_client.post(f"/editions/{edition.name}/projects", json={
             "name": "test",
+            "info_url": "https://info.com",
             "partners": ["ugent"],
             "coaches": [user.user_id]
         })
         await auth_client.post(f"/editions/{edition.name}/projects", json={
             "name": "test",
+            "info_url": "https://info.com",
             "partners": ["ugent"],
             "coaches": [user.user_id]
         })
@@ -143,11 +146,11 @@ async def test_create_project_non_existing_coach(database_session: AsyncSession,
     async with auth_client:
         response = await auth_client.post(endpoint, json={
             "name": "test",
+            "info_url": "https://info.com",
             "partners": ["ugent"],
             "coaches": [0]
         })
         assert response.status_code == status.HTTP_404_NOT_FOUND
-
 
         response = await auth_client.get(f"/editions/{edition.name}/projects/")
         assert len(response.json()['projects']) == 0
@@ -164,12 +167,62 @@ async def test_create_project_no_name(database_session: AsyncSession, auth_clien
     await database_session.begin_nested()
     async with auth_client:
         response = await auth_client.post(f"/editions/{edition.name}/projects", json={
+            "info_url": "https://info.com",
             "partners": [],
             "coaches": []
         })
-    
+
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    
+
+        response = await auth_client.get(f"/editions/{edition.name}/projects/", follow_redirects=True)
+        assert len(response.json()['projects']) == 0
+
+
+async def test_create_project_no_input_url(database_session: AsyncSession, auth_client: AuthClient):
+    """Tests creating a project that has no name"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    await database_session.begin_nested()
+    async with auth_client:
+        response = await auth_client.post(f"/editions/{edition.name}/projects", json={
+            "name": "test",
+            "partners": [],
+            "coaches": []
+        })
+
+        assert response.status_code == status.HTTP_201_CREATED
+        json: dict = response.json()
+        assert "projectId" in json
+        assert json["name"] == "test"
+        assert json["infoUrl"] is None
+        assert len(json["partners"]) == 0
+        assert len(json["coaches"]) == 0
+        assert len(json["projectRoles"]) == 0
+
+
+async def test_create_project_invalid_input_url(database_session: AsyncSession, auth_client: AuthClient):
+    """Tests creating a project that has no name"""
+    edition: Edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    await database_session.commit()
+
+    await auth_client.admin()
+
+    await database_session.begin_nested()
+    async with auth_client:
+        response = await auth_client.post(f"/editions/{edition.name}/projects", json={
+            "name": "test",
+            "info_url": "ssh://info.com",
+            "partners": [],
+            "coaches": []
+        })
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
         response = await auth_client.get(f"/editions/{edition.name}/projects/", follow_redirects=True)
         assert len(response.json()['projects']) == 0
 
@@ -253,9 +306,9 @@ async def test_patch_wrong_project(database_session: AsyncSession, auth_client: 
         assert json['projects'][0]['name'] == project.name
 
 
-async def test_create_project_old_edition(database_session: AsyncSession, auth_client: AuthClient):
+async def test_create_project_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
     """test create a project for a readonly edition"""
-    edition_22: Edition = Edition(year=2022, name="ed2022")
+    edition_22: Edition = Edition(year=2022, name="ed2022", readonly=True)
     edition_23: Edition = Edition(year=2023, name="ed2023")
     database_session.add(edition_22)
     database_session.add(edition_23)

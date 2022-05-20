@@ -21,3 +21,12 @@ def validate_edition(edition: str):
     """
     if not re.fullmatch(r"[a-zA-Z0-9_-]+", edition):
         raise ValidationException("Spaces detected in the edition name")
+
+
+def validate_url(info_url: str | None):
+    """Verify the info_url is actually an url"""
+    if not info_url:
+        return None
+    if info_url.startswith('https://') or info_url.startswith('http://'):
+        return info_url
+    raise ValidationException('info_url should be a link starting with http:// or https://')

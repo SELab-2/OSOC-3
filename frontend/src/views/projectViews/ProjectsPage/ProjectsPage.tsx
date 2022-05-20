@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getProjects } from "../../../utils/api/projects";
 import { CreateButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
@@ -8,6 +8,8 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { isReadonlyEdition } from "../../../utils/logic";
+import { toast } from "react-toastify";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -19,7 +21,8 @@ export default function ProjectPage() {
     const [loading, setLoading] = useState(false);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
-    const [error, setError] = useState<string | undefined>(undefined);
+
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -52,39 +55,49 @@ export default function ProjectPage() {
         }
 
         setLoading(true);
-        try {
-            const response = await getProjects(editionId, searchString, ownProjects, page);
-            if (response) {
-                if (response.projects.length === 0) {
-                    setMoreProjectsAvailable(false);
-                }
-                if (page === 0) {
-                    setProjects(response.projects);
-                } else {
-                    setProjects(projects.concat(response.projects));
-                }
 
-                if (searchString === "") {
-                    if (response.projects.length === 0) {
-                        setAllProjectsFetched(true);
-                    }
-                    if (page === 0) {
-                        setAllProjects(response.projects);
-                    } else {
-                        setAllProjects(allProjects.concat(response.projects));
-                    }
-                }
-
-                setPage(page + 1);
-                setGotProjects(true);
-            } else {
-                setError("Oops, something went wrong...");
-            }
-        } catch (exception) {
-            setError("Oops, something went wrong...");
+        if (controller !== undefined) {
+            controller.abort();
         }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getProjects(editionId, searchString, ownProjects, page, newController),
+            { error: "Failed to retrieve projects" }
+        );
+        if (response.projects.length === 0) {
+            setMoreProjectsAvailable(false);
+        }
+        if (page === 0) {
+            setProjects(response.projects);
+        } else {
+            setProjects(projects.concat(response.projects));
+        }
+
+        if (searchString === "") {
+            if (response.projects.length === 0) {
+                setAllProjectsFetched(true);
+            }
+            if (page === 0) {
+                setAllProjects(response.projects);
+            } else {
+                setAllProjects(allProjects.concat(response.projects));
+            }
+        }
+
+        setPage(page + 1);
+
+        setGotProjects(true);
         setLoading(false);
     }
+
+    /**
+     * update the projects when the edition changes
+     */
+    useEffect(() => {
+        refreshProjects();
+    }, [editionId]);
 
     /**
      * Reset fetched projects
@@ -132,7 +145,7 @@ export default function ProjectPage() {
                     placeholder="project name"
                 />
 
-                {role === Role.ADMIN && editionId === editions[0] && (
+                {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
                     <CreateButton
                         onClick={() => navigate("/editions/" + editionId + "/projects/new")}
                     >
@@ -158,7 +171,6 @@ export default function ProjectPage() {
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}
-                error={error}
             />
         </div>
     );

@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { SuggestionActionTitle, YesButton, MaybeButton, NoButton } from "./styles";
 import { CreateButton } from "../../../Common/Buttons";
 import { FormControl } from "../../../Common/Forms";
+import { toast } from "react-toastify";
 
 interface Props {
     student: Student;
@@ -48,7 +49,14 @@ export default function CoachSuggestionContainer(props: Props) {
         } else {
             suggestionNum = 3;
         }
-        await makeSuggestion(params.editionId!, params.id!, suggestionNum, argumentation);
+        await toast.promise(
+            makeSuggestion(params.editionId!, params.id!, suggestionNum, argumentation),
+            {
+                error: "Failed to send suggestion",
+                pending: "Sending suggestion",
+                success: "Suggestion successfully sent",
+            }
+        );
         setArgumentation("");
         setShow(false);
     }

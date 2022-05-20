@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import Form from "react-bootstrap/Form";
+import Multiselect from "multiselect-react-dropdown";
+import "./formsStyles.css";
 import { Input } from "react-bootstrap-typeahead";
 
 export const StyledFormControl = styled(Form.Control)`
@@ -25,7 +27,9 @@ export const StyledSearchBar = styled(Form.Control)`
     color: white;
     border: 2px solid #323252;
 
-    &:focus {
+    &:focus,
+    &:hover,
+    &:active {
         background-color: var(--osoc_blue);
         color: white;
         border-color: var(--osoc_green);
@@ -56,4 +60,9 @@ export const StyledInput = styled(Input)`
     &:invalid {
         border: 2px solid var(--osoc_red);
     }
+`;
+
+export const StyledMultiSelect = styled(Multiselect).attrs({ variant: "dark" })`
+    background-color: var(--osoc_blue);
+    color: white;
 `;

@@ -14,8 +14,9 @@ import {
     SubjectValues,
     PersonalInformation,
     InfoHeadContainer,
-    PersonIcon,
     AllName,
+    ActionContainer,
+    ActionsCard,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
@@ -44,14 +45,15 @@ export default function StudentInformation(props: { studentId: number; editionId
      * Get all the suggestion that were made on this student.
      */
     async function getData() {
-        try {
-            const studentResponse = await getStudent(props.editionId, props.studentId);
-            const suggenstionsResponse = await getSuggestions(props.editionId, props.studentId);
-            setStudent(studentResponse);
-            setSuggestions(suggenstionsResponse.suggestions);
-        } catch (error) {
-            toast.error("Failed to get details", { toastId: "fetch_student_details_failed" });
-        }
+        const studentResponse = await toast.promise(getStudent(props.editionId, props.studentId), {
+            error: "Failed to get details",
+        });
+        const suggestionsResponse = await toast.promise(
+            getSuggestions(props.editionId, props.studentId),
+            { error: "Failed to get suggestions" }
+        );
+        setStudent(studentResponse);
+        setSuggestions(suggestionsResponse.suggestions);
     }
 
     /**
@@ -85,7 +87,6 @@ export default function StudentInformation(props: { studentId: number; editionId
             <StudentInformationContainer>
                 <InfoHeadContainer>
                     <NameContainer>
-                        <PersonIcon />
                         <AllName>
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
@@ -97,6 +98,15 @@ export default function StudentInformation(props: { studentId: number; editionId
                             </div>
                         </AllName>
                     </NameContainer>
+                    <ActionContainer>
+                        <ActionsCard className="CardContainer" border="primary">
+                            <Card.Header className="CardHeader">Actions</Card.Header>
+                            <Card.Body className="CardBody">
+                                <CoachSuggestionContainer student={student} />
+                                {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
+                            </Card.Body>
+                        </ActionsCard>
+                    </ActionContainer>
                 </InfoHeadContainer>
                 <Card className="CardContainer" border="primary">
                     <Card.Header className="CardHeader">Suggestions</Card.Header>
@@ -144,13 +154,6 @@ export default function StudentInformation(props: { studentId: number; editionId
                         {student.skills.map(skill => (
                             <RoleValue key={skill.skillId}>{skill.name}</RoleValue>
                         ))}
-                    </Card.Body>
-                </Card>
-                <Card className="CardContainer" border="primary">
-                    <Card.Header className="CardHeader">Actions</Card.Header>
-                    <Card.Body className="CardBody">
-                        <CoachSuggestionContainer student={student} />
-                        {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
                     </Card.Body>
                 </Card>
                 <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />

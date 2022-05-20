@@ -149,7 +149,7 @@ async def test_get_all_admins_paginated_filter_name(database_session: AsyncSessi
             DB_PAGE_SIZE * 1.5), 0)
 
 
-async def test_get_user_edition_names_empty(database_session: AsyncSession):
+async def test_get_user_editions_empty(database_session: AsyncSession):
     """Test getting all editions from a user when there are none"""
     user = models.User(name="test")
     database_session.add(user)
@@ -158,11 +158,11 @@ async def test_get_user_edition_names_empty(database_session: AsyncSession):
     # query the user to initiate association tables
     await database_session.execute(select(models.User).where(models.User.user_id == user.user_id))
     # No editions yet
-    editions = await users_crud.get_user_edition_names(database_session, user)
+    editions = await users_crud.get_user_editions(database_session, user)
     assert len(editions) == 0
 
 
-async def test_get_user_edition_names_admin(database_session: AsyncSession):
+async def test_get_user_editions_admin(database_session: AsyncSession):
     """Test getting all editions for an admin"""
     user = models.User(name="test", admin=True)
     database_session.add(user)
@@ -175,11 +175,11 @@ async def test_get_user_edition_names_admin(database_session: AsyncSession):
     await database_session.execute(select(models.User).where(models.User.user_id == user.user_id))
 
     # Not added to edition yet, but admin can see it anyway
-    editions = await users_crud.get_user_edition_names(database_session, user)
+    editions = await users_crud.get_user_editions(database_session, user)
     assert len(editions) == 1
 
 
-async def test_get_user_edition_names_coach(database_session: AsyncSession):
+async def test_get_user_editions_coach(database_session: AsyncSession):
     """Test getting all editions for a coach when they aren't empty"""
     user = models.User(name="test")
     database_session.add(user)
@@ -192,7 +192,7 @@ async def test_get_user_edition_names_coach(database_session: AsyncSession):
     await database_session.execute(select(models.User).where(models.User.user_id == user.user_id))
 
     # No editions yet
-    editions = await users_crud.get_user_edition_names(database_session, user)
+    editions = await users_crud.get_user_editions(database_session, user)
     assert len(editions) == 0
 
     # Add user to a new edition
@@ -200,9 +200,8 @@ async def test_get_user_edition_names_coach(database_session: AsyncSession):
     database_session.add(user)
     await database_session.commit()
 
-    # No editions yet
-    editions = await users_crud.get_user_edition_names(database_session, user)
-    assert editions == [edition.name]
+    editions = await users_crud.get_user_editions(database_session, user)
+    assert editions[0].name == edition.name
 
 
 async def test_get_all_users_from_edition(database_session: AsyncSession, data: dict[str, str]):

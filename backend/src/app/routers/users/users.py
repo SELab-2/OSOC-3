@@ -5,6 +5,7 @@ from starlette.responses import Response
 
 import src.app.logic.users as logic
 from src.app.routers.tags import Tags
+from src.app.schemas.editions import Edition
 from src.app.schemas.login import UserData
 from src.app.schemas.users import UsersListResponse, AdminPatch, UserRequestsResponse, user_model_to_schema, \
     FilterParameters
@@ -32,8 +33,8 @@ async def get_users(
 async def get_current_user(db: AsyncSession = Depends(get_session), user: UserDB = Depends(get_user_from_access_token)):
     """Get a user based on their authorization credentials"""
     user_data = user_model_to_schema(user).__dict__
-    user_data["editions"] = await logic.get_user_editions(db, user)
-
+    editions = await logic.get_user_editions(db, user)
+    user_data["editions"] = list(map(Edition.from_orm, editions))
     return user_data
 
 

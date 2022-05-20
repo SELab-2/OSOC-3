@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
 import { PendingRequests } from "../../components/UsersComponents/Requests";
 import { User } from "../../utils/api/users/users";
 import { getCoaches } from "../../utils/api/users/coaches";
+import { toast } from "react-toastify";
 
 /**
  * Page for admins to manage coach and admin settings.
@@ -15,13 +16,15 @@ function UsersPage() {
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [gotData, setGotData] = useState(false); // Received data
-    const [error, setError] = useState(""); // Error message
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
     const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
 
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
+
     const params = useParams();
+    const navigate = useNavigate();
 
     /**
      * Request the next page from the list of coaches.
@@ -43,36 +46,49 @@ function UsersPage() {
         }
 
         setLoading(true);
-        setError("");
-        try {
-            const response = await getCoaches(params.editionId as string, searchTerm, page);
+
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getCoaches(params.editionId as string, searchTerm, page, newController),
+            { error: "Failed to retrieve coaches" }
+        );
+        if (response.users.length === 0) {
+            setMoreCoachesAvailable(false);
+        }
+        if (page === 0) {
+            setCoaches(response.users);
+        } else {
+            setCoaches(coaches.concat(response.users));
+        }
+
+        if (searchTerm === "") {
             if (response.users.length === 0) {
-                setMoreCoachesAvailable(false);
+                setAllCoachesFetched(true);
             }
             if (page === 0) {
-                setCoaches(response.users);
+                setAllCoaches(response.users);
             } else {
-                setCoaches(coaches.concat(response.users));
+                setAllCoaches(allCoaches.concat(response.users));
             }
-
-            if (searchTerm === "") {
-                if (response.users.length === 0) {
-                    setAllCoachesFetched(true);
-                }
-                if (page === 0) {
-                    setAllCoaches(response.users);
-                } else {
-                    setAllCoaches(allCoaches.concat(response.users));
-                }
-            }
-
-            setPage(page + 1);
-            setGotData(true);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
         }
+
+        setPage(page + 1);
+
+        setGotData(true);
         setLoading(false);
     }
+
+    /**
+     * update the coaches when the edition changes
+     */
+    useEffect(() => {
+        refreshCoaches();
+    }, [params.editionId]);
 
     /**
      * Set the searchTerm and request the first page with this filter.
@@ -89,7 +105,7 @@ function UsersPage() {
 
     /**
      * Reset the list of coaches and get the first page.
-     * Used when a new coach is added.
+     * Used when a new coach is added, or when the edition is changed.
      */
     function refreshCoaches() {
         setCoaches([]);
@@ -109,11 +125,16 @@ function UsersPage() {
                 return object !== coach;
             })
         );
+        setAllCoaches(
+            allCoaches.filter(object => {
+                return object !== coach;
+            })
+        );
     }
 
     if (params.editionId === undefined) {
-        // If this happens, User should be redirected to error page
-        return <div>Error</div>;
+        navigate("/404-not-found");
+        return null;
     } else {
         return (
             <div>
@@ -123,7 +144,6 @@ function UsersPage() {
                     edition={params.editionId}
                     coaches={coaches}
                     gotData={gotData}
-                    error={error}
                     getMoreCoaches={getCoachesData}
                     searchCoaches={filterCoachesData}
                     moreCoachesAvailable={moreCoachesAvailable}

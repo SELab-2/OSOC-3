@@ -1,0 +1,45 @@
+.optionListContainer {
+    background-color: var(--osoc_blue);
+    color: white;
+}
+
+.searchWrapper {
+    border: 2px solid #323252;
+}
+
+.searchWrapper:hover {
+    border: 2px solid var(--osoc_green);
+}
+
+.searchWrapper:active {
+    border: 2px solid var(--osoc_green);
+}
+
+.multiSelectContainer input {
+    color: white;
+}
+
+.icon_down_dir {
+    filter: invert(70%);
+}
+
+.multiSelectContainer li:hover {
+    background-color: #363649 !important;
+}
+
+.multiSelectContainer ul {
+    border: none;
+}
+
+.chip {
+    background-color: var(--osoc_green);
+    color: var(--osoc_blue);
+}
+
+.icon_cancel {
+    filter: invert(80%);
+}
+
+.highlightOption {
+    background-color: transparent;
+}
