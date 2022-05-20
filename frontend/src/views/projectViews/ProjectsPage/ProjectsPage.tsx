@@ -32,7 +32,7 @@ export default function ProjectPage() {
     const params = useParams();
     const editionId = params.editionId!;
 
-    const { role, editions } = useAuth();
+    const { role, editions, userId } = useAuth();
 
     /**
      * Used to fetch the projects
@@ -45,13 +45,19 @@ export default function ProjectPage() {
             return;
         }
 
-        if (ownProjects) {
-            setAllProjectsFetched(false);
-        } else if (allProjectsFetched) {
+        if (allProjectsFetched) {
+            const newUserId: number = userId === null ? -1 : userId;
+
             setProjects(
-                allProjects.filter(project =>
-                    project.name.toUpperCase().includes(searchString.toUpperCase())
-                )
+                allProjects
+                    .filter(project =>
+                        project.name.toUpperCase().includes(searchString.toUpperCase())
+                    )
+                    .filter(
+                        project =>
+                            !ownProjects ||
+                            project.coaches.map(coach => coach.userId).includes(newUserId)
+                    )
             );
             setMoreProjectsAvailable(false);
             return;
