@@ -42,7 +42,7 @@ export default function Navbar() {
     // Matched /editions/new path
     if (editionId === "new") {
         editionId = null;
-    } else if (editionId && !editions.includes(editionId)) {
+    } else if (editionId && !editions.find(e => e.name === editionId)) {
         // If the edition was not found in the user's list of editions,
         // don't display it in the navbar!
         // This will lead to a 404 or 403 re-route either way, so keep
@@ -53,7 +53,7 @@ export default function Navbar() {
     // If the current URL contains an edition, use that
     // if not (eg. /editions), check SessionStorage
     // otherwise, use the most-recent edition from the auth response
-    const currentEdition = editionId || getCurrentEdition() || editions[0];
+    const currentEdition = editionId || getCurrentEdition() || editions[0].name;
 
     // Set the value of the new edition in SessionStorage if useful
     if (currentEdition) {
