@@ -8,7 +8,6 @@ import {
     DropDownButtonDiv,
     SearchDiv,
     FilterDiv,
-    SearchAndFilterDiv,
     CenterDiv,
     MessageDiv,
     MailOverviewDiv,
@@ -19,8 +18,6 @@ import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
 import { toast } from "react-toastify";
-import { StyledTable } from "../../components/Common/Tables/styles";
-import { Error } from "../../components/Common/Users/styles";
 import { StyledTable } from "../../components/Common/Tables/styles";
 import SearchBar from "../../components/Common/Forms/SearchBar";
 import { CommonMultiselect } from "../../components/Common/Forms";
