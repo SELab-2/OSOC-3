@@ -1,7 +1,7 @@
 import React from "react";
-import { StudentRemoveButton } from "../styles";
 import { removeStudent } from "../../../utils/api/students";
 import { useNavigate } from "react-router-dom";
+import { DeleteButton } from "../../Common/Buttons";
 
 /**
  * Component that removes the current student.
@@ -17,9 +17,5 @@ export default function RemoveStudentButton(props: { editionId: string; studentI
         navigate(`/editions/${props.editionId}/students/`);
     }
 
-    return (
-        <StudentRemoveButton onClick={() => handleRemoveStudent()}>
-            Remove Student
-        </StudentRemoveButton>
-    );
+    return <DeleteButton onClick={() => handleRemoveStudent()}>Remove Student</DeleteButton>;
 }

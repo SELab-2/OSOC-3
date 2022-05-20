@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
 import { RemoveAdminBody } from "./styles";
-import { Error } from "../Common/Users/styles";
 import { ModalContentWarning } from "../Common/styles";
+import { toast } from "react-toastify";
+import DeleteButton from "../Common/Buttons/DeleteButton";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
@@ -13,38 +14,35 @@ import { ModalContentWarning } from "../Common/styles";
  */
 export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: User) => void }) {
     const [show, setShow] = useState(false);
-    const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
         setShow(true);
-        setError("");
     };
 
     async function removeUserAsAdmin(removeCoach: boolean) {
-        try {
-            let removed;
-            if (removeCoach) {
-                removed = await removeAdminAndCoach(props.admin.userId);
-            } else {
-                removed = await removeAdmin(props.admin.userId);
-            }
-
-            if (removed) {
-                props.removeAdmin(props.admin);
-            } else {
-                setError("Something went wrong. Failed to remove admin");
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to remove admin");
+        if (removeCoach) {
+            await toast.promise(removeAdminAndCoach(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
+        } else {
+            await toast.promise(removeAdmin(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
         }
+
+        props.removeAdmin(props.admin);
     }
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={handleShow}>
+            <DeleteButton showIcon={false} size="sm" onClick={handleShow}>
                 Remove
-            </Button>
+            </DeleteButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentWarning>
@@ -59,32 +57,25 @@ export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: Us
                         </RemoveAdminBody>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 removeUserAsAdmin(false);
-                                if (!error) {
-                                    handleClose();
-                                }
                             }}
                         >
                             Remove admin
-                        </Button>
-                        <Button
-                            variant="primary"
+                        </DeleteButton>
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 removeUserAsAdmin(true);
-                                if (!error) {
-                                    handleClose();
-                                }
                             }}
                         >
                             Remove as admin and coach
-                        </Button>
+                        </DeleteButton>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentWarning>
             </Modal>

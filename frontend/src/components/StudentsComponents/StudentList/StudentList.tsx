@@ -21,7 +21,7 @@ export default function StudentList(props: Props) {
             <InfiniteScroll
                 loadMore={props.getMoreData}
                 hasMore={props.moreDataAvailable}
-                loader={<LoadSpinner show={true} />}
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >
