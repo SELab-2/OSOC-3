@@ -23,6 +23,7 @@ import {
 } from "../../../utils/session-storage/student-filters";
 import ConfirmFilters from "./ConfirmFilters/ConfirmFilters";
 import LoadSpinner from "../../Common/LoadSpinner";
+import { DragDropContext } from "react-beautiful-dnd";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -184,11 +185,13 @@ export default function StudentListFilters() {
         }
     } else {
         list = (
-            <StudentList
-                students={students}
-                getMoreData={getData}
-                moreDataAvailable={moreDataAvailable}
-            />
+            <DragDropContext onDragEnd={result => console.log(result)}>
+                <StudentList
+                    students={students}
+                    getMoreData={getData}
+                    moreDataAvailable={moreDataAvailable}
+                />
+            </DragDropContext>
         );
     }
 
