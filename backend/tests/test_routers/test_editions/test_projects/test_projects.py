@@ -465,7 +465,14 @@ async def test_update_project_role(database_session: AsyncSession, auth_client: 
             "description": "changed",
             "slots": 2
         })
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_200_OK
+        json = response.json()
+        print(json)
+        assert json["projectRoleId"] == 1
+        assert json["projectId"] == 1
+        assert json["description"] == "changed"
+        assert json["skill"]["skillId"] == 1
+        assert json["slots"] == 2
         response = await auth_client.get("/editions/ed2022/projects/1/roles")
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
