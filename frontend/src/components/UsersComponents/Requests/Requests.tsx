@@ -19,6 +19,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
     const [loading, setLoading] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
+    const [requestedEdition, setRequestedEdition] = useState(props.edition);
     const [open, setOpen] = useState(false); // Collapsible is open
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
     const [allRequestsFetched, setAllRequestsFetched] = useState(false);
@@ -116,9 +117,13 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     useEffect(() => {
         setPage(0);
         setMoreRequestsAvailable(true);
+        if (props.edition !== requestedEdition) {
+            setAllRequestsFetched(false);
+            setRequests([]);
+        }
         getData(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
+    }, [searchTerm, props.edition]);
 
     let list;
     if (requests.length === 0) {

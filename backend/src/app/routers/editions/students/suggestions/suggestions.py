@@ -5,7 +5,7 @@ from starlette import status
 from starlette.responses import Response
 
 from src.app.routers.tags import Tags
-from src.app.utils.dependencies import require_auth, get_student, get_suggestion
+from src.app.utils.dependencies import get_latest_edition, require_auth, get_student, get_suggestion
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, User, Suggestion
@@ -22,7 +22,7 @@ students_suggestions_router = APIRouter(
     "",
     status_code=status.HTTP_201_CREATED,
     response_model=SuggestionResponse,
-    dependencies=[Depends(live)]
+    dependencies=[Depends(live), Depends(get_latest_edition)]
 )
 async def create_suggestion(new_suggestion: NewSuggestion, student: Student = Depends(get_student),
                             db: AsyncSession = Depends(get_session), user: User = Depends(require_auth)):
@@ -50,8 +50,8 @@ async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User 
 
 @students_suggestions_router.put(
     "/{suggestion_id}",
-    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-    dependencies=[Depends(get_student), Depends(live)]
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(get_student), Depends(live), Depends(get_latest_edition)]
 )
 async def edit_suggestion(new_suggestion: NewSuggestion, db: AsyncSession = Depends(get_session),
                           user: User = Depends(require_auth), suggestion: Suggestion = Depends(get_suggestion)):

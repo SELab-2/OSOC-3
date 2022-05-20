@@ -32,14 +32,22 @@ async def get_edition(edition_name: str, database: AsyncSession = Depends(get_se
     return await get_edition_by_name(database, edition_name)
 
 
-async def get_student(student_id: int, database: AsyncSession = Depends(get_session)) -> Student:
+async def get_student(student_id: int, database: AsyncSession = Depends(get_session),
+                      edition: Edition = Depends(get_edition)) -> Student:
     """Get the student from the database, given the id in the path"""
-    return await get_student_by_id(database, student_id)
+    student: Student = await get_student_by_id(database, student_id)
+    if student.edition != edition:
+        raise NotFound()
+    return student
 
 
-async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session)) -> Suggestion:
+async def get_suggestion(suggestion_id: int, database: AsyncSession = Depends(get_session),
+                         student: Student = Depends(get_student)) -> Suggestion:
     """Get the suggestion from the database, given the id in the path"""
-    return await get_suggestion_by_id(database, suggestion_id)
+    suggestion: Suggestion = await get_suggestion_by_id(database, suggestion_id)
+    if suggestion.student != student:
+        raise NotFound()
+    return suggestion
 
 
 async def get_latest_edition(edition: Edition = Depends(get_edition), database: AsyncSession = Depends(get_session)) \

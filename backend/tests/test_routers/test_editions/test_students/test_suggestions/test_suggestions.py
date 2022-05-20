@@ -136,7 +136,7 @@ async def test_get_suggestions_of_student(database_with_data: AsyncSession, auth
         assert (await auth_client.post("/editions/ed2022/students/2/suggestions", json={
             "suggestion": 3, "argumentation": "Neen"})).status_code == status.HTTP_201_CREATED
         res = await auth_client.get(
-            "/editions/1/students/2/suggestions")
+            "/editions/ed2022/students/2/suggestions")
         assert res.status_code == status.HTTP_200_OK
         res_json = res.json()
         assert len(res_json["suggestions"]) == 2
@@ -183,10 +183,30 @@ async def test_delete_suggestion_coach_their_review(database_with_data: AsyncSes
         assert new_suggestion.status_code == status.HTTP_201_CREATED
         suggestion_id = new_suggestion.json()["suggestion"]["suggestionId"]
         assert (await auth_client.delete(
-            f"/editions/ed2022/students/1/suggestions/{suggestion_id}")).status_code == status.HTTP_204_NO_CONTENT
+            f"/editions/ed2022/students/2/suggestions/{suggestion_id}")).status_code == status.HTTP_204_NO_CONTENT
         suggestions: list[Suggestion] = (await database_with_data.execute(select(
             Suggestion).where(Suggestion.suggestion_id == suggestion_id))).unique().scalars().all()
         assert len(suggestions) == 0
+
+
+async def test_delete_suggestion_wrong_student(database_with_data: AsyncSession, auth_client: AuthClient):
+    """Test you can't delete an suggestion that's don't belong to that student"""
+    edition: Edition = (await database_with_data.execute(select(Edition))).scalars().all()[0]
+    await auth_client.coach(edition)
+    async with auth_client:
+        new_suggestion = await auth_client.post("/editions/ed2022/students/2/suggestions",
+                                                json={"suggestion": 1, "argumentation": "test"})
+        assert new_suggestion.status_code == status.HTTP_201_CREATED
+        suggestion_id = new_suggestion.json()["suggestion"]["suggestionId"]
+        assert (await auth_client.delete(
+            f"/editions/ed2022/students/1/suggestions/{suggestion_id}")).status_code == status.HTTP_404_NOT_FOUND
+        res = await auth_client.get(
+            "/editions/ed2022/students/2/suggestions")
+        assert res.status_code == status.HTTP_200_OK
+        res_json = res.json()
+        assert len(res_json["suggestions"]) == 1
+        assert res_json["suggestions"][0]["suggestion"] == 1
+        assert res_json["suggestions"][0]["argumentation"] == "test"
 
 
 async def test_delete_suggestion_coach_other_review(database_with_data: AsyncSession, auth_client: AuthClient):
@@ -237,7 +257,7 @@ async def test_update_suggestion_coach_their_review(database_with_data: AsyncSes
                                                 json={"suggestion": 1, "argumentation": "test"})
         assert new_suggestion.status_code == status.HTTP_201_CREATED
         suggestion_id = new_suggestion.json()["suggestion"]["suggestionId"]
-        assert (await auth_client.put(f"/editions/ed2022/students/1/suggestions/{suggestion_id}", json={
+        assert (await auth_client.put(f"/editions/ed2022/students/2/suggestions/{suggestion_id}", json={
             "suggestion": 3, "argumentation": "test"})).status_code == status.HTTP_204_NO_CONTENT
         suggestion: Suggestion = (await database_with_data.execute(select(
             Suggestion).where(Suggestion.suggestion_id == suggestion_id))).unique().scalar_one()

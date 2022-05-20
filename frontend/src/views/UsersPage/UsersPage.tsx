@@ -16,6 +16,7 @@ function UsersPage() {
     const [coaches, setCoaches] = useState<User[]>([]); // All coaches from the selected edition
     const [loading, setLoading] = useState(false); // Waiting for data (used for spinner)
     const [moreCoachesAvailable, setMoreCoachesAvailable] = useState(true); // Endpoint has more coaches available
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId)
     const [allCoachesFetched, setAllCoachesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter for coachlist
     const [page, setPage] = useState(0); // The next page to request
@@ -90,15 +91,19 @@ function UsersPage() {
     }
 
     useEffect(() => {
-        setPage(0);
-        setMoreCoachesAvailable(true);
-        getCoachesData(-1);
+        if (params.editionId !== requestedEdition) {
+            refreshCoaches();
+        } else {
+            setPage(0);
+            setMoreCoachesAvailable(true);
+            getCoachesData(-1);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
+    }, [searchTerm, params.editionId]);
 
     /**
      * Reset the list of coaches and get the first page.
-     * Used when a new coach is added.
+     * Used when a new coach is added, or when the edition is changed.
      */
     function refreshCoaches() {
         setCoaches([]);
