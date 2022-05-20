@@ -116,7 +116,6 @@ async def post_project_role(
 
 @projects_router.patch(
     "/{project_id}/roles/{project_role_id}",
-    response_model=ProjectRoleSchema,
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(require_admin), Depends(get_latest_edition), Depends(get_project), Depends(live)]
 )
@@ -125,7 +124,7 @@ async def patch_project_role(
         project_role_id: int,
         db: AsyncSession = Depends(get_session)):
     """Create a new project role"""
-    return await logic.patch_project_role(db, project_role_id, input_project_role)
+    await logic.patch_project_role(db, project_role_id, input_project_role)
 
 
 @projects_router.delete(
