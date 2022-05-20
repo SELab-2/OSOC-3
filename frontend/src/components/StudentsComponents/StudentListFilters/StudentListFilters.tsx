@@ -176,10 +176,12 @@ export default function StudentListFilters() {
     }, [params.editionId]);
 
     let list;
-    if (loading) {
-        list = <LoadSpinner show={true} />;
-    } else if (students.length === 0) {
-        list = <MessageDiv>No students found</MessageDiv>;
+    if (students.length === 0) {
+        if (loading) {
+            list = <LoadSpinner show={true} />;
+        } else {
+            list = <MessageDiv>No students found</MessageDiv>;
+        }
     } else {
         list = (
             <StudentList
