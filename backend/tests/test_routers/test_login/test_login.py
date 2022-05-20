@@ -66,3 +66,33 @@ async def test_login_existing_wrong_credentials(database_session: AsyncSession, 
     }
     async with test_client:
         assert (await test_client.post("/login/token/email", data=form)).status_code == status.HTTP_401_UNAUTHORIZED
+
+
+async def test_refresh(database_session: AsyncSession, test_client: AsyncClient):
+    """test refresh token"""
+    email = "test@ema.il"
+    password = "password"
+
+    # Create new user & auth entries in db
+    user = User(name="test")
+
+    database_session.add(user)
+    await database_session.commit()
+
+    auth = AuthEmail(pw_hash=security.get_password_hash(password), email=email)
+    auth.user = user
+    database_session.add(auth)
+    await database_session.commit()
+
+    # Try to get a token using the credentials for the new user
+    form = {
+        "username": email,
+        "password": password
+    }
+    async with test_client:
+        response_login = await test_client.post("/login/token/email", data=form)
+        assert response_login.status_code == status.HTTP_200_OK
+        token:str = response_login.json()["refresh_token"]
+        response_refresh = await test_client.post("/login/refresh", headers={"Authorization": "Bearer " + token })
+        assert response_login.status_code == status.HTTP_200_OK
+        assert response_login.json() == response_refresh.json()
