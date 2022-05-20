@@ -17,6 +17,7 @@ interface Props {
     setSuggestedFilter: (suggested: boolean) => void;
     setStudentCoachVolunteerFilter: (studentCoachVolunteer: boolean) => void;
     setConfirmFilter: (confirm: DropdownRole[]) => void;
+    setPage: (page: number) => void;
 }
 
 /**
@@ -34,6 +35,7 @@ export default function ResetFiltersButton(props: Props) {
         props.setSuggestedFilter(false);
         props.setRolesFilter([]);
         props.setConfirmFilter([]);
+        props.setPage(0);
         setNameFilterStorage(null);
         setAlumniFilterStorage(null);
         setStudentCoachVolunteerFilterStorage(null);

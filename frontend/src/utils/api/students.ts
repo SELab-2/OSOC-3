@@ -24,6 +24,7 @@ export async function getStudents(
     page: number
 ): Promise<Students> {
     let rolesRequestField: string = "";
+
     for (const role of rolesFilter) {
         rolesRequestField += "skill_ids=" + role.value.toString() + "&";
     }
@@ -95,19 +96,10 @@ export async function makeSuggestion(
     suggestionArg: number,
     argumentationArg: string
 ): Promise<number> {
-    try {
-        const request =
-            "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions";
-        await axiosInstance.post(request, {
-            suggestion: suggestionArg,
-            argumentation: argumentationArg,
-        });
-        return 201;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            return 422;
-        } else {
-            throw error;
-        }
-    }
+    const request = "/editions/" + edition + "/students/" + studentId.toString() + "/suggestions";
+    await axiosInstance.post(request, {
+        suggestion: suggestionArg,
+        argumentation: argumentationArg,
+    });
+    return 201;
 }

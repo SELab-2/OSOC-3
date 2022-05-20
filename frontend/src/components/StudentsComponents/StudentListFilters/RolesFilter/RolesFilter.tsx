@@ -14,13 +14,16 @@ export interface DropdownRole {
  * Component that filters the students list based on the current roles selected.
  * @param rolesFilter
  * @param setRolesFilter
+ * @param setPage Function to set the page to fetch next
  */
 export default function RolesFilter({
     rolesFilter,
     setRolesFilter,
+    setPage,
 }: {
     rolesFilter: DropdownRole[];
     setRolesFilter: (value: DropdownRole[]) => void;
+    setPage: (page: number) => void;
 }) {
     const [roles, setRoles] = useState<DropdownRole[]>([]);
 
@@ -55,7 +58,10 @@ export default function RolesFilter({
                     isSearchable
                     placeholder="Choose roles..."
                     value={rolesFilter}
-                    onChange={e => handleRolesChange(e)}
+                    onChange={e => {
+                        handleRolesChange(e);
+                        setPage(0);
+                    }}
                 />
             </FilterRolesDropdownContainer>
         </FilterRoles>

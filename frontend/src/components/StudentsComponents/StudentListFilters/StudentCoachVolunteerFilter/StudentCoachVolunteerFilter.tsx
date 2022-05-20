@@ -6,13 +6,16 @@ import { setStudentCoachVolunteerFilterStorage } from "../../../../utils/session
  * Component that filters the students list based on the student coach field.
  * @param studentCoachVolunteerFilter
  * @param setStudentCoachVolunteerFilter
+ * @param setPage Function to set the page to fetch next
  */
 export default function StudentCoachVolunteerFilter({
     studentCoachVolunteerFilter,
     setStudentCoachVolunteerFilter,
+    setPage,
 }: {
     studentCoachVolunteerFilter: boolean;
     setStudentCoachVolunteerFilter: (value: boolean) => void;
+    setPage: (page: number) => void;
 }) {
     return (
         <div>
@@ -25,6 +28,7 @@ export default function StudentCoachVolunteerFilter({
                     setStudentCoachVolunteerFilter(e.target.checked);
                     setStudentCoachVolunteerFilterStorage(String(e.target.checked));
                     e.target.checked = studentCoachVolunteerFilter;
+                    setPage(0);
                 }}
             />
         </div>
