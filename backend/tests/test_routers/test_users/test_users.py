@@ -6,7 +6,7 @@ from starlette import status
 
 from settings import DB_PAGE_SIZE
 from src.database import models
-from src.database.models import user_editions, CoachRequest
+from src.database.models import user_editions, CoachRequest, Edition, User
 from tests.utils.authorization import AuthClient
 
 
@@ -721,3 +721,20 @@ async def test_reject_request(database_session: AsyncSession, auth_client: AuthC
 
         response = await auth_client.post("users/requests/INVALID/reject")
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+async def test_get_current_user(database_session: AsyncSession, auth_client: AuthClient):
+    """Test getting the current user from their access token"""
+    edition = Edition(year=2022, name="ed2022")
+    user = User(name="Pytest Admin", admin=True, editions=[edition])
+    database_session.add(edition)
+    database_session.add(user)
+    await database_session.commit()
+    auth_client.login(user)
+
+    async with auth_client:
+        response = await auth_client.get("/users/current")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json()["userId"] == auth_client.user.user_id
+        assert len(response.json()["editions"]) == 1
+        assert response.json()["editions"][0]["name"] == edition.name
