@@ -10,5 +10,5 @@ class FailedToAddProjectRoleException(Exception):
     """
 
 
-class NoneStrictPostiveNumberOfSlots(Exception):
-    """Exceptioon raised when roles aren't strict postive"""
+class NoStrictlyPositiveNumberOfSlots(Exception):
+    """Exception raised when roles aren't strictly positive"""

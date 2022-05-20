@@ -145,5 +145,5 @@ def install_handlers(app: FastAPI):
     def none_strict_postive_number_of_slots(_request: Request, _exception: NoneStrictPostiveNumberOfSlots):
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content={'message': 'Roles has to be strict positive'}
+            content={'message': 'The amount of slots per role has to be a strictly positive integer'}
         )
