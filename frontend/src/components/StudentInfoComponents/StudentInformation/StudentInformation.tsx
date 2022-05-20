@@ -31,6 +31,9 @@ import { toast } from "react-toastify";
 import StudentCopyLink from "../StudentCopyLink/StudentCopyLink";
 import "./StudentInformation.css";
 import { Card } from "react-bootstrap";
+import QuestionsAndAnswers from "../QuestionsAndAnswers";
+import { getQuestions } from "../../../utils/api/questions";
+import { Question } from "../../../data/interfaces/questions";
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
@@ -38,12 +41,10 @@ import { Card } from "react-bootstrap";
 export default function StudentInformation(props: { studentId: number; editionId: string }) {
     const { role } = useAuth();
 
+    const [questions, setQuestions] = useState<Question[]>([]);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [student, setStudent] = useState<Student | undefined>(undefined);
 
-    /**
-     * Get all the suggestion that were made on this student.
-     */
     async function getData() {
         const studentResponse = await toast.promise(getStudent(props.editionId, props.studentId), {
             error: "Failed to get details",
@@ -52,8 +53,13 @@ export default function StudentInformation(props: { studentId: number; editionId
             getSuggestions(props.editionId, props.studentId),
             { error: "Failed to get suggestions" }
         );
+        const answersRepsonse = await toast.promise(
+            getQuestions(props.editionId, props.studentId),
+            { error: "Failed to get suggestions" }
+        );
         setStudent(studentResponse);
         setSuggestions(suggestionsResponse.suggestions);
+        setQuestions(answersRepsonse);
     }
 
     /**
@@ -156,6 +162,7 @@ export default function StudentInformation(props: { studentId: number; editionId
                         ))}
                     </Card.Body>
                 </Card>
+                <QuestionsAndAnswers questions={questions} />
                 <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
             </StudentInformationContainer>
         );
