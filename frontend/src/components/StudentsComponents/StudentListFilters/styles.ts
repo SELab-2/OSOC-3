@@ -36,6 +36,12 @@ export const RolesTitle = styled.p`
     font-size: 1.7vh;
 `;
 
+export const ConfirmsTitle = styled.p`
+    margin-top: 2%;
+    margin-right: 2%;
+    font-size: 1.7vh;
+`;
+
 export const FilterRoles = styled.div`
     width: 90%;
     display: flex;
@@ -45,7 +51,20 @@ export const FilterRoles = styled.div`
     align-items: center;
 `;
 
+export const FilterConfirms = styled.div`
+    width: 90%;
+    display: flex;
+    align-self: center;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    align-items: center;
+`;
+
 export const FilterRolesDropdownContainer = styled.div`
+    width: 100%;
+`;
+
+export const FilterConfirmsDropdownContainer = styled.div`
     width: 100%;
 `;
 

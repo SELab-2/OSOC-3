@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import StudentList from "../StudentList";
-import { ButtonGroup, Form, ToggleButton } from "react-bootstrap";
-import {
-    StudentListSideMenu,
-    StudentListLinebreak,
-    FilterControls,
-    MessageDiv,
-    ConfirmButtonsContainer,
-} from "./styles";
+import { Form } from "react-bootstrap";
+import { StudentListSideMenu, StudentListLinebreak, FilterControls, MessageDiv } from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
@@ -21,11 +15,13 @@ import { getStudents } from "../../../utils/api/students";
 import SuggestedForFilter from "./SuggestedForFilter/SuggestedForFilter";
 import {
     getAlumniFilter,
+    getConfirmFilter,
     getNameFilter,
     getRolesFilter,
     getStudentCoachVolunteerFilter,
     getSuggestedFilter,
 } from "../../../utils/session-storage/student-filters";
+import ConfirmFilters from "./ConfirmFilters/ConfirmFilters";
 
 /**
  * Component that shows the sidebar with all the filters and student list.
@@ -46,6 +42,7 @@ export default function StudentListFilters() {
         getStudentCoachVolunteerFilter()
     );
     const [suggestedFilter, setSuggestedFilter] = useState(getSuggestedFilter());
+    const [confirmFilter, setConfirmFilter] = useState<DropdownRole[]>(getConfirmFilter());
 
     /**
      * Request all students with selected filters
@@ -101,6 +98,7 @@ export default function StudentListFilters() {
                 alumniFilter,
                 studentCoachVolunteerFilter,
                 suggestedFilter,
+                confirmFilter,
                 requestedPage
             );
 
@@ -117,6 +115,7 @@ export default function StudentListFilters() {
             if (
                 nameFilter === "" &&
                 rolesFilter.length === 0 &&
+                confirmFilter.length === 0 &&
                 !alumniFilter &&
                 !studentCoachVolunteerFilter &&
                 !suggestedFilter
@@ -146,7 +145,14 @@ export default function StudentListFilters() {
         setMoreDataAvailable(true);
         getData(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, suggestedFilter]);
+    }, [
+        nameFilter,
+        rolesFilter,
+        alumniFilter,
+        studentCoachVolunteerFilter,
+        suggestedFilter,
+        confirmFilter,
+    ]);
 
     let list;
     if (students.length === 0) {
@@ -176,39 +182,7 @@ export default function StudentListFilters() {
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                 />
             </Form.Group>
-            <ConfirmButtonsContainer>
-                <ButtonGroup className="ButtonGroupContainer">
-                    <ToggleButton
-                        className="YesToggle"
-                        variant="outline-success"
-                        value={1}
-                        size="sm"
-                    >
-                        Yes
-                    </ToggleButton>
-                    <ToggleButton
-                        className="MaybeToggle"
-                        variant="outline-warning"
-                        value={2}
-                        size="sm"
-                    >
-                        Maybe
-                    </ToggleButton>
-                </ButtonGroup>
-                <ButtonGroup className="ButtonGroupContainer">
-                    <ToggleButton className="NoToggle" variant="outline-danger" value={3} size="sm">
-                        No
-                    </ToggleButton>
-                    <ToggleButton
-                        className="UndecidedToggle"
-                        variant="outline-light"
-                        value={0}
-                        size="sm"
-                    >
-                        Undecided
-                    </ToggleButton>
-                </ButtonGroup>
-            </ConfirmButtonsContainer>
+            <ConfirmFilters confirmFilter={confirmFilter} setConfirmFilter={setConfirmFilter} />
             <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
@@ -217,6 +191,7 @@ export default function StudentListFilters() {
                     setAlumniFilter={setAlumniFilter}
                     setSuggestedFilter={setSuggestedFilter}
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
+                    setConfirmFilter={setConfirmFilter}
                 />
             </FilterControls>
             {list}

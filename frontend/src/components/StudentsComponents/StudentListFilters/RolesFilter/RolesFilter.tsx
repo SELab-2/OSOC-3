@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FilterRoles, FilterRolesDropdownContainer, RolesTitle } from "../styles";
 import Select, { MultiValue } from "react-select";
 import { getSkills } from "../../../../utils/api/skills";
-import "./RolesFilter.css";
+import "../Dropdown.css";
 import { setRolesFilterStorage } from "../../../../utils/session-storage/student-filters";
 
 export interface DropdownRole {

@@ -20,11 +20,16 @@ export async function getStudents(
     alumniFilter: boolean,
     studentCoachVolunteerFilter: boolean,
     suggestedFilter: boolean,
+    confirmFilter: DropdownRole[],
     page: number
 ): Promise<Students> {
     let rolesRequestField: string = "";
     for (const role of rolesFilter) {
         rolesRequestField += "skill_ids=" + role.value.toString() + "&";
+    }
+    let confirmRequestField: string = "";
+    for (const confirmField of confirmFilter) {
+        confirmRequestField += "decisions=" + confirmField.value.toString() + "&";
     }
     const response = await axiosInstance.get(
         "/editions/" +
@@ -39,6 +44,8 @@ export async function getStudents(
             rolesRequestField +
             "&student_coach=" +
             studentCoachVolunteerFilter +
+            "&" +
+            confirmRequestField +
             "&page=" +
             page
     );
