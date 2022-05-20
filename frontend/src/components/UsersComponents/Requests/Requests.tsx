@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Collapsible from "react-collapsible";
 import { RequestsContainer, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
@@ -107,6 +107,25 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
 
         setGotData(true);
         setLoading(false);
+    }
+
+    /**
+     * update the requests when the edition changes
+     */
+    useEffect(() => {
+        refreshRequests();
+    }, [props.edition]);
+
+    /**
+     * Reset the list of requests and get the first page.
+     * Used when the edition is changed.
+     */
+    function refreshRequests() {
+        setRequests([]);
+        setPage(0);
+        setAllRequestsFetched(false);
+        setGotData(false);
+        setMoreRequestsAvailable(true);
     }
 
     function filter(searchTerm: string) {

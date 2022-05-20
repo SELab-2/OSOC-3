@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Coaches } from "../../components/UsersComponents/Coaches";
 import { InviteUser } from "../../components/UsersComponents/InviteUser";
@@ -84,6 +84,13 @@ function UsersPage() {
     }
 
     /**
+     * update the coaches when the edition changes
+     */
+    useEffect(() => {
+        refreshCoaches();
+    }, [params.editionId]);
+
+    /**
      * Set the searchTerm and request the first page with this filter.
      * The current list of coaches will be resetted.
      * @param searchTerm The string to filter coaches with by username.
@@ -98,7 +105,7 @@ function UsersPage() {
 
     /**
      * Reset the list of coaches and get the first page.
-     * Used when a new coach is added.
+     * Used when a new coach is added, or when the edition is changed.
      */
     function refreshCoaches() {
         setCoaches([]);

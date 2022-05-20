@@ -600,8 +600,7 @@ async def test_creat_email_student_in_other_edition(database_with_data: AsyncSes
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
                                           json={"students_id": [3], "email_status": 5})
-    assert response.status_code == status.HTTP_201_CREATED
-    assert len(response.json()["studentEmails"]) == 0
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 async def test_get_emails_no_authorization(database_with_data: AsyncSession, auth_client: AuthClient):

@@ -70,6 +70,7 @@ async def get_students_search(db: AsyncSession, edition: Edition,
     return ReturnStudentList(students=students)
 
 
+
 async def get_student_return(db: AsyncSession, student: Student, edition: Edition) -> ReturnStudent:
     """return a student"""
     if student.edition == edition:

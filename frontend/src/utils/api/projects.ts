@@ -1,5 +1,10 @@
 import axios from "axios";
-import { CreateProject, Project, Projects } from "../../data/interfaces/projects";
+import {
+    Projects,
+    Project,
+    CreateProject,
+    CreateProject as PatchProject,
+} from "../../data/interfaces/projects";
 import { axiosInstance } from "./api";
 
 /**
@@ -56,6 +61,7 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
  * API call to create a project.
  * @param edition The edition name.
  * @param name The name of the new project.
+ * @param infoUrl A info link about the project.
  * @param partners The partners of the project.
  * @param coaches The coaches that will coach the project.
  * @returns The newly created object.
@@ -82,6 +88,43 @@ export async function createProject(
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
+        } else {
+            throw error;
+        }
+    }
+}
+
+/**
+ * API call to edit a project.
+ * @param edition The edition name.
+ * @param projectId: The id of the project.
+ * @param name The name of the new project.
+ * @param infoUrl A info link about the project.
+ * @param partners The partners of the project.
+ * @param coaches The coaches that will coach the project.
+ * @returns whether or not the patch was successful.
+ */
+export async function patchProject(
+    edition: string,
+    projectId: number,
+    name: string,
+    infoUrl: string,
+    partners: string[],
+    coaches: number[]
+): Promise<boolean> {
+    const payload: PatchProject = {
+        name: name,
+        partners: partners,
+        coaches: coaches,
+        info_url: infoUrl,
+    };
+
+    try {
+        await axiosInstance.patch("editions/" + edition + "/projects/" + projectId, payload);
+        return true;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return false;
         } else {
             throw error;
         }

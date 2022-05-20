@@ -29,7 +29,7 @@ import { toast } from "react-toastify";
 /**
  *
  * @param project a Project object
- * @param refreshProjects what to do when a project is deleted.
+ * @param removeProject what to do when a project is deleted.
  * @returns a project card which is a small overview of a project.
  */
 export default function ProjectCard({
@@ -43,9 +43,12 @@ export default function ProjectCard({
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const navigate = useNavigate();
+
     const params = useParams();
     const editionId = params.editionId!;
+    const { role } = useAuth();
+
+    const navigate = useNavigate();
 
     // What to do when deleting a project.
     async function handleDelete() {
@@ -58,8 +61,6 @@ export default function ProjectCard({
             toast.success("Deleted project", { toastId: "deletedProject" });
         }
     }
-
-    const { role } = useAuth();
 
     return (
         <CardContainer>

@@ -18,10 +18,10 @@ export default function SkillInput({
     const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
 
     useEffect(() => {
-        async function callCoaches() {
+        async function callSkills() {
             setAvailableSkills((await getSkills())?.skills || []);
         }
-        callCoaches();
+        callSkills();
     }, []);
 
     return (
