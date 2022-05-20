@@ -738,3 +738,12 @@ async def test_get_current_user(database_session: AsyncSession, auth_client: Aut
         assert response.json()["userId"] == auth_client.user.user_id
         assert len(response.json()["editions"]) == 1
         assert response.json()["editions"][0]["name"] == edition.name
+
+
+async def test_current_user(database_session: AsyncSession, auth_client: AuthClient):
+    """test current user"""
+    await auth_client.admin()
+    async with auth_client:
+        response = await auth_client.get("users/current")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() == {'userId': 1, 'name': 'Pytest Admin', 'admin': True, 'auth': None, 'editions': []}
