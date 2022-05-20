@@ -53,13 +53,13 @@ export default function StudentInformation(props: { studentId: number; editionId
             getSuggestions(props.editionId, props.studentId),
             { error: "Failed to get suggestions" }
         );
-        const answersRepsonse = await toast.promise(
+        const answersResponse = await toast.promise(
             getQuestions(props.editionId, props.studentId),
             { error: "Failed to get suggestions" }
         );
         setStudent(studentResponse);
         setSuggestions(suggestionsResponse.suggestions);
-        setQuestions(answersRepsonse);
+        setQuestions(answersResponse.qAndA);
     }
 
     /**

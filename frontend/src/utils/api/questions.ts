@@ -1,6 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
-// import { Questions } from "../../data/interfaces/questions";
+import { Questions } from "../../data/interfaces/questions";
 
 /**
  * API call to fetch all questions and answers of a student.
@@ -12,9 +12,8 @@ export async function getQuestions(edition: string, studentId: number) {
         const response = await axiosInstance.get(
             "/editions/" + edition + "/students/" + studentId.toString() + "/answers"
         );
-        // return response.data.qAndA as Questions;
-        console.log(response);
-        return [
+        return response.data as Questions;
+        /* return [
             {
                 question: "Do you like Milk? !very important question",
                 answers: ["Yes Ofcourse", "Milk for life", "A Milk a day keeps the cows away"],
@@ -48,7 +47,7 @@ export async function getQuestions(edition: string, studentId: number) {
                     },
                 ],
             },
-        ];
+        ]; */
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw error;

@@ -11,5 +11,5 @@ export interface StudentFile {
 }
 
 export interface Questions {
-    suggestions: Question[];
+    qAndA: Question[];
 }
