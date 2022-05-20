@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { BsPersonFill } from "react-icons/bs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Card } from "react-bootstrap";
 
 export const InfoHeadContainer = styled.div`
     display: flex;
@@ -11,6 +12,10 @@ export const InfoHeadContainer = styled.div`
 export const StudentInformationContainer = styled.div`
     width: 100%;
     padding: 20px;
+`;
+
+export const ActionsCard = styled(Card)`
+    max-width: 100%;
 `;
 
 export const PersonIcon = styled(BsPersonFill)`

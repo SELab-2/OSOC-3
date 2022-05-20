@@ -8,16 +8,16 @@ export const SuggestionActionTitle = styled.p`
 export const YesButton = styled(Button)`
     background-color: var(--osoc_green);
     color: black;
-    height: 5vh;
-    width: 18vh;
+    height: 100%;
+    width: 100%;
     margin-right: 2%;
 `;
 
 export const MaybeButton = styled(Button)`
     background-color: var(--osoc_orange);
     color: black;
-    height: 5vh;
-    width: 18vh;
+    height: 100%;
+    width: 100%;
     margin-left: 2%;
     margin-right: 2%;
 `;
@@ -25,8 +25,8 @@ export const MaybeButton = styled(Button)`
 export const NoButton = styled(Button)`
     background-color: var(--osoc_red);
     color: black;
-    height: 5vh;
-    width: 18vh;
+    height: 100%;
+    width: 100%;
     margin-left: 2%;
     margin-right: 2%;
 `;

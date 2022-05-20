@@ -14,9 +14,9 @@ import {
     SubjectValues,
     PersonalInformation,
     InfoHeadContainer,
-    PersonIcon,
     AllName,
     ActionContainer,
+    ActionsCard,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
@@ -86,7 +86,6 @@ export default function StudentInformation(props: { studentId: number; editionId
             <StudentInformationContainer>
                 <InfoHeadContainer>
                     <NameContainer>
-                        <PersonIcon />
                         <AllName>
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
@@ -99,13 +98,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                         </AllName>
                     </NameContainer>
                     <ActionContainer>
-                        <Card className="CardContainer" border="primary">
+                        <ActionsCard className="CardContainer" border="primary">
                             <Card.Header className="CardHeader">Actions</Card.Header>
                             <Card.Body className="CardBody">
                                 <CoachSuggestionContainer student={student} />
                                 {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
                             </Card.Body>
-                        </Card>
+                        </ActionsCard>
                     </ActionContainer>
                 </InfoHeadContainer>
                 <Card className="CardContainer" border="primary">

@@ -9,7 +9,8 @@ export const SuggestionButtons = styled.div`
 `;
 
 export const ConfirmButton = styled(Button)`
-    width: 29.33%;
+    width: 30%;
+    height: 30%;
     margin-left: 2%;
     margin-right: 2%;
 `;
