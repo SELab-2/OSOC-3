@@ -23,3 +23,12 @@ export const Suggestions = styled.div`
 export const NoStudents = styled.div`
     margin: 15px 0;
 `;
+
+export const NumberOfStudents = styled.div`
+    .red {
+        color: var(--osoc_red);
+    }
+    .green {
+        color: var(--osoc_green);
+    }
+`;

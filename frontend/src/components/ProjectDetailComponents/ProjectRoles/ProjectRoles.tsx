@@ -4,7 +4,13 @@ import { toast } from "react-toastify";
 import { ProjectRole } from "../../../data/interfaces/projects";
 import { deleteProjectRole } from "../../../utils/api/projectRoles";
 import { DeleteButton } from "../../Common/Buttons";
-import { NoStudents, ProjectRoleContainer, Suggestions, TitleDeleteContainer } from "./styles";
+import {
+    NoStudents,
+    ProjectRoleContainer,
+    Suggestions,
+    TitleDeleteContainer,
+    NumberOfStudents,
+} from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
 
@@ -50,9 +56,21 @@ export default function ProjectRoles({
                     </TitleDeleteContainer>
 
                     <h6>{projectRole.description}</h6>
-                    {projectRole.suggestions.length.toString() +
-                        " / " +
-                        projectRole.slots.toString()}
+                    <NumberOfStudents>
+                        <div
+                            className={
+                                projectRole.suggestions.length > projectRole.slots
+                                    ? "red"
+                                    : projectRole.suggestions.length === projectRole.slots
+                                    ? "green"
+                                    : undefined
+                            }
+                        >
+                            {projectRole.suggestions.length.toString() +
+                                " / " +
+                                projectRole.slots.toString()}
+                        </div>
+                    </NumberOfStudents>
 
                     <Droppable droppableId={projectRole.projectRoleId.toString()}>
                         {(provided, snapshot) => (
