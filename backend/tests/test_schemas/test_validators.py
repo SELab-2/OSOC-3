@@ -1,7 +1,7 @@
 import pytest
 
 from src.app.exceptions.validation_exception import ValidationException
-from src.app.schemas.validators import validate_email_format, validate_edition
+from src.app.schemas.validators import validate_email_format, validate_edition, validate_url
 
 
 def test_email_address():
@@ -42,3 +42,15 @@ def test_edition_name():
     validate_edition("edition2022")
 
     validate_edition("Edition-2022")
+
+
+def test_validate_url():
+    """Test the validation of an url"""
+    validate_url("https://info.com")
+    validate_url("http://info")
+    with pytest.raises(ValidationException):
+        validate_url("ssh://info.com")
+    with pytest.raises(ValidationException):
+        validate_url("http:/info.com")
+    with pytest.raises(ValidationException):
+        validate_url("https:/info.com")
