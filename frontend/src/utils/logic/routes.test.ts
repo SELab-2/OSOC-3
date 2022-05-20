@@ -5,6 +5,15 @@ import { getBestRedirect } from "./routes";
  * about the asterisk matching it
  */
 
+test("/students/states stays there", () => {
+    expect(getBestRedirect("/editions/old/students/states", "new")).toEqual(
+        "/editions/new/students/states"
+    );
+    expect(getBestRedirect("/editions/old/students/states/", "new")).toEqual(
+        "/editions/new/students/states"
+    );
+});
+
 test("/students stays there", () => {
     expect(getBestRedirect("/editions/old/students", "new")).toEqual("/editions/new/students");
     expect(getBestRedirect("/editions/old/students/", "new")).toEqual("/editions/new/students");
