@@ -9,6 +9,7 @@ from src.app.exceptions.authentication import InvalidCredentialsException
 from src.app.logic.security import authenticate_user_email, create_tokens, authenticate_user_github
 from src.app.logic.users import get_user_editions
 from src.app.routers.tags import Tags
+from src.app.schemas.editions import Edition
 from src.app.schemas.login import Token
 from src.app.schemas.users import user_model_to_schema
 from src.app.utils.dependencies import get_user_from_refresh_token, get_http_session
@@ -61,7 +62,8 @@ async def generate_token_response_for_user(db: AsyncSession, user: User) -> Toke
     access_token, refresh_token = create_tokens(user)
 
     user_data: dict = user_model_to_schema(user).__dict__
-    user_data["editions"] = await get_user_editions(db, user)
+    editions = await get_user_editions(db, user)
+    user_data["editions"] = list(map(Edition.from_orm, editions))
 
     return Token(
         access_token=access_token,

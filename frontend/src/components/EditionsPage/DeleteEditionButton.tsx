@@ -26,7 +26,7 @@ export default function DeleteEditionButton(props: Props) {
     }
 
     return (
-        <DeleteButton onClick={handleClick}>
+        <DeleteButton onClick={handleClick} className={"float-end"}>
             <FontAwesomeIcon icon={faTriangleExclamation as IconProp} /> Delete this edition
             <DeleteEditionModal edition={props.edition} show={showModal} setShow={setShowModal} />
         </DeleteButton>

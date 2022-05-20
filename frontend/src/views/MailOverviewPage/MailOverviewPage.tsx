@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { getMailOverview, setStateRequest, StudentEmail } from "../../utils/api/mail_overview";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
-import InputGroup from "react-bootstrap/InputGroup";
-import FormControl from "react-bootstrap/FormControl";
 import InfiniteScroll from "react-infinite-scroller";
-import { Multiselect } from "multiselect-react-dropdown";
 import { Form } from "react-bootstrap";
 import {
     TableDiv,
     DropDownButtonDiv,
     SearchDiv,
     FilterDiv,
-    SearchAndFilterDiv,
     CenterDiv,
     MessageDiv,
+    MailOverviewDiv,
+    SearchAndChangeDiv,
 } from "./styles";
 import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
@@ -22,6 +19,9 @@ import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
 import { toast } from "react-toastify";
 import { StyledTable } from "../../components/Common/Tables/styles";
+import SearchBar from "../../components/Common/Forms/SearchBar";
+import { CommonMultiselect } from "../../components/Common/Forms";
+import { CommonDropdownButton } from "../../components/Common/Buttons/styles";
 
 interface EmailRow {
     email: StudentEmail;
@@ -172,7 +172,7 @@ export default function MailOverviewPage() {
                 <InfiniteScroll
                     loadMore={updateMailOverview}
                     hasMore={moreEmailsAvailable}
-                    loader={<LoadSpinner show={true} />}
+                    loader={<LoadSpinner show={true} key="spinner" />}
                     initialLoad={true}
                     useWindow={false}
                     getScrollParent={() => document.getElementById("root")}
@@ -228,39 +228,21 @@ export default function MailOverviewPage() {
     }
 
     return (
-        <>
-            <DropDownButtonDiv>
-                <DropdownButton
-                    id="dropdown-setstate-button"
-                    title="Set state of selected students"
-                    menuVariant="dark"
-                >
-                    {Object.values(EmailType).map((type, index) => (
-                        <Dropdown.Item
-                            eventKey={index.toString()}
-                            key={type}
-                            onClick={() => changeState(index.toString())}
-                        >
-                            {type}
-                        </Dropdown.Item>
-                    ))}
-                </DropdownButton>
-            </DropDownButtonDiv>
-            <SearchAndFilterDiv>
-                <SearchDiv>
-                    <InputGroup className="mb-3">
-                        <FormControl
-                            placeholder="Search a student"
-                            aria-label="Username"
-                            onChange={e => {
-                                searchName(e.target.value);
-                            }}
-                        />
-                    </InputGroup>
-                </SearchDiv>
+        <MailOverviewDiv>
+            <SearchDiv>
+                <SearchBar
+                    onChange={e => {
+                        searchName(e.target.value);
+                    }}
+                    value={searchTerm}
+                    placeholder="Search a student"
+                />
+            </SearchDiv>
+            <br />
+            <SearchAndChangeDiv>
                 <FilterDiv>
-                    <Multiselect
-                        placeholder="Filter on State"
+                    <CommonMultiselect
+                        placeholder="  Filter on State"
                         showArrow={true}
                         isObject={false}
                         onRemove={changeFilter}
@@ -268,8 +250,24 @@ export default function MailOverviewPage() {
                         options={Object.values(EmailType)}
                     />
                 </FilterDiv>
-            </SearchAndFilterDiv>
+                <DropDownButtonDiv>
+                    <CommonDropdownButton
+                        id="dropdown-setstate-button"
+                        title="Set state of selected students"
+                    >
+                        {Object.values(EmailType).map((type, index) => (
+                            <Dropdown.Item
+                                eventKey={index.toString()}
+                                key={type}
+                                onClick={() => changeState(index.toString())}
+                            >
+                                {type}
+                            </Dropdown.Item>
+                        ))}
+                    </CommonDropdownButton>
+                </DropDownButtonDiv>
+            </SearchAndChangeDiv>
             {table}
-        </>
+        </MailOverviewDiv>
     );
 }

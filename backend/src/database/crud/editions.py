@@ -1,4 +1,4 @@
-from sqlalchemy import exc, func, select, desc
+from sqlalchemy import exc, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import Select
 
@@ -24,7 +24,7 @@ async def get_edition_by_name(db: AsyncSession, edition_name: str) -> Edition:
 
 
 def _get_editions_query() -> Select:
-    return select(Edition).order_by(desc(Edition.edition_id))
+    return select(Edition).order_by(desc(Edition.year), desc(Edition.edition_id))
 
 
 async def get_editions(db: AsyncSession) -> list[Edition]:
@@ -70,12 +70,7 @@ async def delete_edition(db: AsyncSession, edition_name: str):
     await db.commit()
 
 
-async def latest_edition(db: AsyncSession) -> Edition:
-    """Returns the latest edition from the database"""
-    subquery = select(func.max(Edition.edition_id))
-    result = await db.execute(subquery)
-    max_edition_id = result.scalar()
-
-    query = select(Edition).where(Edition.edition_id == max_edition_id)
-    result2 = await db.execute(query)
-    return result2.scalars().one()
+async def patch_edition(db: AsyncSession, edition: Edition, readonly: bool):
+    """Update the readonly status of an edition"""
+    edition.readonly = readonly
+    await db.commit()

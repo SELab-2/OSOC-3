@@ -8,6 +8,7 @@ import { useAuth } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
 import { CreateButton } from "../../../components/Common/Buttons";
 import { SearchBar } from "../../../components/Common/Forms";
@@ -147,7 +148,7 @@ export default function ProjectPage() {
                         />
                     </SearchFieldDiv>
 
-                    {role === Role.ADMIN && editionId === editions[0] && (
+                    {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
                         <CreateButton
                             label="Create Project"
                             onClick={() => navigate("/editions/" + editionId + "/projects/new")}
