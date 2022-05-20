@@ -33,8 +33,11 @@ interface EmailRow {
  * Page that shows the email status of all students, with the possibility to change the status
  */
 export default function MailOverviewPage() {
+    const { editionId } = useParams();
+
     const [emailRows, setEmailRows] = useState<EmailRow[]>([]);
     const [loading, setLoading] = useState(false);
+    const [requestedEdition, setRequestedEdition] = useState(editionId);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emailRows available
     const [page, setPage] = useState(0);
     const [allSelected, setAllSelected] = useState(false);
@@ -45,8 +48,6 @@ export default function MailOverviewPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [filters, setFilters] = useState<EmailType[]>([]);
     const [filtersChanged, setFiltersChanged] = useState(0);
-
-    const { editionId } = useParams();
 
     /**
      * update the table with new values
@@ -97,7 +98,7 @@ export default function MailOverviewPage() {
                     )
                 );
             }
-            setPage(page + 1);
+            setPage(requestedPage + 1);
         } else {
             setMoreEmailsAvailable(false);
         }
@@ -105,11 +106,19 @@ export default function MailOverviewPage() {
     }
 
     useEffect(() => {
-        setPage(0);
-        setMoreEmailsAvailable(true);
-        updateMailOverview(-1);
+        if (editionId !== requestedEdition) {
+            setEmailRows([]);
+            setPage(0);
+            setMoreEmailsAvailable(true);
+            updateMailOverview(-1);
+            setRequestedEdition(editionId);
+        } else {
+            setPage(0);
+            setMoreEmailsAvailable(true);
+            updateMailOverview(-1);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm, filtersChanged]);
+    }, [searchTerm, filtersChanged, editionId]);
 
     /**
      * Keeps the selectedRows list up-to-date when a student is selected/unselected in the table
