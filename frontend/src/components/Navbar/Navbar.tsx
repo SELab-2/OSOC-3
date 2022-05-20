@@ -53,7 +53,8 @@ export default function Navbar() {
     // If the current URL contains an edition, use that
     // if not (eg. /editions), check SessionStorage
     // otherwise, use the most-recent edition from the auth response
-    const currentEdition = editionId || getCurrentEdition() || editions[0].name;
+    const currentEdition =
+        editionId || getCurrentEdition() || (editions[0] && editions[0].name) || "";
 
     // Set the value of the new edition in SessionStorage if useful
     if (currentEdition) {

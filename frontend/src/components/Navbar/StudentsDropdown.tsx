@@ -15,7 +15,7 @@ interface Props {
  * @constructor
  */
 export default function StudentsDropdown(props: Props) {
-    if (!props.isLoggedIn) return null;
+    if (!props.isLoggedIn || !props.currentEdition) return null;
 
     if (props.role === Role.COACH) {
         return (
