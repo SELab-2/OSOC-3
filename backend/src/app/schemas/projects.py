@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
+from src.app.exceptions.validation_exception import ValidationException
 from src.app.schemas.skills import Skill
 from src.app.schemas.utils import CamelCaseModel
 
@@ -82,6 +83,7 @@ class Project(CamelCaseModel):
     """Represents a Project from the database to return when a GET request happens"""
     project_id: int
     name: str
+    info_url: str | None
 
     coaches: list[User]
     partners: list[Partner]
@@ -101,6 +103,7 @@ class ConflictProject(CamelCaseModel):
     """A project to be used in ConflictStudent"""
     project_id: int
     name: str
+    info_url: str | None
 
     class Config:
         """Config Class"""
@@ -154,8 +157,19 @@ class InputProjectRole(BaseModel):
 class InputProject(BaseModel):
     """Used for passing the details of a project when creating/patching a project"""
     name: str
+    info_url: str | None
     partners: list[str]
     coaches: list[int]
+
+    @validator('info_url')
+    @classmethod
+    def is_url(cls, info_url: str | None):
+        """Verify the info_url is actually an url"""
+        if not info_url:
+            return None
+        if info_url.startswith('https://') or info_url.startswith('http://'):
+            return info_url
+        raise ValidationException('info_url should be a link starting with http:// or https://')
 
 
 class InputArgumentation(BaseModel):

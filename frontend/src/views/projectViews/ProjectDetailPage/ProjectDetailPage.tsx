@@ -49,7 +49,7 @@ export default function ProjectDetailPage() {
                     // TODO
                     // Generate student data
                     const studentsTemplate: StudentPlace[] = [];
-                    for (let i = 0; i < response.numberOfStudents; i++) {
+                    for (let i = 0; i < 10; i++) {
                         const student: StudentPlace = {
                             available: i % 2 === 0,
                             name: i % 2 === 0 ? undefined : "Tom",
@@ -83,7 +83,7 @@ export default function ProjectDetailPage() {
                         <Client key={_index}>{element.name}</Client>
                     ))}
                     <NumberOfStudents>
-                        {project.numberOfStudents}
+                        10
                         <BsPersonFill />
                     </NumberOfStudents>
                 </ClientContainer>

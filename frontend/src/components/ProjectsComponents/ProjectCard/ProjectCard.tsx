@@ -24,6 +24,7 @@ import { Project } from "../../../data/interfaces";
 import { useAuth } from "../../../contexts";
 import { Role } from "../../../data/enums";
 import { DeleteButton } from "../../Common/Buttons";
+import { toast } from "react-toastify";
 
 /**
  *
@@ -42,7 +43,6 @@ export default function ProjectCard({
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
     const navigate = useNavigate();
     const params = useParams();
     const editionId = params.editionId!;
@@ -52,9 +52,10 @@ export default function ProjectCard({
         const success = await deleteProject(editionId, project.projectId);
         setShow(false);
         if (!success) {
-            alert("Failed to delete the project");
+            toast.error("Could not delete project", { toastId: "deleteProject" });
         } else {
             removeProject(project);
+            toast.success("Deleted project", { toastId: "deletedProject" });
         }
     }
 
@@ -89,7 +90,9 @@ export default function ProjectCard({
                     ))}
                 </Clients>
                 <NumberOfStudents>
-                    {project.numberOfStudents}
+                    {
+                        // project.numberOfStudents
+                    }
                     <BsPersonFill />
                 </NumberOfStudents>
             </ClientContainer>

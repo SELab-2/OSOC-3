@@ -22,7 +22,7 @@ export default function Partner({
                     if (e.key === "Enter") addPartner();
                 }}
                 list="partners"
-                placeholder="Partner"
+                placeholder="Ex. Open Knowledge Belgium"
             />
 
             <datalist id="partners">

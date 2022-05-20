@@ -2,6 +2,9 @@
  * This file contains all interfaces used in projects pages.
  */
 
+import { Skill } from "./skills";
+import { Student } from "./students";
+
 /**
  * Data about a partner.
  */
@@ -14,11 +17,26 @@ export interface Partner {
  * Data about a coach.
  */
 export interface Coach {
-    /** The name of the coach */
-    name: string;
-
     /** The user's ID */
     userId: number;
+    /** The name of the coach */
+    name: string;
+}
+
+export interface ProjectRoleSuggestion {
+    projectRoleSuggestionId: number;
+    argumentation: string;
+    drafter: Coach;
+    student: Student;
+}
+
+export interface ProjectRole {
+    projectRoleId: number;
+    projectId: number;
+    description: string;
+    skill: Skill;
+    slots: number;
+    suggestions: ProjectRoleSuggestion[];
 }
 
 /**
@@ -26,23 +44,20 @@ export interface Coach {
  * Such as a list of the partners and the coaches
  */
 export interface Project {
+    /** The project's ID */
+    projectId: number;
+
     /** The name of the project */
     name: string;
 
-    /** How many students are needed for this project */
-    numberOfStudents: number;
-
-    /** The partners of this project */
-    partners: Partner[];
+    /** An url with more info */
+    infoUrl: string;
 
     /** The coaches of this project */
     coaches: Coach[];
 
-    /** The name of the edition this project belongs to */
-    editionName: string;
-
-    /** The project's ID */
-    projectId: number;
+    /** The partners of this project */
+    partners: Partner[];
 }
 
 /**
@@ -58,13 +73,13 @@ export interface Projects {
  */
 export interface SkillProject {
     /** The name of the skill */
-    skill: string;
+    skill: Skill;
 
     /** More info about this skill in a specific project */
     description: string;
 
     /** Number of positions of this skill in a project */
-    amount: number;
+    slots: number;
 }
 
 /**
@@ -74,17 +89,25 @@ export interface CreateProject {
     /** The name of the new project */
     name: string;
 
-    /** Number of students the project needs */
-    number_of_students: number;
-
-    /** The required skills for the project */
-    skills: string[];
+    /** An url with more info */
+    info_url: string;
 
     /** The partners that belong to this project */
     partners: string[];
 
     /** The IDs of the users that will coach this project */
     coaches: number[];
+}
+
+export interface CreateProjectRole {
+    /** The id of the skill */
+    skill_id: number;
+
+    /** More info about this skill in a specific project */
+    description: string;
+
+    /** Number of positions of this skill in a project */
+    slots: number;
 }
 
 /**

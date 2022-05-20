@@ -56,8 +56,6 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
  * API call to create a project.
  * @param edition The edition name.
  * @param name The name of the new project.
- * @param numberOfStudents The amount of students needed for this project.
- * @param skills The skills that are needed for this project.
  * @param partners The partners of the project.
  * @param coaches The coaches that will coach the project.
  * @returns The newly created object.
@@ -65,22 +63,22 @@ export async function getProject(edition: string, projectId: number): Promise<Pr
 export async function createProject(
     edition: string,
     name: string,
-    numberOfStudents: number,
-    skills: string[],
+    infoUrl: string,
     partners: string[],
     coaches: number[]
 ): Promise<Project | null> {
     const payload: CreateProject = {
         name: name,
-        number_of_students: numberOfStudents,
-        skills: skills,
+        info_url: infoUrl,
         partners: partners,
         coaches: coaches,
     };
 
     try {
-        const response = await axiosInstance.post("editions/" + edition + "/projects/", payload);
-        return response.data as Project;
+        const response = await axiosInstance.post("editions/" + edition + "/projects", payload);
+        const project = response.data as Project;
+
+        return project;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return null;
