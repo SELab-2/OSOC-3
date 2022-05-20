@@ -10,6 +10,7 @@ from src.database.crud import editions
 from src.database.crud.webhooks import create_webhook
 from src.database.engine import DBSession
 from src.database.models import Edition, WebhookURL
+from settings import FRONTEND_URL
 
 
 async def do(args):
@@ -18,7 +19,7 @@ async def do(args):
         try:
             edition: Edition = await editions.get_edition_by_name(session, args.edition)
             webhook_url: WebhookURL = await create_webhook(session, edition)
-            print(f'WebhookURL created: {webhook_url.uuid}')
+            print(f'WebhookURL created: {FRONTEND_URL}/editions/{edition.name}/webhooks/{webhook_url.uuid}')
         except sqlalchemy.exc.SQLAlchemyError:
             await session.rollback()
             print(traceback.format_exc())
