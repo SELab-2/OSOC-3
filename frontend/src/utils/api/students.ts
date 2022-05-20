@@ -11,7 +11,9 @@ import { DropdownRole } from "../../components/StudentsComponents/StudentListFil
  * @param alumniFilter check to filter on.
  * @param studentCoachVolunteerFilter check to filter on.
  * @param suggestedFilter check to filter on.
+ * @param confirmFilter confirmation state to filter on.
  * @param page The page to fetch.
+ * @param controller An optional AbortController to cancel the request
  */
 export async function getStudents(
     edition: string,
@@ -21,8 +23,9 @@ export async function getStudents(
     studentCoachVolunteerFilter: boolean,
     suggestedFilter: boolean,
     confirmFilter: DropdownRole[],
-    page: number
-): Promise<Students> {
+    page: number,
+    controller: AbortController
+): Promise<Students | null> {
     let rolesRequestField: string = "";
 
     for (const role of rolesFilter) {
@@ -32,25 +35,34 @@ export async function getStudents(
     for (const confirmField of confirmFilter) {
         confirmRequestField += "decisions=" + confirmField.value.toString() + "&";
     }
-    const response = await axiosInstance.get(
-        "/editions/" +
-            edition +
-            "/students?name=" +
-            nameFilter +
-            "&alumni=" +
-            alumniFilter +
-            "&own_suggestions=" +
-            suggestedFilter +
-            "&" +
-            rolesRequestField +
-            "&student_coach=" +
-            studentCoachVolunteerFilter +
-            "&" +
-            confirmRequestField +
-            "&page=" +
-            page
-    );
-    return response.data as Students;
+    try {
+        const response = await axiosInstance.get(
+            "/editions/" +
+                edition +
+                "/students?name=" +
+                nameFilter +
+                "&alumni=" +
+                alumniFilter +
+                "&own_suggestions=" +
+                suggestedFilter +
+                "&" +
+                rolesRequestField +
+                "&student_coach=" +
+                studentCoachVolunteerFilter +
+                "&" +
+                confirmRequestField +
+                "&page=" +
+                page,
+            { signal: controller.signal }
+        );
+        return response.data as Students;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**

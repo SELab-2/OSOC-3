@@ -35,6 +35,7 @@ export default function StudentListFilters() {
     const [moreDataAvailable, setMoreDataAvailable] = useState(true);
     const [allDataFetched, setAllDataFetched] = useState(false);
     const [page, setPage] = useState(0);
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
 
     const [nameFilter, setNameFilter] = useState(getNameFilter());
     const [rolesFilter, setRolesFilter] = useState<DropdownRole[]>(getRolesFilter());
@@ -91,6 +92,12 @@ export default function StudentListFilters() {
 
         setLoading(true);
 
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
         const response = await toast.promise(
             getStudents(
                 params.editionId!,
@@ -100,40 +107,44 @@ export default function StudentListFilters() {
                 studentCoachVolunteerFilter,
                 suggestedFilter,
                 confirmFilter,
-                requestedPage
+                requestedPage,
+                newController
             ),
             { error: "Failed to retrieve students" }
         );
 
-        if (response.students.length === 0 && !filterChanged) {
+        if (response !== null) {
+            if (response.students.length === 0 && !filterChanged) {
+                setMoreDataAvailable(false);
+            }
+            if (page === 0 || filterChanged) {
+                setStudents(response.students);
+            } else {
+                setStudents(students.concat(response.students));
+            }
+
+            // If no filters are set, allStudents can be changed
+            if (
+                nameFilter === "" &&
+                rolesFilter.length === 0 &&
+                confirmFilter.length === 0 &&
+                !alumniFilter &&
+                !studentCoachVolunteerFilter &&
+                !suggestedFilter
+            ) {
+                if (response.students.length === 0) {
+                    setAllDataFetched(true);
+                }
+                if (page === 0) {
+                    setAllStudents(response.students);
+                } else {
+                    setAllStudents(allStudents.concat(response.students));
+                }
+            }
+            setPage(page + 1);
+        } else {
             setMoreDataAvailable(false);
         }
-        if (page === 0 || filterChanged) {
-            setStudents(response.students);
-        } else {
-            setStudents(students.concat(response.students));
-        }
-
-        // If no filters are set, allStudents can be changed
-        if (
-            nameFilter === "" &&
-            rolesFilter.length === 0 &&
-            confirmFilter.length === 0 &&
-            !alumniFilter &&
-            !studentCoachVolunteerFilter &&
-            !suggestedFilter
-        ) {
-            if (response.students.length === 0) {
-                setAllDataFetched(true);
-            }
-            if (page === 0) {
-                setAllStudents(response.students);
-            } else {
-                setAllStudents(allStudents.concat(response.students));
-            }
-        }
-
-        setPage(page + 1);
         setLoading(false);
     }
 
