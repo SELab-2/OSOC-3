@@ -34,3 +34,8 @@ export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
 `;
+
+export const MoreInfoLink = styled.div`
+    margin-top: 20px;
+    margin-bottom: 20px;
+`;

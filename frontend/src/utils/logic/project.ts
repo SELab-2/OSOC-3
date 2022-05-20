@@ -13,6 +13,7 @@ export default function projectToEditProject(project: Project): EditProject {
 
     const editProject: EditProject = {
         name: project.name,
+        info_url: project.infoUrl,
         partners: partners,
         coaches: coachesIds,
     };

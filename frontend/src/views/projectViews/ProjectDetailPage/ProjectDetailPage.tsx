@@ -17,6 +17,7 @@ import {
     ClientsContainer,
     NumberOfStudents,
     ProjectPageContainer,
+    MoreInfoLink,
 } from "./styles";
 import ConfirmDelete from "../../../components/ProjectsComponents/ConfirmDelete";
 import {
@@ -29,6 +30,7 @@ import {
 import { addStudentToProject, deleteStudentFromProject } from "../../../utils/api/projectStudents";
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
+import { CreateButton } from "../../../components/Common/Buttons";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -139,6 +141,7 @@ export default function ProjectDetailPage() {
                 editionId,
                 projectId,
                 newProject!.name,
+                newProject!.info_url,
                 newProject!.partners,
                 newProject!.coaches
             ),
@@ -201,6 +204,14 @@ export default function ProjectDetailPage() {
                         setEditedProject={setEditedProject}
                         editing={editing}
                     />
+
+                    <MoreInfoLink>
+                        <CreateButton
+                            showIcon={false}
+                            label="More info about this project"
+                            onClick={() => window.open(project.infoUrl)}
+                        />
+                    </MoreInfoLink>
 
                     <ProjectRoles
                         projectRoles={project.projectRoles}
