@@ -8,6 +8,7 @@ import {
     DropDownButtonDiv,
     SearchDiv,
     FilterDiv,
+    SearchAndFilterDiv,
     CenterDiv,
     MessageDiv,
     MailOverviewDiv,
@@ -17,6 +18,8 @@ import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
+import { toast } from "react-toastify";
+import { StyledTable } from "../../components/Common/Tables/styles";
 import { Error } from "../../components/Common/Users/styles";
 import { StyledTable } from "../../components/Common/Tables/styles";
 import SearchBar from "../../components/Common/Forms/SearchBar";
@@ -36,9 +39,10 @@ export default function MailOverviewPage() {
     const [gotEmails, setGotEmails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [moreEmailsAvailable, setMoreEmailsAvailable] = useState(true); // Endpoint has more emailRows available
-    const [error, setError] = useState<string | undefined>(undefined);
     const [page, setPage] = useState(0);
     const [allSelected, setAllSelected] = useState(false);
+
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchTerm, setSearchTerm] = useState("");
@@ -56,37 +60,43 @@ export default function MailOverviewPage() {
 
         setLoading(true);
 
-        try {
-            const response = await getMailOverview(editionId, page, searchTerm, filters);
-            if (response.studentEmails.length === 0) {
-                setMoreEmailsAvailable(false);
-            }
-            if (page === 0) {
-                setEmailRows(
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getMailOverview(editionId, page, searchTerm, filters, newController),
+            { error: "Failed to retrieve states" }
+        );
+        if (response.studentEmails.length === 0) {
+            setMoreEmailsAvailable(false);
+        }
+        if (page === 0) {
+            setEmailRows(
+                response.studentEmails.map(email => {
+                    return {
+                        email: email,
+                        checked: false,
+                    };
+                })
+            );
+        } else {
+            setEmailRows(
+                emailRows.concat(
                     response.studentEmails.map(email => {
                         return {
                             email: email,
                             checked: false,
                         };
                     })
-                );
-            } else {
-                setEmailRows(
-                    emailRows.concat(
-                        response.studentEmails.map(email => {
-                            return {
-                                email: email,
-                                checked: false,
-                            };
-                        })
-                    )
-                );
-            }
-            setPage(page + 1);
-            setGotEmails(true);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
+                )
+            );
         }
+        setPage(page + 1);
+
+        setGotEmails(true);
         setLoading(false);
     }
 
@@ -138,30 +148,22 @@ export default function MailOverviewPage() {
             .filter(row => row.checked)
             .map(row => row.email.student.studentId);
 
-        try {
-            await setStateRequest(eventKey, editionId, selectedStudents);
-            setEmailRows(
-                emailRows.map(row => {
-                    row.checked = false;
-                    return row;
-                })
-            );
-            setAllSelected(false);
-            alert("Successful changed");
-            refresh();
-        } catch {
-            alert("Failed to change state");
-        }
+        await toast.promise(setStateRequest(eventKey, editionId, selectedStudents), {
+            error: "Failed to change state",
+            pending: "Changing state",
+        });
+        setEmailRows(
+            emailRows.map(row => {
+                row.checked = false;
+                return row;
+            })
+        );
+        setAllSelected(false);
+        refresh();
     }
 
     let table;
-    if (error) {
-        table = (
-            <CenterDiv>
-                <Error>{error}</Error>
-            </CenterDiv>
-        );
-    } else if (gotEmails && emailRows.length === 0) {
+    if (gotEmails && emailRows.length === 0) {
         table = (
             <CenterDiv>
                 <MessageDiv>No students found.</MessageDiv>

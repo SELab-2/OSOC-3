@@ -7,3 +7,13 @@ export const StyledTable = styled(Table).attrs({
     variant: "dark",
     hover: false,
 })``;
+
+export const RemoveTh = styled.th`
+    width: 200px;
+    text-align: center;
+`;
+
+export const RemoveTd = styled.td`
+    text-align: center;
+    vertical-align: middle;
+`;

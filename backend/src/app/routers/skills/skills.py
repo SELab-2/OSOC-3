@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 from src.app.logic import skills as logic_skills
 from src.app.routers.tags import Tags
@@ -24,8 +25,8 @@ async def create_skill(skill: SkillBase, db: AsyncSession = Depends(get_session)
     return await logic_skills.create_skill(db, skill)
 
 
-@skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, tags=[Tags.SKILLS],
-                      dependencies=[Depends(require_auth)])
+@skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
+                      tags=[Tags.SKILLS], dependencies=[Depends(require_auth)])
 async def delete_skill(skill_id: int, db: AsyncSession = Depends(get_session)):
     """Delete an existing skill."""
     await logic_skills.delete_skill(db, skill_id)

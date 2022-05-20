@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from starlette import status
+from starlette.responses import Response
+
 from src.app.routers.tags import Tags
 from src.app.utils.dependencies import require_auth, get_student, get_suggestion
 from src.app.utils.websockets import live
@@ -35,7 +37,7 @@ async def create_suggestion(new_suggestion: NewSuggestion, student: Student = De
 
 @students_suggestions_router.delete(
     "/{suggestion_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(live)]
 )
 async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User = Depends(require_auth),
@@ -48,7 +50,7 @@ async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User 
 
 @students_suggestions_router.put(
     "/{suggestion_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(get_student), Depends(live)]
 )
 async def edit_suggestion(new_suggestion: NewSuggestion, db: AsyncSession = Depends(get_session),

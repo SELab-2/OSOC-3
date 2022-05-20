@@ -31,6 +31,11 @@ export const SearchAndChangeDiv = styled.div`
     margin-bottom: 5px;
 `;
 
+export const SearchAndFilterDiv = styled.div`
+    margin: auto;
+    width: fit-content;
+`;
+
 export const CenterDiv = styled.div`
     width: 100%;
     margin: auto;
