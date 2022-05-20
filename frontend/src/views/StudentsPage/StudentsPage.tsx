@@ -6,7 +6,7 @@ import { StudentListFilters } from "../../components/StudentsComponents";
  */
 function StudentsPage() {
     return (
-        <DragDropContext onDragEnd={result => console.log(result)}>
+        <DragDropContext onDragEnd={() => {}}>
             <StudentListFilters />
         </DragDropContext>
     );
