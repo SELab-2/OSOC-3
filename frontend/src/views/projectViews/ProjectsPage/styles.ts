@@ -8,34 +8,26 @@ export const CardsGrid = styled.div`
     grid-auto-flow: dense;
 `;
 
-export const SearchField = styled.input`
-    margin: 20px 5px 5px 20px;
-    padding: 5px 10px;
-    background-color: #131329;
-    color: white;
-    border: none;
-    border-radius: 5px;
+export const ControlContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px;
+    margin-bottom: 10px;
 `;
 
-export const SearchButton = styled.button`
-    padding: 5px 10px;
-    background-color: #00bfff;
-    color: white;
-    border: none;
-    border-radius: 5px;
+export const SearchFieldDiv = styled.div`
+    margin-right: 10px;
+    float: left;
+    width: 15em;
 `;
 
-export const CreateButton = styled.button`
-    margin-left: 25px;
-    padding: 5px 10px;
-    background-color: #44dba4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-`;
 export const OwnProject = styled(Form.Check)`
     margin-top: 10px;
     margin-left: 20px;
+    .form-check-input {
+        color: black;
+    }
 `;
 
 export const ProjectsContainer = styled.div`
