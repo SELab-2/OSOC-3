@@ -10,9 +10,11 @@ import { setConfirmFilterStorage } from "../../../../utils/session-storage/stude
 export default function ConfirmFilters({
     confirmFilter,
     setConfirmFilter,
+    setPage,
 }: {
     confirmFilter: DropdownRole[];
     setConfirmFilter: (value: DropdownRole[]) => void;
+    setPage: (page: number) => void;
 }) {
     const [confirms, setConfirms] = useState<DropdownRole[]>([]);
 
@@ -29,6 +31,7 @@ export default function ConfirmFilters({
         const allCheckedRoles: DropdownRole[] = [];
         event.forEach(dropdownRole => allCheckedRoles.push(dropdownRole));
         setConfirmFilter(allCheckedRoles);
+        setPage(0);
         setConfirmFilterStorage(JSON.stringify(allCheckedRoles));
     }
 
