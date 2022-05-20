@@ -467,7 +467,6 @@ async def test_update_project_role(database_session: AsyncSession, auth_client: 
         })
         assert response.status_code == status.HTTP_200_OK
         json = response.json()
-        print(json)
         assert json["projectRoleId"] == 1
         assert json["projectId"] == 1
         assert json["description"] == "changed"
