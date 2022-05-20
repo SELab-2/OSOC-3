@@ -19,7 +19,7 @@ export default function ProjectPage() {
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(false);
-    const [requestedEdition, setRequestedEdition] = useState(params.editionId)
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
 
@@ -39,7 +39,7 @@ export default function ProjectPage() {
     /**
      * Used to fetch the projects
      */
-    async function loadProjects(requested: number) {
+    async function loadProjects(requested: number, reset: boolean) {
         const filterChanged = requested === -1;
         const requestedPage = requested === -1 ? 0 : page;
 
@@ -47,7 +47,7 @@ export default function ProjectPage() {
             return;
         }
 
-        if (allProjectsFetched) {
+        if (allProjectsFetched && !reset) {
             const newUserId: number = userId === null ? -1 : userId;
 
             setProjects(
@@ -107,13 +107,18 @@ export default function ProjectPage() {
     }
 
     useEffect(() => {
-        setPage(0);
-        setMoreProjectsAvailable(true);
         if (params.editionId !== requestedEdition) {
             setProjects([]);
+            setPage(0);
             setAllProjectsFetched(false);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, true);
+            setRequestedEdition(params.editionId);
+        } else {
+            setPage(0);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, false);
         }
-        loadProjects(-1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchString, ownProjects, params.editionId]);
 

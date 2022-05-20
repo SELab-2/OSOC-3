@@ -17,7 +17,7 @@ import LoadSpinner from "../Common/LoadSpinner";
 export default function ProjectTable(props: {
     projects: Project[];
     loading: boolean;
-    getMoreProjects: (page: number) => void;
+    getMoreProjects: (page: number, reset: boolean) => void;
     moreProjectsAvailable: boolean;
     removeProject: (project: Project) => void;
 }) {
@@ -34,7 +34,7 @@ export default function ProjectTable(props: {
 
     return (
         <InfiniteScroll
-            loadMore={props.getMoreProjects}
+            loadMore={page => props.getMoreProjects(page, false)}
             hasMore={props.moreProjectsAvailable}
             loader={<LoadSpinner show={true} key="Spinner" />}
             initialLoad={true}
