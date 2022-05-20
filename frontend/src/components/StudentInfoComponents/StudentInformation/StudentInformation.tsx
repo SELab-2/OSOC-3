@@ -72,6 +72,17 @@ export default function StudentInformation(props: { studentId: number; editionId
     }
 
     /**
+     * Get all info about this student without showing toasts
+     * Used in websockets
+     */
+    async function getDataNoToasts() {
+        const student = await getStudent(props.editionId, props.studentId);
+        const suggestionsResponse = await getSuggestions(props.editionId, props.studentId);
+        setStudent(student);
+        setSuggestions(suggestionsResponse.suggestions);
+    }
+
+    /**
      * Get the string representation for a suggestion value.
      * @param suggestion
      */
@@ -115,28 +126,27 @@ export default function StudentInformation(props: { studentId: number; editionId
     }
 
     /**
-     * Add a suggestion to the list
-     */
-    function insertSuggestion(suggestion: Suggestion, list: Suggestion[]): Suggestion[] {
-        return [...list, suggestion];
-    }
-
-    /**
      * Websockets
      */
     useEffect(() => {
         function listener(event: MessageEvent) {
             const data = JSON.parse(event.data) as WebSocketEvent;
+
             // Wrong type of event
             if (!wsEventTypes.includes(data.eventType)) return;
             // Event for another student
             if (data.pathIds.studentId !== props.studentId.toString()) return;
 
-            // This student was deleted => go back to the /students page
-            if (data.eventType === EventType.STUDENT && data.method === RequestMethod.DELETE) {
-                toast.info("This student was deleted by an admin.");
-                navigate(`/editions/${props.editionId}/students`);
-                return;
+            if (data.eventType === EventType.STUDENT) {
+                if (data.method === RequestMethod.DELETE) {
+                    // Student deleted
+                    navigate(`/editions/${props.editionId}/students`);
+                    toast.info("This student was deleted by an admin.");
+                    return;
+                } else if (data.method === RequestMethod.POST) {
+                    // Suggestion or decision created
+                    getDataNoToasts().then();
+                }
             }
 
             if (data.eventType === EventType.STUDENT_SUGGESTION) {
@@ -153,15 +163,6 @@ export default function StudentInformation(props: { studentId: number; editionId
                     ).then(suggestion =>
                         setSuggestions(findAndUpdateSuggestion(suggestion, suggestions))
                     );
-                } else if (data.method === RequestMethod.POST) {
-                    // Suggestion created
-                    getSuggestionById(
-                        props.editionId,
-                        props.studentId.toString(),
-                        data.pathIds.suggestionId!
-                    ).then(suggestion => {
-                        setSuggestions(insertSuggestion(suggestion, suggestions));
-                    });
                 }
             }
         }
