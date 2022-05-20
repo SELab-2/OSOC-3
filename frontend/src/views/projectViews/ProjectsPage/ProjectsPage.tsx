@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getProjects } from "../../../utils/api/projects";
 import { CreateButton, SearchField, OwnProject } from "./styles";
 import { Project } from "../../../data/interfaces";
@@ -90,6 +90,13 @@ export default function ProjectPage() {
         setGotProjects(true);
         setLoading(false);
     }
+
+    /**
+     * update the projects when the edition changes
+     */
+    useEffect(() => {
+        refreshProjects();
+    }, [editionId]);
 
     /**
      * Reset fetched projects

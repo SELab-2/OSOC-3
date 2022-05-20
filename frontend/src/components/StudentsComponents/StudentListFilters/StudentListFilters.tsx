@@ -49,7 +49,7 @@ export default function StudentListFilters() {
     /**
      * Request all students with selected filters
      */
-    async function getData(requested: number) {
+    async function getData(requested: number, edChange: boolean = false) {
         const filterChanged = requested === -1;
         const requestedPage = requested === -1 ? 0 : page;
 
@@ -57,7 +57,7 @@ export default function StudentListFilters() {
             return;
         }
 
-        if (allDataFetched) {
+        if (allDataFetched && !edChange) {
             const tempStudents = allStudents
                 .filter(student =>
                     (student.firstName + " " + student.lastName)
@@ -164,6 +164,16 @@ export default function StudentListFilters() {
         suggestedFilter,
         confirmFilter,
     ]);
+
+    useEffect(() => {
+        setStudents([]);
+        setAllStudents([]);
+        setPage(0);
+        setAllDataFetched(false);
+        setMoreDataAvailable(true);
+        getData(-1, true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.editionId]);
 
     let list;
     if (loading) {
