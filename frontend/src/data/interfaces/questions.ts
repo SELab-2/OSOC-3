@@ -10,6 +10,6 @@ export interface StudentFile {
     url: string;
 }
 
-export interface Questions{
+export interface Questions {
     suggestions: Question[];
 }
