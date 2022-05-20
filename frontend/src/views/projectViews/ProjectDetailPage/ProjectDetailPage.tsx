@@ -35,6 +35,9 @@ import { useSockets } from "../../../contexts";
 import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
 
 
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
+
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
@@ -61,14 +64,7 @@ export default function ProjectDetailPage() {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
             // Ignore events that aren't targeted towards projects
-            if (
-                ![
-                    EventType.PROJECT,
-                    EventType.PROJECT_ROLE,
-                    EventType.PROJECT_ROLE_SUGGESTION,
-                ].includes(data.eventType)
-            )
-                return;
+            if (!wsEventTypes.includes(data.eventType)) return;
 
             const idString = projectId.toString();
 

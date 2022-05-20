@@ -14,6 +14,9 @@ import { toast } from "react-toastify";
 import { CreateButton } from "../../../components/Common/Buttons";
 import { SearchBar } from "../../../components/Common/Forms";
 
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.PROJECT];
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -168,7 +171,7 @@ export default function ProjectPage() {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
             // Ignore all events that aren't about projects
-            if (data.eventType !== EventType.PROJECT) return;
+            if (!wsEventTypes.includes(data.eventType)) return;
 
             // If the project from the event hasn't been loaded in the list, ignore the event as well
             if (

@@ -26,6 +26,9 @@ import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfac
 import ConfirmFilters from "./ConfirmFilters/ConfirmFilters";
 import LoadSpinner from "../../Common/LoadSpinner";
 
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.STUDENT, EventType.STUDENT_SUGGESTION];
+
 /**
  * Component that shows the sidebar with all the filters and student list.
  */
@@ -239,11 +242,7 @@ export default function StudentListFilters() {
         function listener(event: MessageEvent) {
             const data = JSON.parse(event.data) as WebSocketEvent;
 
-            if (
-                data.eventType !== EventType.STUDENT &&
-                data.eventType !== EventType.STUDENT_SUGGESTION
-            )
-                return;
+            if (!wsEventTypes.includes(data.eventType)) return;
 
             // Student was deleted
             if (data.eventType === EventType.STUDENT) {
