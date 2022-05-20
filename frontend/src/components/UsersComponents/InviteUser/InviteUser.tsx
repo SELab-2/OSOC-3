@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { getInviteLink } from "../../../utils/api/users/users";
-import { InviteContainer, Error, MessageDiv, InputContainer } from "./styles";
+import { InviteContainer, MessageDiv, InputContainer } from "./styles";
 import { ButtonsDiv } from "./InviteUserComponents";
 import { SearchBar } from "../../Common/Forms";
+import { toast } from "react-toastify";
 
 /**
  * A component to invite a user as coach to a given edition.
@@ -14,8 +15,6 @@ import { SearchBar } from "../../Common/Forms";
 export default function InviteUser(props: { edition: string }) {
     const [email, setEmail] = useState(""); // The email address which is entered
     const [valid, setValid] = useState(true); // The given email address is valid (or still being typed)
-    const [errorMessage, setErrorMessage] = useState(""); // An error message
-    const [loading, setLoading] = useState(false); // The invite link is being created
     const [message, setMessage] = useState(""); // A message to confirm link created
 
     /**
@@ -26,7 +25,6 @@ export default function InviteUser(props: { edition: string }) {
     const changeEmail = function (email: string) {
         setEmail(email);
         setValid(true);
-        setErrorMessage("");
         setMessage("");
     };
 
@@ -39,26 +37,24 @@ export default function InviteUser(props: { edition: string }) {
      */
     const sendInvite = async (copyInvite: boolean) => {
         if (/[^@\s]+@[^@\s]+\.[^@\s]+/.test(email)) {
-            setLoading(true);
-            try {
-                const response = await getInviteLink(props.edition, email);
-                if (copyInvite) {
-                    await navigator.clipboard.writeText(response.inviteLink);
-                    setMessage("Copied invite link for " + email);
-                } else {
-                    window.open(response.mailTo);
-                    setMessage("Created email for " + email);
-                }
-                setLoading(false);
-                setEmail("");
-            } catch (error) {
-                setLoading(false);
-                setErrorMessage("Something went wrong");
-                setMessage("");
+            const response = await toast.promise(getInviteLink(props.edition, email), {
+                error: "Failed to create invite",
+                pending: "Creating invite",
+                success: "Invite successfully created",
+            });
+            if (copyInvite) {
+                await navigator.clipboard.writeText(response.inviteLink);
+                setMessage("Copied invite link for " + email);
+            } else {
+                window.open(response.mailTo);
+                setMessage("Created email for " + email);
             }
+            setEmail("");
         } else {
             setValid(false);
-            setErrorMessage("Invalid email");
+            toast.error("Invalid email address", {
+                toastId: "invalid_email",
+            });
             setMessage("");
         }
     };
@@ -74,12 +70,9 @@ export default function InviteUser(props: { edition: string }) {
                         placeholder="Email address"
                     />
                 </InputContainer>
-                <ButtonsDiv loading={loading} sendInvite={sendInvite} />
+                <ButtonsDiv sendInvite={sendInvite} />
             </InviteContainer>
-            <MessageDiv>
-                {message}
-                <Error>{errorMessage}</Error>
-            </MessageDiv>
+            <MessageDiv>{message}</MessageDiv>
         </div>
     );
 }

@@ -2,9 +2,9 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, validator
 
-from src.app.exceptions.validation_exception import ValidationException
 from src.app.schemas.skills import Skill
 from src.app.schemas.utils import CamelCaseModel
+from src.app.schemas.validators import validate_url
 
 
 class User(CamelCaseModel):
@@ -164,12 +164,8 @@ class InputProject(BaseModel):
     @validator('info_url')
     @classmethod
     def is_url(cls, info_url: str | None):
-        """Verify the info_url is actually an url"""
-        if not info_url:
-            return None
-        if info_url.startswith('https://') or info_url.startswith('http://'):
-            return info_url
-        raise ValidationException('info_url should be a link starting with http:// or https://')
+        """Validate url"""
+        return validate_url(info_url)
 
 
 class InputArgumentation(BaseModel):

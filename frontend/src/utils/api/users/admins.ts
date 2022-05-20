@@ -19,9 +19,8 @@ export async function getAdmins(page: number, name: string): Promise<UsersList> 
  * Make the given user admin.
  * @param {number} userId The id of the user.
  */
-export async function addAdmin(userId: number): Promise<boolean> {
-    const response = await axiosInstance.patch(`/users/${userId}`, { admin: true });
-    return response.status === 204;
+export async function addAdmin(userId: number) {
+    await axiosInstance.patch(`/users/${userId}`, { admin: true });
 }
 
 /**
@@ -29,8 +28,7 @@ export async function addAdmin(userId: number): Promise<boolean> {
  * @param {number} userId The id of the user.
  */
 export async function removeAdmin(userId: number) {
-    const response = await axiosInstance.patch(`/users/${userId}`, { admin: false });
-    return response.status === 204;
+    await axiosInstance.patch(`/users/${userId}`, { admin: false });
 }
 
 /**
@@ -38,7 +36,6 @@ export async function removeAdmin(userId: number) {
  * @param {number} userId The id of the user.
  */
 export async function removeAdminAndCoach(userId: number) {
-    const response2 = await axiosInstance.delete(`/users/${userId}/editions`);
-    const response1 = await axiosInstance.patch(`/users/${userId}`, { admin: false });
-    return response1.status === 204 && response2.status === 204;
+    await axiosInstance.delete(`/users/${userId}/editions`);
+    await axiosInstance.patch(`/users/${userId}`, { admin: false });
 }

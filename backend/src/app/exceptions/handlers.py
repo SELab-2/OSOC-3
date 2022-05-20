@@ -10,7 +10,7 @@ from .authentication import (
 from .crud import DuplicateInsertException
 from .editions import ReadOnlyEditionException
 from .parsing import MalformedUUIDError
-from .projects import StudentInConflictException, FailedToAddProjectRoleException
+from .projects import StudentInConflictException, FailedToAddProjectRoleException, NoStrictlyPositiveNumberOfSlots
 from .register import FailedToAddNewUserException, InvalidGitHubCode
 from .students_email import FailedToAddNewEmailException
 from .webhooks import WebhookProcessException
@@ -139,4 +139,11 @@ def install_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={'message': 'Something went wrong while creating a new email'}
+        )
+
+    @app.exception_handler(NoStrictlyPositiveNumberOfSlots)
+    def none_strict_postive_number_of_slots(_request: Request, _exception: NoStrictlyPositiveNumberOfSlots):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={'message': 'The amount of slots per role has to be a strictly positive integer'}
         )

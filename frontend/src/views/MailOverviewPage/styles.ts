@@ -1,4 +1,3 @@
-import { Table } from "react-bootstrap";
 import styled from "styled-components";
 
 export const TableDiv = styled.div`
@@ -6,40 +5,35 @@ export const TableDiv = styled.div`
     margin-top: 5px;
     margin-bottom: 50px;
     width: fit-content;
+    min-width: 100%;
 `;
 
 export const DropDownButtonDiv = styled.div`
-    margin: auto;
-    margin-top: 50px;
+    float: right;
     width: fit-content;
 `;
 
 export const SearchDiv = styled.div`
-    margin: auto;
-    margin-top: 50px;
-    width: fit-content;
+    margin-top: 20px;
+    width: 14em;
     display: inline-block;
 `;
 
 export const FilterDiv = styled.div`
-    background-color: white;
-    color: black;
-    border-radius: 5px;
-    margin: auto;
-    margin-top: 50px;
-    margin-left: 5px;
-    width: fit-content;
+    width: 14em;
     max-width: 350px;
     display: inline-block;
+`;
+
+export const SearchAndChangeDiv = styled.div`
+    float: left;
+    width: 100%;
+    margin-bottom: 5px;
 `;
 
 export const SearchAndFilterDiv = styled.div`
     margin: auto;
     width: fit-content;
-`;
-
-export const EmailsTable = styled(Table)`
-    // TODO: Make all tables uniform
 `;
 
 export const CenterDiv = styled.div`
@@ -48,6 +42,12 @@ export const CenterDiv = styled.div`
 `;
 
 export const MessageDiv = styled.div`
+    width: fit-content;
+    margin: auto;
+`;
+
+export const MailOverviewDiv = styled.div`
+    min-width: 34em;
     width: fit-content;
     margin: auto;
 `;

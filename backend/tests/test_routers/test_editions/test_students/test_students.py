@@ -587,8 +587,11 @@ async def test_creat_email_for_ghost(database_with_data: AsyncSession, auth_clie
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-async def test_creat_email_student_in_other_edition(database_with_data: AsyncSession, auth_client: AuthClient):
-    """test creat an email for a student not in this edition"""
+async def test_create_email_student_in_other_edition_bulk(database_with_data: AsyncSession, auth_client: AuthClient):
+    """test creating an email for a student not in this edition when sending them in bulk
+    The expected result is that only the mails to students in that edition are sent, and the
+    others are ignored
+    """
     edition: Edition = Edition(year=2023, name="ed2023")
     database_with_data.add(edition)
     student: Student = Student(first_name="Mehmet", last_name="Dizdar", preferred_name="Mehmet",
@@ -599,9 +602,30 @@ async def test_creat_email_student_in_other_edition(database_with_data: AsyncSes
     await auth_client.admin()
     async with auth_client:
         response = await auth_client.post("/editions/ed2022/students/emails",
-                                          json={"students_id": [3], "email_status": 5})
-    assert response.status_code == status.HTTP_201_CREATED
-    assert len(response.json()["studentEmails"]) == 0
+                                          json={"students_id": [1, student.student_id], "email_status": 5})
+
+        # When sending a request for students that aren't in this edition,
+        # it ignores them & creates emails for the rest instead
+        assert response.status_code == status.HTTP_201_CREATED
+        assert len(response.json()["studentEmails"]) == 1
+        assert response.json()["studentEmails"][0]["student"]["studentId"] == 1
+
+
+async def test_create_emails_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
+    """Test sending emails in a readonly edition"""
+    edition: Edition = Edition(year=2023, name="ed2023", readonly=True)
+    database_session.add(edition)
+    student: Student = Student(first_name="Mehmet", last_name="Dizdar", preferred_name="Mehmet",
+                               email_address="mehmet.dizdar@example.com", phone_number="(787)-938-6216", alumni=True,
+                               wants_to_be_student_coach=False, edition=edition, skills=[])
+    database_session.add(student)
+    await database_session.commit()
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.post(f"/editions/{edition.name}/students/emails",
+                                          json={"students_id": [student.student_id], "email_status": 5})
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 async def test_get_emails_no_authorization(database_with_data: AsyncSession, auth_client: AuthClient):

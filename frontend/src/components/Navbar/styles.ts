@@ -56,3 +56,7 @@ export const HorizontalSep = styled.hr`
 export const VerticalSep = styled.div`
     margin: 0 10px;
 `;
+
+export const DropdownLabel = styled.div`
+    color: rgba(255, 255, 255, 0.55);
+`;

@@ -5,7 +5,7 @@ from starlette.responses import Response
 
 from src.app.logic.invites import create_mailto_link, delete_invite_link, get_pending_invites_page
 from src.app.routers.tags import Tags
-from src.app.utils.dependencies import get_edition, get_invite_link, require_admin, get_latest_edition
+from src.app.utils.dependencies import get_edition, get_invite_link, require_admin, get_editable_edition
 from src.app.schemas.invites import InvitesLinkList, EmailAddress, NewInviteLink, InviteLink as InviteLinkModel
 from src.database.database import get_session
 from src.database.models import Edition, InviteLink as InviteLinkDB
@@ -24,7 +24,7 @@ async def get_invites(db: AsyncSession = Depends(get_session), edition: Edition 
 @invites_router.post("", status_code=status.HTTP_201_CREATED, response_model=NewInviteLink,
                      dependencies=[Depends(require_admin)])
 async def create_invite(email: EmailAddress, db: AsyncSession = Depends(get_session),
-                        edition: Edition = Depends(get_latest_edition)):
+                        edition: Edition = Depends(get_editable_edition)):
     """
     Create a new invitation link for the current edition.
     """

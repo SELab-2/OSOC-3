@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { LoadSpinner } from "../../components/Common";
 import { validateBearerToken } from "../../utils/api/auth";
 import { logIn, logOut, useAuth } from "../../contexts/auth-context";
 import { getAccessToken, getRefreshToken } from "../../utils/local-storage";
@@ -39,7 +40,7 @@ export default function VerifyingTokenPage() {
     // This will be replaced later on
     return (
         <div data-testid={"verifying-page"}>
-            <h1>Loading...</h1>
+            <LoadSpinner show={true} />
         </div>
     );
 }
