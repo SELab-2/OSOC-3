@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 from src.app.logic.students import (
     definitive_decision_on_student, remove_student, get_student_return,
@@ -13,15 +14,18 @@ from src.app.schemas.students import (
     ReturnStudentMailList, NewEmail, EmailsSearchQueryParams,
     ListReturnStudentMailList
 )
-from src.app.utils.dependencies import get_student, get_edition, require_admin, require_auth
+from src.app.utils.dependencies import get_latest_edition, get_student, get_edition, require_admin, require_auth
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, Edition, User
 from .suggestions import students_suggestions_router
+from .answers import students_answers_router
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
 students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
+students_router.include_router(
+    students_answers_router, prefix="/{student_id}")
 
 
 @students_router.get("", response_model=ReturnStudentList)
@@ -43,7 +47,7 @@ async def get_students(db: AsyncSession = Depends(get_session),
 async def send_emails(
         new_email: NewEmail,
         db: AsyncSession = Depends(get_session),
-        edition: Edition = Depends(get_edition)):
+        edition: Edition = Depends(get_latest_edition)):
     """
     Send a email to a list of students.
     """
@@ -68,7 +72,7 @@ async def get_emails(
 @students_router.delete(
     "/{student_id}",
     dependencies=[Depends(require_admin), Depends(live)],
-    status_code=status.HTTP_204_NO_CONTENT
+    status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
 )
 async def delete_student(student: Student = Depends(get_student), db: AsyncSession = Depends(get_session)):
     """
@@ -78,16 +82,17 @@ async def delete_student(student: Student = Depends(get_student), db: AsyncSessi
 
 
 @students_router.get("/{student_id}", dependencies=[Depends(require_auth)], response_model=ReturnStudent)
-async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student)):
+async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student),
+                            db: AsyncSession = Depends(get_session)):
     """
     Get information about a specific student.
     """
-    return get_student_return(student, edition)
+    return await get_student_return(db, student, edition)
 
 
 @students_router.put(
     "/{student_id}/decision",
-    dependencies=[Depends(require_admin), Depends(live)],
+    dependencies=[Depends(require_admin), Depends(live), Depends(get_latest_edition)],
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def make_decision(

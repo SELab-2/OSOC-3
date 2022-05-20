@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Query, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
+from starlette.responses import Response
 
 import src.app.logic.users as logic
 from src.app.routers.tags import Tags
@@ -36,7 +37,8 @@ async def get_current_user(db: AsyncSession = Depends(get_session), user: UserDB
     return user_data
 
 
-@users_router.patch("/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)])
+@users_router.patch("/{user_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
+                    dependencies=[Depends(require_admin)])
 async def patch_admin_status(user_id: int, admin: AdminPatch, db: AsyncSession = Depends(get_session)):
     """
     Set admin-status of user
@@ -45,7 +47,7 @@ async def patch_admin_status(user_id: int, admin: AdminPatch, db: AsyncSession =
 
 
 @users_router.post("/{user_id}/editions/{edition_name}", status_code=status.HTTP_204_NO_CONTENT,
-                   dependencies=[Depends(require_admin)])
+                   response_class=Response, dependencies=[Depends(require_admin)])
 async def add_to_edition(user_id: int, edition_name: str, db: AsyncSession = Depends(get_session)):
     """
     Add user as coach of the given edition
@@ -54,7 +56,7 @@ async def add_to_edition(user_id: int, edition_name: str, db: AsyncSession = Dep
 
 
 @users_router.delete("/{user_id}/editions/{edition_name}", status_code=status.HTTP_204_NO_CONTENT,
-                     dependencies=[Depends(require_admin)])
+                     response_class=Response, dependencies=[Depends(require_admin)])
 async def remove_from_edition(user_id: int, edition_name: str, db: AsyncSession = Depends(get_session)):
     """
     Remove user as coach of the given edition
@@ -62,7 +64,7 @@ async def remove_from_edition(user_id: int, edition_name: str, db: AsyncSession 
     await logic.remove_coach(db, user_id, edition_name)
 
 
-@users_router.delete("/{user_id}/editions", status_code=status.HTTP_204_NO_CONTENT,
+@users_router.delete("/{user_id}/editions", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                      dependencies=[Depends(require_admin)])
 async def remove_from_all_editions(user_id: int, db: AsyncSession = Depends(get_session)):
     """
@@ -83,7 +85,7 @@ async def get_requests(
     return await logic.get_request_list(db, edition, user, page)
 
 
-@users_router.post("/requests/{request_id}/accept", status_code=status.HTTP_204_NO_CONTENT,
+@users_router.post("/requests/{request_id}/accept", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                    dependencies=[Depends(require_admin)])
 async def accept_request(request_id: int, db: AsyncSession = Depends(get_session)):
     """
@@ -92,7 +94,7 @@ async def accept_request(request_id: int, db: AsyncSession = Depends(get_session
     await logic.accept_request(db, request_id)
 
 
-@users_router.post("/requests/{request_id}/reject", status_code=status.HTTP_204_NO_CONTENT,
+@users_router.post("/requests/{request_id}/reject", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
                    dependencies=[Depends(require_admin)])
 async def reject_request(request_id: int, db: AsyncSession = Depends(get_session)):
     """

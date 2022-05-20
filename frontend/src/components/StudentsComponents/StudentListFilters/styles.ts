@@ -8,12 +8,6 @@ export const StudentListSideMenu = styled.div`
     min-width: 35vh;
     max-width: 50vh;
     height: 100vh;
-    border-right: 2px solid #163542;
-`;
-
-export const StudentListTitle = styled.span`
-    align-self: center;
-    font-size: 5vh;
 `;
 
 export const StudentListLinebreak = styled.div`
@@ -31,58 +25,46 @@ export const FilterStudentName = styled.div`
     align-items: center;
 `;
 
-export const FilterStudentNameLabelContainer = styled.div`
-    display: flex;
-    background-color: var(--osoc_orange);
-    border: 2px solid var(--osoc_orange);
-    width: 30%;
-    text-align: center;
-`;
-
-export const FilterStudentNameLabel = styled.span`
-    color: white;
-    width: 100%;
-`;
-
 export const FilterStudentNameInputContainer = styled.div`
-    margin-left: 15px;
     width: 100%;
+`;
+
+export const RolesTitle = styled.p`
+    margin-top: 2%;
+    margin-right: 2%;
+    font-size: 1.7vh;
+`;
+
+export const ConfirmsTitle = styled.p`
+    margin-top: 2%;
+    margin-right: 2%;
+    font-size: 1.7vh;
 `;
 
 export const FilterRoles = styled.div`
     width: 90%;
     display: flex;
     align-self: center;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 2%;
+    margin-bottom: 2%;
     align-items: center;
 `;
 
-export const FilterRolesLabelContainer = styled.div`
+export const FilterConfirms = styled.div`
+    width: 90%;
     display: flex;
-    background-color: var(--osoc_green);
-    border: 2px solid var(--osoc_green);
-    width: 30%;
-    text-align: center;
-`;
-
-export const FilterRolesLabel = styled.span`
-    color: white;
-    width: 100%;
+    align-self: center;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    align-items: center;
 `;
 
 export const FilterRolesDropdownContainer = styled.div`
-    margin-left: 15px;
     width: 100%;
 `;
 
-export const FilterResetButton = styled.button`
-    width: 50%;
-    align-self: center;
-    border: none;
-    height: 3vh;
-    background-color: var(--osoc_red);
-    color: white;
+export const FilterConfirmsDropdownContainer = styled.div`
+    width: 100%;
 `;
 
 export const FilterControls = styled.div`
@@ -96,4 +78,12 @@ export const FilterControls = styled.div`
 export const MessageDiv = styled.div`
     text-align: center;
     margin-top: 20px;
+`;
+
+export const ConfirmButtonsContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: 90%;
+    margin-bottom: 2%;
 `;

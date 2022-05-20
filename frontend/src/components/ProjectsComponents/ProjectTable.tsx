@@ -5,7 +5,6 @@ import { Project } from "../../data/interfaces";
 import React from "react";
 import { MessageDiv } from "./styles";
 import LoadSpinner from "../Common/LoadSpinner";
-import { Error } from "../Common/Users/styles";
 
 /**
  * A table of [[ProjectCard]]s.
@@ -23,15 +22,8 @@ export default function ProjectTable(props: {
     getMoreProjects: () => void;
     moreProjectsAvailable: boolean;
     removeProject: (project: Project) => void;
-    error: string | undefined;
 }) {
-    if (props.error) {
-        return (
-            <MessageDiv>
-                <Error>{props.error}</Error>
-            </MessageDiv>
-        );
-    } else if (props.gotData && props.projects.length === 0) {
+    if (props.gotData && props.projects.length === 0) {
         return (
             <MessageDiv>
                 <div>No projects found.</div>
@@ -43,7 +35,7 @@ export default function ProjectTable(props: {
         <InfiniteScroll
             loadMore={props.getMoreProjects}
             hasMore={props.moreProjectsAvailable}
-            loader={<LoadSpinner show={true} />}
+            loader={<LoadSpinner show={true} key="Spinner" />}
             initialLoad={true}
             useWindow={false}
             getScrollParent={() => document.getElementById("root")}

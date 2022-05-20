@@ -2,6 +2,7 @@ import { User } from "../../utils/api/users/users";
 import React from "react";
 import { RemoveAdmin } from "./index";
 import { EmailAndAuth } from "../Common/Users";
+import { RemoveTd } from "../Common/Tables/styles";
 
 /**
  * An item from [[AdminList]]. Contains the credentials of an admin and a button to remove the admin.
@@ -15,9 +16,9 @@ export default function AdminItem(props: { admin: User; removeAdmin: (user: User
             <td>
                 <EmailAndAuth user={props.admin} />
             </td>
-            <td>
+            <RemoveTd>
                 <RemoveAdmin admin={props.admin} removeAdmin={props.removeAdmin} />
-            </td>
+            </RemoveTd>
         </tr>
     );
 }
