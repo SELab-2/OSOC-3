@@ -24,25 +24,30 @@ import { User } from "../../../utils/api/users/users";
 import { toast } from "react-toastify";
 import { createProjectRole } from "../../../utils/api/projectRoles";
 import { CreateButton } from "../../../components/Common/Buttons";
+import InfoUrl from "../../../components/ProjectsComponents/CreateProjectComponents/InputFields/InfoUrl";
 /**
  * React component of the create project page.
  * @returns The create project page.
  */
 
 export default function CreateProjectPage() {
-    const [name, setName] = useState(""); // States for coaches
+    const [name, setName] = useState(""); // State for project name
+
+    const [infoUrl, setInfoUrl] = useState(""); // State for info link
 
     const [coach, setCoach] = useState("");
-    const [coaches, setCoaches] = useState<User[]>([]); // States for skills
+    const [coaches, setCoaches] = useState<User[]>([]); // States for coaches
 
     const [skill, setSkill] = useState("");
-    const [projectSkills, setProjectSkills] = useState<SkillProject[]>([]); // States for partners
+    const [projectSkills, setProjectSkills] = useState<SkillProject[]>([]); // States for skills
 
     const [partner, setPartner] = useState("");
-    const [partners, setPartners] = useState<string[]>([]);
+    const [partners, setPartners] = useState<string[]>([]); // States for partners
+
     const navigate = useNavigate();
     const params = useParams();
     const editionId = params.editionId!;
+
     return (
         <CenterContainer>
             <CreateProjectContainer>
@@ -52,7 +57,10 @@ export default function CreateProjectPage() {
                 <Label>Name</Label>
                 <NameInput name={name} setName={setName} />
 
-                <Label>Coaches</Label>
+                <Label>Info Link</Label>
+                <InfoUrl infoUrl={infoUrl} setInfoUrl={setInfoUrl} />
+
+                <Label>Add Coaches</Label>
                 <CoachInput
                     coach={coach}
                     setCoach={setCoach}
@@ -61,7 +69,7 @@ export default function CreateProjectPage() {
                 />
                 <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
 
-                <Label>Skills</Label>
+                <Label>Add Skills</Label>
                 <SkillInput
                     skill={skill}
                     setSkill={setSkill}
@@ -70,7 +78,7 @@ export default function CreateProjectPage() {
                 />
                 <AddedSkills skills={projectSkills} setSkills={setProjectSkills} />
 
-                <Label>Partners</Label>
+                <Label>Add Partners</Label>
                 <PartnerInput
                     partner={partner}
                     setPartner={setPartner}
@@ -97,6 +105,13 @@ export default function CreateProjectPage() {
             return;
         }
 
+        if (infoUrl !== "" && !infoUrl.startsWith("https://") && !infoUrl.startsWith("http://")) {
+            toast.error("InfoUrl should start with https:// or http://", {
+                toastId: "createProjectBadUrl",
+            });
+            return;
+        }
+
         let badSkill = false;
         projectSkills.forEach(projectSkill => {
             if (isNaN(projectSkill.slots)) {
@@ -112,7 +127,7 @@ export default function CreateProjectPage() {
         coaches.forEach(coachToAdd => {
             coachIds.push(coachToAdd.userId);
         });
-        const response = await createProject(editionId, name, partners, coachIds);
+        const response = await createProject(editionId, name, infoUrl, partners, coachIds);
 
         if (response) {
             await toast.promise(addProjectRoles(response.projectId), {
