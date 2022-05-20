@@ -109,6 +109,11 @@ function UsersPage() {
                 return object !== coach;
             })
         );
+        setAllCoaches(
+            allCoaches.filter(object => {
+                return object !== coach;
+            })
+        );
     }
 
     if (params.editionId === undefined) {
