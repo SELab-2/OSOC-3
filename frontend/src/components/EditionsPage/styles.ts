@@ -37,3 +37,27 @@ export const StyledNewEditionButton = styled(Button).attrs(() => ({
         border-color: var(--osoc_orange);
     }
 `;
+
+interface TextProps {
+    readonly: boolean;
+    clickable: boolean;
+}
+
+export const StyledReadonlyText = styled.div<TextProps>`
+    text-decoration: none;
+    transition: 200ms ease-out;
+    color: ${props => (props.readonly ? "var(--osoc_red)" : "var(--osoc_green)")};
+    font-weight: bold;
+
+    // Only change style on hover for admins
+    ${({ clickable }) =>
+        clickable &&
+        `
+        &:hover {
+            text-decoration: underline;
+            transition: 200ms ease-out;
+            color: var(--osoc_orange);
+            cursor: pointer;
+        }
+        `};
+`;

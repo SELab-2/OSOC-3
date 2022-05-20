@@ -22,6 +22,7 @@ class Edition(CamelCaseModel):
     edition_id: int
     name: str
     year: int
+    readonly: bool
 
     class Config:
         """Set to ORM mode"""
@@ -35,3 +36,10 @@ class EditionList(CamelCaseModel):
     class Config:
         """Set to ORM mode"""
         orm_mode = True
+
+
+class EditEdition(CamelCaseModel):
+    """Input schema to edit an edition
+    Only supported operation is patching the readonly status
+    """
+    readonly: bool

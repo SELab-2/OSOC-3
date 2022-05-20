@@ -308,9 +308,9 @@ async def test_patch_wrong_project(database_session: AsyncSession, auth_client: 
         assert json['projects'][0]['name'] == project.name
 
 
-async def test_create_project_old_edition(database_session: AsyncSession, auth_client: AuthClient):
+async def test_create_project_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
     """test create a project for a readonly edition"""
-    edition_22: Edition = Edition(year=2022, name="ed2022")
+    edition_22: Edition = Edition(year=2022, name="ed2022", readonly=True)
     edition_23: Edition = Edition(year=2023, name="ed2023")
     database_session.add(edition_22)
     database_session.add(edition_23)

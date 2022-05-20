@@ -1,0 +1,10 @@
+.show > .btn-primary.dropdown-toggle {
+    background-color: var(--osoc_orange);
+    border-color: var(--osoc_orange);
+    color: var(--osoc_blue);
+    box-shadow: none !important;
+}
+
+.dropdown-menu {
+    width: 100%;
+}
