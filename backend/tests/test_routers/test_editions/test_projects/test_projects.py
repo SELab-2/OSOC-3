@@ -462,10 +462,19 @@ async def test_update_project_role(database_session: AsyncSession, auth_client: 
         assert response.status_code == status.HTTP_201_CREATED
         response = await auth_client.patch("/editions/ed2022/projects/1/roles/1", json={
             "skill_id": 1,
-            "description": "description",
+            "description": "changed",
             "slots": 2
         })
         assert response.status_code == status.HTTP_204_NO_CONTENT
+        response = await auth_client.get("/editions/ed2022/projects/1/roles")
+        assert response.status_code == status.HTTP_200_OK
+        json = response.json()
+        assert len(json["projectRoles"]) == 1
+        assert json["projectRoles"][0]["projectRoleId"] == 1
+        assert json["projectRoles"][0]["projectId"] == 1
+        assert json["projectRoles"][0]["description"] == "changed"
+        assert json["projectRoles"][0]["skill"]["skillId"] == 1
+        assert json["projectRoles"][0]["slots"] == 2
 
 
 async def test_update_project_role_negative_slots(database_session: AsyncSession, auth_client: AuthClient):
@@ -566,6 +575,7 @@ async def test_get_project_role(database_session: AsyncSession, auth_client: Aut
         })
         assert response.status_code == status.HTTP_201_CREATED
         response = await auth_client.get("/editions/ed2022/projects/1/roles")
+        assert response.status_code == status.HTTP_200_OK
         json = response.json()
         assert len(json["projectRoles"]) == 1
         assert json["projectRoles"][0]["projectRoleId"] == 1
