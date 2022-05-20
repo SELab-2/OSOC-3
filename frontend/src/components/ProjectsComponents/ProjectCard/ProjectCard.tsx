@@ -50,6 +50,13 @@ export default function ProjectCard({
 
     const navigate = useNavigate();
 
+    let assignedStudents = 0;
+    let neededStudents = 0;
+    project.projectRoles.forEach(projectRole => {
+        neededStudents += projectRole.slots;
+        assignedStudents += projectRole.suggestions.length;
+    });
+
     // What to do when deleting a project.
     async function handleDelete() {
         const success = await deleteProject(editionId, project.projectId);
@@ -91,9 +98,7 @@ export default function ProjectCard({
                     ))}
                 </Clients>
                 <NumberOfStudents>
-                    {
-                        // project.numberOfStudents
-                    }
+                    {assignedStudents + " / " + neededStudents}
                     <BsPersonFill />
                 </NumberOfStudents>
             </ClientContainer>
