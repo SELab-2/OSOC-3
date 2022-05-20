@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 export const TitleContainer = styled.div`
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    margin-right: 20px;
 `;
 
 export const Title = styled.h2`
@@ -31,22 +33,13 @@ export const Edit = styled.div`
     }
 `;
 
-export const Save = styled.button`
-    padding: 5px 10px;
-    max-height: 35px;
-    background-color: #44dba4;
-    color: white;
-    border: none;
-    margin-left: 5px;
-    border-radius: 5px;
-`;
-
 export const Cancel = styled.button`
     padding: 5px 10px;
-    max-height: 35px;
     background-color: #131329;
     color: white;
     border: none;
     margin-left: 5px;
+    margin-right: 5px;
     border-radius: 5px;
+    height: 38px;
 `;

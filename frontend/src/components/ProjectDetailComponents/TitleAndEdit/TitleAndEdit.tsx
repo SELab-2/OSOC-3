@@ -1,7 +1,6 @@
 import {
     Title,
     TitleContainer,
-    Save,
     Cancel,
     TitleInput,
     Edit,
@@ -11,7 +10,7 @@ import {
 import { MdOutlineEditNote } from "react-icons/md";
 import { Role } from "../../../data/enums/role";
 import { Project } from "../../../data/interfaces/projects";
-import { DeleteButton } from "../../Common/Buttons";
+import { CreateButton, DeleteButton } from "../../Common/Buttons";
 
 export default function TitleAndEdit({
     editing,
@@ -53,14 +52,14 @@ export default function TitleAndEdit({
                         </Edit>
                     ) : (
                         <>
-                            <Save
+                            <CreateButton
+                                label="save"
+                                showIcon={false}
                                 onClick={async () => {
                                     await editProject();
                                     setEditing(false);
                                 }}
-                            >
-                                Save
-                            </Save>
+                            />
                             <Cancel
                                 onClick={() => {
                                     setEditing(false);
