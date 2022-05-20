@@ -19,10 +19,13 @@ from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, Edition, User
 from .suggestions import students_suggestions_router
+from .answers import students_answers_router
 
 students_router = APIRouter(prefix="/students", tags=[Tags.STUDENTS])
 students_router.include_router(
     students_suggestions_router, prefix="/{student_id}")
+students_router.include_router(
+    students_answers_router, prefix="/{student_id}")
 
 
 @students_router.get("", response_model=ReturnStudentList)
