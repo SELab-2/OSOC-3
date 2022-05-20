@@ -14,7 +14,17 @@ export default function StudentList() {
 
     useEffect(() => {
         async function callStudents(newPage: number) {
-            const response = await getStudents(editionId, "", [], false, false, 0);
+            const response = await getStudents(
+                editionId,
+                "",
+                [],
+                false,
+                false,
+                false,
+                [],
+                0,
+                new AbortController()
+            );
 
             if (response) {
                 setGotStudents(true);
