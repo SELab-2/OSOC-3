@@ -24,7 +24,7 @@ async def process_webhook(edition: Edition, data: WebhookEvent, database: AsyncS
     extra_questions: list[Question] = []
 
     attributes: dict = {
-        'edition': edition
+        'edition': edition,
         'skills': []
     }
 
