@@ -8,7 +8,7 @@ import {
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import {
@@ -31,9 +31,7 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
-import { useSockets } from "../../../contexts";
 import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
-
 
 // Types of events accepted by this websocket
 const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];

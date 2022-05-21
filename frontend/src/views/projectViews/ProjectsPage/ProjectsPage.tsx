@@ -152,18 +152,6 @@ export default function ProjectPage() {
     }
 
     /**
-     * Filter the projects by name
-     * @param searchTerm
-     */
-    function filter(searchTerm: string) {
-        setPage(0);
-        setGotProjects(false);
-        setMoreProjectsAvailable(true);
-        setSearchString(searchTerm);
-        setProjects([]);
-    }
-
-    /**
      * Websockets
      */
     useEffect(() => {
