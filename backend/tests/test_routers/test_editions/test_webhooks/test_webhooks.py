@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.database.models import Edition, WebhookURL, Student
+from src.database.models import Edition, WebhookURL, Student, Skill
 from tests.utils.authorization import AuthClient
 from .data import create_webhook_event, WEBHOOK_EVENT_BAD_FORMAT, WEBHOOK_MISSING_QUESTION
 
@@ -28,6 +28,23 @@ async def webhook(edition: Edition, database_session: AsyncSession) -> WebhookUR
     return webhook
 
 
+@pytest.fixture
+async def database_session_skills(database_session: AsyncSession) -> AsyncSession:
+    """fixture to add skills"""
+    database_session.add(Skill(name="Front-end developer"))
+    database_session.add(Skill(name="Back-end developer"))
+    database_session.add(Skill(name="UX / UI designer"))
+    database_session.add(Skill(name="Graphic designer"))
+    database_session.add(Skill(name="Business Modeller"))
+    database_session.add(Skill(name="Storyteller"))
+    database_session.add(Skill(name="Marketer"))
+    database_session.add(Skill(name="Copywriter"))
+    database_session.add(Skill(name="Video editor"))
+    database_session.add(Skill(name="Photographer"))
+    await database_session.commit()
+    return database_session
+
+
 async def test_new_webhook(auth_client: AuthClient, edition: Edition):
     await auth_client.admin()
     async with auth_client:
@@ -44,7 +61,9 @@ async def test_new_webhook_invalid_edition(auth_client: AuthClient, edition: Edi
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-async def test_webhook(test_client: AsyncClient, webhook: WebhookURL, database_session: AsyncSession):
+async def test_webhook(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL):
+    """test webhook"""
+    
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
         first_name="Bob",
@@ -57,7 +76,7 @@ async def test_webhook(test_client: AsyncClient, webhook: WebhookURL, database_s
         response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
         assert response.status_code == status.HTTP_201_CREATED
 
-    student: Student = (await database_session.execute(select(Student))).scalars().first()
+    student: Student = (await database_session_skills.execute(select(Student))).scalars().first()
     assert student.edition == webhook.edition
     assert student.email_address == "test@gmail.com"
     assert student.first_name == "Bob"
@@ -65,6 +84,7 @@ async def test_webhook(test_client: AsyncClient, webhook: WebhookURL, database_s
     assert student.preferred_name == "Jhon"
     assert student.wants_to_be_student_coach is False
     assert student.phone_number == "0477002266"
+    assert len(student.skills) > 0
 
 
 async def test_webhook_bad_format(test_client: AsyncClient, webhook: WebhookURL):
@@ -77,7 +97,7 @@ async def test_webhook_bad_format(test_client: AsyncClient, webhook: WebhookURL)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-async def test_webhook_duplicate_email(test_client: AsyncClient, webhook: WebhookURL, mocker):
+async def test_webhook_duplicate_email(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL, mocker):
     """Test entering a duplicate email address"""
     mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
@@ -86,7 +106,7 @@ async def test_webhook_duplicate_email(test_client: AsyncClient, webhook: Webhoo
     async with test_client:
         response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
         assert response.status_code == status.HTTP_201_CREATED
-    
+
         event: dict = create_webhook_event(
             email_address="test@gmail.com",
         )
@@ -94,7 +114,7 @@ async def test_webhook_duplicate_email(test_client: AsyncClient, webhook: Webhoo
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-async def test_webhook_duplicate_phone(test_client: AsyncClient, webhook: WebhookURL, mocker):
+async def test_webhook_duplicate_phone(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL, mocker):
     """Test entering a duplicate phone number"""
     mocker.patch('builtins.open', new_callable=mock_open())
     event: dict = create_webhook_event(
@@ -103,7 +123,7 @@ async def test_webhook_duplicate_phone(test_client: AsyncClient, webhook: Webhoo
     async with test_client:
         response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
         assert response.status_code == status.HTTP_201_CREATED
-    
+
         event: dict = create_webhook_event(
             phone_number="0477002266",
         )
@@ -111,7 +131,7 @@ async def test_webhook_duplicate_phone(test_client: AsyncClient, webhook: Webhoo
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-async def test_webhook_missing_question(test_client: AsyncClient, webhook: WebhookURL, mocker):
+async def test_webhook_missing_question(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL, mocker):
     """Test submitting a form with a question missing"""
     mocker.patch('builtins.open', new_callable=mock_open())
     async with test_client:
@@ -122,10 +142,11 @@ async def test_webhook_missing_question(test_client: AsyncClient, webhook: Webho
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-async def test_new_webhook_readonly_edition(database_session: AsyncSession, auth_client: AuthClient, edition: Edition):
+async def test_new_webhook_readonly_edition(database_session_skills: AsyncSession, auth_client: AuthClient, edition: Edition):
+    """Test new webhook to an old edition"""
     edition.readonly = True
-    database_session.add(Edition(year=2023, name="ed2023"))
-    await database_session.commit()
+    database_session_skills.add(Edition(year=2023, name="ed2023"))
+    await database_session_skills.commit()
     async with auth_client:
         await auth_client.admin()
         response = await auth_client.post(f"/editions/{edition.name}/webhooks")

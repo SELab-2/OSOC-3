@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.app.exceptions.projects import NoStrictlyPositiveNumberOfSlots
 import src.app.logic.partners as partners_logic
 import src.database.crud.projects as crud
 from src.app.schemas.projects import (
@@ -67,13 +68,17 @@ async def get_project_roles(db: AsyncSession, project: Project) -> ProjectRoleRe
 
 async def create_project_role(db: AsyncSession, project: Project, input_project_role: InputProjectRole) -> ProjectRole:
     """Create a project role"""
-    return await crud.create_project_role(db, project, input_project_role)
+    if input_project_role.slots > 0:
+        return await crud.create_project_role(db, project, input_project_role)
+    raise NoStrictlyPositiveNumberOfSlots
 
 
 async def patch_project_role(db: AsyncSession, project_role_id: int, input_project_role: InputProjectRole) \
         -> ProjectRole:
     """Update a project role"""
-    return await crud.patch_project_role(db, project_role_id, input_project_role)
+    if input_project_role.slots > 0:
+        return await crud.patch_project_role(db, project_role_id, input_project_role)
+    raise NoStrictlyPositiveNumberOfSlots
 
 
 async def get_conflicts(db: AsyncSession, edition: Edition) -> ConflictStudentList:

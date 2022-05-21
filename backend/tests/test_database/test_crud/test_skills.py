@@ -60,3 +60,10 @@ async def test_create_skill_if_not_present_present(database_session: AsyncSessio
     assert not await crud.create_skill_if_not_present(database_session, "name")
     skills = (await database_session.execute(select(Skill).where(Skill.name == "name"))).scalars().all()
     assert len(skills) == 1
+
+
+async def test_get_skill_by_name(database_session: AsyncSession):
+    """Test to get skill by name"""
+    await crud.create_skill_if_not_present(database_session, "name")
+    skill1: Skill = await crud.get_skill_by_name(database_session, "name")
+    assert skill1.name == "name"

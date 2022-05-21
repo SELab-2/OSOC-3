@@ -17,5 +17,4 @@ export const ListLink = styled(Link)`
 
 export const ConflictButtonDiv = styled.div`
     float: right;
-    margin: 20px;
 `;

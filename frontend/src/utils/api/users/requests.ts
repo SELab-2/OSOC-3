@@ -1,5 +1,6 @@
 import { User } from "./users";
 import { axiosInstance } from "../api";
+import axios from "axios";
 
 /**
  * Interface of a request
@@ -28,12 +29,20 @@ export async function getRequests(
     name: string,
     page: number,
     controller: AbortController
-): Promise<GetRequestsResponse> {
-    const response = await axiosInstance.get(
-        `/users/requests?edition=${edition}&page=${page}&user=${name}`,
-        { signal: controller.signal }
-    );
-    return response.data as GetRequestsResponse;
+): Promise<GetRequestsResponse | null> {
+    try {
+        const response = await axiosInstance.get(
+            `/users/requests?edition=${edition}&page=${page}&user=${name}`,
+            { signal: controller.signal }
+        );
+        return response.data as GetRequestsResponse;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**

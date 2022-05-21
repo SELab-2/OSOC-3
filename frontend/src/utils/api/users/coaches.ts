@@ -1,5 +1,6 @@
 import { UsersList } from "./users";
 import { axiosInstance } from "../api";
+import axios from "axios";
 
 /**
  * Get a page from all coaches from the given edition.
@@ -13,18 +14,26 @@ export async function getCoaches(
     name: string,
     page: number,
     controller: AbortController | null = null
-): Promise<UsersList> {
+): Promise<UsersList | null> {
     if (controller === null) {
         const response = await axiosInstance.get(
             `/users?edition=${edition}&page=${page}&name=${name}`
         );
         return response.data as UsersList;
     } else {
-        const response = await axiosInstance.get(
-            `/users?edition=${edition}&page=${page}&name=${name}`,
-            { signal: controller.signal }
-        );
-        return response.data as UsersList;
+        try {
+            const response = await axiosInstance.get(
+                `/users?edition=${edition}&page=${page}&name=${name}`,
+                { signal: controller.signal }
+            );
+            return response.data as UsersList;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+                return null;
+            } else {
+                throw error;
+            }
+        }
     }
 }
 
