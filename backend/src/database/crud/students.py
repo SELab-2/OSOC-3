@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.expression import func, and_
+from sqlalchemy.sql.expression import func, and_, desc
 
 from src.app.schemas.students import CommonQueryParams, EmailsSearchQueryParams
 
@@ -62,7 +62,9 @@ async def get_students(db: AsyncSession, edition: Edition,
 
 async def get_emails(db: AsyncSession, student: Student) -> list[DecisionEmail]:
     """Get all emails send to a student"""
-    query = select(DecisionEmail).where(DecisionEmail.student_id == student.student_id)
+    query = select(DecisionEmail)\
+        .where(DecisionEmail.student_id == student.student_id)\
+        .order_by(desc(DecisionEmail.date))
     result = await db.execute(query)
     return result.unique().scalars().all()
 
