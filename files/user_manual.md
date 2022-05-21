@@ -236,7 +236,7 @@ To remove a student, click on the red trash icon on the bottom of the student's 
 
 ### Searching and filtering in the student's list
 
-The student's list on the lefthand side can be searched through (by typing the name of the student in the search bar) and can also be filtered by multiple attributes:
+The student's list on the left-hand side can be searched through (by typing the name of the student in the search bar) and can also be filtered by multiple attributes:
 
 - Roles: Only show students who have one of the selected roles
 - Only alumni: Only show students who are alumni
