@@ -259,3 +259,18 @@ async def test_get_edition_by_name_coach_not_assigned(database_session: AsyncSes
         # Make the get request
         response = await auth_client.get(f"/editions/{edition2.name}")
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+async def test_patch_edition(database_session: AsyncSession, auth_client: AuthClient):
+    """Test changing the status of an edition"""
+    edition = Edition(year=2022, name="ed2022")
+    database_session.add(edition)
+    await database_session.commit()
+    await auth_client.admin()
+
+    async with auth_client:
+        response = await auth_client.patch(f"/editions/{edition.name}", json={"readonly": True})
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        response = await auth_client.get(f"/editions/{edition.name}")
+        assert response.json()["readonly"]

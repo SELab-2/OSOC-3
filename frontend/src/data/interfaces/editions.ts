@@ -4,4 +4,5 @@
 export interface Edition {
     name: string;
     year: number;
+    readonly: boolean;
 }

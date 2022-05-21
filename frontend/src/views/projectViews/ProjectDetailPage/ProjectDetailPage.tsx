@@ -66,6 +66,7 @@ export default function ProjectDetailPage() {
                     });
                     setStudentAmount(countStudents);
                     setAssignedAmount(countAssigned);
+
                 } else navigate("/404-not-found");
             }
         }

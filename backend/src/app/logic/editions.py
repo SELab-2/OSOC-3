@@ -24,24 +24,16 @@ async def get_edition_by_name(db: AsyncSession, edition_name: str) -> EditionMod
 
 
 async def create_edition(db: AsyncSession, edition: EditionBase) -> EditionModel:
-    """ Create a new edition.
-
-    Args:
-        db (Session): connection with the database.
-
-    Returns:
-        Edition: the newly made edition object.
-    """
+    """Create a new edition."""
     return await crud_editions.create_edition(db, edition)
 
 
 async def delete_edition(db: AsyncSession, edition_name: str):
-    """Delete an existing edition.
-
-    Args:
-        db (Session): connection with the database.
-        edition_name (str): the name of the edition that needs to be deleted, if found.
-
-    Returns: nothing
-    """
+    """Delete an existing edition."""
     await crud_editions.delete_edition(db, edition_name)
+
+
+async def patch_edition(db: AsyncSession, edition: EditionModel, readonly: bool) -> EditionModel:
+    """Edit an existing edition"""
+    await crud_editions.patch_edition(db, edition, readonly)
+    return edition

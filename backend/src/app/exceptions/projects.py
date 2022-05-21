@@ -8,3 +8,7 @@ class FailedToAddProjectRoleException(Exception):
     """
     Exception raised when a project_role can't be added for some reason
     """
+
+
+class NoStrictlyPositiveNumberOfSlots(Exception):
+    """Exception raised when roles aren't strictly positive"""

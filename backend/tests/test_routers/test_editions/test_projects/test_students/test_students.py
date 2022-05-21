@@ -97,9 +97,9 @@ async def test_add_pr_suggestion_non_existing_pr(database_session: AsyncSession,
         assert len((await database_session.execute(select(ProjectRoleSuggestion))).scalars().all()) == 0
 
 
-async def test_add_pr_suggestion_old_edition(database_session: AsyncSession, auth_client: AuthClient):
+async def test_add_pr_suggestion_readonly_edition(database_session: AsyncSession, auth_client: AuthClient):
     """tests add a student to a project from an old edition"""
-    edition: Edition = Edition(year=2022, name="ed2022")
+    edition: Edition = Edition(year=2022, name="ed2022", readonly=True)
     project: Project = Project(name="project 1", edition=edition)
     skill: Skill = Skill(name="skill 1")
     project_role: ProjectRole = ProjectRole(project=project, skill=skill, slots=1)

@@ -1,9 +1,9 @@
-import Button from "react-bootstrap/Button";
 import styled, { css } from "styled-components";
+import "./buttonsStyles.css";
 
 import { HoverAnimation } from "../styles";
 import { AnimatedButton } from "./props";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, DropdownButton, Button } from "react-bootstrap";
 
 export const GreenButton = styled(Button)`
     ${HoverAnimation};
@@ -114,5 +114,26 @@ export const RedButton = styled(Button)<AnimatedButton>`
         background-color: var(--osoc_red_darkened);
         border-color: var(--osoc_red_darkened);
         box-shadow: none !important;
+    }
+`;
+
+export const CommonDropdownButton = styled(DropdownButton).attrs({
+    menuVariant: "dark",
+})`
+    & > Button {
+        ${HoverAnimation};
+
+        background-color: var(--osoc_green);
+        border-color: var(--osoc_green);
+        color: var(--osoc_blue);
+
+        &:hover,
+        &:active,
+        &:focus {
+            background-color: var(--osoc_orange);
+            border-color: var(--osoc_orange);
+            color: var(--osoc_blue);
+            box-shadow: none !important;
+        }
     }
 `;

@@ -9,32 +9,17 @@ from src.database.crud.util import paginate
 from src.database.models import user_editions, User, Edition, CoachRequest, AuthEmail, AuthGitHub, AuthGoogle
 
 
-async def get_user_edition_names(db: AsyncSession, user: User) -> list[str]:
+async def get_user_editions(db: AsyncSession, user: User) -> list[Edition]:
     """Get all names of the editions this user can see"""
     # For admins: return all editions - otherwise, all editions this user is verified coach in
-    source = user.editions if not user.admin else await get_editions(db)
-
-    editions = []
-    # Name & year are non-nullable in the database, so it can never be None,
-    # but MyPy doesn't seem to grasp that concept just yet so we have to check it
-    # Could be a oneliner/list comp but that's a bit less readable
-    # Return from newest to oldest
-    for edition in sorted(source, key=lambda e: e.year or -1, reverse=True):
-        if edition.name is not None:
-            editions.append(edition.name)
-
-    return editions
+    # Sort by year first, id second, descending
+    return sorted(user.editions, key=lambda x: (x.year, x.edition_id),
+                  reverse=True) if not user.admin else await get_editions(db)
 
 
 async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):
     """
     Get users and filter by optional parameters:
-    :param admin: only return admins / only return non-admins
-    :param edition_name: only return users who are coach of the given edition
-    :param exclude_edition_name: only return users who are not coach of the given edition
-    :param name: a string which the user's name must contain
-    :param page: the page to return
-
     Note: When the admin parameter is set, edition_name and exclude_edition_name will be ignored.
     """
 
@@ -57,7 +42,7 @@ async def get_users_filtered_page(db: AsyncSession, params: FilterParameters):
 
     if params.exclude_edition is not None:
         exclude_edition = await get_edition_by_name(db, params.exclude_edition)
-        exclude_user_id = select(user_editions.c.user_id)\
+        exclude_user_id = select(user_editions.c.user_id) \
             .where(user_editions.c.edition_id == exclude_edition.edition_id)
 
         query = query.filter(User.user_id.not_in(exclude_user_id))
@@ -185,7 +170,7 @@ async def reject_request(db: AsyncSession, request_id: int):
 async def remove_request_if_exists(db: AsyncSession, user_id: int, edition_name: str):
     """Remove a pending request for a user if there is one, otherwise do nothing"""
     edition = (await db.execute(select(Edition).where(Edition.name == edition_name))).scalar_one()
-    delete_query = delete(CoachRequest).where(CoachRequest.user_id == user_id)\
+    delete_query = delete(CoachRequest).where(CoachRequest.user_id == user_id) \
         .where(CoachRequest.edition_id == edition.edition_id)
     await db.execute(delete_query)
     await db.commit()
