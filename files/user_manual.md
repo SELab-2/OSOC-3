@@ -55,10 +55,10 @@ At the centre of the page, you can find a list of all users who are coach in the
 
 Next to the email address, there is a button to remove the user as coach from the currently selected edition. Once clicked, you get two choices:
 
-- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not an admin, he won't be able to see any data from any edition anymore
+- **Remove from all editions**: The user will be removed as coach from all editions. If the user is not an admin, he won't be able to see any data from any edition anymore.
 - **Remove from {Edition name}**: The user will be removed as coach from the current selected edition. He will still be able to see data from all other editions in which they are coach.
 
-At the top-right of the list, there is a button to add a user as coach to the selected edition. This can be used if a user of a previous edition needs to be a coach in the current edition. You can only add existing users via this button. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose name contains the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as coach to the current edition. A user who is added as coach will be able to see all data of the current edition and participate in the selection process.
+At the top-right of the list, there is a button to add a user as coach to the selected edition. This can be used if a user of a previous edition needs to be a coach in the current edition. You can only add existing users via this button. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose names contain the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as coach to the current edition. A user who is added as coach will be able to see all data of the current edition and participate in the selection process.
 
 ### Admins
 
@@ -66,7 +66,7 @@ This page consists of a list of all users who are admin. An admin can see all ed
 
 Next to the email address, there is a button to remove a user as admin. Once clicked, you get two choices:
 
-- **Remove admin**: Remove the given user as admin. They will stay coach for editions they were assigned to..
+- **Remove admin**: Remove the given user as admin. They will stay coach for editions they were assigned to.
 - **Remove as admin and coach**: Remove the given user as admin and remove them as coach from every edition. The user won't be able to see any data from any editions.
 
 At the top-right of the list, there is a button to add a user as admin. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose names contain the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as admin.
@@ -91,9 +91,9 @@ This page lists all editions, and contains buttons for:
 
 In order to create new editions, head over to the Editions Page (see [Viewing a list of available editions](#viewing-a-list-of-available-editions)). In the top-right of the page, you should see a "+ Create Edition"-button.
 
-- Click the "+ Create Edition"-button
-- Fill in the fields in the form presented to you (only alphanumerical characters, dashes and underscores are allowed as the name for an edition)
-- Click the "Submit"-button
+- Click the "+ Create Edition"-button.
+- Fill in the fields in the form presented to you (only alphanumerical characters, dashes and underscores are allowed as the name for an edition).
+- Click the "Submit"-button.
 
 You've now created a new edition to which you can add coaches, projects, and students.
 
@@ -101,8 +101,8 @@ You've now created a new edition to which you can add coaches, projects, and stu
 
 In order to delete editions, head over to the Editions Page (see [Viewing a list of available editions](#viewing-a-list-of-available-editions)). Every entry in the list will have a "Delete Edition" on the right.
 
-- Click the "Delete Edition"-button of the edition you want to delete
-- Follow the on-screen instructions
+- Click the "Delete Edition"-button of the edition you want to delete.
+- Follow the on-screen instructions.
 
 **Warning**: Deleting an edition is a <u>**very dangerous operation**</u> and <u>**can not be undone**</u>. As none of the linked data can be viewed without an edition, this means that deleting an edition _also_ deletes:
 
@@ -115,8 +115,8 @@ We have made a component to quickly go to a page from a previous edition. In the
 
 _**Note**: This dropdown is hidden if you cannot see any editions, as it would be empty. If you are an admin, create a new edition. If you are a coach, wait for an admin to add you to an edition._
 
-- Click the dropdown in the navbar to open it
-- In the dropdown, click on the edition you'd like to switch to
+- Click the dropdown in the navbar to open it.
+- In the dropdown, click on the edition you'd like to switch to.
 
 You have now set another edition as your "current edition". This means that navigating through the navbar will show results for that specific edition.
 
@@ -132,7 +132,7 @@ This section contains all actions related to managing projects.
 
 You can navigate to the "Projects page" by clicking the **Projects** button. Here you can see all the projects that belong to the current edition. In the short overview of a project you can see the partners, coaches and the number of students needed for this project.
 
-You can also filter on project name and on the projects where you are a coach of. To filter on name enter a name in the search field and press enter or click the **Search** button. To filter on your own projects toggle the **Only own projects** switch.
+You can also filter on project name and on the projects which you are a coach of. To filter on name enter a name in the search field and press enter or click the **Search** button. To filter on your own projects toggle the **Only own projects** switch.
 
 ### Deleting a project (Admin-only)
 
@@ -189,7 +189,7 @@ The state history will be shown in a table, with the most recent state at the to
 
 ## Overview of states (Admin-only)
 
-To see the overview of states, click on "Students" in the navbar on top of the page, and then click on "State Overview"
+To see the overview of states, click on "Students" in the navbar on top of the page, and then click on "State Overview".
 
 The overview of the states is a table of all students of an edition, together with the most recent state that has been assigned to them.
 
@@ -236,10 +236,11 @@ To remove a student, click on the red trash icon on the bottom of the student's 
 
 The student's list on the left-hand side can be searched through (by typing the name of the student in the search bar) and can also be filtered by multiple attributes:
 
-- Roles: Only show students who have one of the selected roles
-- Only alumni: Only show students who are alumni
-- Students you've suggested for: Only show students for which you made a suggestion
-- Only student coach volunteer: Only show students who indicated that they want to be a student coach
+- Roles: Only show students who have one of the selected roles.
+- Only alumni: Only show students who are alumni.
+- Students you've suggested for: Only show students for which you made a suggestion.
+- Only student coach volunteer: Only show students who indicated that they want to be a student coach.
+- Confirmed: Only show students who have one of the selected confirmation statuses.
 
 These filters can also be reset by clicking the red **Reset filters** button at the top of the student's list. 
 
