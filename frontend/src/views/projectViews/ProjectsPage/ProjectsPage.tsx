@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { CreateButton, SearchField, OwnProject } from "./styles";
+import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,15 +10,19 @@ import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
+import { CreateButton } from "../../../components/Common/Buttons";
+import { SearchBar } from "../../../components/Common/Forms";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
  */
 export default function ProjectPage() {
+    const params = useParams();
+
     const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
     const [allProjectsFetched, setAllProjectsFetched] = useState(false);
 
@@ -31,24 +35,34 @@ export default function ProjectPage() {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
 
-    const params = useParams();
     const editionId = params.editionId!;
 
-    const { role, editions } = useAuth();
+    const { role, editions, userId } = useAuth();
 
     /**
      * Used to fetch the projects
      */
-    async function loadProjects() {
-        if (loading) {
+    async function loadProjects(requested: number, reset: boolean) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
             return;
         }
 
-        if (allProjectsFetched) {
+        if (allProjectsFetched && !reset) {
+            const newUserId: number = userId === null ? -1 : userId;
+
             setProjects(
-                allProjects.filter(project =>
-                    project.name.toUpperCase().includes(searchString.toUpperCase())
-                )
+                allProjects
+                    .filter(project =>
+                        project.name.toUpperCase().includes(searchString.toUpperCase())
+                    )
+                    .filter(
+                        project =>
+                            !ownProjects ||
+                            project.coaches.map(coach => coach.userId).includes(newUserId)
+                    )
             );
             setMoreProjectsAvailable(false);
             return;
@@ -63,52 +77,53 @@ export default function ProjectPage() {
         setController(newController);
 
         const response = await toast.promise(
-            getProjects(editionId, searchString, ownProjects, page, newController),
+            getProjects(editionId, searchString, ownProjects, requestedPage, newController),
             { error: "Failed to retrieve projects" }
         );
-        if (response.projects.length === 0) {
+
+        if (response !== null) {
+            if (response.projects.length === 0 && !filterChanged) {
+                setMoreProjectsAvailable(false);
+            }
+            if (requestedPage === 0 || filterChanged) {
+                setProjects(response.projects);
+            } else {
+                setProjects(projects.concat(response.projects));
+            }
+
+            if (searchString === "" && !ownProjects) {
+                if (response.projects.length === 0) {
+                    setAllProjectsFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllProjects(response.projects);
+                } else {
+                    setAllProjects(allProjects.concat(response.projects));
+                }
+            }
+
+            setPage(requestedPage + 1);
+        } else {
             setMoreProjectsAvailable(false);
         }
-        if (page === 0) {
-            setProjects(response.projects);
-        } else {
-            setProjects(projects.concat(response.projects));
-        }
-
-        if (searchString === "") {
-            if (response.projects.length === 0) {
-                setAllProjectsFetched(true);
-            }
-            if (page === 0) {
-                setAllProjects(response.projects);
-            } else {
-                setAllProjects(allProjects.concat(response.projects));
-            }
-        }
-
-        setPage(page + 1);
-
-        setGotProjects(true);
         setLoading(false);
     }
 
-    /**
-     * update the projects when the edition changes
-     */
     useEffect(() => {
-        refreshProjects();
-    }, [editionId]);
-
-    /**
-     * Reset fetched projects
-     */
-    function refreshProjects() {
-        setProjects([]);
-        setPage(0);
-        setMoreProjectsAvailable(true);
-        setAllProjectsFetched(false);
-        setGotProjects(false);
-    }
+        if (params.editionId !== requestedEdition) {
+            setProjects([]);
+            setPage(0);
+            setAllProjectsFetched(false);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, true);
+            setRequestedEdition(params.editionId);
+        } else {
+            setPage(0);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchString, ownProjects, params.editionId]);
 
     /**
      * Remove a project in local list.
@@ -122,52 +137,44 @@ export default function ProjectPage() {
         );
     }
 
-    /**
-     * Filter the projects by name
-     * @param searchTerm
-     */
-    function filter(searchTerm: string) {
-        setPage(0);
-        setGotProjects(false);
-        setMoreProjectsAvailable(true);
-        setSearchString(searchTerm);
-        setProjects([]);
-    }
-
     return (
         <div>
-            <div>
-                <SearchField
-                    value={searchString}
-                    onChange={e => {
-                        filter(e.target.value);
-                    }}
-                    placeholder="project name"
-                />
+            <ControlContainer>
+                <div>
+                    <SearchFieldDiv>
+                        <SearchBar
+                            onChange={e => {
+                                setPage(0);
+                                setSearchString(e.target.value);
+                            }}
+                            value={searchString}
+                            placeholder="Search project..."
+                        />
+                    </SearchFieldDiv>
 
-                {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
-                    <CreateButton
-                        onClick={() => navigate("/editions/" + editionId + "/projects/new")}
-                    >
-                        Create Project
-                    </CreateButton>
-                )}
+                    {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
+                        <CreateButton
+                            label="Create Project"
+                            onClick={() => navigate("/editions/" + editionId + "/projects/new")}
+                        />
+                    )}
+                </div>
                 <ConflictsButton editionId={editionId} />
-            </div>
+            </ControlContainer>
+
             <OwnProject
                 type="switch"
                 id="custom-switch"
                 label="Only own projects"
                 checked={ownProjects}
                 onChange={() => {
+                    setPage(0);
                     setOwnProjects(!ownProjects);
-                    refreshProjects();
                 }}
             />
             <ProjectTable
                 projects={projects}
                 loading={loading}
-                gotData={gotProjects}
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
                 removeProject={removeProject}

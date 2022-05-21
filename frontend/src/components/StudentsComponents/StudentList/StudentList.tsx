@@ -3,6 +3,7 @@ import { StudentCard } from "../index";
 import { StudentCardsList } from "./styles";
 import { Student } from "../../../data/interfaces/students";
 import InfiniteScroll from "react-infinite-scroller";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import LoadSpinner from "../../Common/LoadSpinner";
 
 interface Props {
@@ -25,9 +26,34 @@ export default function StudentList(props: Props) {
                 useWindow={false}
                 initialLoad={true}
             >
-                {props.students.map(student => (
-                    <StudentCard key={student.studentId} student={student} />
-                ))}
+                <Droppable droppableId="students" isDropDisabled={true}>
+                    {(provided, snapshot) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps}>
+                            {props.students.map((student, index) => (
+                                <Draggable
+                                    draggableId={student.studentId.toString()}
+                                    index={index}
+                                    key={index}
+                                >
+                                    {(provided, snapshot) => (
+                                        <div
+                                            key={student.studentId}
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                        >
+                                            <StudentCard
+                                                key={student.studentId}
+                                                student={student}
+                                            />
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
             </InfiniteScroll>
         </StudentCardsList>
     );

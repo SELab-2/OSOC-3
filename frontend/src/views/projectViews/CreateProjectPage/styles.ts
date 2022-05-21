@@ -60,7 +60,9 @@ export const CreateButton = styled.button`
 `;
 
 export const CancelButton = styled.button`
-    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    padding: 7px 12px;
     margin-right: 5px;
     background-color: #131329;
     color: white;

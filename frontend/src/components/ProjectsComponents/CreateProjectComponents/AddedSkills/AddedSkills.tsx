@@ -43,7 +43,7 @@ export default function AddedSkills({
                     if (event.target.valueAsNumber < 1) return item;
                     return {
                         ...item,
-                        amount: event.target.valueAsNumber,
+                        slots: event.target.valueAsNumber,
                     };
                 }
                 return {
@@ -62,17 +62,18 @@ export default function AddedSkills({
                 <SkillContainer key={index}>
                     <TopContainer>
                         <TopLeftContainer>
-                            <SkillName>{skill.skill}</SkillName>
+                            <SkillName>{skill.skill.name}</SkillName>
 
                             <AmountInput
                                 type="number"
-                                value={skill.amount.toString()}
+                                value={skill.slots.toString()}
                                 placeholder="Amount"
                                 min={1}
                                 onChange={event => {
                                     updateSkills(event, index, true);
                                 }}
                             />
+                            {skill.slots === 1 ? <div>student</div> : <div>students</div>}
                         </TopLeftContainer>
                         <Delete
                             onClick={() => {

@@ -69,7 +69,7 @@ export default function Router() {
                                 <Route path={"editions"} element={<PrivateRoute />}>
                                     <Route path={""} element={<EditionsPage />} />
                                     <Route path={"new"} element={<AdminRoute />}>
-                                        {/* TODO create edition page */}
+                                        {/* create edition page */}
                                         <Route path={""} element={<CreateEditionPage />} />
                                     </Route>
                                     <Route path={":editionId"} element={<Outlet />}>

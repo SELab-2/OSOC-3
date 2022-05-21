@@ -6,6 +6,7 @@ import { RequestList, RequestsHeader } from "./RequestsComponents";
 import SearchBar from "../../Common/Forms/SearchBar";
 import { SearchFieldDiv } from "../../Common/Users/styles";
 import { toast } from "react-toastify";
+import { LoadSpinner } from "../../Common";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -18,7 +19,7 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
     const [loading, setLoading] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
-    const [gotData, setGotData] = useState(false); // Received data
+    const [requestedEdition, setRequestedEdition] = useState(props.edition);
     const [open, setOpen] = useState(false); // Collapsible is open
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
     const [allRequestsFetched, setAllRequestsFetched] = useState(false);
@@ -52,13 +53,15 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
      * Request the next page from the list of requests.
      * The set searchterm will be used.
      */
-    async function getData() {
-        if (loading) {
+    async function getData(requested: number, reset: boolean) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
             return;
         }
 
-        if (allRequestsFetched) {
-            setGotData(true);
+        if (allRequestsFetched && !reset) {
             setRequests(
                 allRequests.filter(request =>
                     request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
@@ -77,67 +80,61 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         setController(newController);
 
         const response = await toast.promise(
-            getRequests(props.edition, searchTerm, page, newController),
+            getRequests(props.edition, searchTerm, requestedPage, newController),
             {
                 error: "Failed to retrieve requests",
             }
         );
 
-        if (response.requests.length === 0) {
+        if (response !== null) {
+            if (response.requests.length === 0 && !filterChanged) {
+                setMoreRequestsAvailable(false);
+            }
+            if (requestedPage === 0 || filterChanged) {
+                setRequests(response.requests);
+            } else {
+                setRequests(requests.concat(response.requests));
+            }
+
+            if (searchTerm === "") {
+                if (response.requests.length === 0 && !filterChanged) {
+                    setAllRequestsFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllRequests(response.requests);
+                } else {
+                    setAllRequests(allRequests.concat(response.requests));
+                }
+            }
+
+            setPage(requestedPage + 1);
+        } else {
             setMoreRequestsAvailable(false);
         }
-        if (page === 0) {
-            setRequests(response.requests);
-        } else {
-            setRequests(requests.concat(response.requests));
-        }
-
-        if (searchTerm === "") {
-            if (response.requests.length === 0) {
-                setAllRequestsFetched(true);
-            }
-            if (page === 0) {
-                setAllRequests(response.requests);
-            } else {
-                setAllRequests(allRequests.concat(response.requests));
-            }
-        }
-
-        setPage(page + 1);
-
-        setGotData(true);
         setLoading(false);
     }
 
-    /**
-     * update the requests when the edition changes
-     */
     useEffect(() => {
-        refreshRequests();
-    }, [props.edition]);
-
-    /**
-     * Reset the list of requests and get the first page.
-     * Used when the edition is changed.
-     */
-    function refreshRequests() {
-        setRequests([]);
-        setPage(0);
-        setAllRequestsFetched(false);
-        setGotData(false);
-        setMoreRequestsAvailable(true);
-    }
-
-    function filter(searchTerm: string) {
-        setPage(0);
-        setGotData(false);
-        setMoreRequestsAvailable(true);
-        setSearchTerm(searchTerm);
-        setRequests([]);
-    }
+        if (props.edition !== requestedEdition) {
+            setRequests([]);
+            setPage(0);
+            setAllRequestsFetched(false);
+            setMoreRequestsAvailable(true);
+            getData(-1, true);
+            setRequestedEdition(props.edition);
+        } else {
+            setPage(0);
+            setMoreRequestsAvailable(true);
+            getData(-1, false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, props.edition]);
 
     let list;
-    if (gotData && requests.length === 0) {
+    if (requests.length === 0) {
+        if (loading) {
+            list = <LoadSpinner show={true} />;
+        }
         list = <div>No requests found</div>;
     } else {
         list = (
@@ -160,7 +157,8 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 <SearchFieldDiv>
                     <SearchBar
                         onChange={e => {
-                            filter(e.target.value);
+                            setPage(0);
+                            setSearchTerm(e.target.value);
                         }}
                         value={searchTerm}
                         placeholder="Search name..."

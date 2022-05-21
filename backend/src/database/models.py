@@ -235,7 +235,7 @@ class Student(Base):
     student_id = Column(Integer, primary_key=True)
     first_name = Column(Text, nullable=False)
     last_name = Column(Text, nullable=False)
-    preferred_name = Column(Text)
+    preferred_name = Column(Text, nullable=True)
     email_address = Column(Text, unique=True, nullable=False)
     phone_number = Column(Text, unique=True, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)

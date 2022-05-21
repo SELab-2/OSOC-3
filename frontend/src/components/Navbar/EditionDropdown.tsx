@@ -1,6 +1,6 @@
 import React from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { StyledDropdownItem } from "./styles";
+import { StyledDropdownItem, DropdownLabel } from "./styles";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCurrentEdition, setCurrentEdition } from "../../utils/session-storage";
 import { getBestRedirect } from "../../utils/logic";
@@ -22,6 +22,12 @@ export default function EditionDropdown(props: Props) {
     // as it would just show "UNDEFINED" at the top
     if (props.editions.length === 0) {
         return null;
+    }
+
+    // User can only access one edition, just show the label
+    // Don't make it a dropdown & don't make it clickable
+    if (props.editions.length === 1) {
+        return <DropdownLabel className={"my-auto"}>{props.editions[0].name}</DropdownLabel>;
     }
 
     // If anything went wrong loading the edition, default to the first one
@@ -55,5 +61,5 @@ export default function EditionDropdown(props: Props) {
         );
     });
 
-    return <NavDropdown title={`Edition ${currentEdition}`}>{navItems}</NavDropdown>;
+    return <NavDropdown title={currentEdition}>{navItems}</NavDropdown>;
 }
