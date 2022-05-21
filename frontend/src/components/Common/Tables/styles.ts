@@ -17,3 +17,11 @@ export const RemoveTd = styled.td`
     text-align: center;
     vertical-align: middle;
 `;
+
+export const DateTh = styled.th`
+    text-align: center;
+`;
+
+export const DateTd = styled.td`
+    text-align: center;
+`;

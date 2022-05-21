@@ -38,11 +38,3 @@ export const CustomDropdownButton = styled(CommonDropdownButton)`
         width: 11em;
     }
 `;
-
-export const DateTh = styled.th`
-    text-align: center;
-`;
-
-export const DateTd = styled.td`
-    text-align: center;
-`;

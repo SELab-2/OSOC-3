@@ -30,7 +30,7 @@ export default function StudentsDropdown(props: Props) {
                     <StyledDropdownItem>Students</StyledDropdownItem>
                 </LinkContainer>
                 <LinkContainer to={`/editions/${props.currentEdition}/students/states`}>
-                    <StyledDropdownItem>State History</StyledDropdownItem>
+                    <StyledDropdownItem>States</StyledDropdownItem>
                 </LinkContainer>
             </NavDropdown>
         );

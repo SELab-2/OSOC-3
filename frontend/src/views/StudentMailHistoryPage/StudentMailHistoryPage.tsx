@@ -4,8 +4,6 @@ import {
     ButtonDiv,
     CenterDiv,
     CustomDropdownButton,
-    DateTh,
-    DateTd,
     NameDiv,
     TableDiv,
 } from "./styles";
@@ -14,7 +12,7 @@ import { Email, Student } from "../../data/interfaces";
 import { EmailType } from "../../data/enums";
 import { useNavigate, useParams } from "react-router-dom";
 import { MessageDiv } from "../MailOverviewPage/styles";
-import { StyledTable } from "../../components/Common/Tables/styles";
+import { DateTd, DateTh, StyledTable } from "../../components/Common/Tables/styles";
 import { LoadSpinner } from "../../components/Common";
 import BackButton from "../../components/Common/Buttons/BackButton";
 import Dropdown from "react-bootstrap/Dropdown";
