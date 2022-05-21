@@ -157,12 +157,6 @@ To edit a project, click on the pencil icon next to the project's name, now you 
 
 To suggest a student for a project, drag the student from the list on the left-hand side to the skill you want to suggest the student for. A pop-up will appear asking for a motivation for the suggestion.
 
-### Confirming a student for a project (Admin-only)
-
-When it has been definitively decided that the student will work on this project, an admin can confirm the student for this project. This will not be possible if the student is currently also assigned to another project (=conflict).
-
-When a student is confirmed, they cannot be added to another project anymore. 
-
 ### Removing a student from a project (Admin-only)
 
 To remove a student from a project, click on the red trash icon on the top-right of the student's card on the "Project page".
