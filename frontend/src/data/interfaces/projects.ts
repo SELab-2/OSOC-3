@@ -51,10 +51,10 @@ export interface AddRoleSuggestion {
 export interface AddStudentRole {
     /** The Id of the project role where to add the student */
     projectRoleId: string;
-    
+
     /** The Id of the student to add */
     studentId: string;
-    
+
     /** Can be used to switch the role of a student */
     switchProjectRoleId: string | undefined;
 }
@@ -104,7 +104,6 @@ export interface Project {
 
     /** The roles of this project */
     projectRoles: ProjectRole[];
-
 }
 
 /**
@@ -156,5 +155,3 @@ export interface CreateProjectRole {
     /** Number of positions of this skill in a project */
     slots: number;
 }
-
-

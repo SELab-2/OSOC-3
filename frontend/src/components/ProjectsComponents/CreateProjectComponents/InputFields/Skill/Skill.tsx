@@ -22,7 +22,6 @@ export default function SkillInput({
             setAvailableSkills((await getSkills())?.skills || []);
         }
         callSkills();
-
     }, []);
 
     return (
