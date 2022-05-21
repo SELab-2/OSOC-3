@@ -15,7 +15,7 @@ import { CreateButton } from "../../../components/Common/Buttons";
 import { SearchBar } from "../../../components/Common/Forms";
 
 // Types of events accepted by this websocket
-const wsEventTypes = [EventType.PROJECT];
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
 
 /**
  * @returns The projects overview page where you can see all the projects.
@@ -171,10 +171,10 @@ export default function ProjectPage() {
             }
 
             // Project was deleted: remove it from the list
-            if (data.method === RequestMethod.DELETE) {
+            if (data.eventType === EventType.PROJECT && data.method === RequestMethod.DELETE) {
                 setAllProjects(findAndRemoveProject(data.pathIds.projectId!, allProjects));
                 setProjects(findAndRemoveProject(data.pathIds.projectId!, projects));
-            } else if (data.method === RequestMethod.PATCH) {
+            } else {
                 // Fetch the new version of the project & replace in the two lists
                 getProject(editionId, parseInt(data.pathIds.projectId!)).then(project => {
                     setAllProjects(updateProject(project!, allProjects));
