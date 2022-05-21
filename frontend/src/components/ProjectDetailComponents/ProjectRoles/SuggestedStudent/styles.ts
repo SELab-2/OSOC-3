@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { HoverAnimation } from "../../../Common/styles";
 
 export const SuggestionContainer = styled.div`
     background-color: #1a1a36;
@@ -32,12 +33,13 @@ export const DrafterContainer = styled.div`
 `;
 
 export const StudentName = styled.div`
+    ${HoverAnimation}
     overflow: auto;
     text-overflow: ellipsis;
     max-width: 80%;
     text-decoration: underline;
 
-    :hover {
+    &:hover {
         cursor: pointer;
         color: var(--osoc_green);
     }
