@@ -11,6 +11,7 @@ import {
     TitleDeleteContainer,
     NumberOfStudents,
     DescriptionContainer,
+    DescriptionAndStudentAmount,
 } from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
@@ -60,40 +61,43 @@ export default function ProjectRoles({
                             }}
                         />
                     </TitleDeleteContainer>
-                    <DescriptionContainer>
-                        <h6>{projectRole.description}</h6>
-                    </DescriptionContainer>
-                    <NumberOfStudents>
-                        <div
-                            className={
-                                projectRole.suggestions.length > projectRole.slots
-                                    ? "red"
-                                    : projectRole.suggestions.length === projectRole.slots
-                                    ? "green"
-                                    : undefined
-                            }
-                        >
-                            {projectRole.suggestions.length.toString() +
-                                " / " +
-                                projectRole.slots.toString()}
-                        </div>
-                    </NumberOfStudents>
+                    <DescriptionAndStudentAmount>
+                        <DescriptionContainer>
+                            <h6>{projectRole.description}</h6>
+                        </DescriptionContainer>
+                        <NumberOfStudents>
+                            <div
+                                className={
+                                    projectRole.suggestions.length > projectRole.slots
+                                        ? "red"
+                                        : projectRole.suggestions.length === projectRole.slots
+                                        ? "green"
+                                        : undefined
+                                }
+                            >
+                                {projectRole.suggestions.length.toString() +
+                                    " / " +
+                                    projectRole.slots.toString()}
+                            </div>
+                        </NumberOfStudents>
+                    </DescriptionAndStudentAmount>
 
                     <Droppable droppableId={projectRole.projectRoleId.toString()}>
                         {(provided, snapshot) => (
                             <Suggestions ref={provided.innerRef} {...provided.droppableProps}>
-                                {projectRole.suggestions.map((sug, _index2) => (
-                                    <SuggestedStudent
-                                        key={_index2}
-                                        suggestion={sug}
-                                        projectRole={projectRole}
-                                        index={_index2}
-                                        setGotProject={setGotProject}
-                                        notDraggable={isReadOnly}
-                                    />
-                                ))}
-                                {projectRole.suggestions.length === 0 && (
+                                {projectRole.suggestions.length === 0 ? (
                                     <NoStudents>Drag students here</NoStudents>
+                                ) : (
+                                    projectRole.suggestions.map((sug, _index2) => (
+                                        <SuggestedStudent
+                                            key={_index2}
+                                            suggestion={sug}
+                                            projectRole={projectRole}
+                                            index={_index2}
+                                            setGotProject={setGotProject}
+                                            notDraggable={isReadOnly}
+                                        />
+                                    ))
                                 )}
                                 {provided.placeholder}
                             </Suggestions>

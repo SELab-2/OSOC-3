@@ -38,6 +38,6 @@ export const NumberOfStudents = styled.div`
 `;
 
 export const MoreInfoLink = styled.div`
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 20px;
 `;

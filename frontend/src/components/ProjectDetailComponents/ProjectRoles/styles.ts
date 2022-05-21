@@ -21,7 +21,21 @@ export const Suggestions = styled.div`
 `;
 
 export const NoStudents = styled.div`
+    display: flex;
+    align-items: center;
+    border: dashed #0f0f30;
+    border-radius: 20px;
     margin: 15px 0;
+    padding: 20px;
+    min-height: 10vh;
+    max-width: 40vw;
+`;
+
+export const DescriptionAndStudentAmount = styled.div`
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 `;
 
 export const NumberOfStudents = styled.div`
