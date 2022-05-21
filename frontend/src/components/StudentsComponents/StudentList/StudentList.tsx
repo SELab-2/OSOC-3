@@ -5,6 +5,9 @@ import { Student } from "../../../data/interfaces/students";
 import InfiniteScroll from "react-infinite-scroller";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import LoadSpinner from "../../Common/LoadSpinner";
+import { isReadonlyEdition } from "../../../utils/logic";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../../../contexts";
 
 interface Props {
     students: Student[];
@@ -17,6 +20,14 @@ interface Props {
  * @param props the students that need to be rendered.
  */
 export default function StudentList(props: Props) {
+    const params = useParams();
+    const editionId = params.editionId;
+    const projectId = params.projectId;
+
+    const { editions } = useAuth();
+
+    const notDraggable = isReadonlyEdition(editionId, editions) || projectId === undefined;
+
     return (
         <StudentCardsList>
             <InfiniteScroll
@@ -34,6 +45,7 @@ export default function StudentList(props: Props) {
                                     draggableId={student.studentId.toString()}
                                     index={index}
                                     key={index}
+                                    isDragDisabled={notDraggable}
                                 >
                                     {(provided, snapshot) => (
                                         <div

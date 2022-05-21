@@ -14,6 +14,8 @@ import {
 } from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
+import { isReadonlyEdition } from "../../../utils/logic";
+import { useAuth } from "../../../contexts";
 
 export default function ProjectRoles({
     projectRoles,
@@ -25,6 +27,9 @@ export default function ProjectRoles({
     const params = useParams();
     const projectId = params.projectId!;
     const editionId = params.editionId!;
+    const { editions } = useAuth();
+
+    const isReadOnly = isReadonlyEdition(editionId, editions);
 
     return (
         <div>
@@ -84,6 +89,7 @@ export default function ProjectRoles({
                                         projectRole={projectRole}
                                         index={_index2}
                                         setGotProject={setGotProject}
+                                        notDraggable={isReadOnly}
                                     />
                                 ))}
                                 {projectRole.suggestions.length === 0 && (
@@ -95,7 +101,7 @@ export default function ProjectRoles({
                     </Droppable>
                 </ProjectRoleContainer>
             ))}
-            <AddNewSkill setGotProject={setGotProject} />
+            {!isReadOnly && <AddNewSkill setGotProject={setGotProject} />}
         </div>
     );
 }
