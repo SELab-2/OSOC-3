@@ -23,7 +23,7 @@ export default function Coach({
 
     useEffect(() => {
         async function callCoaches() {
-            setAvailableCoaches((await getCoaches(editionId, coach, 0)).users);
+            setAvailableCoaches((await getCoaches(editionId, coach, 0))!.users);
         }
         callCoaches();
     }, [coach, editionId]);
@@ -49,7 +49,7 @@ export default function Coach({
 
             <AddButton onClick={addCoach}>Add</AddButton>
             <WarningContainer>
-                <BadCoachAlert show={showAlert} setShow={setShowAlert}></BadCoachAlert>
+                <BadCoachAlert show={showAlert} setShow={setShowAlert} />
             </WarningContainer>
         </div>
     );

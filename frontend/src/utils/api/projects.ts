@@ -14,7 +14,6 @@ import { axiosInstance } from "./api";
  * @param ownProjects To filter on your own projects.
  * @param page The requested page.
  * @param controller An optional AbortController to cancel the request
- * @returns
  */
 export async function getProjects(
     edition: string,
@@ -22,20 +21,27 @@ export async function getProjects(
     ownProjects: boolean,
     page: number,
     controller: AbortController
-): Promise<Projects> {
-    // eslint-disable-next-line promise/param-names
-    const response = await axiosInstance.get(
-        "/editions/" +
-            edition +
-            "/projects?name=" +
-            name +
-            "&coach=" +
-            ownProjects.toString() +
-            "&page=" +
-            page.toString(),
-        { signal: controller.signal }
-    );
-    return response.data as Projects;
+): Promise<Projects | null> {
+    try {
+        const response = await axiosInstance.get(
+            "/editions/" +
+                edition +
+                "/projects?name=" +
+                name +
+                "&coach=" +
+                ownProjects.toString() +
+                "&page=" +
+                page.toString(),
+            { signal: controller.signal }
+        );
+        return response.data as Projects;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**
