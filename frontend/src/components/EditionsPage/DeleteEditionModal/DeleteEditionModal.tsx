@@ -8,6 +8,7 @@ import InfoMessage from "./InfoMessage";
 import Spinner from "react-bootstrap/Spinner";
 import { deleteEdition } from "../../../utils/api/editions";
 import { getCurrentEdition, setCurrentEdition } from "../../../utils/session-storage";
+import { SearchBar } from "../../Common/Forms";
 
 interface Props {
     edition: Edition;
@@ -111,10 +112,9 @@ export default function DeleteEditionModal(props: Props) {
                                 <Form.Label>
                                     Type the name of the edition in the field below
                                 </Form.Label>
-                                <Form.Control
+                                <SearchBar
                                     type="text"
                                     placeholder={"Edition name"}
-                                    required
                                     onChange={e => handleTextfieldChange(e.target.value)}
                                 />
                             </Form.Group>
