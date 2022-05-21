@@ -71,21 +71,43 @@ export default function StudentListFilters() {
                         student.wantsToBeStudentCoach === studentCoachVolunteerFilter
                 );
 
+            let tempStudents2: Student[];
             if (rolesFilter.length === 0) {
-                setStudents(tempStudents);
+                tempStudents2 = tempStudents;
             } else {
-                const newStudents: Student[] = [];
+                tempStudents2 = [];
                 for (const student of tempStudents) {
+                    let keep = false;
                     for (const skill of student.skills) {
-                        rolesFilter.forEach(dropdownValue => {
-                            if (dropdownValue.value === skill.skillId) {
-                                newStudents.push(student);
+                        for (const role of rolesFilter) {
+                            if (role.value === skill.skillId) {
+                                keep = true;
                             }
-                        });
+                        }
+                    }
+                    if (keep) {
+                        tempStudents2.push(student);
                     }
                 }
-                setStudents(newStudents);
             }
+            if (confirmFilter.length === 0) {
+                setStudents(tempStudents2);
+            } else {
+                const finalStudents = [];
+                for (const student of tempStudents2) {
+                    let keep = false;
+                    for (const status of confirmFilter) {
+                        if (student.finalDecision === status.value) {
+                            keep = true;
+                        }
+                    }
+                    if (keep) {
+                        finalStudents.push(student);
+                    }
+                }
+                setStudents(finalStudents);
+            }
+
             setMoreDataAvailable(false);
             return;
         }
@@ -117,7 +139,7 @@ export default function StudentListFilters() {
             if (response.students.length === 0 && !filterChanged) {
                 setMoreDataAvailable(false);
             }
-            if (page === 0 || filterChanged) {
+            if (requestedPage === 0 || filterChanged) {
                 setStudents(response.students);
             } else {
                 setStudents(students.concat(response.students));
@@ -133,15 +155,16 @@ export default function StudentListFilters() {
                 !suggestedFilter
             ) {
                 if (response.students.length === 0) {
+                    console.log("all fetched");
                     setAllDataFetched(true);
                 }
-                if (page === 0) {
+                if (requestedPage === 0) {
                     setAllStudents(response.students);
                 } else {
                     setAllStudents(allStudents.concat(response.students));
                 }
             }
-            setPage(page + 1);
+            setPage(requestedPage + 1);
         } else {
             setMoreDataAvailable(false);
         }
@@ -154,26 +177,23 @@ export default function StudentListFilters() {
     useEffect(() => {
         setPage(0);
         setMoreDataAvailable(true);
-        getData(-1);
+        getData(-1, false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        nameFilter,
-        rolesFilter,
-        alumniFilter,
-        studentCoachVolunteerFilter,
-        suggestedFilter,
-        confirmFilter,
-    ]);
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, confirmFilter]);
 
     useEffect(() => {
+        refresh();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.editionId, suggestedFilter]);
+
+    function refresh() {
         setStudents([]);
         setAllStudents([]);
         setPage(0);
         setAllDataFetched(false);
         setMoreDataAvailable(true);
         getData(-1, true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params.editionId]);
+    }
 
     let list;
     if (students.length === 0) {
@@ -209,7 +229,6 @@ export default function StudentListFilters() {
                 <SuggestedForFilter
                     suggestedFilter={suggestedFilter}
                     setSuggestedFilter={setSuggestedFilter}
-                    setPage={setPage}
                 />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={studentCoachVolunteerFilter}
