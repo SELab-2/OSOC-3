@@ -11,8 +11,8 @@ export default function QuestionsAndAnswers({ questions }: { questions: Question
         <Card className="CardContainer" border="primary">
             <Card.Header className="CardHeader">Questions</Card.Header>
             <Card.Body className="CardBody">
-                {questions.map(question => (
-                    <QuestionAnswer question={question} />
+                {questions.map((question, i) => (
+                    <QuestionAnswer key={i} question={question} />
                 ))}
             </Card.Body>
         </Card>

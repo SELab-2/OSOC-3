@@ -8,7 +8,6 @@ import { QuestionAnswersContainer } from "./styles";
  * Component that removes the current student.
  */
 export default function QuestionAnswer({ question }: { question: Question }) {
-    console.log(question);
     return (
         <div>
             {question.answers.length === 0 && question.files.length === 0 ? null : (
@@ -18,13 +17,13 @@ export default function QuestionAnswer({ question }: { question: Question }) {
                     </Card.Header>
                     <Card.Body className="CardBody">
                         <QuestionAnswersContainer>
-                            {question.answers.map(answer => (
-                                <p>{answer}</p>
+                            {question.answers.map((answer, i) => (
+                                <p key={i}>{answer}</p>
                             ))}
                             {question.files.length === 0 ? null : (
                                 <div>
-                                    {question.files.map(file => (
-                                        <FileField file={file} />
+                                    {question.files.map((file, i) => (
+                                        <FileField key={i} file={file} />
                                     ))}
                                 </div>
                             )}
