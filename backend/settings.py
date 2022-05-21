@@ -41,19 +41,18 @@ GITHUB_CLIENT_SECRET: str | None = env.str("GITHUB_CLIENT_SECRET", None)
 FRONTEND_URL: str = env.str("FRONTEND_URL", "http://localhost:3000")
 
 
-"""Tally form"""
-# ID's for specific questions & information
+# Tally Form - ID's for specific questions & information
 @enum.unique
 class FormMapping(enum.Enum):
-    FIRST_NAME = "question_3ExXkL"
-    LAST_NAME = "question_nro6jL"
-    PREFERRED_NAME_OPTION = "question_w4K84o"
-    PREFERRED_NAME = "question_3jlya9"
-    EMAIL = "question_nW8NOQ"
-    PHONE_NUMBER = "question_mea6qo"
-    # CV = "question_wa26Qy"
-    STUDENT_COACH = "question_wz7qEE"
-    ROLES = "question_3yJ6PW"
+    FIRST_NAME = env.str("FORM_FIRST_NAME", "question_3ExXkL")
+    LAST_NAME = env.str("FORM_LAST_NAME", "question_nro6jL")
+    PREFERRED_NAME_OPTION = env.str("FORM_PREFERRED_NAME_OPTION", "question_w4K84o")
+    PREFERRED_NAME = env.str("FORM_PREFERRED_NAME", "question_3jlya9")
+    EMAIL = env.str("FORM_EMAIL", "question_nW8NOQ")
+    PHONE_NUMBER = env.str("FORM_PHONE_NUMBER", "question_mea6qo")
+    STUDENT_COACH = env.str("FORM_STUDENT_COACH", "question_wz7qEE")
+    ROLES = env.str("FORM_ROLES", "question_3yJ6PW")
+    ALUMNI = env.str("FORM_ALUMNI", "question_n0exVQ")
 
     UNKNOWN = None  # Returned when no specific question can be matched
 
