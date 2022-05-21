@@ -69,7 +69,7 @@ Next to the email address, there is a button to remove a user as admin. Once cli
 - **Remove admin**: Remove the given user as admin. They will stay coach for editions they were assigned to..
 - **Remove as admin and coach**: Remove the given user as admin and remove them as coach from every edition. The user won't be able to see any data from any editions.
 
-At the top right of the list, there is a button to add a user as admin. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose names contain the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as admin.
+At the top-right of the list, there is a button to add a user as admin. Once clicked, you see a prompt to search for a user's name. After typing the name of the user, a list of users whose names contain the typed text will be shown. You can select the desired user, check if the email and register-method are correct and add him as admin.
 
 **Warning**: A user who is added as admin will be able to edit and delete all data. He will be able to add and remove other admins.
 
