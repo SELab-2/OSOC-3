@@ -23,7 +23,6 @@ export default function ProjectCoaches({
                         <RemoveButton
                             onClick={() => {
                                 const newCoaches = [...editedProject.coaches];
-                                console.log(_index);
 
                                 newCoaches.splice(_index, 1);
                                 const newProject: Project = {
