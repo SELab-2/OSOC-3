@@ -32,7 +32,6 @@ export default function SuggestedStudent({
 
     return (
         <Draggable
-            isDragDisabled={studentRemoved}
             draggableId={
                 studentRemoved
                     ? suggestion.projectRoleSuggestionId.toString()
@@ -40,7 +39,7 @@ export default function SuggestedStudent({
             }
             index={index}
             key={index}
-            isDragDisabled={notDraggable}
+            isDragDisabled={studentRemoved || notDraggable}
         >
             {(provided, snapshot) => (
                 <SuggestionContainer
