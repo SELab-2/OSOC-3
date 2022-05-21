@@ -6,7 +6,7 @@ from starlette.responses import Response
 from src.app.logic import skills as logic_skills
 from src.app.routers.tags import Tags
 from src.app.schemas.skills import SkillBase, Skill, SkillList
-from src.app.utils.dependencies import require_admin
+from src.app.utils.dependencies import require_admin, require_coach
 from src.database.database import get_session
 
 skills_router = APIRouter(prefix="/skills", tags=[Tags.SKILLS])
