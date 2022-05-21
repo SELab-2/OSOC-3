@@ -1,37 +1,41 @@
 import styled from "styled-components";
 
+export const ProjectPageContainer = styled.div`
+    display: flex;
+    height: 100vh;
+`;
+
 export const ProjectContainer = styled.div`
+    width: 100%;
     margin: 20px;
+    border: 5px;
+    overflow: auto;
 `;
 
 export const GoBack = styled.div`
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    max-width: max-content;
 
     :hover {
         cursor: pointer;
     }
 `;
 
-export const Title = styled.h2`
-    text-overflow: ellipsis;
-    overflow: hidden;
-`;
-
-export const ClientContainer = styled.div`
+export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;
     color: lightgray;
     overflow-x: auto;
 `;
 
-export const Client = styled.h5`
-    margin-right: 1%;
-`;
-
 export const NumberOfStudents = styled.div`
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
+`;
+
+export const MoreInfoLink = styled.div`
+    margin-top: 20px;
+    margin-bottom: 20px;
 `;

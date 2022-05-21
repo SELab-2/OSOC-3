@@ -1,5 +1,5 @@
 /**
- * This file contains all interfaces used in projects pages.
+ * This file contains all interfaces used for projects.
  */
 
 import { Skill } from "./skills";
@@ -23,19 +23,62 @@ export interface Coach {
     name: string;
 }
 
+/**
+ * Data about a single project role suggestion.
+ */
 export interface ProjectRoleSuggestion {
+    /** The id of the suggestion */
     projectRoleSuggestionId: number;
+
+    /** The argumentation why this student is a good fit */
     argumentation: string;
+
+    /** The user who suggested this student */
     drafter: Coach;
+
+    /** The suggested student */
     student: Student;
 }
 
+/**
+ * Data to create a new project role suggestion.
+ */
+export interface AddRoleSuggestion {
+    /** The argumentation why this student is a good fit */
+    argumentation: string;
+}
+
+export interface AddStudentRole {
+    /** The Id of the project role where to add the student */
+    projectRoleId: string;
+
+    /** The Id of the student to add */
+    studentId: string;
+
+    /** Can be used to switch the role of a student */
+    switchProjectRoleId: string | undefined;
+}
+
+/**
+ * Data about a project role
+ */
 export interface ProjectRole {
+    /** The id of the project role */
     projectRoleId: number;
+
+    /** The id of the project this role belongs to */
     projectId: number;
+
+    /** More info about the skill */
     description: string;
+
+    /** The skill needed for this role */
     skill: Skill;
+
+    /** The number of positions this role has */
     slots: number;
+
+    /** The suggested students for this role */
     suggestions: ProjectRoleSuggestion[];
 }
 
@@ -58,6 +101,9 @@ export interface Project {
 
     /** The partners of this project */
     partners: Partner[];
+
+    /** The roles of this project */
+    projectRoles: ProjectRole[];
 }
 
 /**
@@ -108,18 +154,4 @@ export interface CreateProjectRole {
 
     /** Number of positions of this skill in a project */
     slots: number;
-}
-
-/**
- * Data about a place in a project
- */
-export interface StudentPlace {
-    /** Whether or not this position is filled in */
-    available: boolean;
-
-    /** The skill needed for this place */
-    skill: string;
-
-    /** The name of the student if this place is filled in */
-    name: string | undefined;
 }

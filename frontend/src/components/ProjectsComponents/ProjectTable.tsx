@@ -2,7 +2,6 @@ import { CardsGrid, ProjectsContainer } from "../../views/projectViews/ProjectsP
 import { ProjectCard } from "./index";
 import InfiniteScroll from "react-infinite-scroller";
 import { Project } from "../../data/interfaces";
-import React from "react";
 import { MessageDiv } from "./styles";
 import LoadSpinner from "../Common/LoadSpinner";
 
