@@ -1,6 +1,7 @@
 import React from "react";
 import { Question } from "../../../../data/interfaces/questions";
 import { Card } from "react-bootstrap";
+import FileField from "../FileField/FileField";
 import { QuestionAnswersContainer } from "./styles";
 
 /**
@@ -9,15 +10,28 @@ import { QuestionAnswersContainer } from "./styles";
 export default function QuestionAnswer({ question }: { question: Question }) {
     console.log(question);
     return (
-        <Card className="CardContainer" border="primary">
-            <Card.Header className="CardHeader">{question.question}</Card.Header>
-            <Card.Body className="CardBody">
-                <QuestionAnswersContainer>
-                    {question.answers.map(answer => (
-                        <p>{answer}</p>
-                    ))}
-                </QuestionAnswersContainer>
-            </Card.Body>
-        </Card>
+        <div>
+            {question.answers.length === 0 && question.files.length === 0 ? null : (
+                <Card className="CardContainer" border="primary">
+                    <Card.Header className="CardHeader">
+                        <h4>{question.question}</h4>
+                    </Card.Header>
+                    <Card.Body className="CardBody">
+                        <QuestionAnswersContainer>
+                            {question.answers.map(answer => (
+                                <p>{answer}</p>
+                            ))}
+                            {question.files.length === 0 ? null : (
+                                <div>
+                                    {question.files.map(file => (
+                                        <FileField file={file} />
+                                    ))}
+                                </div>
+                            )}
+                        </QuestionAnswersContainer>
+                    </Card.Body>
+                </Card>
+            )}
+        </div>
     );
 }
