@@ -13,11 +13,13 @@ export default function SuggestedStudent({
     projectRole,
     index,
     setGotProject,
+    notDraggable,
 }: {
     suggestion: ProjectRoleSuggestion;
     projectRole: ProjectRole;
     index: number;
     setGotProject: (value: boolean) => void;
+    notDraggable: boolean;
 }) {
     const params = useParams();
     const projectId = parseInt(params.projectId!);
@@ -34,6 +36,7 @@ export default function SuggestedStudent({
             }
             index={index}
             key={index}
+            isDragDisabled={notDraggable}
         >
             {(provided, snapshot) => (
                 <SuggestionContainer

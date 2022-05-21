@@ -28,16 +28,6 @@ export const SkillName = styled.div`
     text-overflow: ellipsis;
 `;
 
-export const Delete = styled.button`
-    background-color: #f14a3b;
-    border: 0;
-    padding: 2.5px 2.5px;
-    border-radius: 1px;
-    color: white;
-    display: flex;
-    align-items: center;
-`;
-
 export const DescriptionContainer = styled.div`
     margin-bottom: 10px;
     max-width: 100%;

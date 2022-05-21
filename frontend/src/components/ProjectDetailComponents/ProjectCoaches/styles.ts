@@ -5,6 +5,7 @@ export const CoachesContainer = styled.div`
     align-items: center;
     margin-top: 20px;
     overflow-x: auto;
+    padding-bottom: 15px;
 `;
 
 export const CoachContainer = styled.div`
@@ -19,7 +20,7 @@ export const CoachContainer = styled.div`
 `;
 
 export const CoachText = styled.div`
-    overflow: hidden;
+    overflow: auto;
     text-overflow: ellipsis;
     white-space: nowrap;
 `;

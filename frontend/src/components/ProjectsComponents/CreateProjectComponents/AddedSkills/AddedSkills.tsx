@@ -3,7 +3,6 @@ import {
     AmountInput,
     SkillContainer,
     DescriptionContainer,
-    Delete,
     TopContainer,
     SkillName,
     TopLeftContainer,
@@ -11,6 +10,7 @@ import {
 } from "./styles";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from "react";
+import { DeleteButton } from "../../../Common/Buttons";
 
 /**
  * 
@@ -75,15 +75,16 @@ export default function AddedSkills({
                             />
                             {skill.slots === 1 ? <div>student</div> : <div>students</div>}
                         </TopLeftContainer>
-                        <Delete
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 const newSkills = [...skills];
                                 newSkills.splice(index, 1);
                                 setSkills(newSkills);
                             }}
                         >
-                            <TiDeleteOutline size={"20px"} />
-                        </Delete>
+                            <TiDeleteOutline size={"25px"} />
+                        </DeleteButton>
                     </TopContainer>
 
                     <DescriptionContainer>

@@ -1,6 +1,7 @@
 import { Modal } from "react-bootstrap";
 import styled from "styled-components";
 import { BsArrowUpRightSquare } from "react-icons/bs";
+import { HoverAnimation } from "../../Common/styles";
 
 export const CardContainer = styled.div`
     border: 2px solid #1a1a36;
@@ -18,12 +19,17 @@ export const TitleContainer = styled.div`
 `;
 
 export const Title = styled.h2`
-    text-overflow: ellipsis;
-    overflow: hidden;
+    ${HoverAnimation}
+    max-height: 3.6em;
+    line-height: 1.2em;
+    overflow: auto;
     display: flex;
     align-items: center;
-    :hover {
+    margin-right: 10px;
+
+    &:hover {
         cursor: pointer;
+        color: var(--osoc_green);
     }
 `;
 
@@ -42,7 +48,8 @@ export const ClientContainer = styled.div`
 
 export const Clients = styled.div`
     display: flex;
-    overflow-x: auto;
+    overflow: auto;
+    max-height: 3rem;
 `;
 
 export const Client = styled.h5`
@@ -61,6 +68,7 @@ export const CoachesContainer = styled.div`
     align-items: center;
     margin-top: 20px;
     overflow-x: auto;
+    padding-bottom: 15px;
 `;
 
 export const CoachContainer = styled.div`
@@ -75,7 +83,7 @@ export const CoachContainer = styled.div`
 `;
 
 export const CoachText = styled.div`
-    overflow: hidden;
+    overflow: auto;
     text-overflow: ellipsis;
     white-space: nowrap;
 `;
