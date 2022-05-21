@@ -21,7 +21,7 @@ There are different ways to log in, depending on the way in which you have regis
 
 ## Logging out
 
-To log out, click on the **Log Out** button on the top right of the page.
+To log out, click on the **Log Out** button in the top-right corner of the page.
 
 
 ## Managing Users (Admin-only)
