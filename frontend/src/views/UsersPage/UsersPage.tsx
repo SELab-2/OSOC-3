@@ -31,7 +31,7 @@ function UsersPage() {
      * Request the next page from the list of coaches.
      * The set searchterm will be used.
      */
-    async function getCoachesData(requested: number) {
+    async function getCoachesData(requested: number, reset: boolean) {
         const filterChanged = requested === -1;
         const requestedPage = requested === -1 ? 0 : page;
 
@@ -39,7 +39,7 @@ function UsersPage() {
             return;
         }
 
-        if (allCoachesFetched) {
+        if (allCoachesFetched && !reset) {
             setCoaches(
                 allCoaches.filter(coach =>
                     coach.name.toUpperCase().includes(searchTerm.toUpperCase())
@@ -98,7 +98,7 @@ function UsersPage() {
         } else {
             setPage(0);
             setMoreCoachesAvailable(true);
-            getCoachesData(-1);
+            getCoachesData(-1, false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, params.editionId]);
@@ -112,7 +112,7 @@ function UsersPage() {
         setPage(0);
         setAllCoachesFetched(false);
         setMoreCoachesAvailable(true);
-        getCoachesData(-1);
+        getCoachesData(-1, true);
     }
 
     /**
