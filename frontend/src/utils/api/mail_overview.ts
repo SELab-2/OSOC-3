@@ -1,6 +1,7 @@
 import { Email, Student } from "../../data/interfaces";
 import { EmailType } from "../../data/enums";
 import { axiosInstance } from "./api";
+import axios from "axios";
 
 /**
  * A student together with its email history
@@ -26,17 +27,25 @@ export async function getMailOverview(
     name: string,
     filters: EmailType[],
     controller: AbortController
-): Promise<StudentEmails> {
-    const FormatFilters: string[] = filters.map(filter => {
-        return `&email_status=${Object.values(EmailType).indexOf(filter)}`;
-    });
-    const concatted: string = FormatFilters.join("");
+): Promise<StudentEmails | null> {
+    try {
+        const FormatFilters: string[] = filters.map(filter => {
+            return `&email_status=${Object.values(EmailType).indexOf(filter)}`;
+        });
+        const concatted: string = FormatFilters.join("");
 
-    const response = await axiosInstance.get(
-        `/editions/${edition}/students/emails?page=${page}&name=${name}${concatted}`,
-        { signal: controller.signal }
-    );
-    return response.data as StudentEmails;
+        const response = await axiosInstance.get(
+            `/editions/${edition}/students/emails?page=${page}&name=${name}${concatted}`,
+            { signal: controller.signal }
+        );
+        return response.data as StudentEmails;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.code === "ERR_CANCELED") {
+            return null;
+        } else {
+            throw error;
+        }
+    }
 }
 
 /**

@@ -51,3 +51,7 @@ export const MailOverviewDiv = styled.div`
     width: fit-content;
     margin: auto;
 `;
+
+export const ClearDiv = styled.div`
+    clear: both;
+`;
