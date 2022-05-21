@@ -5,7 +5,7 @@ from starlette import status
 from starlette.responses import Response
 
 from src.app.routers.tags import Tags
-from src.app.utils.dependencies import get_editable_edition, require_auth, get_student, get_suggestion
+from src.app.utils.dependencies import get_editable_edition, require_auth, get_student, get_suggestion, require_coach
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, User, Suggestion
@@ -25,7 +25,7 @@ students_suggestions_router = APIRouter(
     dependencies=[Depends(live), Depends(get_editable_edition)]
 )
 async def create_suggestion(new_suggestion: NewSuggestion, student: Student = Depends(get_student),
-                            db: AsyncSession = Depends(get_session), user: User = Depends(require_auth)):
+                            db: AsyncSession = Depends(get_session), user: User = Depends(require_coach)):
     """
     Make a suggestion about a student.
 
@@ -40,7 +40,7 @@ async def create_suggestion(new_suggestion: NewSuggestion, student: Student = De
     status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
     dependencies=[Depends(live)]
 )
-async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User = Depends(require_auth),
+async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User = Depends(require_coach),
                             suggestion: Suggestion = Depends(get_suggestion)):
     """
     Delete a suggestion you made about a student.
@@ -54,14 +54,14 @@ async def delete_suggestion(db: AsyncSession = Depends(get_session), user: User 
     dependencies=[Depends(get_student), Depends(live), Depends(get_editable_edition)]
 )
 async def edit_suggestion(new_suggestion: NewSuggestion, db: AsyncSession = Depends(get_session),
-                          user: User = Depends(require_auth), suggestion: Suggestion = Depends(get_suggestion)):
+                          user: User = Depends(require_coach), suggestion: Suggestion = Depends(get_suggestion)):
     """
     Edit a suggestion you made about a student.
     """
     await change_suggestion(db, new_suggestion, suggestion, user)
 
 
-@students_suggestions_router.get("", dependencies=[Depends(require_auth)],
+@students_suggestions_router.get("", dependencies=[Depends(require_coach)],
                                  status_code=status.HTTP_200_OK, response_model=SuggestionListResponse)
 async def get_suggestions(student: Student = Depends(get_student), db: AsyncSession = Depends(get_session)):
     """
