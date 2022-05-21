@@ -24,7 +24,7 @@ export default function Coaches(props: {
     edition: string;
     coaches: User[];
     loading: boolean;
-    getMoreCoaches: (page: number) => void;
+    getMoreCoaches: (page: number, reset: boolean) => void;
     searchCoaches: (word: string) => void;
     setPage: (page: number) => void;
     moreCoachesAvailable: boolean;
@@ -45,7 +45,7 @@ export default function Coaches(props: {
                 coaches={props.coaches}
                 edition={props.edition}
                 removeCoach={props.removeCoach}
-                getMoreCoaches={props.getMoreCoaches}
+                getMoreCoaches={page => props.getMoreCoaches(page, false)}
                 moreCoachesAvailable={props.moreCoachesAvailable}
             />
         );
