@@ -21,7 +21,7 @@ export default function CoachInput({
 
     useEffect(() => {
         async function callCoaches() {
-            setAvailableCoaches((await getCoaches(editionId, coach, 0)).users);
+            setAvailableCoaches((await getCoaches(editionId, coach, 0))?.users || []);
         }
         callCoaches();
     }, [coach, editionId]);
