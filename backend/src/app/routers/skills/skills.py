@@ -6,13 +6,13 @@ from starlette.responses import Response
 from src.app.logic import skills as logic_skills
 from src.app.routers.tags import Tags
 from src.app.schemas.skills import SkillBase, Skill, SkillList
-from src.app.utils.dependencies import require_admin, require_coach
+from src.app.utils.dependencies import require_admin, require_auth
 from src.database.database import get_session
 
 skills_router = APIRouter(prefix="/skills", tags=[Tags.SKILLS])
 
 
-@skills_router.get("", response_model=SkillList, tags=[Tags.SKILLS], dependencies=[Depends(require_coach)])
+@skills_router.get("", response_model=SkillList, tags=[Tags.SKILLS], dependencies=[Depends(require_auth)])
 async def get_skills(db: AsyncSession = Depends(get_session)):
     """Get a list of all the base skills that can be added to a student or project."""
     return await logic_skills.get_skills(db)
