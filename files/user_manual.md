@@ -142,7 +142,7 @@ To delete a project click the **trash** button located on the top right of a pro
 
 ### Conflicts
 
-As coaches can suggest a student for multiple project, but a student can only work on one, conflicts can happen. To definitively confirm a student for a project, all conflicts involving that student will first need to be resolved.
+As coaches can suggest a student for multiple projects, but a student can only work on one, conflicts can happen. To definitively confirm a student for a project, all conflicts involving that student will first need to be resolved.
 
 To see an overview of all current conflicts, click on the green button at the top right of the "Projects page".
 
