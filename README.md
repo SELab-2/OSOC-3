@@ -1,5 +1,7 @@
 # OSOC-3
 
+[![codecov](https://codecov.io/gh/SELab-2/OSOC-3/branch/develop/graph/badge.svg?token=gzlDMtycUN)](https://codecov.io/gh/SELab-2/OSOC-3)
+
 ## Table of Contents
 
 [User manual](#user-manual)
