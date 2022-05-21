@@ -87,7 +87,7 @@ async def test_webhook(database_session_skills: AsyncSession, test_client: Async
     assert len(student.skills) > 0
 
 
-async def test_webhook_unknow_question_type(test_client: AsyncClient, webhook: WebhookURL, database_session: AsyncSession):
+async def test_webhook_unknow_question_type(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL):
     """test webhook with unknow question type"""
     event: dict = create_webhook_event(
         email_address="test@gmail.com",
@@ -106,6 +106,7 @@ async def test_webhook_unknow_question_type(test_client: AsyncClient, webhook: W
             })
     async with test_client:
         response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+        print(response.json())
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
