@@ -138,7 +138,7 @@ When there are a lot of projects, the **Load more projects** button located at t
 
 ### Deleting a project (Admin-only)
 
-To delete a project click the **trash** button located on the top right of a project card or next to the project name in the detailed project page. A pop up will appear to confirm your decision. Press **Delete** again to delete the project or cancel the delete operation.
+To delete a project click the **trash** button located on the top-right of a project card or next to the project name in the detailed project page. A pop-up will appear to confirm your decision. Press **Delete** again to delete the project or cancel the delete operation.
 
 ### Conflicts
 
