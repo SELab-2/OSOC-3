@@ -134,8 +134,6 @@ You can navigate to the "Projects page" by clicking the **Projects** button. Her
 
 You can also filter on project name and on the projects where you are a coach of. To filter on name enter a name in the search field and press enter or click the **Search** button. To filter on your own projects toggle the **Only own projects** switch.
 
-When there are a lot of projects, the **Load more projects** button located at the bottom of the search results will get you more projects.
-
 ### Deleting a project (Admin-only)
 
 To delete a project click the **trash** button located on the top-right of a project card or next to the project name in the detailed project page. A pop-up will appear to confirm your decision. Press **Delete** again to delete the project or cancel the delete operation.
@@ -144,7 +142,7 @@ To delete a project click the **trash** button located on the top-right of a pro
 
 As coaches can suggest a student for multiple projects, but a student can only work on one, conflicts can happen. To definitively confirm a student for a project, all conflicts involving that student will first need to be resolved.
 
-To see an overview of all current conflicts, click on the green button at the top right of the "Projects page".
+To see an overview of all current conflicts, click on the red button with the warning sign at the top right of the "Projects page".
 
 
 ## Detailed view of a project
@@ -157,7 +155,7 @@ To edit a project, click on the pencil icon next to the project's name, now you 
 
 ### Suggesting a student for a project
 
-To suggest a student for a project, drag the student from the list on the lefthand side to the skill you want to suggest the student for. A pop-up will appear asking for a motivation for the suggestion.
+To suggest a student for a project, drag the student from the list on the left-hand side to the skill you want to suggest the student for. A pop-up will appear asking for a motivation for the suggestion.
 
 ### Confirming a student for a project (Admin-only)
 
@@ -223,12 +221,12 @@ To view the details of a student, click on the student's name in the list on the
 ### Making a suggestion for a student
 
 Every coach can make a suggestion for a student, where they express whether they find the student interesting to use in their project or not.
-To do this, scroll down on the student's detail page and click on the appropriate suggestion you want to make for that student. A popup will appear where you can enter an argumentation for this decision.
+To do this, go to the student's detail page and click on the appropriate suggestion you want to make for that student. A popup will appear where you can enter an argumentation for this decision.
 
 ### Making a definitive decision for a student (Admin-only)
 
 An admin can make a definitive decision for a student, by taking into account the multiple suggestions from the coaches. This is where an admin decides if a student is accepted into the programme or not.
-To make a definitive decision, scroll down on the student's detail page and click on the **Confirm** button. A popup will appear where you can select the decision you want to make.
+To make a definitive decision, go to the student's detail page and click on the **Confirm** button. A popup will appear where you can select the decision you want to make.
 
 ### Removing a student (Admin-only)
 
