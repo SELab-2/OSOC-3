@@ -32,15 +32,22 @@ export const DrafterContainer = styled.div`
     text-overflow: ellipsis;
 `;
 
-export const StudentName = styled.div`
+interface StudentNameProps {
+    removed: boolean;
+}
+
+export const StudentName = styled.div<StudentNameProps>`
     ${HoverAnimation}
     overflow: auto;
     text-overflow: ellipsis;
     max-width: 80%;
-    text-decoration: underline;
+
+    ${props =>
+        !props.removed &&
+        `    text-decoration: underline;
 
     &:hover {
         cursor: pointer;
         color: var(--osoc_green);
-    }
+    }`}
 `;

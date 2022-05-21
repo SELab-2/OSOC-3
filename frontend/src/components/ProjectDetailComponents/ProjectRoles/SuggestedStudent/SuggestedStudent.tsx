@@ -28,15 +28,18 @@ export default function SuggestedStudent({
     const { role, userId } = useAuth();
 
     const navigate = useNavigate();
+    const studentRemoved = suggestion.student === null;
 
     return (
         <Draggable
             draggableId={
-                suggestion.student.studentId.toString() + projectRole.projectRoleId.toString()
+                studentRemoved
+                    ? suggestion.projectRoleSuggestionId.toString()
+                    : suggestion.student.studentId.toString() + projectRole.projectRoleId.toString()
             }
             index={index}
             key={index}
-            isDragDisabled={notDraggable}
+            isDragDisabled={studentRemoved || notDraggable}
         >
             {(provided, snapshot) => (
                 <SuggestionContainer
@@ -46,37 +49,44 @@ export default function SuggestedStudent({
                 >
                     <NameDeleteContainer>
                         <StudentName
-                            onClick={() =>
-                                navigate(
-                                    "/editions/" +
-                                        editionId +
-                                        "/students/" +
-                                        suggestion.student.studentId
-                                )
+                            removed={studentRemoved}
+                            onClick={
+                                studentRemoved
+                                    ? () => {}
+                                    : () =>
+                                          navigate(
+                                              "/editions/" +
+                                                  editionId +
+                                                  "/students/" +
+                                                  suggestion.student.studentId
+                                          )
                             }
                         >
-                            {suggestion.student.firstName + " " + suggestion.student.lastName}
+                            {studentRemoved
+                                ? "[STUDENT REMOVED]"
+                                : suggestion.student.firstName + " " + suggestion.student.lastName}
                         </StudentName>
-                        {(role === Role.ADMIN || userId === suggestion.drafter.userId) && (
-                            <DeleteButton
-                                onClick={async () => {
-                                    await toast.promise(
-                                        deleteStudentFromProject(
-                                            editionId,
-                                            projectId.toString(),
-                                            projectRole.projectRoleId.toString(),
-                                            suggestion.student.studentId.toString()
-                                        ),
-                                        {
-                                            pending: "Deleting student from project",
-                                            success: "Successfully removed student",
-                                            error: "Something went wrong",
-                                        }
-                                    );
-                                    setGotProject(false);
-                                }}
-                            />
-                        )}
+                        {(role === Role.ADMIN || userId === suggestion.drafter.userId) &&
+                            !studentRemoved && (
+                                <DeleteButton
+                                    onClick={async () => {
+                                        await toast.promise(
+                                            deleteStudentFromProject(
+                                                editionId,
+                                                projectId.toString(),
+                                                projectRole.projectRoleId.toString(),
+                                                suggestion.student.studentId.toString()
+                                            ),
+                                            {
+                                                pending: "Deleting student from project",
+                                                success: "Successfully removed student",
+                                                error: "Something went wrong",
+                                            }
+                                        );
+                                        setGotProject(false);
+                                    }}
+                                />
+                            )}
                     </NameDeleteContainer>
                     <DrafterContainer>
                         {suggestion.drafter && suggestion.argumentation !== "" ? (
