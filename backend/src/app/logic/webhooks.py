@@ -66,6 +66,11 @@ async def process_main_questions(questions: list[Question], extra_questions: lis
                         if option.id == question.value:
                             attributes['wants_to_be_student_coach'] = "yes" in option.text.lower()
                             break  # Only 2 options, Yes and No.
+            case FormMapping.ALUMNI:
+                if question.options is not None:
+                    for option in question.options:
+                        if option.id == question.value:
+                            attributes['alumni'] = "yes" in option.text.lower()
             case FormMapping.ROLES:
                 if question.options is not None:
                     answers = cast(list[str], question.value)
@@ -85,6 +90,7 @@ async def process_main_questions(questions: list[Question], extra_questions: lis
         'email_address',
         'phone_number',
         'wants_to_be_student_coach',
+        'alumni',
         'edition',
         'skills'
     }

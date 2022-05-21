@@ -1,9 +1,6 @@
-import { StyledNewEditionButton } from "./styles";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useAuth } from "../../contexts";
 import { Role } from "../../data/enums";
+import { CreateButton } from "../Common/Buttons";
 
 interface Props {
     onClick: () => void;
@@ -21,8 +18,6 @@ export default function NewEditionButton({ onClick }: Props) {
     }
 
     return (
-        <StyledNewEditionButton onClick={onClick}>
-            <FontAwesomeIcon icon={faPlus as IconProp} className={"me-1"} /> Create new edition
-        </StyledNewEditionButton>
+        <CreateButton onClick={onClick} label={"Create new edition"} className={"ms-auto my-3"} />
     );
 }

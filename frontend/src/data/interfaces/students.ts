@@ -16,7 +16,7 @@ export interface Student {
     lastName: string;
     nrOfSuggestions: NrSuggestions;
     phoneNumber: string;
-    preferredName: string;
+    preferredName?: string;
     skills: Skill[];
     studentId: number;
     wantsToBeStudentCoach: boolean;

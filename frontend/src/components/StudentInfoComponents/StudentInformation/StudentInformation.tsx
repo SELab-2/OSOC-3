@@ -93,9 +93,11 @@ export default function StudentInformation(props: { studentId: number; editionId
                                 <LastName>{student.lastName}</LastName>
                                 <StudentCopyLink />
                             </FullName>
-                            <div>
-                                <PreferedName>{student.preferredName}</PreferedName>
-                            </div>
+                            {student.preferredName !== null && (
+                                <div>
+                                    <PreferedName>{student.preferredName}</PreferedName>
+                                </div>
+                            )}
                         </AllName>
                     </NameContainer>
                     <ActionContainer>
