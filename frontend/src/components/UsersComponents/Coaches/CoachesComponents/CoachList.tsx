@@ -19,13 +19,12 @@ export default function CoachList(props: {
     coaches: User[];
     edition: string;
     removeCoach: (coach: User) => void;
-    getMoreCoaches: () => void;
+    getMoreCoaches: (page: number) => void;
     moreCoachesAvailable: boolean;
 }) {
     return (
         <ListDiv>
             <InfiniteScroll
-                pageStart={0}
                 loadMore={props.getMoreCoaches}
                 hasMore={props.moreCoachesAvailable}
                 loader={<LoadSpinner show={true} key="spinner" />}
