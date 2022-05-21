@@ -6,7 +6,7 @@ from starlette.responses import Response
 from src.app.logic import skills as logic_skills
 from src.app.routers.tags import Tags
 from src.app.schemas.skills import SkillBase, Skill, SkillList
-from src.app.utils.dependencies import require_auth
+from src.app.utils.dependencies import require_admin, require_auth
 from src.database.database import get_session
 
 skills_router = APIRouter(prefix="/skills", tags=[Tags.SKILLS])
@@ -19,14 +19,14 @@ async def get_skills(db: AsyncSession = Depends(get_session)):
 
 
 @skills_router.post("", status_code=status.HTTP_201_CREATED, response_model=Skill, tags=[Tags.SKILLS],
-                    dependencies=[Depends(require_auth)])
+                    dependencies=[Depends(require_admin)])
 async def create_skill(skill: SkillBase, db: AsyncSession = Depends(get_session)):
     """Add a new skill into the database."""
     return await logic_skills.create_skill(db, skill)
 
 
 @skills_router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response,
-                      tags=[Tags.SKILLS], dependencies=[Depends(require_auth)])
+                      tags=[Tags.SKILLS], dependencies=[Depends(require_admin)])
 async def delete_skill(skill_id: int, db: AsyncSession = Depends(get_session)):
     """Delete an existing skill."""
     await logic_skills.delete_skill(db, skill_id)
