@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { BsPersonFill } from "react-icons/bs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card } from "react-bootstrap";
+import { SuggestionColor, SuggestionEnum } from "../../../data/enums/suggestions";
 
 export const InfoHeadContainer = styled.div`
     display: flex;
@@ -16,11 +16,6 @@ export const StudentInformationContainer = styled.div`
 
 export const ActionsCard = styled(Card)`
     max-width: 100%;
-`;
-
-export const PersonIcon = styled(BsPersonFill)`
-    width: 20%;
-    height: 90%;
 `;
 
 export const NameContainer = styled.div`
@@ -63,8 +58,8 @@ export const LastName = styled.span`
 
 export const CopyLinkContainer = styled.div`
     display: flex;
+    width: fit-content;
     height: 40%;
-    align-self: center;
     align-items: center;
     font-size: 12px;
     &:hover {
@@ -76,19 +71,19 @@ export const CopyLinkContainer = styled.div`
 
 export const StudentLink = styled.p`
     font-size: 12px;
-    margin-top: 17%;
 `;
 
 export const CopyIcon = styled(FontAwesomeIcon)`
     margin-left: 0.35vh;
-    margin-bottom: 8%;
+    margin-bottom: 20%;
 `;
 
 export const PreferedName = styled.p`
     font-size: 20px;
 `;
 
-export const SuggestionField = styled.p`
+export const SuggestionField = styled.div`
+    display: flex;
     font-size: 20px;
     margin-bottom: 1%;
 `;
@@ -123,4 +118,17 @@ export const RoleValue = styled.p`
 
 export const DefinitiveDecisionContainer = styled.div`
     width: 40%;
+`;
+
+export const SuggestionTextColor = styled.p<{ suggestion: number }>`
+    color: ${p =>
+        p.suggestion === SuggestionEnum.YES
+            ? SuggestionColor.YES
+            : p.suggestion === SuggestionEnum.MAYBE
+            ? SuggestionColor.MAYBE
+            : SuggestionColor.NO};
+`;
+
+export const SuggestionCoachAndArg = styled.p`
+    margin-left: 10px;
 `;

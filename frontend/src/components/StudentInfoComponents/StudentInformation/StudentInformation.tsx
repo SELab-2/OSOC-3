@@ -17,6 +17,8 @@ import {
     AllName,
     ActionContainer,
     ActionsCard,
+    SuggestionTextColor,
+    SuggestionCoachAndArg,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
@@ -31,6 +33,7 @@ import { toast } from "react-toastify";
 import StudentCopyLink from "../StudentCopyLink/StudentCopyLink";
 import "./StudentInformation.css";
 import { Card } from "react-bootstrap";
+import StudentStateHistoryButton from "../StudentStateHistoryButton";
 import QuestionsAndAnswers from "../QuestionsAndAnswers";
 import { getQuestions } from "../../../utils/api/questions";
 import { Question } from "../../../data/interfaces/questions";
@@ -97,13 +100,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
                                 <LastName>{student.lastName}</LastName>
-                                <StudentCopyLink />
                             </FullName>
                             {student.preferredName !== null && (
                                 <div>
                                     <PreferedName>{student.preferredName}</PreferedName>
                                 </div>
                             )}
+                            <StudentCopyLink />
                         </AllName>
                     </NameContainer>
                     <ActionContainer>
@@ -112,6 +115,10 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <Card.Body className="CardBody">
                                 <CoachSuggestionContainer student={student} />
                                 {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
+                                <StudentStateHistoryButton
+                                    editionId={props.editionId}
+                                    studentId={props.studentId}
+                                />
                             </Card.Body>
                         </ActionsCard>
                     </ActionContainer>
@@ -121,8 +128,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                     <Card.Body className="CardBody">
                         {suggestions.map(suggestion => (
                             <SuggestionField key={suggestion.suggestionId}>
-                                {suggestion.coach.name}: "{suggestionToText(suggestion.suggestion)}"{" "}
-                                {suggestion.argumentation}
+                                <SuggestionTextColor suggestion={suggestion.suggestion}>
+                                    {" "}
+                                    {suggestionToText(suggestion.suggestion)}
+                                </SuggestionTextColor>
+                                <SuggestionCoachAndArg>
+                                    {suggestion.coach.name}: "{suggestion.argumentation}"
+                                </SuggestionCoachAndArg>
                             </SuggestionField>
                         ))}
                     </Card.Body>
@@ -165,7 +177,11 @@ export default function StudentInformation(props: { studentId: number; editionId
                     </Card.Body>
                 </Card>
                 <QuestionsAndAnswers questions={questions} />
-                <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
+                <RemoveStudentButton
+                    student={student}
+                    studentId={props.studentId}
+                    editionId={props.editionId}
+                />
             </StudentInformationContainer>
         );
     }
