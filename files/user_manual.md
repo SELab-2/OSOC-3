@@ -157,7 +157,7 @@ To edit a project, click on the pencil icon next to the project's name, now you 
 
 ### Suggesting a student for a project
 
-To suggest a student for a project, drag the student from the list on the lefthand side to the skill you want to suggest the student for. A popup will appear asking for a motivation for the suggestion.
+To suggest a student for a project, drag the student from the list on the lefthand side to the skill you want to suggest the student for. A pop-up will appear asking for a motivation for the suggestion.
 
 ### Confirming a student for a project (Admin-only)
 
