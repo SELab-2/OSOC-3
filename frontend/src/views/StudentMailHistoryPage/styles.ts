@@ -27,6 +27,7 @@ export const ButtonDiv = styled.div`
 export const CenterDiv = styled.div`
     width: 45em;
     min-width: fit-content;
+    max-width: 95%;
     margin: 2em auto;
 `;
 
