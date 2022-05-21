@@ -108,7 +108,7 @@ export async function patchProject(
     edition: string,
     projectId: number,
     name: string,
-    infoUrl: string,
+    infoUrl: string | null,
     partners: string[],
     coaches: number[]
 ): Promise<boolean> {

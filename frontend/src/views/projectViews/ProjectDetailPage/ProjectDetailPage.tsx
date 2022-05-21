@@ -45,6 +45,7 @@ export default function ProjectDetailPage() {
     const [gotProject, setGotProject] = useState(false);
     const [editing, setEditing] = useState(false);
     const [studentAmount, setStudentAmount] = useState(0);
+    const [assignedAmount, setAssignedAmount] = useState(0);
 
     const navigate = useNavigate();
     const { role } = useAuth();
@@ -58,10 +59,13 @@ export default function ProjectDetailPage() {
                     setProject(response);
                     setEditedProject(response);
                     let countStudents = 0;
+                    let countAssigned = 0;
                     response.projectRoles.forEach(projectRole => {
                         countStudents += projectRole.slots;
+                        countAssigned += projectRole.suggestions.length;
                     });
                     setStudentAmount(countStudents);
+                    setAssignedAmount(countAssigned);
                 } else navigate("/404-not-found");
             }
         }
@@ -141,7 +145,7 @@ export default function ProjectDetailPage() {
                 editionId,
                 projectId,
                 newProject!.name,
-                newProject!.info_url,
+                newProject.info_url || null,
                 newProject!.partners,
                 newProject!.coaches
             ),
@@ -193,7 +197,7 @@ export default function ProjectDetailPage() {
                             editing={editing}
                         />
                         <NumberOfStudents>
-                            {studentAmount}
+                            {assignedAmount + " / " + studentAmount}
                             <BsPersonFill />
                         </NumberOfStudents>
                     </ClientsContainer>
@@ -205,13 +209,15 @@ export default function ProjectDetailPage() {
                         editing={editing}
                     />
 
-                    <MoreInfoLink>
-                        <CreateButton
-                            showIcon={false}
-                            label="More info about this project"
-                            onClick={() => window.open(project.infoUrl)}
-                        />
-                    </MoreInfoLink>
+                    {project.infoUrl !== null && (
+                        <MoreInfoLink>
+                            <CreateButton
+                                showIcon={false}
+                                label="More info about this project"
+                                onClick={() => window.open(project.infoUrl!)}
+                            />
+                        </MoreInfoLink>
+                    )}
 
                     <ProjectRoles
                         projectRoles={project.projectRoles}

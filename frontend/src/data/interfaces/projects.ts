@@ -64,22 +64,16 @@ export interface ProjectRole {
     /** The id of the project this role belongs to */
     projectId: number;
 
-    /**
-     * More info about the skill
-     */
+    /** More info about the skill */
     description: string;
 
-    /**
-     * The skill needed for this role
-     */
+    /** The skill needed for this role */
     skill: Skill;
 
     /** The number of positions this role has */
     slots: number;
 
-    /**
-     * The suggested students for this role
-     */
+    /** The suggested students for this role */
     suggestions: ProjectRoleSuggestion[];
 }
 
@@ -95,7 +89,7 @@ export interface Project {
     name: string;
 
     /** An url with more info */
-    infoUrl: string;
+    infoUrl: string | null;
 
     /** The coaches of this project */
     coaches: Coach[];
@@ -137,7 +131,7 @@ export interface CreateProject {
     name: string;
 
     /** An url with more info */
-    info_url: string;
+    info_url: string | null;
 
     /** The partners that belong to this project */
     partners: string[];
