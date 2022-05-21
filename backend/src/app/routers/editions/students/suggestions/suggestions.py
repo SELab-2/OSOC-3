@@ -5,7 +5,7 @@ from starlette import status
 from starlette.responses import Response
 
 from src.app.routers.tags import Tags
-from src.app.utils.dependencies import get_editable_edition, require_auth, get_student, get_suggestion, require_coach
+from src.app.utils.dependencies import get_editable_edition, get_student, get_suggestion, require_coach
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, User, Suggestion
