@@ -46,7 +46,7 @@ export default function TitleAndEdit({
                     ) : (
                         <>
                             <CreateButton
-                                label="save"
+                                label="Save"
                                 showIcon={false}
                                 onClick={async () => {
                                     await editProject();
