@@ -218,7 +218,7 @@ This can be done by selecting these students in the table, clicking on the "Set 
 
 ### Viewing a student
 
-To view the details of a student, click on the student's name in the list on the lefthand side.
+To view the details of a student, click on the student's name in the list on the left-hand side.
 
 ### Making a suggestion for a student
 
