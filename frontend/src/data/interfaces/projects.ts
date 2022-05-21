@@ -51,7 +51,7 @@ export interface Project {
     name: string;
 
     /** An url with more info */
-    infoUrl: string;
+    infoUrl: string | null;
 
     /** The coaches of this project */
     coaches: Coach[];
@@ -90,7 +90,7 @@ export interface CreateProject {
     name: string;
 
     /** An url with more info */
-    info_url: string;
+    info_url: string | null;
 
     /** The partners that belong to this project */
     partners: string[];
