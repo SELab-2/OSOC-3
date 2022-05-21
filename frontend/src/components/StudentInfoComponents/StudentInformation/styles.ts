@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { BsPersonFill } from "react-icons/bs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card } from "react-bootstrap";
+import { SuggestionColor, SuggestionEnum } from "../../../data/enums/suggestions";
 
 export const InfoHeadContainer = styled.div`
     display: flex;
@@ -16,11 +16,6 @@ export const StudentInformationContainer = styled.div`
 
 export const ActionsCard = styled(Card)`
     max-width: 100%;
-`;
-
-export const PersonIcon = styled(BsPersonFill)`
-    width: 20%;
-    height: 90%;
 `;
 
 export const NameContainer = styled.div`
@@ -126,7 +121,12 @@ export const DefinitiveDecisionContainer = styled.div`
 `;
 
 export const SuggestionTextColor = styled.p<{ suggestion: number }>`
-    color: ${p => (p.suggestion === 1 ? "#44dba4" : p.suggestion === 2 ? "#fcb70f" : "#f14a3b")};
+    color: ${p =>
+        p.suggestion === SuggestionEnum.YES
+            ? SuggestionColor.YES
+            : p.suggestion === SuggestionEnum.MAYBE
+            ? SuggestionColor.MAYBE
+            : SuggestionColor.NO};
 `;
 
 export const SuggestionCoachAndArg = styled.p`
