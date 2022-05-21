@@ -153,6 +153,7 @@ export default function MailOverviewPage() {
         await toast.promise(setStateRequest(eventKey, editionId, selectedStudents), {
             error: "Failed to change state",
             pending: "Changing state",
+            success: "Successfully added state",
         });
         setEmailRows(
             emailRows.map(row => {

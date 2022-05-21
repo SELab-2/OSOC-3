@@ -1,63 +1,120 @@
 import React, { useEffect, useState } from "react";
-import { MailHistoryPage } from "./styles";
-import Table from "react-bootstrap/Table";
+import {
+    BackButtonDiv,
+    ButtonDiv,
+    CenterDiv,
+    CustomDropdownButton,
+    NameDiv,
+    TableDiv,
+} from "./styles";
 import { getEmails } from "../../utils/api/student_email_history";
-import { EmailHistoryList } from "../../data/interfaces";
+import { Email, Student } from "../../data/interfaces";
 import { EmailType } from "../../data/enums";
-import { useParams } from "react-router-dom";
-import { CenterDiv, MessageDiv } from "../MailOverviewPage/styles";
+import { useNavigate, useParams } from "react-router-dom";
+import { MessageDiv } from "../MailOverviewPage/styles";
+import { StyledTable } from "../../components/Common/Tables/styles";
+import { LoadSpinner } from "../../components/Common";
+import BackButton from "../../components/Common/Buttons/BackButton";
+import Dropdown from "react-bootstrap/Dropdown";
+import { toast } from "react-toastify";
+import { setStateRequest } from "../../utils/api/mail_overview";
 
 /**
  * Page that shows the email history of a student in a table
  */
 export default function StudentMailHistoryPage() {
-    const init: EmailHistoryList = {
-        emails: [],
-    };
-    const [table, setTable] = useState(init);
+    const [emails, setEmails] = useState<Email[]>([]);
     const [gotEmails, setGotEmails] = useState(false);
+    const [student, setStudent] = useState<Student | undefined>();
+
     const { editionId, id } = useParams();
+    const navigate = useNavigate();
+
+    async function getData() {
+        setEmails([]);
+        setGotEmails(false);
+        try {
+            const response = await getEmails(editionId, id);
+            setEmails(response.emails);
+            setStudent(response.student);
+            setGotEmails(true);
+        } catch (exception) {
+            console.log(exception);
+        }
+    }
+
     useEffect(() => {
-        const updateEmailList = async () => {
-            try {
-                setGotEmails(false);
-                const emails = await getEmails(editionId, id);
-                setTable(emails);
-                setGotEmails(true);
-            } catch (exception) {
-                console.log(exception);
-            }
-        };
-        updateEmailList();
+        getData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editionId, id]);
 
+    async function changeState(eventKey: string) {
+        await toast.promise(setStateRequest(eventKey, editionId, [student!.studentId]), {
+            error: "Failed to change state",
+            pending: "Changing state",
+            success: "Successfully added state",
+        });
+        getData();
+    }
+
+    if (!gotEmails) {
+        return <LoadSpinner show={true} />;
+    }
+
     let emailtable;
-    if (gotEmails && table.emails.length === 0) {
-        emailtable = (
-            <CenterDiv>
-                <MessageDiv>No states found.</MessageDiv>
-            </CenterDiv>
-        );
+    if (emails.length === 0) {
+        emailtable = <MessageDiv>No states found.</MessageDiv>;
     } else {
         emailtable = (
-            <Table bordered striped>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>State</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {table.emails.map(d => (
-                        <tr key={d.emailId}>
-                            <td>{new Date(String(d.date)).toLocaleString("nl-be")}</td>
-                            <td>{Object.values(EmailType)[d.decision]}</td>
+            <TableDiv>
+                <StyledTable>
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Date</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {emails.map(d => (
+                            <tr key={d.emailId}>
+                                <td>{Object.values(EmailType)[d.decision]}</td>
+                                <td>{new Date(String(d.date)).toLocaleString("nl-be")}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </StyledTable>
+            </TableDiv>
         );
     }
 
-    return <MailHistoryPage>{emailtable}</MailHistoryPage>;
+    return (
+        <div>
+            <BackButtonDiv>
+                <BackButton
+                    onClick={() => navigate("/editions/" + editionId + "/students/" + id)}
+                    label="  Student details"
+                />
+            </BackButtonDiv>
+            <CenterDiv>
+                <NameDiv>
+                    <h4>{student?.firstName + " " + student?.lastName}</h4>
+                </NameDiv>
+
+                <ButtonDiv>
+                    <CustomDropdownButton id="dropdown-setstate-button" title="Add new state">
+                        {Object.values(EmailType).map((type, index) => (
+                            <Dropdown.Item
+                                eventKey={index.toString()}
+                                key={type}
+                                onClick={() => changeState(index.toString())}
+                            >
+                                {type}
+                            </Dropdown.Item>
+                        ))}
+                    </CustomDropdownButton>
+                </ButtonDiv>
+                {emailtable}
+            </CenterDiv>
+        </div>
+    );
 }

@@ -137,3 +137,14 @@ export const CommonDropdownButton = styled(DropdownButton).attrs({
         }
     }
 `;
+
+export const GoBack = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    max-width: max-content;
+
+    :hover {
+        cursor: pointer;
+    }
+`;

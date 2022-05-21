@@ -12,17 +12,6 @@ export const ProjectContainer = styled.div`
     overflow: auto;
 `;
 
-export const GoBack = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    max-width: max-content;
-
-    :hover {
-        cursor: pointer;
-    }
-`;
-
 export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;

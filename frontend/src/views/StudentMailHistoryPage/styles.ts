@@ -1,9 +1,39 @@
 import styled from "styled-components";
+import { CommonDropdownButton } from "../../components/Common/Buttons/styles";
 
-export const MailHistoryPage = styled.div`
-    background-color: white;
+export const TableDiv = styled.div`
+    width: 25em;
+    min-width: fit-content;
     margin: auto;
-    margin-top: 50px;
-    margin-bottom: 50px;
+`;
+
+export const BackButtonDiv = styled.div`
+    margin-left: 2em;
+    float: left;
+`;
+
+export const NameDiv = styled.div`
+    overflow: hidden;
     width: fit-content;
+    margin: auto;
+`;
+
+export const ButtonDiv = styled.div`
+    width: fit-content;
+    margin-bottom: 5px;
+    margin-top: 10px;
+`;
+
+export const CenterDiv = styled.div`
+    width: fit-content;
+    margin: 2em auto;
+`;
+
+export const CustomDropdownButton = styled(CommonDropdownButton)`
+    width: 11em;
+
+    & > Button {
+        margin-left: 10px;
+        width: 11em;
+    }
 `;

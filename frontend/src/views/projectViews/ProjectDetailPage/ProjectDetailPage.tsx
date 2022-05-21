@@ -8,11 +8,9 @@ import {
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { useAuth } from "../../../contexts/auth-context";
-import { BiArrowBack } from "react-icons/bi";
+import { useAuth } from "../../../contexts";
 import { BsPersonFill } from "react-icons/bs";
 import {
-    GoBack,
     ProjectContainer,
     ClientsContainer,
     NumberOfStudents,
@@ -31,6 +29,7 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
+import BackButton from "../../../components/Common/Buttons/BackButton";
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
@@ -166,11 +165,10 @@ export default function ProjectDetailPage() {
                 <StudentListFilters />
 
                 <ProjectContainer>
-                    <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
-                        <BiArrowBack />
-                        Overview
-                    </GoBack>
-
+                    <BackButton
+                        onClick={() => navigate("/editions/" + editionId + "/projects/")}
+                        label="Overview"
+                    />
                     <TitleAndEdit
                         editing={editing}
                         project={project}
@@ -187,7 +185,7 @@ export default function ProjectDetailPage() {
                         handleConfirm={handleDelete}
                         handleClose={handleDeleteClose}
                         name={project.name}
-                    ></ConfirmDelete>
+                    />
 
                     <ClientsContainer>
                         <ProjectPartners
