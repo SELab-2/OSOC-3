@@ -12,19 +12,18 @@ export const RequestHeaderTitle = styled.div`
     width: 100px;
     font-size: 25px;
     float: left;
+    margin-right: 15px;
 `;
 
 export const OpenArrow = styled(BiDownArrow)`
     margin-top: 13px;
     margin-left: 10px;
-    offset-position: 0 30px;
 `;
 
 export const ClosedArrow = styled(BiDownArrow)`
     margin-top: 13px;
     margin-left: 10px;
     transform: rotate(-90deg);
-    offset: 0 30px;
 `;
 
 export const RequestsTable = styled(Table).attrs({
