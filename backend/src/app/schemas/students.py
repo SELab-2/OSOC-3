@@ -30,7 +30,7 @@ class Student(CamelCaseModel):
     student_id: int
     first_name: str
     last_name: str
-    preferred_name: str
+    preferred_name: str | None
     email_address: str
     phone_number: str
     alumni: bool
