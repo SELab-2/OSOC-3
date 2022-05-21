@@ -167,7 +167,7 @@ When a student is confirmed, they cannot be added to another project anymore.
 
 ### Removing a student from a project (Admin-only)
 
-To remove a student from a project, click on the red trash icon on the top right of the student's card on the "Project page".
+To remove a student from a project, click on the red trash icon on the top-right of the student's card on the "Project page".
 
 ### Adding a skill to a project (Admin-only)
 
