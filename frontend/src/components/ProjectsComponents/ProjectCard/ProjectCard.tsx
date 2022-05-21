@@ -4,7 +4,6 @@ import {
     CoachContainer,
     CoachText,
     NumberOfStudents,
-    Delete,
     TitleContainer,
     Title,
     OpenIcon,
@@ -14,7 +13,6 @@ import {
 } from "./styles";
 
 import { BsPersonFill } from "react-icons/bs";
-import { HiOutlineTrash } from "react-icons/hi";
 
 import { useState } from "react";
 
@@ -25,6 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../data/interfaces";
 import { useAuth } from "../../../contexts";
 import { Role } from "../../../data/enums";
+import { DeleteButton } from "../../Common/Buttons";
 import { toast } from "react-toastify";
 
 /**
@@ -51,6 +50,13 @@ export default function ProjectCard({
 
     const navigate = useNavigate();
 
+    let assignedStudents = 0;
+    let neededStudents = 0;
+    project.projectRoles.forEach(projectRole => {
+        neededStudents += projectRole.slots;
+        assignedStudents += projectRole.suggestions.length;
+    });
+
     // What to do when deleting a project.
     async function handleDelete() {
         const success = await deleteProject(editionId, project.projectId);
@@ -75,11 +81,7 @@ export default function ProjectCard({
                     <OpenIcon />
                 </Title>
 
-                {role === Role.ADMIN && (
-                    <Delete onClick={handleShow}>
-                        <HiOutlineTrash size={"20px"} />
-                    </Delete>
-                )}
+                {role === Role.ADMIN && <DeleteButton onClick={handleShow} />}
 
                 <ConfirmDelete
                     visible={show}
@@ -96,9 +98,7 @@ export default function ProjectCard({
                     ))}
                 </Clients>
                 <NumberOfStudents>
-                    {
-                        // project.numberOfStudents
-                    }
+                    {assignedStudents + " / " + neededStudents}
                     <BsPersonFill />
                 </NumberOfStudents>
             </ClientContainer>
