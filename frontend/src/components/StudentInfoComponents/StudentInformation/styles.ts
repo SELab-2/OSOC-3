@@ -63,8 +63,8 @@ export const LastName = styled.span`
 
 export const CopyLinkContainer = styled.div`
     display: flex;
+    width: fit-content;
     height: 40%;
-    align-self: center;
     align-items: center;
     font-size: 12px;
     &:hover {
@@ -76,12 +76,11 @@ export const CopyLinkContainer = styled.div`
 
 export const StudentLink = styled.p`
     font-size: 12px;
-    margin-top: 17%;
 `;
 
 export const CopyIcon = styled(FontAwesomeIcon)`
     margin-left: 0.35vh;
-    margin-bottom: 8%;
+    margin-bottom: 20%;
 `;
 
 export const PreferedName = styled.p`

@@ -31,6 +31,7 @@ import { toast } from "react-toastify";
 import StudentCopyLink from "../StudentCopyLink/StudentCopyLink";
 import "./StudentInformation.css";
 import { Card } from "react-bootstrap";
+import StudentStateHistoryButton from "../StudentStateHistoryButton";
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
@@ -91,11 +92,11 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
                                 <LastName>{student.lastName}</LastName>
-                                <StudentCopyLink />
                             </FullName>
                             <div>
                                 <PreferedName>{student.preferredName}</PreferedName>
                             </div>
+                            <StudentCopyLink />
                         </AllName>
                     </NameContainer>
                     <ActionContainer>
@@ -104,6 +105,10 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <Card.Body className="CardBody">
                                 <CoachSuggestionContainer student={student} />
                                 {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
+                                <StudentStateHistoryButton
+                                    editionId={props.editionId}
+                                    studentId={props.studentId}
+                                />
                             </Card.Body>
                         </ActionsCard>
                     </ActionContainer>
@@ -156,7 +161,11 @@ export default function StudentInformation(props: { studentId: number; editionId
                         ))}
                     </Card.Body>
                 </Card>
-                <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
+                <RemoveStudentButton
+                    student={student}
+                    studentId={props.studentId}
+                    editionId={props.editionId}
+                />
             </StudentInformationContainer>
         );
     }
