@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { CommonDropdownButton } from "../../components/Common/Buttons/styles";
 
 export const TableDiv = styled.div`
-    width: 25em;
+    width: 100%;
     min-width: fit-content;
     margin: auto;
 `;
@@ -25,7 +25,8 @@ export const ButtonDiv = styled.div`
 `;
 
 export const CenterDiv = styled.div`
-    width: fit-content;
+    width: 45em;
+    min-width: fit-content;
     margin: 2em auto;
 `;
 
@@ -33,7 +34,14 @@ export const CustomDropdownButton = styled(CommonDropdownButton)`
     width: 11em;
 
     & > Button {
-        margin-left: 10px;
         width: 11em;
     }
+`;
+
+export const DateTh = styled.th`
+    text-align: center;
+`;
+
+export const DateTd = styled.td`
+    text-align: center;
 `;

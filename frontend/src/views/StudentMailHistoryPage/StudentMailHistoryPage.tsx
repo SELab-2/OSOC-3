@@ -4,6 +4,8 @@ import {
     ButtonDiv,
     CenterDiv,
     CustomDropdownButton,
+    DateTh,
+    DateTd,
     NameDiv,
     TableDiv,
 } from "./styles";
@@ -71,14 +73,14 @@ export default function StudentMailHistoryPage() {
                     <thead>
                         <tr>
                             <th>State</th>
-                            <th>Date</th>
+                            <DateTh>Date</DateTh>
                         </tr>
                     </thead>
                     <tbody>
                         {emails.map(d => (
                             <tr key={d.emailId}>
                                 <td>{Object.values(EmailType)[d.decision]}</td>
-                                <td>{new Date(String(d.date)).toLocaleString("nl-be")}</td>
+                                <DateTd>{new Date(String(d.date)).toLocaleString("nl-be")}</DateTd>
                             </tr>
                         ))}
                     </tbody>
