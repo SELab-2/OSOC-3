@@ -87,7 +87,8 @@ export const PreferedName = styled.p`
     font-size: 20px;
 `;
 
-export const SuggestionField = styled.p`
+export const SuggestionField = styled.div`
+    display: flex;
     font-size: 20px;
     margin-bottom: 1%;
 `;
@@ -122,4 +123,12 @@ export const RoleValue = styled.p`
 
 export const DefinitiveDecisionContainer = styled.div`
     width: 40%;
+`;
+
+export const SuggestionTextColor = styled.p<{ suggestion: number }>`
+    color: ${p => (p.suggestion === 1 ? "#44dba4" : p.suggestion === 2 ? "#fcb70f" : "#f14a3b")};
+`;
+
+export const SuggestionCoachAndArg = styled.p`
+    margin-left: 10px;
 `;

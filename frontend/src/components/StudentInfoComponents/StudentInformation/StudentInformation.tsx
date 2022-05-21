@@ -17,6 +17,8 @@ import {
     AllName,
     ActionContainer,
     ActionsCard,
+    SuggestionTextColor,
+    SuggestionCoachAndArg,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
@@ -118,8 +120,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                     <Card.Body className="CardBody">
                         {suggestions.map(suggestion => (
                             <SuggestionField key={suggestion.suggestionId}>
-                                {suggestion.coach.name}: "{suggestionToText(suggestion.suggestion)}"{" "}
-                                {suggestion.argumentation}
+                                <SuggestionTextColor suggestion={suggestion.suggestion}>
+                                    {" "}
+                                    {suggestionToText(suggestion.suggestion)}
+                                </SuggestionTextColor>
+                                <SuggestionCoachAndArg>
+                                    {suggestion.coach.name}: "{suggestion.argumentation}"
+                                </SuggestionCoachAndArg>
                             </SuggestionField>
                         ))}
                     </Card.Body>
