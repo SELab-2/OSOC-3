@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getProjects } from "../../../utils/api/projects";
-import { CreateButton, SearchField, OwnProject } from "./styles";
+import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +10,8 @@ import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
+import { CreateButton } from "../../../components/Common/Buttons";
+import { SearchBar } from "../../../components/Common/Forms";
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -137,25 +139,29 @@ export default function ProjectPage() {
 
     return (
         <div>
-            <div>
-                <SearchField
-                    value={searchString}
-                    onChange={e => {
-                        setPage(0);
-                        setSearchString(e.target.value);
-                    }}
-                    placeholder="project name"
-                />
+            <ControlContainer>
+                <div>
+                    <SearchFieldDiv>
+                        <SearchBar
+                            onChange={e => {
+                                setPage(0);
+                                setSearchString(e.target.value);
+                            }}
+                            value={searchString}
+                            placeholder="Search project..."
+                        />
+                    </SearchFieldDiv>
 
-                {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
-                    <CreateButton
-                        onClick={() => navigate("/editions/" + editionId + "/projects/new")}
-                    >
-                        Create Project
-                    </CreateButton>
-                )}
+                    {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
+                        <CreateButton
+                            label="Create Project"
+                            onClick={() => navigate("/editions/" + editionId + "/projects/new")}
+                        />
+                    )}
+                </div>
                 <ConflictsButton editionId={editionId} />
-            </div>
+            </ControlContainer>
+
             <OwnProject
                 type="switch"
                 id="custom-switch"

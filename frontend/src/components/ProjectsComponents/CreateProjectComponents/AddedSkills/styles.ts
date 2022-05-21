@@ -54,11 +54,12 @@ export const DescriptionInput = styled.input`
 `;
 
 export const AmountInput = styled.input`
-    margin: 5px;
+    margin: 5px 10px;
     padding: 2px 10px;
     background-color: #131329;
     color: white;
     border: none;
     border-radius: 5px;
     width: 100px;
+    direction: rtl;
 `;
