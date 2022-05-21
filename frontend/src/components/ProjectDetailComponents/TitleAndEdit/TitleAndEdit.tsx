@@ -30,6 +30,7 @@ export default function TitleAndEdit({
                 <Title>{project.name}</Title>
             ) : (
                 <TitleInput
+                    placeholder="Ex. UGent project"
                     value={editedProject.name}
                     onChange={e => {
                         const newProject: Project = { ...project, name: e.target.value };

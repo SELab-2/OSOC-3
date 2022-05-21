@@ -26,8 +26,10 @@ export const GoBack = styled.div`
 export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;
-    color: lightgray;
-    overflow-x: auto;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-right: 20px;
+    max-width: 100%;
 `;
 
 export const NumberOfStudents = styled.div`

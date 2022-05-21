@@ -140,6 +140,12 @@ export default function ProjectDetailPage() {
 
     async function editProject() {
         const newProject: EditProject = projectToEditProject(editedProject!);
+        if (newProject.name === "") {
+            toast.error("Project name must be filled in", {
+                toastId: "createProjectNoName",
+            });
+            return;
+        }
         await toast.promise(
             patchProject(
                 editionId,

@@ -10,6 +10,7 @@ import {
     Suggestions,
     TitleDeleteContainer,
     NumberOfStudents,
+    DescriptionContainer,
 } from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
@@ -54,8 +55,9 @@ export default function ProjectRoles({
                             }}
                         />
                     </TitleDeleteContainer>
-
-                    <h6>{projectRole.description}</h6>
+                    <DescriptionContainer>
+                        <h6>{projectRole.description}</h6>
+                    </DescriptionContainer>
                     <NumberOfStudents>
                         <div
                             className={

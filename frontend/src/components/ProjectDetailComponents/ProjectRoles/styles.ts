@@ -32,3 +32,10 @@ export const NumberOfStudents = styled.div`
         color: var(--osoc_green);
     }
 `;
+
+export const DescriptionContainer = styled.div`
+    overflow: auto;
+    text-overflow: ellipsis;
+    max-height: 2.6rem;
+    max-width: 90%;
+`;
