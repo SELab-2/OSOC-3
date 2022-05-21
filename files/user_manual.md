@@ -173,7 +173,7 @@ To remove a student from a project, click on the red trash icon on the top right
 
 A skill contains a number of slots where students can be placed in to fulfill that skill for that project.
 
-To add a new skill requirement to a project, click on the **Add new skill** button on the botton of the "Project page".
+To add a new skill requirement to a project, click on the **Add new skill** button on the bottom of the "Project page".
 
 ### Removing a skill from a project (Admin-only)
 
