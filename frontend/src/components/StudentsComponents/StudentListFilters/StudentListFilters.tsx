@@ -235,12 +235,12 @@ export default function StudentListFilters() {
                     setStudentCoachVolunteerFilter={setStudentCoachVolunteerFilter}
                     setPage={setPage}
                 />
-                <ConfirmFilters
-                    confirmFilter={confirmFilter}
-                    setConfirmFilter={setConfirmFilter}
-                    setPage={setPage}
-                />
             </Form.Group>
+            <ConfirmFilters
+                confirmFilter={confirmFilter}
+                setConfirmFilter={setConfirmFilter}
+                setPage={setPage}
+            />
             <StudentListLinebreak />
             <FilterControls>
                 <ResetFiltersButton
