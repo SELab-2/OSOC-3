@@ -84,7 +84,7 @@ export default function AddNewSkill({
                                     setSlots(event.target.valueAsNumber);
                                 }}
                             />
-                            {slots === 1 ? <div>student</div> : <div>students</div>}
+                            {slots === 1 ? <div>Student</div> : <div>Students</div>}
                         </NewSkillLeft>
                         <NewSKillRight>
                             <AddNewSkillButton
