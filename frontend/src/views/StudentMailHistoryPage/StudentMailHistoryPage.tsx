@@ -56,7 +56,7 @@ export default function StudentMailHistoryPage() {
             pending: "Changing state",
             success: "Successfully added state",
         });
-        getData();
+        await getData();
     }
 
     if (!gotEmails) {
