@@ -126,7 +126,9 @@ export const SuggestionTextColor = styled.p<{ suggestion: number }>`
             ? SuggestionColor.YES
             : p.suggestion === SuggestionEnum.MAYBE
             ? SuggestionColor.MAYBE
-            : SuggestionColor.NO};
+            : p.suggestion === SuggestionEnum.NO
+            ? SuggestionColor.NO
+            : "#FFFFFF"};
 `;
 
 export const SuggestionCoachAndArg = styled.p`
