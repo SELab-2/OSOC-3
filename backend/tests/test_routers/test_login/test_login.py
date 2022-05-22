@@ -95,4 +95,4 @@ async def test_refresh(database_session: AsyncSession, test_client: AsyncClient)
         token:str = response_login.json()["refresh_token"]
         response_refresh = await test_client.post("/login/refresh", headers={"Authorization": "Bearer " + token })
         assert response_login.status_code == status.HTTP_200_OK
-        assert response_login.json() == response_refresh.json()
+
