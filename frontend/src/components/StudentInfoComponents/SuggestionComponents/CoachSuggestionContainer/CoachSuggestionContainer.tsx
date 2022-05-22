@@ -94,21 +94,18 @@ export default function CoachSuggestionContainer(props: Props) {
             <ButtonGroup className="grid gap-sm-1">
                 <YesButton
                     variant="success"
-                    size="lg"
                     onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
                 >
                     Yes
                 </YesButton>
                 <MaybeButton
                     variant="warning"
-                    size="lg"
                     onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
                 >
                     Maybe
                 </MaybeButton>
                 <NoButton
                     variant="danger"
-                    size="lg"
                     onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleShow(e)}
                 >
                     No
