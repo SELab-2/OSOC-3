@@ -23,6 +23,8 @@ import SearchBar from "../../components/Common/Forms/SearchBar";
 import { CommonMultiselect } from "../../components/Common/Forms";
 import { CommonDropdownButton } from "../../components/Common/Buttons/styles";
 import { DateTd, DateTh } from "../../components/Common/Tables/styles";
+import { isReadonlyEdition } from "../../utils/logic";
+import { useAuth } from "../../contexts";
 
 interface EmailRow {
     email: StudentEmail;
@@ -34,6 +36,7 @@ interface EmailRow {
  */
 export default function MailOverviewPage() {
     const { editionId } = useParams();
+    const { editions } = useAuth();
 
     const [emailRows, setEmailRows] = useState<EmailRow[]>([]);
     const [loading, setLoading] = useState(false);
@@ -275,22 +278,24 @@ export default function MailOverviewPage() {
                         options={Object.values(EmailType)}
                     />
                 </FilterDiv>
-                <DropDownButtonDiv>
-                    <CommonDropdownButton
-                        id="dropdown-setstate-button"
-                        title="Add new state to selected students"
-                    >
-                        {Object.values(EmailType).map((type, index) => (
-                            <Dropdown.Item
-                                eventKey={index.toString()}
-                                key={type}
-                                onClick={() => changeState(index.toString())}
-                            >
-                                {type}
-                            </Dropdown.Item>
-                        ))}
-                    </CommonDropdownButton>
-                </DropDownButtonDiv>
+                {!isReadonlyEdition(editionId, editions) && (
+                    <DropDownButtonDiv>
+                        <CommonDropdownButton
+                            id="dropdown-setstate-button"
+                            title="Add new state to selected students"
+                        >
+                            {Object.values(EmailType).map((type, index) => (
+                                <Dropdown.Item
+                                    eventKey={index.toString()}
+                                    key={type}
+                                    onClick={() => changeState(index.toString())}
+                                >
+                                    {type}
+                                </Dropdown.Item>
+                            ))}
+                        </CommonDropdownButton>
+                    </DropDownButtonDiv>
+                )}
             </SearchAndChangeDiv>
             <ClearDiv />
             {table}

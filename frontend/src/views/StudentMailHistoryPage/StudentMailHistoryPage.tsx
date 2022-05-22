@@ -18,6 +18,8 @@ import BackButton from "../../components/Common/Buttons/BackButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { setStateRequest } from "../../utils/api/mail_overview";
+import { isReadonlyEdition } from "../../utils/logic";
+import { useAuth } from "../../contexts";
 
 /**
  * Page that shows the email history of a student in a table
@@ -28,6 +30,7 @@ export default function StudentMailHistoryPage() {
     const [student, setStudent] = useState<Student | undefined>();
 
     const { editionId, id } = useParams();
+    const { editions } = useAuth();
     const navigate = useNavigate();
 
     async function getData() {
@@ -99,20 +102,21 @@ export default function StudentMailHistoryPage() {
                 <NameDiv>
                     <h4>{student?.firstName + " " + student?.lastName}</h4>
                 </NameDiv>
-
-                <ButtonDiv>
-                    <CustomDropdownButton id="dropdown-setstate-button" title="Add new state">
-                        {Object.values(EmailType).map((type, index) => (
-                            <Dropdown.Item
-                                eventKey={index.toString()}
-                                key={type}
-                                onClick={() => changeState(index.toString())}
-                            >
-                                {type}
-                            </Dropdown.Item>
-                        ))}
-                    </CustomDropdownButton>
-                </ButtonDiv>
+                {!isReadonlyEdition(editionId, editions) && (
+                    <ButtonDiv>
+                        <CustomDropdownButton id="dropdown-setstate-button" title="Add new state">
+                            {Object.values(EmailType).map((type, index) => (
+                                <Dropdown.Item
+                                    eventKey={index.toString()}
+                                    key={type}
+                                    onClick={() => changeState(index.toString())}
+                                >
+                                    {type}
+                                </Dropdown.Item>
+                            ))}
+                        </CustomDropdownButton>
+                    </ButtonDiv>
+                )}
                 {emailtable}
             </CenterDiv>
         </div>
