@@ -73,7 +73,6 @@ export default function Router() {
                                         <Route path={""} element={<CreateEditionPage />} />
                                     </Route>
                                     <Route path={":editionId"} element={<Outlet />}>
-                                        {/* TODO edition page? do we need? maybe just some nav/links? */}
                                         <Route path={""} element={<div />} />
 
                                         {/* Projects routes */}
@@ -97,10 +96,12 @@ export default function Router() {
                                                 <Route path={""} element={<MailOverviewPage />} />
                                             </Route>
                                             <Route path={":id"} element={<StudentInfoPage />} />
-                                            <Route
-                                                path={":id/states"}
-                                                element={<StudentMailHistoryPage />}
-                                            />
+                                            <Route path={":id/states"} element={<AdminRoute />}>
+                                                <Route
+                                                    path={""}
+                                                    element={<StudentMailHistoryPage />}
+                                                />
+                                            </Route>
                                         </Route>
 
                                         {/* Users routes */}

@@ -7,7 +7,7 @@ import { QuestionAnswersContainer } from "./styles";
 /**
  * Component that removes the current student.
  */
-export default function QuestionAnswer({ question }: { question: Question }) {
+export default function SomeTest({ question }: { question: Question }) {
     return (
         <div>
             {question.answers.length === 0 && question.files.length === 0 ? null : (
