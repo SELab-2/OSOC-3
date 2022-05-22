@@ -8,7 +8,7 @@ import {
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { useAuth } from "../../../contexts/auth-context";
+import { useAuth, useSockets } from "../../../contexts";
 import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import {
@@ -31,11 +31,17 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
 
 /**
  * @returns the detailed page of a project. Here you can add or remove students from the project.
  */
 export default function ProjectDetailPage() {
+    const { socket } = useSockets();
+
     const params = useParams();
     const projectId = parseInt(params.projectId!);
     const editionId = params.editionId!;
@@ -50,6 +56,46 @@ export default function ProjectDetailPage() {
     const navigate = useNavigate();
     const { role } = useAuth();
 
+    // WebSocket listener
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Ignore events that aren't targeted towards projects
+            if (!wsEventTypes.includes(data.eventType)) return;
+
+            const idString = projectId.toString();
+
+            // Ignore events targeted towards other projects
+            if (data.pathIds.projectId !== idString) return;
+
+            // This project was deleted
+            if (data.method === RequestMethod.DELETE) {
+                if (data.eventType === EventType.PROJECT) {
+                    toast.info("This project was deleted by an admin.");
+                    navigate(`/editions/${editionId}/projects`);
+                    return;
+                }
+            }
+
+            // Project was edited in some way (either a PATCH or adding/deleting suggestions)
+            // By setting this one to False we force the other useEffect
+            // to fetch the project again
+            setGotProject(false);
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [socket, editionId, projectId, navigate]);
+
+    // Get project details
     useEffect(() => {
         async function callProjects(): Promise<void> {
             if (projectId) {
@@ -72,7 +118,9 @@ export default function ProjectDetailPage() {
         if (!gotProject) {
             callProjects();
         }
-    }, [editionId, gotProject, navigate, projectId]);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editionId, gotProject, projectId]);
 
     // Used for the delete modal.
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -140,6 +188,12 @@ export default function ProjectDetailPage() {
 
     async function editProject() {
         const newProject: EditProject = projectToEditProject(editedProject!);
+        if (newProject.name === "") {
+            toast.error("Project name must be filled in", {
+                toastId: "createProjectNoName",
+            });
+            return;
+        }
         await toast.promise(
             patchProject(
                 editionId,

@@ -113,7 +113,7 @@ export default function AdminDecisionContainer() {
             </Modal>
             <ConfirmActionTitle>Definitive decision by admin</ConfirmActionTitle>
             <DefinitiveDecisionContainer>
-                <CreateButton onClick={handleShow} variant="success" size="lg">
+                <CreateButton showIcon={false} onClick={handleShow} size="lg">
                     Confirm
                 </CreateButton>
             </DefinitiveDecisionContainer>

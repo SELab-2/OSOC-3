@@ -14,7 +14,7 @@ from src.app.schemas.students import (
     ReturnStudentMailList, NewEmail, EmailsSearchQueryParams,
     ListReturnStudentMailList
 )
-from src.app.utils.dependencies import get_editable_edition, get_student, get_edition, require_admin, require_auth
+from src.app.utils.dependencies import get_editable_edition, get_student, get_edition, require_admin, require_coach
 from src.app.utils.websockets import live
 from src.database.database import get_session
 from src.database.models import Student, Edition, User
@@ -31,7 +31,7 @@ students_router.include_router(
 @students_router.get("", response_model=ReturnStudentList)
 async def get_students(db: AsyncSession = Depends(get_session),
                        commons: CommonQueryParams = Depends(CommonQueryParams),
-                       edition: Edition = Depends(get_edition), user: User = Depends(require_auth)):
+                       edition: Edition = Depends(get_edition), user: User = Depends(require_coach)):
     """
     Get a list of all students.
     """
@@ -81,7 +81,7 @@ async def delete_student(student: Student = Depends(get_student), db: AsyncSessi
     await remove_student(db, student)
 
 
-@students_router.get("/{student_id}", dependencies=[Depends(require_auth)], response_model=ReturnStudent)
+@students_router.get("/{student_id}", dependencies=[Depends(require_coach)], response_model=ReturnStudent)
 async def get_student_by_id(edition: Edition = Depends(get_edition), student: Student = Depends(get_student),
                             db: AsyncSession = Depends(get_session)):
     """

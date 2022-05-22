@@ -26,8 +26,10 @@ export const GoBack = styled.div`
 export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;
-    color: lightgray;
-    overflow-x: auto;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-right: 20px;
+    max-width: 100%;
 `;
 
 export const NumberOfStudents = styled.div`
@@ -36,6 +38,6 @@ export const NumberOfStudents = styled.div`
 `;
 
 export const MoreInfoLink = styled.div`
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 20px;
 `;

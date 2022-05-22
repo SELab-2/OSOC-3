@@ -11,7 +11,7 @@ students_answers_router = APIRouter(
     prefix="/answers", tags=[Tags.STUDENTS])
 
 
-@students_answers_router.get("/", status_code=status.HTTP_200_OK, response_model=Questions,
+@students_answers_router.get("", status_code=status.HTTP_200_OK, response_model=Questions,
                              dependencies=[Depends(require_coach)])
 async def get_answers(student: Student = Depends(get_student)):
     """give answers of a student"""

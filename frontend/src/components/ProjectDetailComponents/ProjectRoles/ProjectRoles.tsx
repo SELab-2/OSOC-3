@@ -10,9 +10,13 @@ import {
     Suggestions,
     TitleDeleteContainer,
     NumberOfStudents,
+    DescriptionContainer,
+    DescriptionAndStudentAmount,
 } from "./styles";
 import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
+import { isReadonlyEdition } from "../../../utils/logic";
+import { useAuth } from "../../../contexts";
 
 export default function ProjectRoles({
     projectRoles,
@@ -24,6 +28,9 @@ export default function ProjectRoles({
     const params = useParams();
     const projectId = params.projectId!;
     const editionId = params.editionId!;
+    const { editions } = useAuth();
+
+    const isReadOnly = isReadonlyEdition(editionId, editions);
 
     return (
         <div>
@@ -54,38 +61,43 @@ export default function ProjectRoles({
                             }}
                         />
                     </TitleDeleteContainer>
-
-                    <h6>{projectRole.description}</h6>
-                    <NumberOfStudents>
-                        <div
-                            className={
-                                projectRole.suggestions.length > projectRole.slots
-                                    ? "red"
-                                    : projectRole.suggestions.length === projectRole.slots
-                                    ? "green"
-                                    : undefined
-                            }
-                        >
-                            {projectRole.suggestions.length.toString() +
-                                " / " +
-                                projectRole.slots.toString()}
-                        </div>
-                    </NumberOfStudents>
+                    <DescriptionAndStudentAmount>
+                        <DescriptionContainer>
+                            <h6>{projectRole.description}</h6>
+                        </DescriptionContainer>
+                        <NumberOfStudents>
+                            <div
+                                className={
+                                    projectRole.suggestions.length > projectRole.slots
+                                        ? "red"
+                                        : projectRole.suggestions.length === projectRole.slots
+                                        ? "green"
+                                        : undefined
+                                }
+                            >
+                                {projectRole.suggestions.length.toString() +
+                                    " / " +
+                                    projectRole.slots.toString()}
+                            </div>
+                        </NumberOfStudents>
+                    </DescriptionAndStudentAmount>
 
                     <Droppable droppableId={projectRole.projectRoleId.toString()}>
                         {(provided, snapshot) => (
                             <Suggestions ref={provided.innerRef} {...provided.droppableProps}>
-                                {projectRole.suggestions.map((sug, _index2) => (
-                                    <SuggestedStudent
-                                        key={_index2}
-                                        suggestion={sug}
-                                        projectRole={projectRole}
-                                        index={_index2}
-                                        setGotProject={setGotProject}
-                                    />
-                                ))}
-                                {projectRole.suggestions.length === 0 && (
+                                {projectRole.suggestions.length === 0 ? (
                                     <NoStudents>Drag students here</NoStudents>
+                                ) : (
+                                    projectRole.suggestions.map((sug, _index2) => (
+                                        <SuggestedStudent
+                                            key={_index2}
+                                            suggestion={sug}
+                                            projectRole={projectRole}
+                                            index={_index2}
+                                            setGotProject={setGotProject}
+                                            notDraggable={isReadOnly}
+                                        />
+                                    ))
                                 )}
                                 {provided.placeholder}
                             </Suggestions>
@@ -93,7 +105,7 @@ export default function ProjectRoles({
                     </Droppable>
                 </ProjectRoleContainer>
             ))}
-            <AddNewSkill setGotProject={setGotProject} />
+            {!isReadOnly && <AddNewSkill setGotProject={setGotProject} />}
         </div>
     );
 }

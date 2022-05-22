@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import StudentList from "../StudentList";
 import { Form } from "react-bootstrap";
-import { StudentListSideMenu, StudentListLinebreak, FilterControls, MessageDiv } from "./styles";
+import { FilterControls, MessageDiv, StudentListLinebreak, StudentListSideMenu } from "./styles";
 import AlumniFilter from "./AlumniFilter/AlumniFilter";
 import StudentCoachVolunteerFilter from "./StudentCoachVolunteerFilter/StudentCoachVolunteerFilter";
 import NameFilter from "./NameFilter/NameFilter";
@@ -11,7 +11,7 @@ import ResetFiltersButton from "./ResetFiltersButton/ResetFiltersButton";
 import { Student } from "../../../data/interfaces/students";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getStudents } from "../../../utils/api/students";
+import { getStudent, getStudents } from "../../../utils/api/students";
 import SuggestedForFilter from "./SuggestedForFilter/SuggestedForFilter";
 import {
     getAlumniFilter,
@@ -21,14 +21,20 @@ import {
     getStudentCoachVolunteerFilter,
     getSuggestedFilter,
 } from "../../../utils/session-storage/student-filters";
+import { useSockets } from "../../../contexts";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
 import ConfirmFilters from "./ConfirmFilters/ConfirmFilters";
 import LoadSpinner from "../../Common/LoadSpinner";
+
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.STUDENT, EventType.STUDENT_SUGGESTION];
 
 /**
  * Component that shows the sidebar with all the filters and student list.
  */
 export default function StudentListFilters() {
     const params = useParams();
+    const { socket } = useSockets();
     const [allStudents, setAllStudents] = useState<Student[]>([]);
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
@@ -71,21 +77,43 @@ export default function StudentListFilters() {
                         student.wantsToBeStudentCoach === studentCoachVolunteerFilter
                 );
 
+            let tempStudents2: Student[];
             if (rolesFilter.length === 0) {
-                setStudents(tempStudents);
+                tempStudents2 = tempStudents;
             } else {
-                const newStudents: Student[] = [];
+                tempStudents2 = [];
                 for (const student of tempStudents) {
+                    let keep = false;
                     for (const skill of student.skills) {
-                        rolesFilter.forEach(dropdownValue => {
-                            if (dropdownValue.value === skill.skillId) {
-                                newStudents.push(student);
+                        for (const role of rolesFilter) {
+                            if (role.value === skill.skillId) {
+                                keep = true;
                             }
-                        });
+                        }
+                    }
+                    if (keep) {
+                        tempStudents2.push(student);
                     }
                 }
-                setStudents(newStudents);
             }
+            if (confirmFilter.length === 0) {
+                setStudents(tempStudents2);
+            } else {
+                const finalStudents = [];
+                for (const student of tempStudents2) {
+                    let keep = false;
+                    for (const status of confirmFilter) {
+                        if (student.finalDecision === status.value) {
+                            keep = true;
+                        }
+                    }
+                    if (keep) {
+                        finalStudents.push(student);
+                    }
+                }
+                setStudents(finalStudents);
+            }
+
             setMoreDataAvailable(false);
             return;
         }
@@ -117,7 +145,7 @@ export default function StudentListFilters() {
             if (response.students.length === 0 && !filterChanged) {
                 setMoreDataAvailable(false);
             }
-            if (page === 0 || filterChanged) {
+            if (requestedPage === 0 || filterChanged) {
                 setStudents(response.students);
             } else {
                 setStudents(students.concat(response.students));
@@ -133,15 +161,16 @@ export default function StudentListFilters() {
                 !suggestedFilter
             ) {
                 if (response.students.length === 0) {
+                    console.log("all fetched");
                     setAllDataFetched(true);
                 }
-                if (page === 0) {
+                if (requestedPage === 0) {
                     setAllStudents(response.students);
                 } else {
                     setAllStudents(allStudents.concat(response.students));
                 }
             }
-            setPage(page + 1);
+            setPage(requestedPage + 1);
         } else {
             setMoreDataAvailable(false);
         }
@@ -154,26 +183,23 @@ export default function StudentListFilters() {
     useEffect(() => {
         setPage(0);
         setMoreDataAvailable(true);
-        getData(-1);
+        getData(-1, false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        nameFilter,
-        rolesFilter,
-        alumniFilter,
-        studentCoachVolunteerFilter,
-        suggestedFilter,
-        confirmFilter,
-    ]);
+    }, [nameFilter, rolesFilter, alumniFilter, studentCoachVolunteerFilter, confirmFilter]);
 
     useEffect(() => {
+        refresh();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.editionId, suggestedFilter]);
+
+    function refresh() {
         setStudents([]);
         setAllStudents([]);
         setPage(0);
         setAllDataFetched(false);
         setMoreDataAvailable(true);
         getData(-1, true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params.editionId]);
+    }
 
     let list;
     if (students.length === 0) {
@@ -192,6 +218,59 @@ export default function StudentListFilters() {
         );
     }
 
+    /**
+     * Find a student with a specific id and update its data
+     */
+    function findAndUpdate(list: Student[], student: Student): Student[] {
+        const index = list.findIndex(s => s.studentId === student.studentId);
+        if (index === -1) return list;
+
+        const copy = [...list];
+        copy[index] = student;
+        return copy;
+    }
+
+    /**
+     * Find a student with a specific id and delete it from the list
+     */
+    function findAndDelete(id: string, list: Student[]): Student[] {
+        return list.filter(s => s.studentId.toString() !== id);
+    }
+
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            if (!wsEventTypes.includes(data.eventType)) return;
+
+            // Student was deleted
+            if (data.eventType === EventType.STUDENT) {
+                if (data.method === RequestMethod.DELETE) {
+                    setAllStudents(findAndDelete(data.pathIds.studentId!, allStudents));
+                    setStudents(findAndDelete(data.pathIds.studentId!, students));
+                    return;
+                }
+            }
+
+            // Everything else: the student was updated, or a suggestion was changed/deleted
+            // Handle both of these as re-fetching the student
+            getStudent(params.editionId!, parseInt(data.pathIds.studentId!)).then(student => {
+                setAllStudents(findAndUpdate(allStudents, student));
+                setStudents(findAndUpdate(students, student));
+            });
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [socket, allStudents, students, params.editionId]);
+
     return (
         <StudentListSideMenu>
             <NameFilter nameFilter={nameFilter} setNameFilter={setNameFilter} setPage={setPage} />
@@ -209,7 +288,6 @@ export default function StudentListFilters() {
                 <SuggestedForFilter
                     suggestedFilter={suggestedFilter}
                     setSuggestedFilter={setSuggestedFilter}
-                    setPage={setPage}
                 />
                 <StudentCoachVolunteerFilter
                     studentCoachVolunteerFilter={studentCoachVolunteerFilter}
