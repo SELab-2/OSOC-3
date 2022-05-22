@@ -23,7 +23,7 @@ export default function Coach({
 
     useEffect(() => {
         async function callCoaches() {
-            setAvailableCoaches((await getCoaches(editionId, coach, 0)).users);
+            setAvailableCoaches((await getCoaches(editionId, coach, 0))!.users);
         }
         callCoaches();
     }, [coach, editionId]);
@@ -35,8 +35,11 @@ export default function Coach({
                 onChange={e => {
                     setCoach(e.target.value);
                 }}
+                onKeyDown={e => {
+                    if (e.key === "Enter") addCoach();
+                }}
                 list="users"
-                placeholder="Coach"
+                placeholder="Ex. Michael Scott"
             />
             <datalist id="users">
                 {availableCoaches.map((availableCoach, _index) => {
@@ -44,32 +47,30 @@ export default function Coach({
                 })}
             </datalist>
 
-            <AddButton
-                onClick={() => {
-                    let coachToAdd = null;
-                    availableCoaches.forEach(availableCoach => {
-                        if (availableCoach.name === coach) {
-                            coachToAdd = availableCoach;
-                        }
-                    });
-                    if (coachToAdd) {
-                        if (!coaches.some(presentCoach => presentCoach.name === coach)) {
-                            const newCoaches = [...coaches];
-                            newCoaches.push(coachToAdd);
-                            setCoaches(newCoaches);
-                            setShowAlert(false);
-                        }
-                    } else setShowAlert(true);
-                    setCoach("");
-                }}
-            >
-                Add coach
-            </AddButton>
+            <AddButton onClick={addCoach}>Add</AddButton>
             <WarningContainer>
-                <BadCoachAlert show={showAlert} setShow={setShowAlert}></BadCoachAlert>
+                <BadCoachAlert show={showAlert} setShow={setShowAlert} />
             </WarningContainer>
         </div>
     );
+
+    function addCoach() {
+        let coachToAdd = null;
+        availableCoaches.forEach(availableCoach => {
+            if (availableCoach.name === coach) {
+                coachToAdd = availableCoach;
+            }
+        });
+        if (coachToAdd) {
+            if (!coaches.some(presentCoach => presentCoach.name === coach)) {
+                const newCoaches = [...coaches];
+                newCoaches.push(coachToAdd);
+                setCoaches(newCoaches);
+                setShowAlert(false);
+            }
+        } else setShowAlert(true);
+        setCoach("");
+    }
 }
 
 function BadCoachAlert({ show, setShow }: { show: boolean; setShow: (state: boolean) => void }) {

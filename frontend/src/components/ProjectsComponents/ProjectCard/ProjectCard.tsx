@@ -4,7 +4,6 @@ import {
     CoachContainer,
     CoachText,
     NumberOfStudents,
-    Delete,
     TitleContainer,
     Title,
     OpenIcon,
@@ -14,7 +13,6 @@ import {
 } from "./styles";
 
 import { BsPersonFill } from "react-icons/bs";
-import { HiOutlineTrash } from "react-icons/hi";
 
 import { useState } from "react";
 
@@ -25,37 +23,43 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Project } from "../../../data/interfaces";
 import { useAuth } from "../../../contexts";
 import { Role } from "../../../data/enums";
+import { DeleteButton } from "../../Common/Buttons";
+import { toast } from "react-toastify";
 
 /**
  *
  * @param project a Project object
- * @param refreshProjects what to do when a project is deleted.
  * @returns a project card which is a small overview of a project.
  */
-export default function ProjectCard({
-    project,
-    refreshProjects,
-}: {
-    project: Project;
-    refreshProjects: () => void;
-}) {
+export default function ProjectCard({ project }: { project: Project }) {
     // Used for the confirm screen.
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    // What to do when deleting a project.
-    const handleDelete = () => {
-        deleteProject(project.editionName, project.projectId);
-        setShow(false);
-        refreshProjects();
-    };
-
-    const navigate = useNavigate();
     const params = useParams();
     const editionId = params.editionId!;
-
     const { role } = useAuth();
+
+    const navigate = useNavigate();
+
+    let assignedStudents = 0;
+    let neededStudents = 0;
+    project.projectRoles.forEach(projectRole => {
+        neededStudents += projectRole.slots;
+        assignedStudents += projectRole.suggestions.length;
+    });
+
+    // What to do when deleting a project.
+    async function handleDelete() {
+        const success = await deleteProject(editionId, project.projectId);
+        setShow(false);
+        if (!success) {
+            toast.error("Could not delete project", { toastId: "deleteProject" });
+        } else {
+            toast.success("Deleted project", { toastId: "deletedProject" });
+        }
+    }
 
     return (
         <CardContainer>
@@ -69,18 +73,14 @@ export default function ProjectCard({
                     <OpenIcon />
                 </Title>
 
-                {role === Role.ADMIN && (
-                    <Delete onClick={handleShow}>
-                        <HiOutlineTrash size={"20px"} />
-                    </Delete>
-                )}
+                {role === Role.ADMIN && <DeleteButton onClick={handleShow} />}
 
                 <ConfirmDelete
                     visible={show}
                     handleConfirm={handleDelete}
                     handleClose={handleClose}
                     name={project.name}
-                ></ConfirmDelete>
+                />
             </TitleContainer>
 
             <ClientContainer>
@@ -90,7 +90,7 @@ export default function ProjectCard({
                     ))}
                 </Clients>
                 <NumberOfStudents>
-                    {project.numberOfStudents}
+                    {assignedStudents + " / " + neededStudents}
                     <BsPersonFill />
                 </NumberOfStudents>
             </ClientContainer>

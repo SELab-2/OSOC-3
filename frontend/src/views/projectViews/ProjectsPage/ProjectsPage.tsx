@@ -1,30 +1,37 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../../../utils/api/projects";
-import { ProjectCard, LoadSpinner } from "../../../components/ProjectsComponents";
-import {
-    CardsGrid,
-    CreateButton,
-    SearchButton,
-    SearchField,
-    OwnProject,
-    ProjectsContainer,
-    LoadMoreContainer,
-    LoadMoreButton,
-} from "./styles";
+import { getProject, getProjects } from "../../../utils/api/projects";
+import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
+import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroller";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
+
 import { Role } from "../../../data/enums";
+import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { isReadonlyEdition } from "../../../utils/logic";
+import { toast } from "react-toastify";
+import { CreateButton } from "../../../components/Common/Buttons";
+import { SearchBar } from "../../../components/Common/Forms";
+
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
  */
 export default function ProjectPage() {
+    const params = useParams();
+
+    const [allProjects, setAllProjects] = useState<Project[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
-    const [gotProjects, setGotProjects] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [requestedEdition, setRequestedEdition] = useState(params.editionId);
     const [moreProjectsAvailable, setMoreProjectsAvailable] = useState(true); // Endpoint has more coaches available
+    const [allProjectsFetched, setAllProjectsFetched] = useState(false);
+
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
 
     // Keep track of the set filters
     const [searchString, setSearchString] = useState("");
@@ -33,112 +40,203 @@ export default function ProjectPage() {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
 
-    const params = useParams();
     const editionId = params.editionId!;
 
-    const { role } = useAuth();
+    const { role, editions, userId } = useAuth();
+    const { socket } = useSockets();
 
     /**
      * Used to fetch the projects
      */
-    async function callProjects(newPage: number) {
-        if (loading) return;
-        setLoading(true);
-        const response = await getProjects(editionId, searchString, ownProjects, newPage);
-        setGotProjects(true);
+    async function loadProjects(requested: number, reset: boolean) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
 
-        if (response) {
-            if (response.projects.length === 0) {
+        if (loading && !filterChanged) {
+            return;
+        }
+
+        if (allProjectsFetched && !reset) {
+            const newUserId: number = userId === null ? -1 : userId;
+
+            setProjects(
+                allProjects
+                    .filter(project =>
+                        project.name.toUpperCase().includes(searchString.toUpperCase())
+                    )
+                    .filter(
+                        project =>
+                            !ownProjects ||
+                            project.coaches.map(coach => coach.userId).includes(newUserId)
+                    )
+            );
+            setMoreProjectsAvailable(false);
+            return;
+        }
+
+        setLoading(true);
+
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getProjects(editionId, searchString, ownProjects, requestedPage, newController),
+            { error: "Failed to retrieve projects" }
+        );
+
+        if (response !== null) {
+            if (response.projects.length === 0 && !filterChanged) {
                 setMoreProjectsAvailable(false);
             } else {
-                setPage(page + 1);
+                setMoreProjectsAvailable(true);
+            }
+            if (requestedPage === 0 || filterChanged) {
+                setProjects(response.projects);
+            } else {
                 setProjects(projects.concat(response.projects));
             }
+
+            if (searchString === "" && !ownProjects) {
+                if (response.projects.length === 0) {
+                    setAllProjectsFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllProjects(response.projects);
+                } else {
+                    setAllProjects(allProjects.concat(response.projects));
+                }
+            }
+
+            setPage(requestedPage + 1);
+        } else {
+            setMoreProjectsAvailable(false);
         }
         setLoading(false);
     }
 
-    async function refreshProjects() {
-        setProjects([]);
-        setPage(0);
-        setMoreProjectsAvailable(true);
-        setGotProjects(false);
+    useEffect(() => {
+        if (params.editionId !== requestedEdition) {
+            setProjects([]);
+            setPage(0);
+            setAllProjectsFetched(false);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, true);
+            setRequestedEdition(params.editionId);
+        } else {
+            setPage(0);
+            setMoreProjectsAvailable(true);
+            loadProjects(-1, false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchString, ownProjects, params.editionId]);
+
+    /**
+     * Remove a project with a specific id
+     */
+    function findAndRemoveProject(id: string, list: Project[]): Project[] {
+        return list.filter(project => project.projectId.toString() !== id);
     }
 
+    /**
+     * Find a project with a specific id and update its data
+     */
+    function updateProject(project: Project, list: Project[]): Project[] {
+        const index = list.findIndex(pr => pr.projectId === project.projectId);
+        if (index === -1) return list;
+
+        const copy = [...list];
+        copy[index] = project;
+
+        return copy;
+    }
+
+    /**
+     * Websockets
+     */
     useEffect(() => {
-        if (moreProjectsAvailable && !gotProjects) {
-            callProjects(0);
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Ignore all events that aren't about projects
+            if (!wsEventTypes.includes(data.eventType)) return;
+
+            // If the project from the event hasn't been loaded in the list, ignore the event as well
+            if (
+                !allProjects.some(
+                    project => project.projectId.toString() === data.pathIds.projectId
+                )
+            ) {
+                return;
+            }
+
+            // Project was deleted: remove it from the list
+            if (data.eventType === EventType.PROJECT && data.method === RequestMethod.DELETE) {
+                setAllProjects(findAndRemoveProject(data.pathIds.projectId!, allProjects));
+                setProjects(findAndRemoveProject(data.pathIds.projectId!, projects));
+            } else {
+                // Fetch the new version of the project & replace in the two lists
+                getProject(editionId, parseInt(data.pathIds.projectId!)).then(project => {
+                    setAllProjects(updateProject(project!, allProjects));
+                    setProjects(updateProject(project!, projects));
+                });
+            }
         }
-    });
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [socket, allProjects, projects, editionId]);
 
     return (
         <div>
-            <div>
-                <SearchField
-                    value={searchString}
-                    onChange={e => setSearchString(e.target.value)}
-                    placeholder="project name"
-                    onKeyDown={e => {
-                        if (e.key === "Enter") refreshProjects();
-                    }}
-                />
-                <SearchButton onClick={refreshProjects}>Search</SearchButton>
-                {role === Role.ADMIN && (
-                    <CreateButton
-                        onClick={() => navigate("/editions/" + editionId + "/projects/new")}
-                    >
-                        Create Project
-                    </CreateButton>
-                )}
-            </div>
+            <ControlContainer>
+                <div>
+                    <SearchFieldDiv>
+                        <SearchBar
+                            onChange={e => {
+                                setPage(0);
+                                setSearchString(e.target.value);
+                            }}
+                            value={searchString}
+                            placeholder="Search project..."
+                        />
+                    </SearchFieldDiv>
+
+                    {role === Role.ADMIN && !isReadonlyEdition(editionId, editions) && (
+                        <CreateButton
+                            label="Create Project"
+                            onClick={() => navigate("/editions/" + editionId + "/projects/new")}
+                        />
+                    )}
+                </div>
+                <ConflictsButton editionId={editionId} />
+            </ControlContainer>
+
             <OwnProject
                 type="switch"
                 id="custom-switch"
                 label="Only own projects"
                 checked={ownProjects}
                 onChange={() => {
+                    setPage(0);
                     setOwnProjects(!ownProjects);
-                    refreshProjects();
                 }}
             />
-
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={(newPage: number) => {
-                    console.log("loading more" + newPage);
-                }}
-                hasMore={moreProjectsAvailable}
-                useWindow={false}
-                initialLoad={true}
-            >
-                <ProjectsContainer>
-                    <CardsGrid>
-                        {projects.map((project, _index) => (
-                            <ProjectCard
-                                project={project}
-                                refreshProjects={refreshProjects}
-                                key={_index}
-                            />
-                        ))}
-                    </CardsGrid>
-                </ProjectsContainer>
-            </InfiniteScroll>
-
-            <LoadSpinner show={loading} />
-
-            {moreProjectsAvailable && (
-                <LoadMoreContainer>
-                    <LoadMoreButton
-                        onClick={() => {
-                            if (moreProjectsAvailable) {
-                                callProjects(page);
-                            }
-                        }}
-                    >
-                        Load more projects
-                    </LoadMoreButton>
-                </LoadMoreContainer>
-            )}
+            <ProjectTable
+                projects={projects}
+                loading={loading}
+                getMoreProjects={loadProjects}
+                moreProjectsAvailable={moreProjectsAvailable}
+            />
         </div>
     );
 }

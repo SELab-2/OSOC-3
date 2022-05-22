@@ -9,16 +9,16 @@ license = "MIT"
 python = "^3.10"
 
 # Alembic: Database migrations extension for SQLAlchemy
-alembic = "1.7.6"
+alembic = "1.7.7"
 
 # Environs: simplified environment variable parsing
 environs = "9.5.0"
 
 # FastAPI: API framework
-fastapi = "0.74.1"
+fastapi = "0.78.0"
 
 # MariaDB: Python MariaDB connector
-mariadb = "1.0.10"
+mariadb = "1.0.11"
 
 # Hash passwords
 passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
@@ -27,7 +27,7 @@ passlib = { "version" = "1.7.4", extras = ["bcrypt"] }
 python-jose = { "version" = "3.3.0", extras = ["cryptography"] }
 
 # Humps: Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python
-pyhumps = "3.5.3"
+pyhumps = "3.7.1"
 
 # OAuth2 form data
 python-multipart = "0.0.5"
@@ -36,33 +36,46 @@ python-multipart = "0.0.5"
 requests = "2.27.1"
 
 # SQLAlchemy: ORM and database toolkit
-SQLAlchemy = "1.4.31"
+SQLAlchemy = "1.4.36"
 
 # SQLAlchemy-Utils: Various utility functions and datatypes for SQLAlchemy
 sqlalchemy-utils = "0.38.2"
 
 # Uvicorn: ASGI web server implementation
-uvicorn = { "version" = ">=0.12.0, < 0.16.0", extras = ["standard"] }
+uvicorn = { "version" = ">=0.12.0,<0.18.0", extras = ["standard"] }
+aiohttp = "^3.8.1"
+
+# AioSQLite: async connector for SQLite
+aiosqlite = "^0.17.0"
+
+# Asyncmy: async connector for MariaDB
+asyncmy = "^0.2.5"
+
+# Httpx: send async HTTP requests
+httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 # Coverage: generate code coverage reports
-coverage = { "version" = "6.3.1", extras = ["toml"] }
+coverage = { "version" = "6.3.3", extras = ["toml"] }
 
 # faker: Generate dummy data
-faker = "13.3.1"
+faker = "13.11.1"
 
 # Mypy: check type usage in code
-mypy = "0.940"
+mypy = "0.950"
 
 # Pylint: Python linter
-pylint = "2.12.2"
+pylint = "2.13.9"
 
 # Pylint-Pytest: A Pylint plugin to suppress pytest-related false positives.
 pylint-pytest = "1.1.2"
 
 # Pytest: Python testing framework
 # (more advanced than the built-in unittest module)
-pytest = "7.0.1"
+pytest = "7.1.2"
+
+# Pytest-asyncio: plugin for pytest to support async tests & fixtures
+pytest-asyncio = "^0.18.3"
 
 # Pytest-cov: coverage plugin for pytest
 pytest-cov = "3.0.0"
@@ -74,10 +87,10 @@ pytest-env = "0.6.2"
 pytest-mock = "3.7.0"
 
 # Sqlalchemy-stubs: type hints for sqlalchemy
-sqlalchemy2-stubs="0.0.2a20"
+sqlalchemy2-stubs="0.0.2a22"
 
 # Types for the passlib library
-types-passlib="1.7.0"
+types-passlib="1.7.5"
 
 [tool.mypy]
 plugins = ["sqlalchemy.ext.mypy.plugin"]
@@ -103,12 +116,26 @@ extension-pkg-whitelist = "pydantic"
 [tool.pylint.format]
 max-line-length = 120
 
+[tool.pylint.similarities]
+min-similarity-lines=10
+
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*The distutils package is deprecated:DeprecationWarning",
 ]
 env = [
     "DB_USE_SQLITE = 1",
+    "GITHUB_CLIENT_ID = 25",
+    "GITHUB_CLIENT_SECRET = secret"
+]
+
+[tool.coverage.run]
+concurrency = [
+    "greenlet"
+]
+include = [
+    "src/*"
 ]
 
 [build-system]

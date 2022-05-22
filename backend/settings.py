@@ -33,23 +33,44 @@ SECRET_KEY: str = env.str("SECRET_KEY", "4d16a9cc83d74144322e893c879b5f639088c15
 ACCESS_TOKEN_EXPIRE_M: int = env.int("ACCESS_TOKEN_EXPIRE_M", 5)
 REFRESH_TOKEN_EXPIRE_M: int = env.int("REFRESH_TOKEN_EXPIRE_M", 2880)
 
+"""GitHub OAuth"""
+GITHUB_CLIENT_ID: str | None = env.str("GITHUB_CLIENT_ID", None)
+GITHUB_CLIENT_SECRET: str | None = env.str("GITHUB_CLIENT_SECRET", None)
+
 """Frontend"""
 FRONTEND_URL: str = env.str("FRONTEND_URL", "http://localhost:3000")
 
 
+# Tally Form - ID's for specific questions & information
 @enum.unique
 class FormMapping(enum.Enum):
-    FIRST_NAME = "question_3ExXkL"
-    LAST_NAME = "question_nro6jL"
-    PREFERRED_NAME_OPTION = "question_w4K84o"
-    PREFERRED_NAME = "question_3jlya9"
-    EMAIL = "question_nW8NOQ"
-    PHONE_NUMBER = "question_mea6qo"
-    # CV = "question_wa26Qy"
-    STUDENT_COACH = "question_wz7qEE"
+    FIRST_NAME = env.str("FORM_FIRST_NAME", "question_3ExXkL")
+    LAST_NAME = env.str("FORM_LAST_NAME", "question_nro6jL")
+    PREFERRED_NAME_OPTION = env.str("FORM_PREFERRED_NAME_OPTION", "question_w4K84o")
+    PREFERRED_NAME = env.str("FORM_PREFERRED_NAME", "question_3jlya9")
+    EMAIL = env.str("FORM_EMAIL", "question_nW8NOQ")
+    PHONE_NUMBER = env.str("FORM_PHONE_NUMBER", "question_mea6qo")
+    STUDENT_COACH = env.str("FORM_STUDENT_COACH", "question_wz7qEE")
+    ROLES = env.str("FORM_ROLES", "question_3yJ6PW")
+    ALUMNI = env.str("FORM_ALUMNI", "question_n0exVQ")
 
     UNKNOWN = None  # Returned when no specific question can be matched
 
     @classmethod
     def _missing_(cls, value: object) -> Any:
         return FormMapping.UNKNOWN
+
+
+# Skills that should be added into the database when starting the API
+REQUIRED_SKILLS = [
+    "Front-end Developer",
+    "Back-end Developer",
+    "UX / UI Designer",
+    "Graphic Designer",
+    "Business Modeller",
+    "Storyteller",
+    "Marketer",
+    "Copywriter",
+    "Video Editor",
+    "Photographer"
+]

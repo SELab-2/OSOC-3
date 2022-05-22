@@ -1,26 +1,23 @@
 import { User } from "../../../../utils/api/users/users";
-import { SpinnerContainer } from "../../Requests/styles";
-import { Spinner } from "react-bootstrap";
-import { CoachesTable, ListDiv, RemoveTh } from "../styles";
+import { CoachesTable } from "../styles";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { CoachListItem } from "./index";
+import LoadSpinner from "../../../Common/LoadSpinner";
+import { ListDiv } from "../../../Common/Users/styles";
+import { RemoveTh } from "../../../Common/Tables/styles";
 
 /**
  * A list of [[CoachListItem]]s.
  * @param props.coaches The list of coaches which needs to be shown.
- * @param props.loading Data is not available yet.
  * @param props.edition The edition.
- * @param props.gotData All data is received.
  * @param props.removeCoach A function which will be called when a coach is removed.
  * @param props.getMoreCoaches A function to load more coaches.
  * @param props.moreCoachesAvailable More unfetched coaches available.
  */
 export default function CoachList(props: {
     coaches: User[];
-    loading: boolean;
     edition: string;
-    gotData: boolean;
     removeCoach: (coach: User) => void;
     getMoreCoaches: (page: number) => void;
     moreCoachesAvailable: boolean;
@@ -28,18 +25,13 @@ export default function CoachList(props: {
     return (
         <ListDiv>
             <InfiniteScroll
-                pageStart={0}
                 loadMore={props.getMoreCoaches}
                 hasMore={props.moreCoachesAvailable}
-                loader={
-                    <SpinnerContainer key={"spinner"}>
-                        <Spinner animation="border" />
-                    </SpinnerContainer>
-                }
+                loader={<LoadSpinner show={true} key="spinner" />}
                 useWindow={false}
                 initialLoad={true}
             >
-                <CoachesTable variant="dark">
+                <CoachesTable>
                     <thead>
                         <tr>
                             <th>Name</th>

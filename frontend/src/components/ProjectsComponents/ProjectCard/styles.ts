@@ -1,6 +1,7 @@
 import { Modal } from "react-bootstrap";
 import styled from "styled-components";
 import { BsArrowUpRightSquare } from "react-icons/bs";
+import { HoverAnimation } from "../../Common/styles";
 
 export const CardContainer = styled.div`
     border: 2px solid #1a1a36;
@@ -13,17 +14,22 @@ export const CardContainer = styled.div`
 
 export const TitleContainer = styled.div`
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
 `;
 
 export const Title = styled.h2`
-    text-overflow: ellipsis;
+    ${HoverAnimation}
+    max-height: 3.7em;
     overflow: hidden;
     display: flex;
     align-items: center;
-    :hover {
+    margin-right: 10px;
+
+    &:hover {
+        overflow: hidden;
         cursor: pointer;
+        color: var(--osoc_green);
     }
 `;
 
@@ -35,14 +41,18 @@ export const OpenIcon = styled(BsArrowUpRightSquare)`
 
 export const ClientContainer = styled.div`
     display: flex;
-    align-items: top;
+    align-items: center;
     justify-content: space-between;
     color: lightgray;
 `;
 
 export const Clients = styled.div`
     display: flex;
-    overflow-x: auto;
+    overflow: hidden;
+    max-height: 3rem;
+    :hover {
+        overflow: hidden;
+    }
 `;
 
 export const Client = styled.h5`
@@ -58,8 +68,13 @@ export const NumberOfStudents = styled.div`
 
 export const CoachesContainer = styled.div`
     display: flex;
+    align-items: center;
     margin-top: 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
+    padding-bottom: 15px;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const CoachContainer = styled.div`
@@ -70,23 +85,15 @@ export const CoachContainer = styled.div`
     padding: 7.5px 15px;
     width: fit-content;
     max-width: 20vw;
+    display: flex;
 `;
 
 export const CoachText = styled.div`
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
-`;
-
-export const Delete = styled.button`
-    background-color: #f14a3b;
-    padding: 5px 5px;
-    border: 0;
-    border-radius: 1px;
-    max-height: 30px;
-    margin-left: 5%;
-    display: flex;
-    align-items: center;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const PopUp = styled(Modal)``;

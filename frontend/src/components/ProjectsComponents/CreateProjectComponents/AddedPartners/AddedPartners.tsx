@@ -1,5 +1,6 @@
 import { TiDeleteOutline } from "react-icons/ti";
-import { AddedItem, ItemName, RemoveButton } from "../styles";
+import { DeleteButton } from "../../../Common/Buttons";
+import { AddedItem, ItemName } from "../styles";
 
 export default function AddedPartners({
     items,
@@ -13,15 +14,16 @@ export default function AddedPartners({
             {items.map((element, _index) => (
                 <AddedItem key={_index}>
                     <ItemName>{element}</ItemName>
-                    <RemoveButton
+                    <DeleteButton
+                        showIcon={false}
                         onClick={() => {
                             const newItems = [...items];
                             newItems.splice(_index, 1);
                             setItems(newItems);
                         }}
                     >
-                        <TiDeleteOutline size={"20px"} />
-                    </RemoveButton>
+                        <TiDeleteOutline size={"25px"} />
+                    </DeleteButton>
                 </AddedItem>
             ))}
         </div>

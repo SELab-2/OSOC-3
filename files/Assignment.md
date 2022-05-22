@@ -8,7 +8,7 @@ Import data from selection form in the tool via the webhook
 
 - Receive invitation link
 
-- Sign up via mail account, Google or GitHub
+- Sign up via mail account or GitHub
 
 - Admin approves
 
@@ -16,11 +16,11 @@ Import data from selection form in the tool via the webhook
 
 - Restricted access for coaches
 
-	- Can’t see “manage users”
+  - Can’t see “manage users”
 
-	- Can’t confirm student selection, only suggest
-	
-	-  Can't see multiple editions
+  - Can’t confirm student selection, only suggest
+
+  - Can't see multiple editions
 
 - Partners do not have access, and are not involved in selection
 
@@ -36,17 +36,17 @@ Import data from selection form in the tool via the webhook
 
 - Filter & search:
 
-	- By name
+  - By name
 
-   - By skill
+  - By skill
 
-	- Alumni
+  - Alumni
 
-	- Student coach volunteer
+  - Student coach volunteer
 
-	- Decided on “yes, maybe, no” or undecided
+  - Decided on “yes, maybe, no” or undecided
 
-	- Reset (remove all filters)	
+  - Reset (remove all filters)
 
 ### BONUS:
 

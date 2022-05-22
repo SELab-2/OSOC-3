@@ -1,15 +1,16 @@
 import { SkillProject } from "../../../../data/interfaces/projects";
-import { Input } from "../styles";
 import {
     AmountInput,
     SkillContainer,
     DescriptionContainer,
-    Delete,
     TopContainer,
     SkillName,
+    TopLeftContainer,
+    DescriptionInput,
 } from "./styles";
 import { TiDeleteOutline } from "react-icons/ti";
 import React from "react";
+import { DeleteButton } from "../../../Common/Buttons";
 
 /**
  * 
@@ -38,10 +39,11 @@ export default function AddedSkills({
     ) {
         const newList = skills.map((item, otherIndex) => {
             if (index === otherIndex) {
-                if (amount && !isNaN(event.target.valueAsNumber)) {
+                if (amount) {
+                    if (event.target.valueAsNumber < 1) return item;
                     return {
                         ...item,
-                        amount: event.target.valueAsNumber,
+                        slots: event.target.valueAsNumber,
                     };
                 }
                 return {
@@ -59,30 +61,34 @@ export default function AddedSkills({
             {skills.map((skill, index) => (
                 <SkillContainer key={index}>
                     <TopContainer>
-                        <SkillName>{skill.skill}</SkillName>
+                        <TopLeftContainer>
+                            <SkillName>{skill.skill.name}</SkillName>
 
-                        <AmountInput
-                            type="number"
-                            value={skill.amount}
-                            placeholder="Amount"
-                            min={1}
-                            onChange={event => {
-                                updateSkills(event, index, true);
-                            }}
-                        />
-                        <Delete
+                            <AmountInput
+                                type="number"
+                                value={skill.slots.toString()}
+                                placeholder="Amount"
+                                min={1}
+                                onChange={event => {
+                                    updateSkills(event, index, true);
+                                }}
+                            />
+                            {skill.slots === 1 ? <div>student</div> : <div>students</div>}
+                        </TopLeftContainer>
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
                                 const newSkills = [...skills];
                                 newSkills.splice(index, 1);
                                 setSkills(newSkills);
                             }}
                         >
-                            <TiDeleteOutline size={"20px"} />
-                        </Delete>
+                            <TiDeleteOutline size={"25px"} />
+                        </DeleteButton>
                     </TopContainer>
 
                     <DescriptionContainer>
-                        <Input
+                        <DescriptionInput
                             type="text"
                             value={skill.description}
                             placeholder="Description"

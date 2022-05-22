@@ -11,15 +11,18 @@ export default function Partner({
     partners: string[];
     setPartners: (partners: string[]) => void;
 }) {
-    const availablePartners = ["partner1", "partner2"]; // TODO get partners from API call
+    const availablePartners: string[] = [];
 
     return (
         <div>
             <Input
                 value={partner}
                 onChange={e => setPartner(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === "Enter") addPartner();
+                }}
                 list="partners"
-                placeholder="Partner"
+                placeholder="Ex. Open Knowledge Belgium"
             />
 
             <datalist id="partners">
@@ -28,18 +31,16 @@ export default function Partner({
                 })}
             </datalist>
 
-            <AddButton
-                onClick={() => {
-                    if (!partners.includes(partner) && partner.length > 0) {
-                        const newPartners = [...partners];
-                        newPartners.push(partner);
-                        setPartners(newPartners);
-                    }
-                    setPartner("");
-                }}
-            >
-                Add partner
-            </AddButton>
+            <AddButton onClick={addPartner}>Add</AddButton>
         </div>
     );
+
+    function addPartner() {
+        if (!partners.includes(partner) && partner.length > 0) {
+            const newPartners = [...partners];
+            newPartners.push(partner);
+            setPartners(newPartners);
+        }
+        setPartner("");
+    }
 }

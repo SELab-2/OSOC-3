@@ -1,3 +1,6 @@
+import { OAuthProvider } from "../../data/enums";
+import { FE_BASE_URL } from "../../settings";
+
 const Buffer = require("buffer/").Buffer;
 
 /**
@@ -27,4 +30,15 @@ export function decodeRegistrationLink(
         console.error(e);
         return null;
     }
+}
+
+/**
+ * Compose a redirect uri for oauth providers
+ */
+export function createRedirectUri(
+    provider: OAuthProvider,
+    data: { edition: string; uuid: string }
+): string {
+    const encodedEdition = encodeURIComponent(data.edition);
+    return `${FE_BASE_URL}/register/redirect?provider=${provider}&edition=${encodedEdition}&uuid=${data.uuid}`;
 }

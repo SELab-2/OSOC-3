@@ -1,6 +1,9 @@
 /**
- * This file contains all interfaces used in projects pages.
+ * This file contains all interfaces used for projects.
  */
+
+import { Skill } from "./skills";
+import { Student } from "./students";
 
 /**
  * Data about a partner.
@@ -14,11 +17,69 @@ export interface Partner {
  * Data about a coach.
  */
 export interface Coach {
-    /** The name of the coach */
-    name: string;
-
     /** The user's ID */
     userId: number;
+    /** The name of the coach */
+    name: string;
+}
+
+/**
+ * Data about a single project role suggestion.
+ */
+export interface ProjectRoleSuggestion {
+    /** The id of the suggestion */
+    projectRoleSuggestionId: number;
+
+    /** The argumentation why this student is a good fit */
+    argumentation: string;
+
+    /** The user who suggested this student */
+    drafter: Coach;
+
+    /** The suggested student */
+    student: Student;
+}
+
+/**
+ * Data to create a new project role suggestion.
+ */
+export interface AddRoleSuggestion {
+    /** The argumentation why this student is a good fit */
+    argumentation: string;
+}
+
+export interface AddStudentRole {
+    /** The Id of the project role where to add the student */
+    projectRoleId: string;
+
+    /** The Id of the student to add */
+    studentId: string;
+
+    /** Can be used to switch the role of a student */
+    switchProjectRoleId: string | undefined;
+}
+
+/**
+ * Data about a project role
+ */
+export interface ProjectRole {
+    /** The id of the project role */
+    projectRoleId: number;
+
+    /** The id of the project this role belongs to */
+    projectId: number;
+
+    /** More info about the skill */
+    description: string;
+
+    /** The skill needed for this role */
+    skill: Skill;
+
+    /** The number of positions this role has */
+    slots: number;
+
+    /** The suggested students for this role */
+    suggestions: ProjectRoleSuggestion[];
 }
 
 /**
@@ -26,27 +87,27 @@ export interface Coach {
  * Such as a list of the partners and the coaches
  */
 export interface Project {
+    /** The project's ID */
+    projectId: number;
+
     /** The name of the project */
     name: string;
 
-    /** How many students are needed for this project */
-    numberOfStudents: number;
-
-    /** The partners of this project */
-    partners: Partner[];
+    /** An url with more info */
+    infoUrl: string | null;
 
     /** The coaches of this project */
     coaches: Coach[];
 
-    /** The name of the edition this project belongs to */
-    editionName: string;
+    /** The partners of this project */
+    partners: Partner[];
 
-    /** The project's ID */
-    projectId: number;
+    /** The roles of this project */
+    projectRoles: ProjectRole[];
 }
 
 /**
- * Used as an response object for multiple projects
+ * Used as a response object for multiple projects
  */
 export interface Projects {
     /** A list of projects */
@@ -58,13 +119,13 @@ export interface Projects {
  */
 export interface SkillProject {
     /** The name of the skill */
-    skill: string;
+    skill: Skill;
 
     /** More info about this skill in a specific project */
     description: string;
 
     /** Number of positions of this skill in a project */
-    amount: number;
+    slots: number;
 }
 
 /**
@@ -74,11 +135,8 @@ export interface CreateProject {
     /** The name of the new project */
     name: string;
 
-    /** Number of students the project needs */
-    number_of_students: number;
-
-    /** The required skills for the project */
-    skills: string[];
+    /** An url with more info */
+    info_url: string | null;
 
     /** The partners that belong to this project */
     partners: string[];
@@ -87,16 +145,13 @@ export interface CreateProject {
     coaches: number[];
 }
 
-/**
- * Data about a place in a project
- */
-export interface StudentPlace {
-    /** Whether or not this position is filled in */
-    available: boolean;
+export interface CreateProjectRole {
+    /** The id of the skill */
+    skill_id: number;
 
-    /** The skill needed for this place */
-    skill: string;
+    /** More info about this skill in a specific project */
+    description: string;
 
-    /** The name of the student if this place is filled in */
-    name: string | undefined;
+    /** Number of positions of this skill in a project */
+    slots: number;
 }

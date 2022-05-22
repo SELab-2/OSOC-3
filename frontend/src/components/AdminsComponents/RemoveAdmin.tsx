@@ -2,48 +2,47 @@ import { User } from "../../utils/api/users/users";
 import React, { useState } from "react";
 import { removeAdmin, removeAdminAndCoach } from "../../utils/api/users/admins";
 import { Button, Modal } from "react-bootstrap";
-import { ModalContentWarning } from "./styles";
-import { Error } from "../UsersComponents/Requests/styles";
+import { RemoveAdminBody } from "./styles";
+import { ModalContentWarning } from "../Common/styles";
+import { toast } from "react-toastify";
+import DeleteButton from "../Common/Buttons/DeleteButton";
 
 /**
  * Button and popup to remove a user as admin (and as coach).
  * @param props.admin The user which can be removed.
- * @param props.refresh A function which is called when the user is removed as admin.
+ * @param props.removeAdmin A function which is called when the user is removed as admin.
  */
-export default function RemoveAdmin(props: { admin: User; refresh: () => void }) {
+export default function RemoveAdmin(props: { admin: User; removeAdmin: (user: User) => void }) {
     const [show, setShow] = useState(false);
-    const [error, setError] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => {
         setShow(true);
-        setError("");
     };
 
-    async function removeUserAsAdmin(userId: number, removeCoach: boolean) {
-        try {
-            let removed;
-            if (removeCoach) {
-                removed = await removeAdminAndCoach(userId);
-            } else {
-                removed = await removeAdmin(userId);
-            }
-
-            if (removed) {
-                props.refresh();
-            } else {
-                setError("Something went wrong. Failed to remove admin");
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to remove admin");
+    async function removeUserAsAdmin(removeCoach: boolean) {
+        if (removeCoach) {
+            await toast.promise(removeAdminAndCoach(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
+        } else {
+            await toast.promise(removeAdmin(props.admin.userId), {
+                pending: "Removing admin",
+                success: "Admin successfully removed",
+                error: "Failed to remove admin",
+            });
         }
+
+        props.removeAdmin(props.admin);
     }
 
     return (
         <>
-            <Button variant="primary" size="sm" onClick={handleShow}>
+            <DeleteButton showIcon={false} size="sm" onClick={handleShow}>
                 Remove
-            </Button>
+            </DeleteButton>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentWarning>
@@ -51,39 +50,32 @@ export default function RemoveAdmin(props: { admin: User; refresh: () => void })
                         <Modal.Title>Remove Admin</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <h4>{props.admin.name}</h4>
-                        <p>{props.admin.auth.email}</p>
-                        <p>
-                            Remove admin: {props.admin.name} will stay coach for assigned editions
-                        </p>
+                        <RemoveAdminBody>
+                            <h4>{props.admin.name}</h4>
+                            <p>{props.admin.auth.email}</p>
+                            <p>Remove admin: This admin will stay coach for assigned editions</p>
+                        </RemoveAdminBody>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button
-                            variant="primary"
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
-                                removeUserAsAdmin(props.admin.userId, false);
-                                if (!error) {
-                                    handleClose();
-                                }
+                                removeUserAsAdmin(false);
                             }}
                         >
                             Remove admin
-                        </Button>
-                        <Button
-                            variant="primary"
+                        </DeleteButton>
+                        <DeleteButton
+                            showIcon={false}
                             onClick={() => {
-                                removeUserAsAdmin(props.admin.userId, true);
-                                if (!error) {
-                                    handleClose();
-                                }
+                                removeUserAsAdmin(true);
                             }}
                         >
                             Remove as admin and coach
-                        </Button>
+                        </DeleteButton>
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentWarning>
             </Modal>

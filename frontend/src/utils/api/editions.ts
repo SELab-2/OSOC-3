@@ -6,23 +6,18 @@ interface EditionsResponse {
     editions: Edition[];
 }
 
-interface EditionFields {
-    name: string;
-    year: number;
-}
-
 /**
  * Get all editions the user can see.
  */
 export async function getEditions(): Promise<EditionsResponse> {
-    const response = await axiosInstance.get("/editions/");
+    const response = await axiosInstance.get("/editions");
     return response.data as EditionsResponse;
 }
 
 /**
- * Get all edition names sorted the user can see
+ * Get all edition names sorted that the user can see
  */
-export async function getSortedEditions(): Promise<string[]> {
+export async function getSortedEditions(): Promise<Edition[]> {
     const response = await axiosInstance.get("/users/current");
     return response.data.editions;
 }
@@ -39,9 +34,9 @@ export async function deleteEdition(name: string): Promise<number> {
  * Create a new edition with the given name and year
  */
 export async function createEdition(name: string, year: number): Promise<AxiosResponse> {
-    const payload: EditionFields = { name: name, year: year };
+    const payload = { name: name, year: year };
     try {
-        return await axiosInstance.post("/editions/", payload);
+        return await axiosInstance.post("/editions", payload);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response !== undefined) {
             return error.response;
@@ -49,4 +44,12 @@ export async function createEdition(name: string, year: number): Promise<AxiosRe
             throw error;
         }
     }
+}
+
+/**
+ * Change the readonly status of an edition
+ */
+export async function patchEdition(name: string, readonly: boolean): Promise<AxiosResponse> {
+    const payload = { readonly: readonly };
+    return await axiosInstance.patch(`/editions/${name}`, payload);
 }

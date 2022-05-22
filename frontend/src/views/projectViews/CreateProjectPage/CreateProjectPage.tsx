@@ -1,12 +1,17 @@
-import { CreateProjectContainer, CreateButton, Label } from "./styles";
+import {
+    CreateProjectContainer,
+    Label,
+    CenterContainer,
+    Center,
+    CancelButton,
+    CenterTitle,
+} from "./styles";
 import { createProject } from "../../../utils/api/projects";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { GoBack } from "../ProjectDetailPage/styles";
 import { BiArrowBack } from "react-icons/bi";
 import {
     NameInput,
-    NumberOfStudentsInput,
     CoachInput,
     SkillInput,
     PartnerInput,
@@ -16,93 +21,135 @@ import {
 } from "../../../components/ProjectsComponents/CreateProjectComponents";
 import { SkillProject } from "../../../data/interfaces/projects";
 import { User } from "../../../utils/api/users/users";
-
+import { toast } from "react-toastify";
+import { createProjectRole } from "../../../utils/api/projectRoles";
+import { CreateButton } from "../../../components/Common/Buttons";
+import InfoUrl from "../../../components/ProjectsComponents/CreateProjectComponents/InputFields/InfoUrl";
 /**
  * React component of the create project page.
  * @returns The create project page.
  */
+
 export default function CreateProjectPage() {
-    const [name, setName] = useState("");
-    const [numberOfStudents, setNumberOfStudents] = useState<number>(1);
+    const [name, setName] = useState(""); // State for project name
 
-    // States for coaches
+    const [infoUrl, setInfoUrl] = useState(""); // State for info link
+
     const [coach, setCoach] = useState("");
-    const [coaches, setCoaches] = useState<User[]>([]);
+    const [coaches, setCoaches] = useState<User[]>([]); // States for coaches
 
-    // States for skills
     const [skill, setSkill] = useState("");
-    const [skills, setSkills] = useState<SkillProject[]>([]);
+    const [projectSkills, setProjectSkills] = useState<SkillProject[]>([]); // States for skills
 
-    // States for partners
     const [partner, setPartner] = useState("");
-    const [partners, setPartners] = useState<string[]>([]);
+    const [partners, setPartners] = useState<string[]>([]); // States for partners
 
     const navigate = useNavigate();
-
     const params = useParams();
     const editionId = params.editionId!;
 
     return (
-        <CreateProjectContainer>
-            <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
-                <BiArrowBack />
-                Cancel
-            </GoBack>
-            <h2>New Project</h2>
+        <CenterContainer>
+            <CreateProjectContainer>
+                <CenterTitle>
+                    <h2>New Project</h2>
+                </CenterTitle>
+                <Label>Name</Label>
+                <NameInput name={name} setName={setName} />
 
-            <Label>Name</Label>
-            <NameInput name={name} setName={setName} />
+                <Label>Info Link</Label>
+                <InfoUrl infoUrl={infoUrl} setInfoUrl={setInfoUrl} />
 
-            <Label>Number of students</Label>
-            <NumberOfStudentsInput
-                numberOfStudents={numberOfStudents}
-                setNumberOfStudents={setNumberOfStudents}
-            />
+                <Label>Add Coaches</Label>
+                <CoachInput
+                    coach={coach}
+                    setCoach={setCoach}
+                    coaches={coaches}
+                    setCoaches={setCoaches}
+                />
+                <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
 
-            <Label>Coaches</Label>
-            <CoachInput
-                coach={coach}
-                setCoach={setCoach}
-                coaches={coaches}
-                setCoaches={setCoaches}
-            />
-            <AddedCoaches coaches={coaches} setCoaches={setCoaches} />
+                <Label>Add Skills</Label>
+                <SkillInput
+                    skill={skill}
+                    setSkill={setSkill}
+                    skills={projectSkills}
+                    setSkills={setProjectSkills}
+                />
+                <AddedSkills skills={projectSkills} setSkills={setProjectSkills} />
 
-            <Label>Skills</Label>
-            <SkillInput skill={skill} setSkill={setSkill} skills={skills} setSkills={setSkills} />
-            <AddedSkills skills={skills} setSkills={setSkills} />
-
-            <Label>Partners</Label>
-            <PartnerInput
-                partner={partner}
-                setPartner={setPartner}
-                partners={partners}
-                setPartners={setPartners}
-            />
-            <AddedPartners items={partners} setItems={setPartners} />
-
-            <CreateButton
-                onClick={async () => {
-                    const coachIds: number[] = [];
-                    coaches.forEach(coachToAdd => {
-                        coachIds.push(coachToAdd.userId);
-                    });
-
-                    const response = await createProject(
-                        editionId,
-                        name,
-                        numberOfStudents!,
-                        [], // Empty skills for now TODO
-                        partners,
-                        coachIds
-                    );
-                    if (response) {
-                        navigate("/editions/" + editionId + "/projects/");
-                    } else alert("Something went wrong :(");
-                }}
-            >
-                Create Project
-            </CreateButton>
-        </CreateProjectContainer>
+                <Label>Add Partners</Label>
+                <PartnerInput
+                    partner={partner}
+                    setPartner={setPartner}
+                    partners={partners}
+                    setPartners={setPartners}
+                />
+                <AddedPartners items={partners} setItems={setPartners} />
+                <Center>
+                    <CancelButton onClick={() => navigate("/editions/" + editionId + "/projects/")}>
+                        <BiArrowBack />
+                        Cancel
+                    </CancelButton>
+                    <CreateButton label="Create Project" onClick={makeProject} />
+                </Center>
+            </CreateProjectContainer>
+        </CenterContainer>
     );
+
+    async function makeProject() {
+        if (name === "") {
+            toast.error("Project name must be filled in", {
+                toastId: "createProjectNoName",
+            });
+            return;
+        }
+
+        if (infoUrl !== "" && !infoUrl.startsWith("https://") && !infoUrl.startsWith("http://")) {
+            toast.error("InfoUrl should start with https:// or http://", {
+                toastId: "createProjectBadUrl",
+            });
+            return;
+        }
+
+        let badSkill = false;
+        projectSkills.forEach(projectSkill => {
+            if (isNaN(projectSkill.slots)) {
+                badSkill = true;
+                toast.error(projectSkill.skill.name + " is missing the amount of students", {
+                    toastId: "invalidSkill" + projectSkill.skill.name,
+                });
+            }
+        });
+        if (badSkill) return;
+
+        const coachIds: number[] = [];
+        coaches.forEach(coachToAdd => {
+            coachIds.push(coachToAdd.userId);
+        });
+        const response = await createProject(editionId, name, infoUrl, partners, coachIds);
+
+        if (response) {
+            await toast.promise(addProjectRoles(response.projectId), {
+                pending: "Creating project",
+                success: "Successfully created project",
+                error: "Something went wrong",
+            });
+            navigate("/editions/" + editionId + "/projects/" + response.projectId);
+        } else toast.error("Something went wrong");
+    }
+
+    async function addProjectRoles(projectId: number) {
+        // Use a for loop or else await won't work as intended
+        for (const projectSkill of projectSkills) {
+            const addedSkill = await createProjectRole(
+                editionId,
+                projectId.toString(),
+                projectSkill.skill.skillId,
+                projectSkill.description,
+                projectSkill.slots
+            );
+            if (!addedSkill) toast.error("Couldn't add skill" + projectSkill.skill.name);
+        }
+    }
 }

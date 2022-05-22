@@ -1,10 +1,11 @@
+from src.app.schemas.editions import Edition
 from src.app.schemas.users import User
 from src.app.schemas.utils import BaseModel
 
 
 class UserData(User):
     """User information that can be passed to frontend"""
-    editions: list[str] = []
+    editions: list[Edition] = []
 
 
 class Token(BaseModel):

@@ -11,6 +11,7 @@ together
 """
 from __future__ import annotations
 
+from typing import Optional
 from uuid import uuid4, UUID
 
 from sqlalchemy import Column, Integer, Enum, ForeignKey, Text, Boolean, DateTime, Table, UniqueConstraint
@@ -31,7 +32,7 @@ class AuthEmail(Base):
     email = Column(Text, unique=True, nullable=False)
     pw_hash = Column(Text, nullable=False)
 
-    user: User = relationship("User", back_populates="email_auth", uselist=False)
+    user: User = relationship("User", back_populates="email_auth", uselist=False, lazy="selectin")
 
 
 class AuthGitHub(Base):
@@ -39,10 +40,14 @@ class AuthGitHub(Base):
     __tablename__ = "github_auths"
 
     gh_auth_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
-    email = Column(Text, unique=True, nullable=False)
 
-    user: User = relationship("User", back_populates="github_auth", uselist=False)
+    # Allow nullable in case a token gets invalidated
+    access_token = Column(Text, nullable=True)
+    email = Column(Text, unique=True, nullable=False)
+    github_user_id = Column(Integer, unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    user: User = relationship("User", back_populates="github_auth", uselist=False, lazy="selectin")
 
 
 class AuthGoogle(Base):
@@ -53,7 +58,7 @@ class AuthGoogle(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     email = Column(Text, unique=True, nullable=False)
 
-    user: User = relationship("User", back_populates="google_auth", uselist=False)
+    user: User = relationship("User", back_populates="google_auth", uselist=False, lazy="selectin")
 
 
 class CoachRequest(Base):
@@ -67,8 +72,8 @@ class CoachRequest(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"), nullable=False)
 
-    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False)
-    user: User = relationship("User", back_populates="coach_request", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="coach_requests", uselist=False, lazy="selectin")
+    user: User = relationship("User", back_populates="coach_request", uselist=False, lazy="selectin")
 
 
 class DecisionEmail(Base):
@@ -80,7 +85,7 @@ class DecisionEmail(Base):
     decision = Column(Enum(EmailStatusEnum), nullable=False)
     date = Column(DateTime, nullable=False)
 
-    student: Student = relationship("Student", back_populates="emails", uselist=False)
+    student: Student = relationship("Student", back_populates="emails", uselist=False, lazy="selectin")
 
 
 class Edition(Base):
@@ -88,15 +93,17 @@ class Edition(Base):
     __tablename__ = "editions"
 
     edition_id = Column(Integer, primary_key=True)
-    name = Column(Text, unique=True, nullable=False)
-    year = Column(Integer, unique=True, nullable=False)
+    name: str = Column(Text, unique=True, nullable=False)
+    year: int = Column(Integer, nullable=False)
+    readonly: bool = Column(Boolean, nullable=False, default=False)
 
-    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition")
-    projects: list[Project] = relationship("Project", back_populates="edition")
+    invite_links: list[InviteLink] = relationship("InviteLink", back_populates="edition", cascade="all, delete-orphan")
+    projects: list[Project] = relationship("Project", back_populates="edition", cascade="all, delete-orphan")
     coaches: list[User] = relationship("User", secondary="user_editions", back_populates="editions")
-    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition")
-    students: list[Student] = relationship("Student", back_populates="edition")
-    webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition")
+    coach_requests: list[CoachRequest] = relationship("CoachRequest", back_populates="edition",
+                                                      cascade="all, delete-orphan")
+    students: list[Student] = relationship("Student", back_populates="edition", cascade="all, delete-orphan")
+    webhook_urls: list[WebhookURL] = relationship("WebhookURL", back_populates="edition", cascade="all, delete-orphan")
 
 
 class InviteLink(Base):
@@ -108,7 +115,7 @@ class InviteLink(Base):
     target_email = Column(Text, nullable=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id", name="fk_invite_link_edition_id_edition"))
 
-    edition: Edition = relationship("Edition", back_populates="invite_links", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="invite_links", uselist=False, lazy="selectin")
 
 
 class Partner(Base):
@@ -118,7 +125,8 @@ class Partner(Base):
     partner_id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
-    projects: list[Project] = relationship("Project", secondary="project_partners", back_populates="partners")
+    projects: list[Project] = relationship("Project", secondary="project_partners",
+                                           back_populates="partners", lazy="selectin")
 
 
 class Project(Base):
@@ -127,14 +135,16 @@ class Project(Base):
 
     project_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    number_of_students = Column(Integer, nullable=False, default=0)
+    info_url = Column(Text, nullable=True)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition: Edition = relationship("Edition", back_populates="projects", uselist=False)
-    coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects")
-    skills: list[Skill] = relationship("Skill", secondary="project_skills", back_populates="projects")
-    partners: list[Partner] = relationship("Partner", secondary="project_partners", back_populates="projects")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="project")
+    edition: Edition = relationship("Edition", back_populates="projects", uselist=False, lazy="selectin")
+    coaches: list[User] = relationship("User", secondary="project_coaches", back_populates="projects", lazy="selectin")
+    partners: list[Partner] = \
+        relationship("Partner", secondary="project_partners", back_populates="projects", lazy="selectin")
+    project_roles: list[ProjectRole] = \
+        relationship("ProjectRole", back_populates="project", lazy="selectin",
+                     cascade="all, delete-orphan")
 
 
 project_coaches = Table(
@@ -163,25 +173,41 @@ class ProjectRole(Base):
     be drafted for multiple projects
     """
     __tablename__ = "project_roles"
+    project_role_id = Column(Integer, primary_key=True)
 
-    student_id = Column(Integer, ForeignKey("students.student_id"), primary_key=True)
-    project_id = Column(Integer, ForeignKey("projects.project_id"), primary_key=True)
-    skill_id = Column(Integer, ForeignKey("skills.skill_id"), primary_key=True)
-    definitive = Column(Boolean, nullable=False, default=False)
+    project_id = Column(Integer, ForeignKey("projects.project_id"))
+    skill_id = Column(Integer, ForeignKey("skills.skill_id"))
+    description = Column(Text, nullable=True)
+    slots = Column(Integer, nullable=False, default=0)
+
+    project: Project = relationship("Project", back_populates="project_roles", uselist=False, lazy="selectin")
+    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False, lazy="selectin")
+    suggestions: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="project_role",
+                                                            lazy="selectin", cascade="all, delete-orphan")
+
+
+class ProjectRoleSuggestion(Base):
+    """Suggestion of a student by a coach for a project role"""
+    __tablename__ = "pr_suggestions"
+    __table_args__ = (UniqueConstraint('project_role_id', 'student_id'),)
+    project_role_suggestion_id = Column(Integer, primary_key=True)
     argumentation = Column(Text, nullable=True)
-    drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
-    student: Student = relationship("Student", back_populates="project_roles", uselist=False)
-    project: Project = relationship("Project", back_populates="project_roles", uselist=False)
-    skill: Skill = relationship("Skill", back_populates="project_roles", uselist=False)
-    drafter: User = relationship("User", back_populates="drafted_roles", uselist=False)
+    project_role_id = Column(Integer, ForeignKey("project_roles.project_role_id"))
+    project_role: ProjectRole = relationship(
+        "ProjectRole",
+        back_populates="suggestions",
+        uselist=False,
+        lazy="selectin",
+        cascade="save-update"
+    )
 
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)
+    student: Optional[Student] = \
+        relationship("Student", back_populates="pr_suggestions", uselist=False, lazy="selectin")
 
-project_skills = Table(
-    "project_skills", Base.metadata,
-    Column("project_id", ForeignKey("projects.project_id")),
-    Column("skill_id", ForeignKey("skills.skill_id"))
-)
+    drafter_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
+    drafter: Optional[User] = relationship("User", back_populates="drafted_roles", uselist=False, lazy="selectin")
 
 
 class Skill(Base):
@@ -191,17 +217,15 @@ class Skill(Base):
 
     Example:
         name:        Frontend
-        description: Must know React
     """
     __tablename__ = "skills"
 
     skill_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    description = Column(Text, nullable=True)
 
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="skill")
-    projects: list[Project] = relationship("Project", secondary="project_skills", back_populates="skills")
-    students: list[Student] = relationship("Student", secondary="student_skills", back_populates="skills")
+    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="skill", lazy="selectin")
+    students: list[Student] = \
+        relationship("Student", secondary="student_skills", back_populates="skills", lazy="selectin")
 
 
 class Student(Base):
@@ -211,7 +235,7 @@ class Student(Base):
     student_id = Column(Integer, primary_key=True)
     first_name = Column(Text, nullable=False)
     last_name = Column(Text, nullable=False)
-    preferred_name = Column(Text)
+    preferred_name = Column(Text, nullable=True)
     email_address = Column(Text, unique=True, nullable=False)
     phone_number = Column(Text, unique=True, nullable=True, default=None)
     alumni = Column(Boolean, nullable=False, default=False)
@@ -220,12 +244,16 @@ class Student(Base):
     wants_to_be_student_coach = Column(Boolean, nullable=False, default=False)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    emails: list[DecisionEmail] = relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan")
-    project_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="student")
-    skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student")
-    questions: list[Question] = relationship("Question", back_populates="student")
-    edition: Edition = relationship("Edition", back_populates="students", uselist=False)
+    emails: list[DecisionEmail] = \
+        relationship("DecisionEmail", back_populates="student", cascade="all, delete-orphan", lazy="selectin")
+    pr_suggestions: list[ProjectRoleSuggestion] = \
+        relationship("ProjectRoleSuggestion", back_populates="student", lazy="selectin")
+    skills: list[Skill] = relationship("Skill", secondary="student_skills", back_populates="students", lazy="selectin")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="student", cascade="all, delete-orphan",
+                                                 lazy="selectin")
+    questions: list[Question] = relationship("Question", back_populates="student", lazy="selectin",
+                                             cascade="all, delete-orphan")
+    edition: Edition = relationship("Edition", back_populates="students", uselist=False, lazy="selectin")
 
 
 class Question(Base):
@@ -237,9 +265,11 @@ class Question(Base):
     question = Column(Text, nullable=False)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
 
-    answers: list[QuestionAnswer] = relationship("QuestionAnswer", back_populates="question")
-    files: list[QuestionFileAnswer] = relationship("QuestionFileAnswer", back_populates="question")
-    student: Student = relationship("Student", back_populates="questions", uselist=False)
+    answers: list[QuestionAnswer] = relationship("QuestionAnswer", back_populates="question",
+                                                 cascade="all, delete-orphan", lazy="selectin")
+    files: list[QuestionFileAnswer] = relationship("QuestionFileAnswer", back_populates="question",
+                                                   cascade="all, delete-orphan", lazy="selectin")
+    student: Student = relationship("Student", back_populates="questions", uselist=False, lazy="selectin")
 
 
 class QuestionAnswer(Base):
@@ -250,7 +280,7 @@ class QuestionAnswer(Base):
     answer = Column(Text, nullable=True)
     question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
 
-    question: Question = relationship("Question", back_populates="answers", uselist=False)
+    question: Question = relationship("Question", back_populates="answers", uselist=False, lazy="selectin")
 
 
 class QuestionFileAnswer(Base):
@@ -264,7 +294,7 @@ class QuestionFileAnswer(Base):
     size = Column(Integer, nullable=False)
     question_id = Column(Integer, ForeignKey("questions.question_id"), nullable=False)
 
-    question: Question = relationship("Question", back_populates="files", uselist=False)
+    question: Question = relationship("Question", back_populates="files", uselist=False, lazy="selectin")
 
 
 student_skills = Table(
@@ -277,18 +307,16 @@ student_skills = Table(
 class Suggestion(Base):
     """A suggestion left by a coach about a student"""
     __tablename__ = "suggestions"
-    __table_args__=(
-        UniqueConstraint('coach_id', 'student_id', name='unique_coach_student_suggestion'),
-    )
+    __table_args__ = (UniqueConstraint('student_id', 'coach_id'),)
 
     suggestion_id = Column(Integer, primary_key=True)
     student_id = Column(Integer, ForeignKey("students.student_id"), nullable=False)
-    coach_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    coach_id = Column(Integer, ForeignKey("users.user_id"), nullable=True)
     suggestion = Column(Enum(DecisionEnum), nullable=False, default=DecisionEnum.UNDECIDED)
     argumentation = Column(Text, nullable=True)
 
-    student: Student = relationship("Student", back_populates="suggestions", uselist=False)
-    coach: User = relationship("User", back_populates="suggestions", uselist=False)
+    student: Student = relationship("Student", back_populates="suggestions", uselist=False, lazy="selectin")
+    coach: Optional[User] = relationship("User", back_populates="suggestions", uselist=False, lazy="selectin")
 
 
 class User(Base):
@@ -299,16 +327,24 @@ class User(Base):
     name = Column(Text, nullable=False)
     admin = Column(Boolean, nullable=False, default=False)
 
-    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False)
-    drafted_roles: list[ProjectRole] = relationship("ProjectRole", back_populates="drafter")
-    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches")
-    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches")
-    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach")
+    coach_request: CoachRequest = relationship("CoachRequest", back_populates="user", uselist=False,
+                                               cascade="all, delete-orphan", lazy="selectin")
+    drafted_roles: list[ProjectRoleSuggestion] = relationship("ProjectRoleSuggestion", back_populates="drafter",
+                                                              cascade="all, delete-orphan", lazy="selectin")
+    editions: list[Edition] = relationship("Edition", secondary="user_editions", back_populates="coaches",
+                                           lazy="selectin")
+    projects: list[Project] = relationship("Project", secondary="project_coaches", back_populates="coaches",
+                                           lazy="selectin")
+    suggestions: list[Suggestion] = relationship("Suggestion", back_populates="coach", cascade="all, delete-orphan",
+                                                 lazy="selectin")
 
     # Authentication methods
-    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False)
-    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False)
-    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False)
+    email_auth: AuthEmail = relationship("AuthEmail", back_populates="user", uselist=False,
+                                         cascade="all, delete-orphan", lazy="selectin")
+    github_auth: AuthGitHub = relationship("AuthGitHub", back_populates="user", uselist=False,
+                                           cascade="all, delete-orphan", lazy="selectin")
+    google_auth: AuthGoogle = relationship("AuthGoogle", back_populates="user", uselist=False,
+                                           cascade="all, delete-orphan", lazy="selectin")
 
 
 user_editions = Table(
@@ -326,4 +362,4 @@ class WebhookURL(Base):
     uuid: UUID = Column(UUIDType(binary=False), default=uuid4)
     edition_id = Column(Integer, ForeignKey("editions.edition_id"))
 
-    edition: Edition = relationship("Edition", back_populates="webhook_urls", uselist=False)
+    edition: Edition = relationship("Edition", back_populates="webhook_urls", uselist=False, lazy="selectin")

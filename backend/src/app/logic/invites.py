@@ -1,6 +1,6 @@
 import base64
 
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import settings
 import src.database.crud.invites as crud
@@ -9,22 +9,23 @@ from src.app.utils.mailto import generate_mailto_string
 from src.database.models import Edition, InviteLink as InviteLinkDB
 
 
-def delete_invite_link(db: Session, invite_link: InviteLinkDB):
+async def delete_invite_link(db: AsyncSession, invite_link: InviteLinkDB):
     """Delete an invite link from the database"""
-    crud.delete_invite_link(db, invite_link)
+    await crud.delete_invite_link(db, invite_link)
 
 
-def get_pending_invites_page(db: Session, edition: Edition, page: int) -> InvitesLinkList:
+async def get_pending_invites_page(db: AsyncSession, edition: Edition, page: int) -> InvitesLinkList:
     """Query the database for a list of invite links and wrap the result in a pydantic model"""
-    return InvitesLinkList(invite_links=crud.get_pending_invites_for_edition_page(db, edition, page))
+    invite_page = await crud.get_pending_invites_for_edition_page(db, edition, page)
+    return InvitesLinkList(invite_links=invite_page)
 
 
-def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddress) -> NewInviteLink:
+async def create_mailto_link(db: AsyncSession, edition: Edition, email_address: EmailAddress) -> NewInviteLink:
     """Add a new invite link into the database & return a mailto link for it"""
     # Create db entry, drop existing.
-    invite = crud.get_optional_invite_link_by_edition_and_email(db, edition, email_address.email)
+    invite = await crud.get_optional_invite_link_by_edition_and_email(db, edition, email_address.email)
     if invite is None:
-        invite = crud.create_invite_link(db, edition, email_address.email)
+        invite = await crud.create_invite_link(db, edition, email_address.email)
 
     # Add edition name & encode with base64
     encoded_uuid = f"{invite.edition.name}/{invite.uuid}".encode("utf-8")
@@ -33,7 +34,10 @@ def create_mailto_link(db: Session, edition: Edition, email_address: EmailAddres
     # Create endpoint for the user to click on
     link = f"{settings.FRONTEND_URL}/register/{encoded_link}"
 
+    with open('templates/invites.txt', 'r', encoding="utf-8") as file:
+        message = file.read().format(invite_link=link)
+
     return NewInviteLink(mail_to=generate_mailto_string(
         recipient=email_address.email, subject=f"Open Summer Of Code {edition.year} invitation",
-        body=link
+        body=message
     ), invite_link=link)

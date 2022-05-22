@@ -10,7 +10,7 @@ import Brand from "./Brand";
 export default function NavbarBase({ children }: { children?: React.ReactNode }) {
     return (
         <BSNavbar>
-            <Container>
+            <Container className={"mx-5"} fluid>
                 <Brand />
                 {children}
             </Container>

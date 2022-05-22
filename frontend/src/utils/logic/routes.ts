@@ -5,7 +5,12 @@ import { matchPath } from "react-router-dom";
  * Boils down to the most-specific route that can be used across editions
  */
 export function getBestRedirect(location: string, editionName: string): string {
-    // All /student/X routes should go to /students
+    // Students/states should stay at /students/states
+    if (matchPath({ path: "/editions/:edition/students/states" }, location)) {
+        return `/editions/${editionName}/students/states`;
+    }
+
+    // All remaining /student/X routes should go to /students
     if (matchPath({ path: "/editions/:edition/students/*" }, location)) {
         return `/editions/${editionName}/students`;
     }
@@ -32,4 +37,11 @@ export function getBestRedirect(location: string, editionName: string): string {
 
     // All the rest: go to /editions
     return "/editions";
+}
+
+/**
+ * Check if the current location is the register page
+ */
+export function isRegisterPath(location: string): boolean {
+    return Boolean(matchPath({ path: "/register/:id" }, location));
 }

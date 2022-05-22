@@ -1,11 +1,19 @@
 :root {
+    /* OSOC colours */
     --osoc_blue: #131329;
     --osoc_orange: #fcb70f;
     --osoc_red: #f14a3b;
     --osoc_green: #44dba4;
+    /* Darkened OSOC colours, used for hovering, etc */
+    --osoc_blue_darkened: #0e0e1e;
+    --osoc_orange_darkened: #c58c02;
+    --osoc_red_darkened: #d21f0f;
+    --osoc_green_darkened: #21be85;
+    /* General site colours */
     --react_dark_grey: #343434;
     --custom_light_blue: #00bfff;
     --background_color: #272741;
+    --card-color: #323252;
 }
 
 #root {
@@ -22,4 +30,49 @@
 body {
     background-color: var(--background_color);
     color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 7px;
+}
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+}
+::-webkit-scrollbar-thumb {
+    background: #88888d;
+    border: 0 none #ffffff;
+    border-radius: 50px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #bdbdc2;
+}
+::-webkit-scrollbar-thumb:active {
+    background: #bdbdc2;
+}
+::-webkit-scrollbar-track {
+    background: var(--osoc_blue);
+    border: 0 none #ffffff;
+    border-radius: 22px;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* All tables */
+.table-dark {
+    --bs-table-bg: #0f0f30;
+    --bs-table-background: #0f0f30;
+    --bs-table-striped-bg: #1a1a38;
+    --bs-table-striped-color: #fff;
+    --bs-table-active-bg: #51516e;
+    --bs-table-active-color: #fff;
+    --bs-table-hover-bg: #41415e;
+    --bs-table-hover-color: #fff;
+}
+
+.table > :not(:first-child) {
+    border-top: none;
 }

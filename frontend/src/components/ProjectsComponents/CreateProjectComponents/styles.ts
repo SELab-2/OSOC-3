@@ -7,6 +7,8 @@ export const Input = styled.input`
     color: white;
     border: none;
     border-radius: 5px;
+    width: 35vw;
+    min-width: 300px;
 `;
 
 export const AddButton = styled.button`
@@ -18,20 +20,13 @@ export const AddButton = styled.button`
     border-radius: 5px;
 `;
 
-export const RemoveButton = styled.button`
-    padding: 0px 2.5px;
-    background-color: #f14a3b;
-    color: white;
-    border: none;
-    margin-left: 10px;
-    border-radius: 1px;
-    display: flex;
-    align-items: center;
-`;
-
 export const ItemName = styled.div`
+    height: auto;
     overflow-x: auto;
     text-overflow: ellipsis;
+    margin: auto;
+    margin-left: 5px;
+    margin-right: 5px;
 `;
 
 export const AddedItem = styled.div`
@@ -39,10 +34,12 @@ export const AddedItem = styled.div`
     margin-left: 0;
     padding: 5px;
     background-color: #1a1a36;
-    width: fit-content;
-    max-width: 75%;
+    width: 35vw;
+    max-width: 50%;
     border-radius: 5px;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
 `;
 
 export const WarningContainer = styled.div`

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Collapsible from "react-collapsible";
-import { RequestsContainer, Error, SpinnerContainer, RequestListContainer } from "./styles";
+import { RequestsContainer, RequestListContainer } from "./styles";
 import { getRequests, Request } from "../../../utils/api/users/requests";
 import { RequestList, RequestsHeader } from "./RequestsComponents";
-import { Spinner } from "react-bootstrap";
-import { SearchInput } from "../../styles";
+import SearchBar from "../../Common/Forms/SearchBar";
+import { SearchFieldDiv } from "../../Common/Users/styles";
+import { toast } from "react-toastify";
+import { LoadSpinner } from "../../Common";
 
 /**
  * A collapsible component which contains all coach requests for a given edition.
@@ -13,13 +15,17 @@ import { SearchInput } from "../../styles";
  * @param props.refreshCoaches A function which will be called when a new coach is added
  */
 export default function Requests(props: { edition: string; refreshCoaches: () => void }) {
+    const [allRequests, setAllRequests] = useState<Request[]>([]);
     const [requests, setRequests] = useState<Request[]>([]); // All requests after filter
-    const [gettingRequests, setGettingRequests] = useState(false); // Waiting for data
+    const [loading, setLoading] = useState(false); // Waiting for data
     const [searchTerm, setSearchTerm] = useState(""); // The word set in the filter
-    const [gotData, setGotData] = useState(false); // Received data
+    const [requestedEdition, setRequestedEdition] = useState(props.edition);
     const [open, setOpen] = useState(false); // Collapsible is open
-    const [error, setError] = useState(""); // Error message
     const [moreRequestsAvailable, setMoreRequestsAvailable] = useState(true); // Endpoint has more requests available
+    const [allRequestsFetched, setAllRequestsFetched] = useState(false);
+    const [page, setPage] = useState(0); // The next page which needs to be fetched
+
+    const [controller, setController] = useState<AbortController | undefined>(undefined);
 
     /**
      * Remove a request from the list of requests (Request is accepter or rejected).
@@ -33,75 +39,105 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 return object !== request;
             })
         );
+        setAllRequests(
+            allRequests.filter(object => {
+                return object !== request;
+            })
+        );
         if (accepted) {
             props.refreshCoaches();
         }
     }
 
     /**
-     * Request a page from the list of requests.
-     * An optional filter can be used to filter the username.
-     * If the filter is not used, the string saved in the "searchTerm" state will be used.
-     * @param page The page to load.
-     * @param filter Optional string to filter username.
+     * Request the next page from the list of requests.
+     * The set searchterm will be used.
      */
-    async function getData(page: number, filter: string | undefined = undefined) {
-        if (filter === undefined) {
-            filter = searchTerm;
+    async function getData(requested: number, reset: boolean) {
+        const filterChanged = requested === -1;
+        const requestedPage = requested === -1 ? 0 : page;
+
+        if (loading && !filterChanged) {
+            return;
         }
-        setGettingRequests(true);
-        setError("");
-        try {
-            const response = await getRequests(props.edition, filter, page);
-            if (response.requests.length === 0) {
-                setMoreRequestsAvailable(false);
+
+        if (allRequestsFetched && !reset) {
+            setRequests(
+                allRequests.filter(request =>
+                    request.user.name.toUpperCase().includes(searchTerm.toUpperCase())
+                )
+            );
+            setMoreRequestsAvailable(false);
+            return;
+        }
+
+        setLoading(true);
+
+        if (controller !== undefined) {
+            controller.abort();
+        }
+        const newController = new AbortController();
+        setController(newController);
+
+        const response = await toast.promise(
+            getRequests(props.edition, searchTerm, requestedPage, newController),
+            {
+                error: "Failed to retrieve requests",
             }
-            if (page === 0) {
+        );
+
+        if (response !== null) {
+            if (response.requests.length === 0 && !filterChanged) {
+                setMoreRequestsAvailable(false);
+            } else {
+                setMoreRequestsAvailable(true);
+            }
+            if (requestedPage === 0 || filterChanged) {
                 setRequests(response.requests);
             } else {
                 setRequests(requests.concat(response.requests));
             }
 
-            setGotData(true);
-            setGettingRequests(false);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
-            setGettingRequests(false);
+            if (searchTerm === "") {
+                if (response.requests.length === 0 && !filterChanged) {
+                    setAllRequestsFetched(true);
+                }
+                if (requestedPage === 0) {
+                    setAllRequests(response.requests);
+                } else {
+                    setAllRequests(allRequests.concat(response.requests));
+                }
+            }
+
+            setPage(requestedPage + 1);
+        } else {
+            setMoreRequestsAvailable(false);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
-        if (!gotData && !gettingRequests && !error) {
-            getData(0);
+        if (props.edition !== requestedEdition) {
+            setRequests([]);
+            setPage(0);
+            setAllRequestsFetched(false);
+            setMoreRequestsAvailable(true);
+            getData(-1, true);
+            setRequestedEdition(props.edition);
+        } else {
+            setPage(0);
+            setMoreRequestsAvailable(true);
+            getData(-1, false);
         }
-    });
-
-    /**
-     * Set the searchTerm and request the first page with this filter.
-     * The current list of requests will be resetted.
-     * @param searchTerm The string to filter coaches with by username.
-     */
-    function filterRequests(searchTerm: string) {
-        setGotData(false);
-        setSearchTerm(searchTerm);
-        setRequests([]);
-        setMoreRequestsAvailable(true);
-        getData(0, searchTerm);
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, props.edition]);
 
     let list;
     if (requests.length === 0) {
-        if (gettingRequests) {
-            list = (
-                <SpinnerContainer>
-                    <Spinner animation="border" />
-                </SpinnerContainer>
-            );
-        } else if (gotData) {
-            list = <div>No requests found</div>;
-        } else {
-            list = <Error>{error}</Error>;
+        if (loading) {
+            list = <LoadSpinner show={true} />;
         }
+        list = <div>No requests found</div>;
     } else {
         list = (
             <RequestList
@@ -120,7 +156,16 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
                 onOpening={() => setOpen(true)}
                 onClosing={() => setOpen(false)}
             >
-                <SearchInput value={searchTerm} onChange={e => filterRequests(e.target.value)} />
+                <SearchFieldDiv>
+                    <SearchBar
+                        onChange={e => {
+                            setPage(0);
+                            setSearchTerm(e.target.value);
+                        }}
+                        value={searchTerm}
+                        placeholder="Search name..."
+                    />
+                </SearchFieldDiv>
                 <RequestListContainer>{list}</RequestListContainer>
             </Collapsible>
         </RequestsContainer>

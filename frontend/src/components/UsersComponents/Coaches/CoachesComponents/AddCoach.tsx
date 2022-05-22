@@ -1,13 +1,18 @@
 import { getUsersExcludeEdition, User } from "../../../../utils/api/users/users";
-import React, { useState } from "react";
+import { useState, createRef, useEffect } from "react";
 import { addCoachToEdition } from "../../../../utils/api/users/coaches";
 import { Button, Modal, Spinner } from "react-bootstrap";
-import { Error } from "../../Requests/styles";
-import { AddAdminButton, ModalContentConfirm } from "../../../AdminsComponents/styles";
+import { AddButtonDiv } from "../../../AdminsComponents/styles";
+import Typeahead from "react-bootstrap-typeahead/types/core/Typeahead";
+import UserMenuItem from "../../../Common/Users/MenuItem";
+import { StyledMenuItem } from "../../../Common/Users/styles";
+import { EmailAndAuth } from "../../../Common/Users";
+import { EmailDiv } from "../styles";
+import CreateButton from "../../../Common/Buttons/CreateButton";
+import { ModalContentConfirm } from "../../../Common/styles";
+import { StyledInput } from "../../../Common/Forms/styles";
 import { AsyncTypeahead, Menu } from "react-bootstrap-typeahead";
-import UserMenuItem from "../../../GeneralComponents/MenuItem";
-import { StyledMenuItem } from "../../../GeneralComponents/styles";
-import { EmailAndAuth } from "../../../GeneralComponents";
+import { toast } from "react-toastify";
 
 /**
  * A button and popup to add a new coach to the given edition.
@@ -19,30 +24,37 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState<User | undefined>(undefined);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [gettingData, setGettingData] = useState(false); // Waiting for data
     const [users, setUsers] = useState<User[]>([]); // All users which are not a coach
     const [searchTerm, setSearchTerm] = useState(""); // The word set in filter
+    const [clearRef, setClearRef] = useState(false); // The ref must be cleared
+
+    const typeaheadRef = createRef<Typeahead>();
+
+    useEffect(() => {
+        // For some obscure reason the ref can only be cleared in here & not somewhere else
+        if (clearRef) {
+            // This triggers itself, but only once, so it doesn't really matter
+            setClearRef(false);
+            typeaheadRef.current?.clear();
+        }
+    }, [clearRef, typeaheadRef]);
 
     async function getData(page: number, filter: string | undefined = undefined) {
         if (filter === undefined) {
             filter = searchTerm;
         }
         setGettingData(true);
-        setError("");
-        try {
-            const response = await getUsersExcludeEdition(props.edition, filter, page);
-            if (page === 0) {
-                setUsers(response.users);
-            } else {
-                setUsers(users.concat(response.users));
-            }
-
-            setGettingData(false);
-        } catch (exception) {
-            setError("Oops, something went wrong...");
-            setGettingData(false);
+        const response = await toast.promise(getUsersExcludeEdition(props.edition, filter, page), {
+            error: "Failed to retrieve users",
+        });
+        if (page === 0) {
+            setUsers(response.users);
+        } else {
+            setUsers(users.concat(response.users));
         }
+
+        setGettingData(false);
     }
 
     function filterData(searchTerm: string) {
@@ -53,7 +65,7 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     const handleClose = () => {
         setSelected(undefined);
-        setError("");
+        props.refreshCoaches();
         setShow(false);
     };
     const handleShow = () => {
@@ -62,21 +74,15 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
 
     async function addCoach(user: User) {
         setLoading(true);
-        setError("");
-        let success = false;
-        try {
-            success = await addCoachToEdition(user.userId, props.edition);
-            if (!success) {
-                setError("Something went wrong. Failed to add coach");
-            }
-        } catch (error) {
-            setError("Something went wrong. Failed to add coach");
-        }
+        await toast.promise(addCoachToEdition(user.userId, props.edition), {
+            error: "Failed to add coach",
+            pending: "Adding coach",
+            success: "Coach successfully added",
+        });
+
         setLoading(false);
-        if (success) {
-            props.refreshCoaches();
-            handleClose();
-        }
+        setSelected(undefined);
+        setClearRef(true);
     }
 
     let addButton;
@@ -84,8 +90,8 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
         addButton = <Spinner animation="border" />;
     } else {
         addButton = (
-            <Button
-                variant="primary"
+            <CreateButton
+                showIcon={false}
                 onClick={() => {
                     if (selected !== undefined) {
                         addCoach(selected);
@@ -93,16 +99,18 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                 }}
                 disabled={selected === undefined}
             >
-                Add {selected?.name} as coach
-            </Button>
+                Add coach
+            </CreateButton>
         );
     }
 
     return (
         <>
-            <AddAdminButton variant="primary" onClick={handleShow}>
-                Add coach
-            </AddAdminButton>
+            <AddButtonDiv>
+                <CreateButton showIcon={false} onClick={handleShow}>
+                    Add coach to current edition
+                </CreateButton>
+            </AddButtonDiv>
 
             <Modal show={show} onHide={handleClose}>
                 <ModalContentConfirm>
@@ -118,11 +126,20 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                             minLength={1}
                             onSearch={filterData}
                             options={users}
-                            placeholder={"user's name"}
+                            ref={typeaheadRef}
+                            placeholder={"Username"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
-                                setError("");
                             }}
+                            renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
+                                <StyledInput
+                                    {...inputProps}
+                                    ref={input => {
+                                        inputRef(input);
+                                        referenceElementRef(input);
+                                    }}
+                                />
+                            )}
                             renderMenu={(results, menuProps) => {
                                 const {
                                     newSelectionPrefix,
@@ -149,14 +166,15 @@ export default function AddCoach(props: { edition: string; refreshCoaches: () =>
                                 );
                             }}
                         />
-                        <EmailAndAuth user={selected} />
+                        <EmailDiv>
+                            <EmailAndAuth user={selected} />
+                        </EmailDiv>
                     </Modal.Body>
                     <Modal.Footer>
                         {addButton}
                         <Button variant="secondary" onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Error> {error} </Error>
                     </Modal.Footer>
                 </ModalContentConfirm>
             </Modal>

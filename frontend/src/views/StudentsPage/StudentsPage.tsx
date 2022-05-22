@@ -1,8 +1,15 @@
-import React from "react";
-import "./StudentsPage.css";
+import { DragDropContext } from "react-beautiful-dnd";
+import { StudentListFilters } from "../../components/StudentsComponents";
 
-function Students() {
-    return <div>This is the students page</div>;
+/**
+ * @returns Page where admins and coaches can filter on students.
+ */
+function StudentsPage() {
+    return (
+        <DragDropContext onDragEnd={() => {}}>
+            <StudentListFilters />
+        </DragDropContext>
+    );
 }
 
-export default Students;
+export default StudentsPage;

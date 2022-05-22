@@ -1,7 +1,9 @@
-import { AcceptButton, RejectButton } from "../styles";
 import { Request, acceptRequest, rejectRequest } from "../../../../utils/api/users/requests";
-import React, { useState } from "react";
-import { Spinner } from "react-bootstrap";
+import React from "react";
+import CreateButton from "../../../Common/Buttons/CreateButton";
+import DeleteButton from "../../../Common/Buttons/DeleteButton";
+import { Spacing } from "../styles";
+import { toast } from "react-toastify";
 
 /**
  * Component consisting of two buttons to accept or reject a coach request.
@@ -12,55 +14,33 @@ export default function AcceptReject(props: {
     request: Request;
     removeRequest: (coachAdded: boolean, request: Request) => void;
 }) {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-
     async function accept() {
-        setLoading(true);
-        let success = false;
-        try {
-            success = await acceptRequest(props.request.requestId);
-            if (!success) {
-                setError("Failed to accept");
-            }
-        } catch (exception) {
-            setError("Failed to accept");
-        }
-        setLoading(false);
-        if (success) {
-            props.removeRequest(true, props.request);
-        }
+        await toast.promise(acceptRequest(props.request.requestId), {
+            error: "Failed to accept request",
+            pending: "Accepting request",
+        });
+
+        props.removeRequest(true, props.request);
     }
 
     async function reject() {
-        setLoading(true);
-        let success = false;
-        try {
-            success = await rejectRequest(props.request.requestId);
-            if (!success) {
-                setError("Failed to reject");
-            }
-        } catch (exception) {
-            setError("Failed to reject");
-        }
-        setLoading(false);
-        if (success) {
-            props.removeRequest(false, props.request);
-        }
-    }
+        await toast.promise(rejectRequest(props.request.requestId), {
+            error: "Failed to reject request",
+            pending: "Rejecting request",
+        });
 
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    if (loading) {
-        return <Spinner animation="border" />;
+        props.removeRequest(false, props.request);
     }
 
     return (
         <div>
-            <AcceptButton onClick={accept}>Accept</AcceptButton>
-            <RejectButton onClick={reject}>Reject</RejectButton>
+            <CreateButton onClick={accept} size="sm" showIcon={false}>
+                Accept
+            </CreateButton>
+            <Spacing />
+            <DeleteButton onClick={reject} size="sm" showIcon={false}>
+                Reject
+            </DeleteButton>
         </div>
     );
 }
