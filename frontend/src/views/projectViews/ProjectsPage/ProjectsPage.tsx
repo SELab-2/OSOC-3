@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { getProjects } from "../../../utils/api/projects";
+import { getProject, getProjects } from "../../../utils/api/projects";
 import { ControlContainer, OwnProject, SearchFieldDiv } from "./styles";
 import { Project } from "../../../data/interfaces";
 import ProjectTable from "../../../components/ProjectsComponents/ProjectTable";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
 
 import { Role } from "../../../data/enums";
 import ConflictsButton from "../../../components/ProjectsComponents/Conflicts/ConflictsButton";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { toast } from "react-toastify";
 import { CreateButton } from "../../../components/Common/Buttons";
 import { SearchBar } from "../../../components/Common/Forms";
+
+// Types of events accepted by this websocket
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
+
 /**
  * @returns The projects overview page where you can see all the projects.
  * You can filter on your own projects or filter on project name.
@@ -38,6 +43,7 @@ export default function ProjectPage() {
     const editionId = params.editionId!;
 
     const { role, editions, userId } = useAuth();
+    const { socket } = useSockets();
 
     /**
      * Used to fetch the projects
@@ -126,16 +132,67 @@ export default function ProjectPage() {
     }, [searchString, ownProjects, params.editionId]);
 
     /**
-     * Remove a project in local list.
-     * @param project The project to remove.
+     * Remove a project with a specific id
      */
-    function removeProject(project: Project) {
-        setProjects(
-            projects.filter(object => {
-                return object !== project;
-            })
-        );
+    function findAndRemoveProject(id: string, list: Project[]): Project[] {
+        return list.filter(project => project.projectId.toString() !== id);
     }
+
+    /**
+     * Find a project with a specific id and update its data
+     */
+    function updateProject(project: Project, list: Project[]): Project[] {
+        const index = list.findIndex(pr => pr.projectId === project.projectId);
+        if (index === -1) return list;
+
+        const copy = [...list];
+        copy[index] = project;
+
+        return copy;
+    }
+
+    /**
+     * Websockets
+     */
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Ignore all events that aren't about projects
+            if (!wsEventTypes.includes(data.eventType)) return;
+
+            // If the project from the event hasn't been loaded in the list, ignore the event as well
+            if (
+                !allProjects.some(
+                    project => project.projectId.toString() === data.pathIds.projectId
+                )
+            ) {
+                return;
+            }
+
+            // Project was deleted: remove it from the list
+            if (data.eventType === EventType.PROJECT && data.method === RequestMethod.DELETE) {
+                setAllProjects(findAndRemoveProject(data.pathIds.projectId!, allProjects));
+                setProjects(findAndRemoveProject(data.pathIds.projectId!, projects));
+            } else {
+                // Fetch the new version of the project & replace in the two lists
+                getProject(editionId, parseInt(data.pathIds.projectId!)).then(project => {
+                    setAllProjects(updateProject(project!, allProjects));
+                    setProjects(updateProject(project!, projects));
+                });
+            }
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [socket, allProjects, projects, editionId]);
 
     return (
         <div>
@@ -177,7 +234,6 @@ export default function ProjectPage() {
                 loading={loading}
                 getMoreProjects={loadProjects}
                 moreProjectsAvailable={moreProjectsAvailable}
-                removeProject={removeProject}
             />
         </div>
     );

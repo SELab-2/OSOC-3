@@ -1,6 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "./api";
-import { Suggestions } from "../../data/interfaces/suggestions";
+import { Suggestion, Suggestions } from "../../data/interfaces/suggestions";
 
 /**
  * API call to fetch all suggestion on a student.
@@ -34,4 +34,18 @@ export async function confirmStudent(edition: string, studentId: string, confirm
         { decision: confirmValue }
     );
     return response.status === 204;
+}
+
+/**
+ * API call to fetch a suggestion by its id
+ */
+export async function getSuggestionById(
+    edition: string,
+    studentId: string,
+    suggestionId: string
+): Promise<Suggestion> {
+    const response = await axiosInstance.get(
+        `/editions/${edition}/students/${studentId}/suggestions/${suggestionId}`
+    );
+    return response.data as Suggestion;
 }

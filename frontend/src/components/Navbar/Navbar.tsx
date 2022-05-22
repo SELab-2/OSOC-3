@@ -11,6 +11,7 @@ import NavbarBase from "./NavbarBase";
 import { LinkContainer } from "react-router-bootstrap";
 import EditionNavLink from "./EditionNavLink";
 import StudentsDropdown from "./StudentsDropdown";
+import SocketDummy from "./SocketDummy";
 /**
  * Navbar component displayed at the top of the screen.
  * If the user is not signed in, this is hidden automatically.
@@ -63,6 +64,7 @@ export default function Navbar() {
 
     return (
         <NavbarBase>
+            <SocketDummy edition={currentEdition} />
             {/* Make Navbar responsive (hamburger menu) */}
             <BSNavbar.Toggle aria-controls={"responsive-navbar-nav"} />
             <BSNavbar.Collapse id={"responsive-navbar-nav"}>
