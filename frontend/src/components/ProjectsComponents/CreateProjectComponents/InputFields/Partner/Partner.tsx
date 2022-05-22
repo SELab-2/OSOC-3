@@ -11,7 +11,7 @@ export default function Partner({
     partners: string[];
     setPartners: (partners: string[]) => void;
 }) {
-    const availablePartners = ["partner1", "partner2"]; // TODO get partners from API call
+    const availablePartners: string[] = [];
 
     return (
         <div>
