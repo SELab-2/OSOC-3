@@ -20,7 +20,7 @@ export default function SocialButtons(props: { edition: string; uuid: string }) 
     return (
         <SocialsContainer>
             <Socials>
-                <GithubLoginButton text="Register with Github" onClick={githubRegister} />
+                <GithubLoginButton text="Register with GitHub" onClick={githubRegister} />
             </Socials>
         </SocialsContainer>
     );
