@@ -16,7 +16,7 @@ from ..database.exceptions import PendingMigrationsException
 
 app = FastAPI(
     title="OSOC Team 3",
-    version="0.0.1"
+    version="3.0.0"
 )
 
 # Add middleware
