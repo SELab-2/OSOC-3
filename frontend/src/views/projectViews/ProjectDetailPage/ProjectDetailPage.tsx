@@ -9,10 +9,8 @@ import {
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
 import { useAuth, useSockets } from "../../../contexts";
-import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import {
-    GoBack,
     ProjectContainer,
     ClientsContainer,
     NumberOfStudents,
@@ -31,6 +29,7 @@ import { addStudentToProject, deleteStudentFromProject } from "../../../utils/ap
 import { toast } from "react-toastify";
 import { StudentListFilters } from "../../../components/StudentsComponents";
 import { CreateButton } from "../../../components/Common/Buttons";
+import BackButton from "../../../components/Common/Buttons/BackButton";
 import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
 
 // Types of events accepted by this websocket
@@ -220,11 +219,10 @@ export default function ProjectDetailPage() {
                 <StudentListFilters />
 
                 <ProjectContainer>
-                    <GoBack onClick={() => navigate("/editions/" + editionId + "/projects/")}>
-                        <BiArrowBack />
-                        Overview
-                    </GoBack>
-
+                    <BackButton
+                        onClick={() => navigate("/editions/" + editionId + "/projects/")}
+                        label="Overview"
+                    />
                     <TitleAndEdit
                         editing={editing}
                         project={project}
@@ -241,7 +239,7 @@ export default function ProjectDetailPage() {
                         handleConfirm={handleDelete}
                         handleClose={handleDeleteClose}
                         name={project.name}
-                    ></ConfirmDelete>
+                    />
 
                     <ClientsContainer>
                         <ProjectPartners

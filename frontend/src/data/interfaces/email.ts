@@ -1,6 +1,8 @@
 /**
  * A sent email
  */
+import { Student } from "./students";
+
 export interface Email {
     emailId: number;
     studentId: number;
@@ -12,4 +14,5 @@ export interface Email {
  */
 export interface EmailHistoryList {
     emails: Email[];
+    student: Student;
 }
