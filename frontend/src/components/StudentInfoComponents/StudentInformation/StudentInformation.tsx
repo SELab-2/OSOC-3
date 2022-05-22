@@ -225,10 +225,20 @@ export default function StudentInformation(props: { studentId: number; editionId
                                     {suggestionToText(suggestion.suggestion)}
                                 </SuggestionTextColor>
                                 <SuggestionCoachAndArg>
-                                    {suggestion.coach.name}: "{suggestion.argumentation}"
+                                    {suggestion.coach.name +
+                                        (suggestion.argumentation
+                                            ? ': "' + suggestion.argumentation + '"'
+                                            : "")}
                                 </SuggestionCoachAndArg>
                             </SuggestionField>
                         ))}
+                        {suggestions.length === 0 ? (
+                            <SuggestionField>
+                                <SuggestionTextColor suggestion={-1}>
+                                    No Suggestions yet
+                                </SuggestionTextColor>
+                            </SuggestionField>
+                        ) : null}
                     </Card.Body>
                 </Card>
                 <Card className="CardContainer" border="primary">
