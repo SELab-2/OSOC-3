@@ -8,9 +8,7 @@ import {
 } from "../../../data/interfaces/projects";
 import projectToEditProject from "../../../utils/logic/project";
 import { deleteProject, getProject, patchProject } from "../../../utils/api/projects";
-import { useAuth } from "../../../contexts";
 import { useAuth, useSockets } from "../../../contexts";
-import { BiArrowBack } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import {
     ProjectContainer,
