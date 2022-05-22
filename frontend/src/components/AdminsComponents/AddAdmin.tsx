@@ -113,7 +113,7 @@ export default function AddAdmin(props: { adminAdded: (user: User) => void }) {
                             onSearch={filterData}
                             options={users}
                             ref={typeaheadRef}
-                            placeholder={"user's name"}
+                            placeholder={"Username"}
                             onChange={selected => {
                                 setSelected(selected[0] as User);
                             }}

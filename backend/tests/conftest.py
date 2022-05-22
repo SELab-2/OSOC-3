@@ -1,10 +1,8 @@
 """Pytest configuration file with fixtures"""
 from typing import AsyncGenerator, Generator
 from unittest.mock import AsyncMock
-import asyncio
 
 import pytest
-import pytest_asyncio
 from alembic import command
 from alembic import config
 from httpx import AsyncClient
@@ -14,35 +12,19 @@ from src.app import app
 from src.app.utils.dependencies import get_http_session
 from src.database.database import get_session
 from src.database.engine import engine
-from src.database.models import Base
 from tests.utils.authorization import AuthClient
 
 
-# @pytest.fixture(scope="session")
-# def tables():
-#     """
-#     Fixture to initialize a database before the tests,
-#     and drop it again afterwards
-#     """
-#     alembic_config: config.Config = config.Config('alembic.ini')
-#     command.upgrade(alembic_config, 'head')
-#     yield
-#     command.downgrade(alembic_config, 'base')
-
 @pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-
-
-@pytest.fixture(scope="session")
-async def tables():
+def tables():
     """
-    Fixture to initialize a database before the tests
+    Fixture to initialize a database before the tests,
+    and drop it again afterwards
     """
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    alembic_config: config.Config = config.Config('alembic.ini')
+    command.upgrade(alembic_config, 'head')
+    yield
+    command.downgrade(alembic_config, 'base')
 
 
 @pytest.fixture

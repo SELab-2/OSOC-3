@@ -20,14 +20,14 @@ export const TitleContainer = styled.div`
 
 export const Title = styled.h2`
     ${HoverAnimation}
-    max-height: 3.6em;
-    line-height: 1.2em;
-    overflow: auto;
+    max-height: 3.7em;
+    overflow: hidden;
     display: flex;
     align-items: center;
     margin-right: 10px;
 
     &:hover {
+        overflow: hidden;
         cursor: pointer;
         color: var(--osoc_green);
     }
@@ -48,8 +48,11 @@ export const ClientContainer = styled.div`
 
 export const Clients = styled.div`
     display: flex;
-    overflow: auto;
+    overflow: hidden;
     max-height: 3rem;
+    :hover {
+        overflow: hidden;
+    }
 `;
 
 export const Client = styled.h5`
@@ -67,8 +70,11 @@ export const CoachesContainer = styled.div`
     display: flex;
     align-items: center;
     margin-top: 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
     padding-bottom: 15px;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const CoachContainer = styled.div`
@@ -83,9 +89,11 @@ export const CoachContainer = styled.div`
 `;
 
 export const CoachText = styled.div`
-    overflow: auto;
-    text-overflow: ellipsis;
+    overflow: hidden;
     white-space: nowrap;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const PopUp = styled(Modal)``;
