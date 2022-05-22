@@ -8,6 +8,7 @@ import {
     setRefreshTokenLock,
 } from "../local-storage/auth";
 import { refreshTokens } from "./auth";
+import { isRegisterPath } from "../logic";
 
 export const axiosInstance = axios.create();
 
@@ -65,7 +66,10 @@ axiosInstance.interceptors.response.use(undefined, async (error: AxiosError) => 
     } else if (error.response?.status === 403) {
         window.location.replace("/403-forbidden");
     } else if (error.response?.status === 404) {
-        window.location.replace("/404-not-found");
+        // Don't go to 404 when trying to register
+        if (!isRegisterPath(window.location.pathname)) {
+            window.location.replace("/404-not-found");
+        }
     }
 
     throw error;

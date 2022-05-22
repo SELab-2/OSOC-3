@@ -1,4 +1,4 @@
-import { getBestRedirect } from "./routes";
+import { getBestRedirect, isRegisterPath } from "./routes";
 
 /**
  * Note: all tests here also test the one with a trailing slash (/) because I'm paranoid
@@ -45,4 +45,16 @@ test("/admins stays there", () => {
 test("/editions stays there", () => {
     expect(getBestRedirect("/editions", "new")).toEqual("/editions");
     expect(getBestRedirect("/editions/", "new")).toEqual("/editions");
+});
+
+test("register link detected correctly", () => {
+    expect(isRegisterPath("/register/this-is-an-id")).toBeTruthy();
+});
+
+test("other links are not detected as register paths", () => {
+    expect(isRegisterPath("/")).toBeFalsy();
+    expect(isRegisterPath("/register")).toBeFalsy();
+    expect(isRegisterPath("/editions/:uid")).toBeFalsy();
+    expect(isRegisterPath("/editions/register")).toBeFalsy();
+    expect(isRegisterPath("/projects/register/uid")).toBeFalsy();
 });
