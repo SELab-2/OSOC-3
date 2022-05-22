@@ -14,6 +14,7 @@ import {
     ClearDiv,
     CustomStyledTable,
 } from "./styles";
+import "../../components/Common/Buttons/buttonsStyles.css";
 import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";

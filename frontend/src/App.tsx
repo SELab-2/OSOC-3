@@ -1,8 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import "./components/Common/Forms/formsStyles.css";
-import "./components/Common/Buttons/buttonsStyles.css";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider, SocketProvider } from "./contexts";
 import { ToastContainer } from "react-toastify";
