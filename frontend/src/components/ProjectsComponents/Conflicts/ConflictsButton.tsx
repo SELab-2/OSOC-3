@@ -7,11 +7,17 @@ import ConflictDiv from "./Conflict";
 import LoadSpinner from "../../Common/LoadSpinner";
 import CreateButton from "../../Common/Buttons/CreateButton";
 import WarningButton from "../../Common/Buttons/WarningButton";
+import { EventType, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { useSockets } from "../../../contexts";
+
+const wsEventTypes = [EventType.PROJECT_ROLE_SUGGESTION];
 
 /**
  * A button which opens a side-panel to show all students who are assigned to multiple projects.
  */
 export default function ConflictsButton(props: { editionId: string }) {
+    const { socket } = useSockets();
+
     const [conflicts, setConflicts] = useState<Conflict[] | undefined>(undefined);
     const [show, setShow] = useState(false);
 
@@ -26,6 +32,28 @@ export default function ConflictsButton(props: { editionId: string }) {
 
         fetchConflicts().catch(console.error);
     }, [props.editionId]);
+
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+            if (!wsEventTypes.includes(data.eventType)) return;
+
+            // Re-fetch the conflicts
+            getConflicts(props.editionId).then(conflicts =>
+                setConflicts(conflicts.conflictStudents)
+            );
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+    }, [props.editionId, socket]);
 
     if (conflicts === undefined) {
         return (
