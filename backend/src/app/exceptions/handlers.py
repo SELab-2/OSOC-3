@@ -21,7 +21,7 @@ from .util import NotFound
 # however, we can't really change that so we'll just disable the warning because it doesn't make
 # a lot of sense
 # pylint: disable=R0914
-def install_handlers(app: FastAPI):
+def install_handlers(app: FastAPI): # pragma: no cover
     """Install all custom exception handlers"""
 
     @app.exception_handler(ExpiredCredentialsException)
