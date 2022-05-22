@@ -89,6 +89,8 @@ export default function Requests(props: { edition: string; refreshCoaches: () =>
         if (response !== null) {
             if (response.requests.length === 0 && !filterChanged) {
                 setMoreRequestsAvailable(false);
+            } else {
+                setMoreRequestsAvailable(true);
             }
             if (requestedPage === 0 || filterChanged) {
                 setRequests(response.requests);
