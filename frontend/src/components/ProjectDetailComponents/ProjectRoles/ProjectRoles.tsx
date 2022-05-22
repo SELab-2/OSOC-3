@@ -17,13 +17,16 @@ import SuggestedStudent from "./SuggestedStudent";
 import AddNewSkill from "./AddNewSkill";
 import { isReadonlyEdition } from "../../../utils/logic";
 import { useAuth } from "../../../contexts";
+import { Role } from "../../../data/enums";
 
 export default function ProjectRoles({
     projectRoles,
     setGotProject,
+    role,
 }: {
     projectRoles: ProjectRole[];
     setGotProject: (value: boolean) => void;
+    role: Role;
 }) {
     const params = useParams();
     const projectId = params.projectId!;
@@ -38,28 +41,30 @@ export default function ProjectRoles({
                 <ProjectRoleContainer key={_index}>
                     <TitleDeleteContainer>
                         <h4>{projectRole.skill.name}</h4>
-                        <DeleteButton
-                            onClick={async () => {
-                                await toast.promise(
-                                    deleteProjectRole(
-                                        editionId,
-                                        projectId,
-                                        projectRole.projectRoleId.toString()
-                                    ),
-                                    {
-                                        pending: "Deleting project role",
-                                        success: "Successfully deleted skill",
-                                        error: "Something went wrong",
-                                    },
-                                    {
-                                        toastId:
-                                            "deleteProjectRole" +
-                                            projectRole.projectRoleId.toString(),
-                                    }
-                                );
-                                setGotProject(false);
-                            }}
-                        />
+                        {role === Role.ADMIN && (
+                            <DeleteButton
+                                onClick={async () => {
+                                    await toast.promise(
+                                        deleteProjectRole(
+                                            editionId,
+                                            projectId,
+                                            projectRole.projectRoleId.toString()
+                                        ),
+                                        {
+                                            pending: "Deleting project role",
+                                            success: "Successfully deleted skill",
+                                            error: "Something went wrong",
+                                        },
+                                        {
+                                            toastId:
+                                                "deleteProjectRole" +
+                                                projectRole.projectRoleId.toString(),
+                                        }
+                                    );
+                                    setGotProject(false);
+                                }}
+                            />
+                        )}
                     </TitleDeleteContainer>
                     <DescriptionAndStudentAmount>
                         <DescriptionContainer>
@@ -105,7 +110,7 @@ export default function ProjectRoles({
                     </Droppable>
                 </ProjectRoleContainer>
             ))}
-            {!isReadOnly && <AddNewSkill setGotProject={setGotProject} />}
+            {!isReadOnly && role === Role.ADMIN && <AddNewSkill setGotProject={setGotProject} />}
         </div>
     );
 }
