@@ -31,7 +31,7 @@ export const ActionContainer = styled.div`
     flex-direction: column;
     display: flex;
     margin-top: 1%;
-    width: 100%;
+    min-width: fit-content;
 `;
 
 export const AllName = styled.div`

@@ -63,6 +63,8 @@ export default function StudentListFilters() {
             return;
         }
 
+        setLoading(true);
+
         if (allDataFetched && !edChange) {
             const tempStudents = allStudents
                 .filter(student =>
@@ -115,10 +117,9 @@ export default function StudentListFilters() {
             }
 
             setMoreDataAvailable(false);
+            setLoading(false);
             return;
         }
-
-        setLoading(true);
 
         if (controller !== undefined) {
             controller.abort();
@@ -144,6 +145,8 @@ export default function StudentListFilters() {
         if (response !== null) {
             if (response.students.length === 0 && !filterChanged) {
                 setMoreDataAvailable(false);
+            } else {
+                setMoreDataAvailable(true);
             }
             if (requestedPage === 0 || filterChanged) {
                 setStudents(response.students);
@@ -161,7 +164,6 @@ export default function StudentListFilters() {
                 !suggestedFilter
             ) {
                 if (response.students.length === 0) {
-                    console.log("all fetched");
                     setAllDataFetched(true);
                 }
                 if (requestedPage === 0) {

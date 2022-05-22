@@ -21,6 +21,7 @@ export default function SuggestedForFilter({
                 name="suggestedFilter"
                 label="Students you've suggested for"
                 checked={suggestedFilter}
+                id="suggested_for_filter"
                 onChange={e => {
                     setSuggestedFilter(e.target.checked);
                     setSuggestedFilterStorage(String(e.target.checked));

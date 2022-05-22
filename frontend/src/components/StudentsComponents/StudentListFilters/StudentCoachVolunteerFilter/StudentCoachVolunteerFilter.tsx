@@ -24,6 +24,7 @@ export default function StudentCoachVolunteerFilter({
                 name="studentCoachVolunteerFilter"
                 label="Only student coach volunteer"
                 checked={studentCoachVolunteerFilter}
+                id="student_coach_filter"
                 onChange={e => {
                     setStudentCoachVolunteerFilter(e.target.checked);
                     setStudentCoachVolunteerFilterStorage(String(e.target.checked));
