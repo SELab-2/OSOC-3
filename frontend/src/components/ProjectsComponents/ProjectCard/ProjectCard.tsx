@@ -29,16 +29,9 @@ import { toast } from "react-toastify";
 /**
  *
  * @param project a Project object
- * @param removeProject what to do when a project is deleted.
  * @returns a project card which is a small overview of a project.
  */
-export default function ProjectCard({
-    project,
-    removeProject,
-}: {
-    project: Project;
-    removeProject: (project: Project) => void;
-}) {
+export default function ProjectCard({ project }: { project: Project }) {
     // Used for the confirm screen.
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -64,7 +57,6 @@ export default function ProjectCard({
         if (!success) {
             toast.error("Could not delete project", { toastId: "deleteProject" });
         } else {
-            removeProject(project);
             toast.success("Deleted project", { toastId: "deletedProject" });
         }
     }

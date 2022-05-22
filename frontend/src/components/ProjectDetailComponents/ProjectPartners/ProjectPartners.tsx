@@ -2,7 +2,7 @@ import { TiDeleteOutline } from "react-icons/ti";
 import { Project } from "../../../data/interfaces";
 import PartnerInput from "../PartnerInput";
 
-import { ClientContainer, Client, RemoveButton } from "./styles";
+import { ClientContainer, Client, RemoveButton, ClientsContainer } from "./styles";
 
 export default function ProjectPartners({
     project,
@@ -16,7 +16,7 @@ export default function ProjectPartners({
     editing: boolean;
 }) {
     return (
-        <>
+        <ClientsContainer>
             {editedProject.partners.map((element, _index) => (
                 <ClientContainer key={_index}>
                     <Client>{element.name}</Client>
@@ -38,6 +38,6 @@ export default function ProjectPartners({
                 </ClientContainer>
             ))}
             {editing && <PartnerInput project={editedProject!} setProject={setEditedProject} />}
-        </>
+        </ClientsContainer>
     );
 }

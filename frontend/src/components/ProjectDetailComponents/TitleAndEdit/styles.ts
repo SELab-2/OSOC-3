@@ -10,8 +10,10 @@ export const TitleContainer = styled.div`
 
 export const Title = styled.h2`
     text-overflow: ellipsis;
-    overflow: hidden;
+    overflow: auto;
     margin-right: 10px;
+    max-height: 3.6em;
+    line-height: 1.2em;
 `;
 
 export const TitleInput = styled.input`

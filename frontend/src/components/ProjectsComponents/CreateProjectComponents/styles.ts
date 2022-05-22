@@ -20,20 +20,13 @@ export const AddButton = styled.button`
     border-radius: 5px;
 `;
 
-export const RemoveButton = styled.button`
-    padding: 0px 2.5px;
-    background-color: #f14a3b;
-    color: white;
-    border: none;
-    margin-left: auto;
-    border-radius: 1px;
-    display: flex;
-    align-items: center;
-`;
-
 export const ItemName = styled.div`
+    height: auto;
     overflow-x: auto;
     text-overflow: ellipsis;
+    margin: auto;
+    margin-left: 5px;
+    margin-right: 5px;
 `;
 
 export const AddedItem = styled.div`
@@ -45,8 +38,8 @@ export const AddedItem = styled.div`
     max-width: 50%;
     border-radius: 5px;
     display: flex;
-    align-content: space-around;
-    overflow: auto;
+    justify-content: space-between;
+    align-items: center;
 `;
 
 export const WarningContainer = styled.div`

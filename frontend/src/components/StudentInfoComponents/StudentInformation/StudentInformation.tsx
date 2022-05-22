@@ -17,12 +17,14 @@ import {
     AllName,
     ActionContainer,
     ActionsCard,
+    SuggestionTextColor,
+    SuggestionCoachAndArg,
 } from "./styles";
 import { AdminDecisionContainer, CoachSuggestionContainer } from "../SuggestionComponents";
 import { Suggestion } from "../../../data/interfaces/suggestions";
-import { getSuggestions } from "../../../utils/api/suggestions";
+import { getSuggestionById, getSuggestions } from "../../../utils/api/suggestions";
 import RemoveStudentButton from "../RemoveStudentButton/RemoveStudentButton";
-import { useAuth } from "../../../contexts";
+import { useAuth, useSockets } from "../../../contexts";
 import { Role } from "../../../data/enums";
 import { Student } from "../../../data/interfaces/students";
 import { getStudent } from "../../../utils/api/students";
@@ -31,19 +33,27 @@ import { toast } from "react-toastify";
 import StudentCopyLink from "../StudentCopyLink/StudentCopyLink";
 import "./StudentInformation.css";
 import { Card } from "react-bootstrap";
+import StudentStateHistoryButton from "../StudentStateHistoryButton";
+import QuestionsAndAnswers from "../QuestionsAndAnswers";
+import { getQuestions } from "../../../utils/api/questions";
+import { Question } from "../../../data/interfaces/questions";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { useNavigate } from "react-router-dom";
+
+const wsEventTypes = [EventType.STUDENT, EventType.STUDENT_SUGGESTION];
 
 /**
  * Component that renders all information of a student and all buttons to perform actions on this student.
  */
 export default function StudentInformation(props: { studentId: number; editionId: string }) {
     const { role } = useAuth();
+    const { socket } = useSockets();
+    const navigate = useNavigate();
 
+    const [questions, setQuestions] = useState<Question[]>([]);
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [student, setStudent] = useState<Student | undefined>(undefined);
 
-    /**
-     * Get all the suggestion that were made on this student.
-     */
     async function getData() {
         const studentResponse = await toast.promise(getStudent(props.editionId, props.studentId), {
             error: "Failed to get details",
@@ -52,7 +62,23 @@ export default function StudentInformation(props: { studentId: number; editionId
             getSuggestions(props.editionId, props.studentId),
             { error: "Failed to get suggestions" }
         );
+        const answersResponse = await toast.promise(
+            getQuestions(props.editionId, props.studentId),
+            { error: "Failed to get suggestions" }
+        );
         setStudent(studentResponse);
+        setSuggestions(suggestionsResponse.suggestions);
+        setQuestions(answersResponse.qAndA);
+    }
+
+    /**
+     * Get all info about this student without showing toasts
+     * Used in websockets
+     */
+    async function getDataNoToasts() {
+        const student = await getStudent(props.editionId, props.studentId);
+        const suggestionsResponse = await getSuggestions(props.editionId, props.studentId);
+        setStudent(student);
         setSuggestions(suggestionsResponse.suggestions);
     }
 
@@ -80,6 +106,79 @@ export default function StudentInformation(props: { studentId: number; editionId
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.studentId, props.editionId]);
 
+    /**
+     * Delete a suggestion from the list
+     */
+    function deleteSuggestion(id: string, suggestions: Suggestion[]): Suggestion[] {
+        return suggestions.filter(s => s.suggestionId.toString() !== id);
+    }
+
+    /**
+     * Find a suggestion in the list & update it
+     */
+    function findAndUpdateSuggestion(suggestion: Suggestion, list: Suggestion[]): Suggestion[] {
+        const index = list.findIndex(s => s.suggestionId === suggestion.suggestionId);
+        if (index === -1) return list;
+
+        const copy = [...list];
+        copy[index] = suggestion;
+        return copy;
+    }
+
+    /**
+     * Websockets
+     */
+    useEffect(() => {
+        function listener(event: MessageEvent) {
+            const data = JSON.parse(event.data) as WebSocketEvent;
+
+            // Wrong type of event
+            if (!wsEventTypes.includes(data.eventType)) return;
+            // Event for another student
+            if (data.pathIds.studentId !== props.studentId.toString()) return;
+
+            if (data.eventType === EventType.STUDENT) {
+                if (data.method === RequestMethod.DELETE) {
+                    // Student deleted
+                    navigate(`/editions/${props.editionId}/students`);
+                    toast.info("This student was deleted by an admin.");
+                    return;
+                } else if (data.method === RequestMethod.POST) {
+                    // Suggestion or decision created
+                    getDataNoToasts().then();
+                }
+            }
+
+            if (data.eventType === EventType.STUDENT_SUGGESTION) {
+                if (data.method === RequestMethod.DELETE) {
+                    // Suggestion deleted
+                    setSuggestions(deleteSuggestion(data.pathIds.suggestionId!, suggestions));
+                } else if (data.method === RequestMethod.PATCH) {
+                    // Suggestion edited
+                    // Fetch the updated suggestion & update it in the list
+                    getSuggestionById(
+                        props.editionId,
+                        props.studentId.toString(),
+                        data.pathIds.suggestionId!
+                    ).then(suggestion =>
+                        setSuggestions(findAndUpdateSuggestion(suggestion, suggestions))
+                    );
+                }
+            }
+        }
+
+        socket?.addEventListener("message", listener);
+
+        function removeListener() {
+            if (socket) {
+                socket.removeEventListener("message", listener);
+            }
+        }
+
+        return removeListener;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket, props.editionId, props.studentId, suggestions]);
+
     if (student === undefined) {
         return <LoadSpinner show={true} />;
     } else {
@@ -91,13 +190,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <FullName>
                                 <FirstName>{student.firstName}</FirstName>
                                 <LastName>{student.lastName}</LastName>
-                                <StudentCopyLink />
                             </FullName>
                             {student.preferredName !== null && (
                                 <div>
                                     <PreferedName>{student.preferredName}</PreferedName>
                                 </div>
                             )}
+                            <StudentCopyLink />
                         </AllName>
                     </NameContainer>
                     <ActionContainer>
@@ -106,6 +205,10 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <Card.Body className="CardBody">
                                 <CoachSuggestionContainer student={student} />
                                 {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
+                                <StudentStateHistoryButton
+                                    editionId={props.editionId}
+                                    studentId={props.studentId}
+                                />
                             </Card.Body>
                         </ActionsCard>
                     </ActionContainer>
@@ -115,8 +218,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                     <Card.Body className="CardBody">
                         {suggestions.map(suggestion => (
                             <SuggestionField key={suggestion.suggestionId}>
-                                {suggestion.coach.name}: "{suggestionToText(suggestion.suggestion)}"{" "}
-                                {suggestion.argumentation}
+                                <SuggestionTextColor suggestion={suggestion.suggestion}>
+                                    {" "}
+                                    {suggestionToText(suggestion.suggestion)}
+                                </SuggestionTextColor>
+                                <SuggestionCoachAndArg>
+                                    {suggestion.coach.name}: "{suggestion.argumentation}"
+                                </SuggestionCoachAndArg>
                             </SuggestionField>
                         ))}
                     </Card.Body>
@@ -158,7 +266,12 @@ export default function StudentInformation(props: { studentId: number; editionId
                         ))}
                     </Card.Body>
                 </Card>
-                <RemoveStudentButton studentId={props.studentId} editionId={props.editionId} />
+                <QuestionsAndAnswers questions={questions} />
+                <RemoveStudentButton
+                    student={student}
+                    studentId={props.studentId}
+                    editionId={props.editionId}
+                />
             </StudentInformationContainer>
         );
     }

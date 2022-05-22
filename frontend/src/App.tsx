@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "./contexts";
+import { AuthProvider, SocketProvider } from "./contexts";
 import { ToastContainer } from "react-toastify";
 import Router from "./Router";
 
@@ -14,8 +14,10 @@ export default function App() {
     return (
         // AuthContext should be available in the entire application
         <AuthProvider>
-            <Router />
-            <ToastContainer position={"bottom-right"} theme={"dark"} />
+            <SocketProvider>
+                <Router />
+                <ToastContainer position={"bottom-right"} theme={"dark"} />
+            </SocketProvider>
         </AuthProvider>
     );
 }

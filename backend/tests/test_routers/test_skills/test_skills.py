@@ -1,5 +1,3 @@
-from json import dumps
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 

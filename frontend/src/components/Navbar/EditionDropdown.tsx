@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { StyledDropdownItem, DropdownLabel } from "./styles";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,6 +17,8 @@ export default function EditionDropdown(props: Props) {
     const navItems: React.ReactNode[] = [];
     const location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {}, []);
 
     // User can't access any editions yet, no point in rendering the dropdown either
     // as it would just show "UNDEFINED" at the top
