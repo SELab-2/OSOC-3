@@ -43,7 +43,7 @@ async def test_add_pr_suggestion(database_session: AsyncSession, auth_client: Au
         assert json2['projectRoles'][0]['suggestions'][0]['argumentation'] == 'argumentation'
 
 
-async def test_add_pr_suggestion_dublicate(database_session: AsyncSession, auth_client: AuthClient):
+async def test_add_pr_suggestion_duplicate(database_session: AsyncSession, auth_client: AuthClient):
     """tests add a student to a project"""
     edition: Edition = Edition(year=2022, name="ed2022")
     project: Project = Project(name="project 1", edition=edition)
