@@ -48,8 +48,11 @@ export const NumberOfStudents = styled.div`
 `;
 
 export const DescriptionContainer = styled.div`
-    overflow: auto;
+    overflow: hidden;
     text-overflow: ellipsis;
     max-height: 2.6rem;
     max-width: 90%;
+    :hover {
+        overflow: auto;
+    }
 `;

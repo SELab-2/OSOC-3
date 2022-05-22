@@ -4,7 +4,11 @@ export const CoachesContainer = styled.div`
     display: flex;
     align-items: center;
     margin-top: 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
+    :hover {
+        overflow: auto;
+    }
+    
     padding-bottom: 15px;
 `;
 
@@ -20,8 +24,10 @@ export const CoachContainer = styled.div`
 `;
 
 export const CoachText = styled.div`
-    overflow: auto;
-    text-overflow: ellipsis;
+    overflow: hidden;
+    :hover {
+        overflow: auto;
+    }
     white-space: nowrap;
 `;
 

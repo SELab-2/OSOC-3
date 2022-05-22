@@ -4,7 +4,10 @@ export const ClientsContainer = styled.div`
     display: flex;
     align-items: center;
     max-width: 85%;
-    overflow: auto;
+    overflow: hidden;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const ClientContainer = styled.div`
@@ -18,8 +21,11 @@ export const ClientContainer = styled.div`
 export const Client = styled.h5`
     margin-bottom: 0;
     margin-right: 0;
-    overflow: auto;
+    overflow: hidden;
     white-space: nowrap;
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const RemoveButton = styled.button`
