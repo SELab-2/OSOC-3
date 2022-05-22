@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import "./buttonsStyles.css";
 
 import { HoverAnimation } from "../styles";
 import { AnimatedButton } from "./props";
