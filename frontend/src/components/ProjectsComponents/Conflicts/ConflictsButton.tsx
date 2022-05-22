@@ -7,10 +7,10 @@ import ConflictDiv from "./Conflict";
 import LoadSpinner from "../../Common/LoadSpinner";
 import CreateButton from "../../Common/Buttons/CreateButton";
 import WarningButton from "../../Common/Buttons/WarningButton";
-import { EventType, WebSocketEvent } from "../../../data/interfaces/websockets";
+import { EventType, RequestMethod, WebSocketEvent } from "../../../data/interfaces/websockets";
 import { useSockets } from "../../../contexts";
 
-const wsEventTypes = [EventType.PROJECT_ROLE_SUGGESTION];
+const wsEventTypes = [EventType.PROJECT, EventType.PROJECT_ROLE, EventType.PROJECT_ROLE_SUGGESTION];
 
 /**
  * A button which opens a side-panel to show all students who are assigned to multiple projects.
@@ -38,10 +38,21 @@ export default function ConflictsButton(props: { editionId: string }) {
             const data = JSON.parse(event.data) as WebSocketEvent;
             if (!wsEventTypes.includes(data.eventType)) return;
 
-            // Re-fetch the conflicts
-            getConflicts(props.editionId).then(conflicts =>
-                setConflicts(conflicts.conflictStudents)
-            );
+            // Re-fetch the conflicts if:
+            // - Project deleted
+            // - Role deleted
+            // - Suggestion added/changed/deleted
+            const containerDeleted =
+                (data.eventType === EventType.PROJECT ||
+                    data.eventType === EventType.PROJECT_ROLE) &&
+                data.method === RequestMethod.DELETE;
+            const suggestionChanged = data.eventType === EventType.PROJECT_ROLE_SUGGESTION;
+
+            if (containerDeleted || suggestionChanged) {
+                getConflicts(props.editionId).then(conflicts =>
+                    setConflicts(conflicts.conflictStudents)
+                );
+            }
         }
 
         socket?.addEventListener("message", listener);
