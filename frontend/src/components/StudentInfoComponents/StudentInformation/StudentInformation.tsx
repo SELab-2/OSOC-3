@@ -204,11 +204,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                             <Card.Header className="CardHeader">Actions</Card.Header>
                             <Card.Body className="CardBody">
                                 <CoachSuggestionContainer student={student} />
-                                {role === Role.ADMIN ? <AdminDecisionContainer /> : <></>}
-                                <StudentStateHistoryButton
-                                    editionId={props.editionId}
-                                    studentId={props.studentId}
-                                />
+                                {role === Role.ADMIN ? <AdminDecisionContainer /> : null}
+                                {role === Role.ADMIN ? (
+                                    <StudentStateHistoryButton
+                                        editionId={props.editionId}
+                                        studentId={props.studentId}
+                                    />
+                                ) : null}
                             </Card.Body>
                         </ActionsCard>
                     </ActionContainer>
@@ -267,11 +269,13 @@ export default function StudentInformation(props: { studentId: number; editionId
                     </Card.Body>
                 </Card>
                 <QuestionsAndAnswers questions={questions} />
-                <RemoveStudentButton
-                    student={student}
-                    studentId={props.studentId}
-                    editionId={props.editionId}
-                />
+                {role === Role.ADMIN ? (
+                    <RemoveStudentButton
+                        student={student}
+                        studentId={props.studentId}
+                        editionId={props.editionId}
+                    />
+                ) : null}
             </StudentInformationContainer>
         );
     }
