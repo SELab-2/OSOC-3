@@ -20,6 +20,7 @@ import { decodeRegistrationLink } from "../../../utils/logic";
 import PendingPage from "../../PendingPage";
 import { useAuth } from "../../../contexts";
 import { PageContainer } from "../../../App.styles";
+import { LoadSpinner } from "../../../components/Common";
 
 /**
  * Page where a user can register a new account. If the uuid in the url is invalid,
@@ -27,6 +28,7 @@ import { PageContainer } from "../../../App.styles";
  */
 export default function RegisterPage() {
     const { isLoggedIn } = useAuth();
+    const [validating, setValidating] = useState(true);
     const [validUuid, setValidUuid] = useState(false);
     const [pending, setPending] = useState(false);
     const params = useParams();
@@ -45,6 +47,8 @@ export default function RegisterPage() {
                 if (response) {
                     setValidUuid(true);
                 }
+
+                setValidating(false);
             }
         }
         if (!validUuid) {
@@ -73,6 +77,15 @@ export default function RegisterPage() {
             console.log(error);
             alert("Something went wrong when creating your account");
         }
+    }
+
+    // URL is still being validated
+    if (validating) {
+        return (
+            <PageContainer>
+                <LoadSpinner show={true} />
+            </PageContainer>
+        );
     }
 
     // User is currently logged in, show them a message instead

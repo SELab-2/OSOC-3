@@ -38,3 +38,10 @@ export function getBestRedirect(location: string, editionName: string): string {
     // All the rest: go to /editions
     return "/editions";
 }
+
+/**
+ * Check if the current location is the register page
+ */
+export function isRegisterPath(location: string): boolean {
+    return Boolean(matchPath({ path: "/register/:id" }, location));
+}
