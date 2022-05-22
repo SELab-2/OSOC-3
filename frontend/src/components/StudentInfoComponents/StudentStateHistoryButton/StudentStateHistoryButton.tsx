@@ -14,7 +14,6 @@ export default function StudentStateHistoryButton(props: { editionId: string; st
                     onClick={() =>
                         navigate(`/editions/${props.editionId}/students/${props.studentId}/states`)
                     }
-                    size="lg"
                 >
                     State history
                 </OrangeButton>

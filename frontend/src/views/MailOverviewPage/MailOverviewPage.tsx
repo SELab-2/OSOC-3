@@ -79,6 +79,8 @@ export default function MailOverviewPage() {
             if (response !== null) {
                 if (response.studentEmails.length === 0 && !filterChanged) {
                     setMoreEmailsAvailable(false);
+                } else {
+                    setMoreEmailsAvailable(true);
                 }
                 if (requestedPage === 0) {
                     setEmailRows(

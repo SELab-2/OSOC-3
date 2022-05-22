@@ -24,6 +24,7 @@ export default function AlumniFilter({
                 name="alumniFilter"
                 label="Only alumni"
                 checked={alumniFilter}
+                id="alumni_filter"
                 onChange={e => {
                     setAlumniFilter(e.target.checked);
                     setAlumniFilterStorage(String(e.target.checked));

@@ -87,6 +87,29 @@ async def test_webhook(database_session_skills: AsyncSession, test_client: Async
     assert len(student.skills) > 0
 
 
+async def test_webhook_unknow_question_type(database_session_skills: AsyncSession, test_client: AsyncClient, webhook: WebhookURL):
+    """test webhook with unknow question type"""
+    event: dict = create_webhook_event(
+        email_address="test@gmail.com",
+        first_name="Bob",
+        last_name="Klonck",
+        preferred_name="Jhon",
+        wants_to_be_student_coach=False,
+        phone_number="0477002266",
+    )
+    event["data"]["fields"].append({
+                "key": "question_wrong",
+                "label": "This is a test",
+                "type": "TEST",
+                "value": "89597a5d-bf59-41d0-88b1-wrong6cee12d",
+                "options": []
+            })
+    async with test_client:
+        response = await test_client.post(f"/editions/{webhook.edition.name}/webhooks/{webhook.uuid}", json=event)
+        print(response.json())
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
 async def test_webhook_bad_format(test_client: AsyncClient, webhook: WebhookURL):
     """Test a badly formatted webhook input"""
     async with test_client:

@@ -90,6 +90,8 @@ export default function ProjectPage() {
         if (response !== null) {
             if (response.projects.length === 0 && !filterChanged) {
                 setMoreProjectsAvailable(false);
+            } else {
+                setMoreProjectsAvailable(true);
             }
             if (requestedPage === 0 || filterChanged) {
                 setProjects(response.projects);

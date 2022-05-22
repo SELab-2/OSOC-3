@@ -4,8 +4,12 @@ export const CoachesContainer = styled.div`
     display: flex;
     align-items: center;
     margin-top: 20px;
-    overflow-x: auto;
+    overflow-x: hidden;
     padding-bottom: 15px;
+
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const CoachContainer = styled.div`
@@ -20,13 +24,16 @@ export const CoachContainer = styled.div`
 `;
 
 export const CoachText = styled.div`
-    overflow: auto;
-    text-overflow: ellipsis;
+    overflow: hidden;
     white-space: nowrap;
+
+    :hover {
+        overflow: auto;
+    }
 `;
 
 export const RemoveButton = styled.button`
-    padding: 0px 2.5px;
+    padding: 0 2.5px;
     background-color: #f14a3b;
     color: white;
     border: none;
