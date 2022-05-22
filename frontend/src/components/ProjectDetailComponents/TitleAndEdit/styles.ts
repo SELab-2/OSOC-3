@@ -12,7 +12,7 @@ export const Title = styled.h2`
     overflow: hidden;
     margin-right: 10px;
     max-height: 3.6em;
-    line-height: 1.2em;
+    line-height: 1.3em;
     :hover {
         overflow: auto;
     }

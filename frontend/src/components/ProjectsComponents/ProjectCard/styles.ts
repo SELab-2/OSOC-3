@@ -20,14 +20,14 @@ export const TitleContainer = styled.div`
 
 export const Title = styled.h2`
     ${HoverAnimation}
-    max-height: 3.6em;
+    max-height: 3.7em;
     overflow: hidden;
     display: flex;
     align-items: center;
     margin-right: 10px;
 
     &:hover {
-        overflow: auto;
+        overflow: hidden;
         cursor: pointer;
         color: var(--osoc_green);
     }
@@ -51,7 +51,7 @@ export const Clients = styled.div`
     overflow: hidden;
     max-height: 3rem;
     :hover {
-        overflow: auto;
+        overflow: hidden;
     }
 `;
 
