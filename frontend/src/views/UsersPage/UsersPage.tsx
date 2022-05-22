@@ -65,6 +65,8 @@ function UsersPage() {
         if (response !== null) {
             if (response.users.length === 0 && !filterChanged) {
                 setMoreCoachesAvailable(false);
+            } else {
+                setMoreCoachesAvailable(true);
             }
             if (requestedPage === 0 || filterChanged) {
                 setCoaches(response.users);
