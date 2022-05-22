@@ -4,7 +4,6 @@ import Dropdown from "react-bootstrap/Dropdown";
 import InfiniteScroll from "react-infinite-scroller";
 import { Form } from "react-bootstrap";
 import {
-    TableDiv,
     DropDownButtonDiv,
     SearchDiv,
     FilterDiv,
@@ -13,16 +12,17 @@ import {
     MailOverviewDiv,
     SearchAndChangeDiv,
     ClearDiv,
+    CustomStyledTable,
 } from "./styles";
 import { EmailType } from "../../data/enums";
 import { useParams } from "react-router-dom";
 import { Student } from "../../data/interfaces";
 import LoadSpinner from "../../components/Common/LoadSpinner";
 import { toast } from "react-toastify";
-import { StyledTable } from "../../components/Common/Tables/styles";
 import SearchBar from "../../components/Common/Forms/SearchBar";
 import { CommonMultiselect } from "../../components/Common/Forms";
 import { CommonDropdownButton } from "../../components/Common/Buttons/styles";
+import { DateTd, DateTh } from "../../components/Common/Tables/styles";
 
 interface EmailRow {
     email: StudentEmail;
@@ -68,50 +68,55 @@ export default function MailOverviewPage() {
         const newController = new AbortController();
         setController(newController);
 
-        const response = await toast.promise(
-            getMailOverview(editionId, requestedPage, searchTerm, filters, newController),
-            { error: "Failed to retrieve states" }
-        );
-
-        if (response !== null) {
-            if (response.studentEmails.length === 0 && !filterChanged) {
-                setMoreEmailsAvailable(false);
-            }
-            if (requestedPage === 0) {
-                setEmailRows(
-                    response.studentEmails.map(email => {
-                        return {
-                            email: email,
-                            checked: false,
-                        };
-                    })
-                );
-            } else {
-                setEmailRows(
-                    emailRows.concat(
+        try {
+            const response = await getMailOverview(
+                editionId,
+                requestedPage,
+                searchTerm,
+                filters,
+                newController
+            );
+            if (response !== null) {
+                if (response.studentEmails.length === 0 && !filterChanged) {
+                    setMoreEmailsAvailable(false);
+                }
+                if (requestedPage === 0) {
+                    setEmailRows(
                         response.studentEmails.map(email => {
                             return {
                                 email: email,
                                 checked: false,
                             };
                         })
-                    )
-                );
+                    );
+                } else {
+                    setEmailRows(
+                        emailRows.concat(
+                            response.studentEmails.map(email => {
+                                return {
+                                    email: email,
+                                    checked: false,
+                                };
+                            })
+                        )
+                    );
+                }
+                setPage(requestedPage + 1);
+            } else {
+                setMoreEmailsAvailable(false);
             }
-            setPage(requestedPage + 1);
-        } else {
+        } catch (error) {
+            toast.error("Failed to retrieve states");
             setMoreEmailsAvailable(false);
         }
+
         setLoading(false);
     }
 
     useEffect(() => {
         if (editionId !== requestedEdition) {
-            setEmailRows([]);
-            setPage(0);
-            setMoreEmailsAvailable(true);
-            updateMailOverview(-1);
             setRequestedEdition(editionId);
+            refresh();
         } else {
             setPage(0);
             setMoreEmailsAvailable(true);
@@ -119,6 +124,13 @@ export default function MailOverviewPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, filtersChanged, editionId]);
+
+    function refresh() {
+        setEmailRows([]);
+        setPage(0);
+        setMoreEmailsAvailable(true);
+        updateMailOverview(-1);
+    }
 
     /**
      * Keeps the selectedRows list up-to-date when a student is selected/unselected in the table
@@ -162,6 +174,7 @@ export default function MailOverviewPage() {
             })
         );
         setAllSelected(false);
+        refresh();
     }
 
     let table;
@@ -185,7 +198,7 @@ export default function MailOverviewPage() {
                 useWindow={false}
                 getScrollParent={() => document.getElementById("root")}
             >
-                <StyledTable>
+                <CustomStyledTable>
                     <thead>
                         <tr>
                             <th>
@@ -198,7 +211,7 @@ export default function MailOverviewPage() {
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Current State</th>
-                            <th>Date</th>
+                            <DateTh>Date</DateTh>
                         </tr>
                     </thead>
                     <tbody>
@@ -216,15 +229,15 @@ export default function MailOverviewPage() {
                                 <td>{row.email.student.firstName}</td>
                                 <td>{row.email.student.lastName}</td>
                                 <td>{Object.values(EmailType)[row.email.emails[0].decision]}</td>
-                                <td>
+                                <DateTd>
                                     {new Date(String(row.email.emails[0].date)).toLocaleString(
                                         "nl-be"
                                     )}
-                                </td>
+                                </DateTd>
                             </tr>
                         ))}
                     </tbody>
-                </StyledTable>
+                </CustomStyledTable>
             </InfiniteScroll>
         );
     }
@@ -241,7 +254,6 @@ export default function MailOverviewPage() {
                     placeholder="Search a student"
                 />
             </SearchDiv>
-            <br />
             <SearchAndChangeDiv>
                 <FilterDiv>
                     <CommonMultiselect
@@ -264,7 +276,7 @@ export default function MailOverviewPage() {
                 <DropDownButtonDiv>
                     <CommonDropdownButton
                         id="dropdown-setstate-button"
-                        title="Set state of selected students"
+                        title="Add new state to selected students"
                     >
                         {Object.values(EmailType).map((type, index) => (
                             <Dropdown.Item
@@ -279,7 +291,7 @@ export default function MailOverviewPage() {
                 </DropDownButtonDiv>
             </SearchAndChangeDiv>
             <ClearDiv />
-            <TableDiv>{table}</TableDiv>
+            {table}
         </MailOverviewDiv>
     );
 }

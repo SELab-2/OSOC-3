@@ -1,16 +1,8 @@
 import styled from "styled-components";
-
-export const TableDiv = styled.div`
-    margin: auto;
-    margin-top: 5px;
-    margin-bottom: 50px;
-    width: fit-content;
-    min-width: 100%;
-`;
+import { StyledTable } from "../../components/Common/Tables/styles";
 
 export const DropDownButtonDiv = styled.div`
     float: right;
-    width: fit-content;
 `;
 
 export const SearchDiv = styled.div`
@@ -26,14 +18,8 @@ export const FilterDiv = styled.div`
 `;
 
 export const SearchAndChangeDiv = styled.div`
-    float: left;
     width: 100%;
     margin-bottom: 5px;
-`;
-
-export const SearchAndFilterDiv = styled.div`
-    margin: auto;
-    width: fit-content;
 `;
 
 export const CenterDiv = styled.div`
@@ -47,11 +33,17 @@ export const MessageDiv = styled.div`
 `;
 
 export const MailOverviewDiv = styled.div`
-    min-width: 34em;
     width: fit-content;
     margin: auto;
+    max-width: 95%;
 `;
 
 export const ClearDiv = styled.div`
     clear: both;
+`;
+
+export const CustomStyledTable = styled(StyledTable)`
+    min-width: fit-content;
+    width: 60em;
+    max-width: 100%;
 `;
