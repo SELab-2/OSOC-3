@@ -52,7 +52,7 @@ aiosqlite = "^0.17.0"
 asyncmy = "^0.2.5"
 
 # Httpx: send async HTTP requests
-httpx = "^0.22.0"
+httpx = "^0.23.0"
 
 [tool.poetry.dev-dependencies]
 # Coverage: generate code coverage reports
