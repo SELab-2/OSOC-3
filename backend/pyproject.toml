@@ -56,7 +56,7 @@ httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 # Coverage: generate code coverage reports
-coverage = { "version" = "6.3.3", extras = ["toml"] }
+coverage = { "version" = "6.4", extras = ["toml"] }
 
 # faker: Generate dummy data
 faker = "13.11.1"
